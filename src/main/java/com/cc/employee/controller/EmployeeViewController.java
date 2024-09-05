@@ -9,6 +9,6 @@ public class EmployeeViewController {
 	
 	@GetMapping("/login")
 	public String loginPage() {
-		return "member/pages-login";
+		return "employee/pages-login";
 	}
 }
