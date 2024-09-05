@@ -29,7 +29,7 @@ public class Approval {
 	private Long apprNo;
 	
 	@Column(name="emp_code")
-	private String empCode;
+	private Long empCode;
 	
 	@Column(name="appr_state")
 	private String apprState;
@@ -69,11 +69,6 @@ public class Approval {
 	
 	@Column(name="referencer_last_no")
 	private int referencerLastNo;
-	
-	
-	
-	
-	
 	
 	
 	
