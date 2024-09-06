@@ -2,11 +2,15 @@ package com.cc.approval.domain;
 
 import java.time.LocalDateTime;
 
+import com.cc.employee.domain.Employee;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,8 +32,9 @@ public class Approval {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long apprNo;
 	
-	@Column(name="emp_code")
-	private Long empCode;
+	@ManyToOne
+	@JoinColumn(name="emp_code")
+	private Employee employee;
 	
 	@Column(name="appr_state")
 	private String apprState;
