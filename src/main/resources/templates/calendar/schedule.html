@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+  <head>
+    <meta charset='utf-8' />
+  	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
+  
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      headerToolbar: {
+        left: 'prevYear,prev,next,nextYear today',
+        center: 'title',
+        right: 'dayGridMonth,dayGridWeek,dayGridDay'
+      },
+      initialDate: '2023-01-12',
+      navLinks: true, // can click day/week names to navigate views
+      editable: true,
+      dayMaxEvents: true, // allow "more" link when too many events
+      events: [
+        {
+          title: 'All Day Event',
+          start: '2023-01-01'
+        },
+        {
+          title: 'Long Event',
+          start: '2023-01-07',
+          end: '2023-01-10'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2023-01-09T16:00:00'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2023-01-16T16:00:00'
+        },
+        {
+          title: 'Conference',
+          start: '2023-01-11',
+          end: '2023-01-13'
+        },
+        {
+          title: 'Meeting',
+          start: '2023-01-12T10:30:00',
+          end: '2023-01-12T12:30:00'
+        },
+        {
+          title: 'Lunch',
+          start: '2023-01-12T12:00:00'
+        },
+        {
+          title: 'Meeting',
+          start: '2023-01-12T14:30:00'
+        },
+        {
+          title: 'Happy Hour',
+          start: '2023-01-12T17:30:00'
+        },
+        {
+          title: 'Dinner',
+          start: '2023-01-12T20:00:00'
+        },
+        {
+          title: 'Birthday Party',
+          start: '2023-01-13T07:00:00'
+        },
+        {
+          title: 'Click for Google',
+          url: 'http://google.com/',
+          start: '2023-01-28'
+        }
+      ]
+    });
+
+    calendar.render();
+  });
+
+</script>
+  </head>
+  
+  <body>
+ 
+  <th:block layout:fragment="content">
+	   <main id="main" class="main">
+		   <div class="sub-sidebar" id="sub-sidebar">
+		    	<span class="subside_title">캘린더</span><br><br>
+			    <ul id="sub-sidebar-content">
+				    <li><input type="checkbox" id="my-schedule"> <label for="my-schedule">내 일정</label></li>
+				    <li><input type="checkbox" id="company-schedule"> <label for="company-schedule">전사 일정</label></li>
+				    <li><input type="checkbox" id="department-schedule"> <label for="department-schedule">부서 일정</label></li>
+				    <li><input type="checkbox" id="team-schedule"> <label for="team-schedule">팀 일정</label></li>
+				</ul>
+			</div>
+	    	<div id='calendar' >
+	    	</div>
+	    </main>
+  </th:block>
+	   <!-- Vendor JS Files -->
+	  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+	  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+	  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+	  <script src="/bootstrap/vendor/quill/quill.js"></script>
+	  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+	  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+	  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+	  <!-- Template Main JS File -->
+	  <script src="/bootstrap/js/main.js"></script>
+  </body>
+</html>
