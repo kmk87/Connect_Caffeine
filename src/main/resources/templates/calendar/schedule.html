@@ -26,6 +26,9 @@
   <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
   
 <script>
 
@@ -38,10 +41,32 @@
         center: 'title',
         right: 'dayGridMonth,dayGridWeek,dayGridDay'
       },
-      initialDate: '2023-01-12',
+      
       navLinks: true, // can click day/week names to navigate views
       editable: true,
+      locale: 'ko', // 한국어 설정
       dayMaxEvents: true, // allow "more" link when too many events
+      eventAdd: function(obj) { // 이벤트가 추가되면 발생하는 이벤트
+          console.log(obj);
+        },
+        eventChange: function(obj) { // 이벤트가 수정되면 발생하는 이벤트
+          console.log(obj);
+        },
+        eventRemove: function(obj){ // 이벤트가 삭제되면 발생하는 이벤트
+          console.log(obj);
+        },
+        select: function(arg) { // 캘린더에서 드래그로 이벤트를 생성할 수 있다.
+          var title = prompt('Event Title:');
+          if (title) {
+            calendar.addEvent({
+              title: title,
+              start: arg.start,
+              end: arg.end,
+              allDay: arg.allDay
+            })
+          }
+          calendar.unselect()
+        },
       events: [
         {
           title: 'All Day Event',
@@ -112,7 +137,69 @@
 	   <main id="main" class="main">
 		   <div class="sub-sidebar" id="sub-sidebar">
 		    	<span class="subside_title">캘린더</span><br><br>
-			    <ul id="sub-sidebar-content">
+			      <!-- Vertically centered Modal -->
+	              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered" style="margin-left:50px">
+	               일정 등록
+	              </button>
+	              <div class="modal fade" id="verticalycentered" tabindex="-1">
+	                <div class="modal-dialog modal-dialog-centered">
+	                  <div class="modal-content">
+	                    <div class="modal-header">
+	                      <h5 class="modal-title">일정 등록</h5>
+	                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	                    </div>
+	                    <div class="modal-body"><br>
+	                     <!-- Floating Labels Form -->
+			              <form class="row g-3">
+			              	<div class="row mb-3">
+			                  <label class="col-sm-2 col-form-label">일정 종류</label>
+			                  <div class="col-sm-10">
+			                    <select class="form-select" aria-label="Default select example">
+			                      <option selected>선택하기</option>
+			                      <option value="1">내일정</option>
+			                      <option value="2">전사일정</option>
+			                      <option value="3">부서일정</option>
+			                      <option value="4">팀일정</option>
+			                    </select>
+			                  </div>
+			                </div>
+			                <div class="row mb-3">
+			                  <label for="inputText" class="col-sm-2 col-form-label">제목</label>
+			                  <div class="col-sm-10">
+			                    <input type="text" class="form-control">
+			                  </div>
+			                </div>
+			
+				            <div class="row mb-3">
+			                  <label for="inputPassword" class="col-sm-2 col-form-label">내용</label>
+			                  <div class="col-sm-10">
+			                    <textarea class="form-control" style="height: 100px"></textarea>
+			                  </div>
+			                </div>
+			        		<div class="row mb-3">
+			                  <label for="inputText" class="col-sm-2 col-form-label">장소</label>
+			                  <div class="col-sm-10">
+			                    <input type="text" class="form-control">
+			                  </div>
+			                </div>
+			                <div class="row mb-3">
+				                  <label for="inputDate" class="col-sm-2 col-form-label">Date</label>
+				                  <div class="col-sm-10">
+				                    <input type="date" class="form-control">
+				                    <input type="time" class="form-control">
+				                    <input type="date" class="form-control">
+				                    <input type="time" class="form-control">
+				                  </div>
+				                </div>
+			              </form><!-- End floating Labels Form -->      
+	                    </div>
+	                    <div class="modal-footer">
+	                      <button type="button" class="btn btn-primary">등록</button>
+	                    </div>
+	                  </div>
+	                </div>
+	              </div><!-- End Vertically centered Modal--><br><br>
+			    <ul id="sub-sidebar-content" >
 				    <li><input type="checkbox" id="my-schedule"> <label for="my-schedule">내 일정</label></li>
 				    <li><input type="checkbox" id="company-schedule"> <label for="company-schedule">전사 일정</label></li>
 				    <li><input type="checkbox" id="department-schedule"> <label for="department-schedule">부서 일정</label></li>
@@ -123,6 +210,15 @@
 	    	</div>
 	    </main>
   </th:block>
+	  <!-- 자바스크립트를 이용한 모달 열기 -->
+	<script>
+	    // 모달 요소 선택
+	    var myModal = new bootstrap.Modal(document.getElementById('verticalycentered'));
+	
+	    // 모달 열기
+	    myModal.show();
+	</script>
+  
 	   <!-- Vendor JS Files -->
 	  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
 	  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
