@@ -26,24 +26,25 @@
          <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 800px;">
              <div class="card-body">
              
-                <form id="noticeAddFrm">
+                <form id="noticeUpdateFrm" th:object="${dto}">
                 <div class="form-floating mb-3">
-                      <input type="text" class="form-control" id="notice_title" name="notice_title" placeholder="제목">
+                      <input type="text" class="form-control" id="notice_title" name="notice_title" th:value="${dto.notice_title}" placeholder="제목">
                       <label for="notice_title">제목</label>
                 </div>
+                <input type="hidden" id="notice_no" name="notice_no" th:field="*{notice_no}">
                 <input type="hidden" id="notice_writer_name" name="notice_writer_name" th:value="${#authentication.principal.dto.emp_name}">
                 <input type="hidden" id="notice_writer_code" name="notice_writer_code" th:value="${#authentication.principal.dto.emp_code}">
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                <input type="hidden" id="content_upload" name="content_upload" th:value="${dto.notice_content}">
                 <!-- Quill Editor Container -->
                 <div id="notice_content" style="height: 500px;"></div>
                 
                 <hr>
-                <input class="form-check-input" type="radio" name="notice_comment_status" id="notice_comment_on" value="Y" checked="checked">
-                <label class="form-check-label" for="notice_comment_on">댓글 허용</label><br><br>
-                <input class="form-check-input" type="radio" name="notice_comment_status" id="notice_comment_off" value="N" >
-                <label class="form-check-label" for="notice_comment_off">댓글 비허용</label>
-                
-                <button type="submit" class="btn btn-primary rounded-pill" style="float:right;">등록</button>
+                <input class="form-check-input" type="radio" name="notice_comment_status" id="notice_comment_on" value="Y" th:checked="${dto.notice_comment_status == 'Y'}">
+    			<label class="form-check-label" for="notice_comment_on">댓글 허용</label><br><br>
+    			<input class="form-check-input" type="radio" name="notice_comment_status" id="notice_comment_off" value="N" th:checked="${dto.notice_comment_status == 'N'}">
+    			<label class="form-check-label" for="notice_comment_off">댓글 비허용</label>
+                <button type="submit" class="btn btn-primary rounded-pill" style="float:right;">수정</button>
              	</form>
              </div>
          </div>
@@ -57,21 +58,38 @@
   <!-- Initialize Quill -->
   <script>
     // Quill Editor 초기화
-    var quill = new Quill('#notice_content', {
-      theme: 'snow',
-      placeholder: '내용을 입력하세요',
-      modules: {
-        toolbar: [
-          [{ 'header': [1, 2, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ 'align': [] }],
-          [{ 'size': ['small', false, 'large', 'huge'] }],
-          [{ 'color': [] }, { 'background': [] }]
-        ],     
-      }
-    });
+   let quill;
 
-    const form = document.getElementById("noticeAddFrm");
+        document.addEventListener('DOMContentLoaded', () => {
+            // Quill Editor 초기화
+            quill = new Quill('#notice_content', {
+                theme: 'snow',
+                placeholder: '내용을 입력하세요',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'align': [] }],
+                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'color': [] }, { 'background': [] }]
+                    ]
+                }
+            });
+
+            // 기존 콘텐츠를 Quill Editor에 로드
+            var existingContent = document.querySelector('input[name="content_upload"]').value;
+            if (existingContent) {
+                quill.root.innerHTML = existingContent;
+            }
+
+            // 폼 제출 시 Quill Editor의 내용을 숨겨진 필드에 업데이트
+            document.getElementById('noticeUpdateFrm').addEventListener('submit', (event) => {
+                var noticeContentField = document.querySelector('input[name="content_upload"]');
+                noticeContentField.value = quill.root.innerHTML;
+            });
+        });
+
+    const form = document.getElementById("noticeUpdateFrm");
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -95,11 +113,12 @@
       } else {
         // FormData에 Quill Editor 내용을 추가
         const payload = new FormData(form);
+        const noticeNo = form.notice_no.value;
         payload.append('notice_content', quillContent);  // Quill 내용 추가
         payload.forEach((value, key) => {
         	  console.log(key + ": " + value);
         	});
-        fetch('/notice',{
+        fetch('/notice/'+noticeNo,{
         	method : 'POST',
 			body : payload
         })

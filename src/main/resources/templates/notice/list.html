@@ -77,7 +77,7 @@
       			</tr>
       		</th:block>
       		<th:block th:if="${!#lists.isEmpty(resultList)}">
-      			<tr th:each="notice : ${resultList}">
+      			<tr th:each="notice : ${resultList}" th:onclick="|location.href='@{/notice/detail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
       				<td th:text="${notice.notice_no}"></td>
       				<td th:text="${notice.notice_title}"></td>
       				<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>

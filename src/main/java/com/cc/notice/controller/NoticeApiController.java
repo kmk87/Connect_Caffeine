@@ -36,4 +36,18 @@ public class NoticeApiController {
 		
 		return resultMap;
 	}
+	
+	@ResponseBody
+	@PostMapping("/notice/{notice_no}")
+	public Map<String, String> updateNotice(NoticeDto dto){
+		Map<String, String> resultMap = new HashMap<String, String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "공지사항 수정중 오류가 발생했습니다.");
+		
+		if(noticeService.updateNotice(dto) != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "공지사항이 성공적으로 수정되었습니다.");
+		}
+		return resultMap;
+	}
 }

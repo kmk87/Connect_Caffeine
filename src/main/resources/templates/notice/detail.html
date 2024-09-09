@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     layout:decorate="~{include/layout}">
+
+ <th:block layout:fragment="content">
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>공지사항</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">목록</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    
+    <div class="col-xxl-4 col-md-6">
+         <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 800px;">
+             <div class="card-body">
+             	<table id="notice_detail" class="table" style="margin-top: 50px;">
+             		<colgroup>
+             			<col width="33%" align="center">
+             			<col width="33%" align="center">
+             			<col width="33%" align="center">
+             		</colgroup>
+             		<thead>
+             			<tr>
+             				<th style="background-color: #FAF0E6; text-align: center;">작성자</th>
+             				<th style="background-color: #FAF0E6; text-align: center;">제목</th>
+             				<th style="background-color: #FAF0E6; text-align: center;">작성일</th>
+             			</tr>
+             			<tr>
+             				<th th:text="${dto.notice_writer_name}" style="text-align: center;"></th>
+             				<th th:text="${dto.notice_title}" style="text-align: center;"></th>
+             				<th th:text="${#temporals.format(dto.notice_reg_date, 'YYYY-MM-dd HH:MM')}" style="text-align: center;"></th>
+             			</tr>
+             		</thead>
+             		<tbody>
+             			<tr >
+             				<th colspan="3" style="background-color: #FAF0E6; text-align: center;">내용</th>
+             			</tr>
+             			<tr>
+             				<td th:utext="${dto.notice_content}" colspan="3" style="height: 300px;"></td>
+             			</tr>
+             		</tbody>
+             	</table>
+             	<div th:if="${dto.notice_writer_code == #authentication.principal.dto.emp_code}">
+                		<button type="button"  
+                		class="btn btn-outline-danger" style="float: right; margin-left: 10px;">삭제</button>
+                		<button type="button" th:onclick="|location.href='@{/notice/update/{noticeNo}(noticeNo=${dto.notice_no})}'|" 
+                		class="btn btn-outline-info" style="float: right;">수정</button>
+                </div>
+             	
+             	<table id="notice_comment" class="table" style="margin-top: 100px">
+             	<thead>
+             		<tr>
+             			<th style="background-color: #FAF0E6; text-align: center;">댓글 작성</th>
+             		</tr>
+             	</thead>
+             	<tbody>
+             		<th:block th:if="${dto.notice_comment_status.equals('N')}">
+             				<tr>
+             					<td style="text-align: center;">해당 공지사항에 댓글을 등록할 수 없습니다.</td>
+             				</tr>
+             		</th:block>
+             		<th:block th:if="${dto.notice_comment_status.equals('Y')}">
+             			<tr>
+             				<td>
+             				<form id="commentAddFrm">
+             					<input type="hidden" id="notice_no" name="notice_no" th:value="${dto.notice_no}">
+             					<input type="hidden" id="comment_writer_name" name="comment_writer_name" th:value="${#authentication.principal.dto.emp_name}">
+                				<input type="hidden" id="comment_writer_code" name="comment_writer_code" th:value="${#authentication.principal.dto.emp_code}">
+                				<input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+             					<div class="form-floating mb-3">
+                      			<input type="text" class="form-control" id="comment_content" name="comment_content" placeholder="내용을 입력하세요.">
+                      			<label for="comment_content">내용을 입력하세요.</label>
+                				</div>
+                				<button type="submit" class="btn btn-primary rounded-pill" style="float:right;">등록</button>
+                			</form>
+                			</td>
+             			</tr>
+             			<script>
+	const form = document.getElementById("commentAddFrm");
+	
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+		let vali_check = false;
+		let vali_text = "";
+		
+		if(form.comment_content.value == ""){
+			vali_text += "댓글 내용을 입력하세요.";
+			form.comment_content.focus();
+		}else{
+			vali_check = true;
+		}
+		
+		if(vali_check == false){
+			alert(vali_text);
+		}else{
+			const payload = new FormData(form);
+			for (var pair of payload.entries()) {
+			    console.log(pair[0] + ': ' + pair[1]);
+			}
+			fetch('/comment',{
+				method : 'POST',
+				body : payload
+			})
+			.then(response => response.json())
+			.then(data=>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon : 'success',
+						title : '성공',
+						text : data.res_msg,
+						confirmButtonText : "닫기"
+					}).then((result)=>{
+						window.location.href = window.location.href;
+					});
+				} else{
+					Swal.fire({
+						icon : 'error',
+						title : '실패',
+						text : data.res_msg,
+						confirmButtonText : "닫기"
+					});
+				}
+			});
+		}
+	})
+</script>
+             		</th:block>
+             		
+             	</tbody>
+             	</table>
+             	<table class="table">
+    <tbody>
+    <th:block th:if="${dto.notice_comment_status.equals('Y')}">
+    <th:block th:if="${#lists.isEmpty(resultList)}">
+    	<tr>
+   			<th style="background-color: #FAF0E6; text-align: center;">댓글 목록</th>
+   		</tr>
+    	<tr>
+    		<th style="text-align: center;">등록된 댓글이 없습니다.</th>
+    	</tr>
+    </th:block>
+    <th:block th:if="${!#lists.isEmpty(resultList)}">
+   	<tr>
+   		<th style="background-color: #FAF0E6; text-align: center;">댓글 목록</th>
+   	</tr>
+        <tr th:each="parentComment : ${resultList}" th:if="${parentComment.comment_parent_no == null}">
+            <td>
+                <div th:if="${parentComment.comment_status != 'N'}">
+                	<div th:if="${parentComment.comment_writer_code == #authentication.principal.dto.emp_code}">
+                		<button type="submit" class="btn btn-outline-danger" style="float: right; margin-left: 10px;">삭제</button>
+                		<button type="submit" class="btn btn-outline-info" style="float:right;">수정</button>
+                	</div>
+                    <span th:text="${parentComment.comment_writer_name}"></span><br>
+                    <span th:text="${parentComment.comment_content}"></span><br>
+                    <span th:text="${#temporals.format(parentComment.comment_reg_date, 'MM-dd HH:mm')}"></span>
+                	<button type="submit" class="btn btn-outline-secondary" style="float:right;">답글</button>
+                </div>
+                <div th:if="${parentComment.comment_status == 'N'}">삭제된 댓글입니다</div>
+                <table style="margin-left: 20px;" class="table">
+                    <tbody>
+                        <tr th:each="childComment : ${resultList}" th:if="${childComment.comment_parent_no == parentComment.comment_no}">
+                            <td>
+                                <div th:if="${childComment.comment_status != 'N'}">
+                                	<div th:if="${childComment.comment_writer_code == #authentication.principal.dto.emp_code}">
+                						<button type="submit" class="btn btn-outline-danger" style="float: right; margin-left: 10px;">삭제</button>
+                						<button type="submit" class="btn btn-outline-info" style="float:right;">수정</button>
+                					</div>
+                                    <span th:text="${childComment.comment_writer_name}"></span><br>
+                                    <span th:text="${childComment.comment_content}"></span><br>
+                                    <span th:text="${#temporals.format(childComment.comment_reg_date, 'MM-dd HH:mm')}"></span>
+                                </div>
+                                <div th:if="${childComment.comment_status == 'N'}">삭제된 댓글입니다</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </th:block>
+    </th:block>
+    </tbody>
+</table>
+
+
+             	
+             </div>
+         </div>
+     </div>
+  </main><!-- End #main -->
+</th:block>
+
+
+</html>

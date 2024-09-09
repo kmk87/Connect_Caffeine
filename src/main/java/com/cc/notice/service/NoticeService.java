@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cc.notice.domain.Notice;
+import com.cc.notice.domain.NoticeComment;
 import com.cc.notice.domain.NoticeDto;
+import com.cc.notice.repository.NoticeCommentRepository;
 import com.cc.notice.repository.NoticeRepository;
 
 @Service
@@ -18,6 +20,7 @@ public class NoticeService {
 	public NoticeService(NoticeRepository noticeRepository) {
 		this.noticeRepository = noticeRepository;
 	}
+	
 	
 	public List<NoticeDto> selectNoticeList(){
 		List<Notice> noticeList = null;
@@ -43,5 +46,28 @@ public class NoticeService {
 				.noticeStatus("Y")
 				.build();
 		return noticeRepository.save(notice);
+	}
+	
+	public NoticeDto selectNoticeOne(Long notice_no) {
+		Notice notice = noticeRepository.findBynoticeNo(notice_no);
+		NoticeDto dto = NoticeDto.builder()
+				.notice_no(notice.getNoticeNo())
+				.notice_title(notice.getNoticeTitle())
+				.notice_content(notice.getNoticeContent())
+				.notice_writer_code(notice.getNoticeWriterCode())
+				.notice_writer_name(notice.getNoticeWriterName())
+				.notice_reg_date(notice.getNoticeRegDate())
+				.notice_mod_date(notice.getNoticeModDate())
+				.notice_comment_status(notice.getNoticeCommentStatus())
+				.build();
+		return dto;
+	}
+	
+	public Notice updateNotice(NoticeDto dto) {
+		NoticeDto noticeDto = selectNoticeOne(dto.getNotice_no());
+		Notice notice = noticeDto.toEntity();
+		Notice result = noticeRepository.save(notice);
+		
+		return result;
 	}
 }
