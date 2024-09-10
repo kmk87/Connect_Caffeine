@@ -28,107 +28,7 @@
   <link href="/bootstrap/css/style.css" rel="stylesheet">
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  
-  
-<script>
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      headerToolbar: {
-        left: 'prevYear,prev,next,nextYear today',
-        center: 'title',
-        right: 'dayGridMonth,dayGridWeek,dayGridDay'
-      },
-      
-      navLinks: true, // can click day/week names to navigate views
-      editable: true,
-      locale: 'ko', // 한국어 설정
-      dayMaxEvents: true, // allow "more" link when too many events
-      eventAdd: function(obj) { // 이벤트가 추가되면 발생하는 이벤트
-          console.log(obj);
-        },
-        eventChange: function(obj) { // 이벤트가 수정되면 발생하는 이벤트
-          console.log(obj);
-        },
-        eventRemove: function(obj){ // 이벤트가 삭제되면 발생하는 이벤트
-          console.log(obj);
-        },
-        select: function(arg) { // 캘린더에서 드래그로 이벤트를 생성할 수 있다.
-          var title = prompt('Event Title:');
-          if (title) {
-            calendar.addEvent({
-              title: title,
-              start: arg.start,
-              end: arg.end,
-              allDay: arg.allDay
-            })
-          }
-          calendar.unselect()
-        },
-      events: [
-        {
-          title: 'All Day Event',
-          start: '2023-01-01'
-        },
-        {
-          title: 'Long Event',
-          start: '2023-01-07',
-          end: '2023-01-10'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2023-01-09T16:00:00'
-        },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2023-01-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2023-01-11',
-          end: '2023-01-13'
-        },
-        {
-          title: 'Meeting',
-          start: '2023-01-12T10:30:00',
-          end: '2023-01-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2023-01-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2023-01-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2023-01-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2023-01-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2023-01-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2023-01-28'
-        }
-      ]
-    });
-
-    calendar.render();
-  });
-
-</script>
   </head>
   
   <body>
@@ -150,11 +50,13 @@
 	                    </div>
 	                    <div class="modal-body"><br>
 	                     <!-- Floating Labels Form -->
-			              <form class="row g-3">
+			              <form id="scheduleForm" class="row g-3">
+			              	<input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+			              	<input type="hidden" id="calendar_writer_no" name="calendar_writer_no" th:value="${#authentication.principal.dto.emp_code}">
 			              	<div class="row mb-3">
 			                  <label class="col-sm-2 col-form-label">일정 종류</label>
 			                  <div class="col-sm-10">
-			                    <select class="form-select" aria-label="Default select example">
+			                    <select class="form-select" aria-label="Default select example" id="schedule_type" name="schedule_type">
 			                      <option selected>선택하기</option>
 			                      <option value="1">내일정</option>
 			                      <option value="2">전사일정</option>
@@ -166,70 +68,127 @@
 			                <div class="row mb-3">
 			                  <label for="inputText" class="col-sm-2 col-form-label">제목</label>
 			                  <div class="col-sm-10">
-			                    <input type="text" class="form-control">
+			                    <input type="text" class="form-control" id="schedule_title" name="schedule_title">
 			                  </div>
 			                </div>
 			
 				            <div class="row mb-3">
 			                  <label for="inputPassword" class="col-sm-2 col-form-label">내용</label>
 			                  <div class="col-sm-10">
-			                    <textarea class="form-control" style="height: 100px"></textarea>
+			                    <textarea class="form-control" id="schedule_content" name="schedule_content" style="height: 100px"></textarea>
 			                  </div>
 			                </div>
 			        		<div class="row mb-3">
 			                  <label for="inputText" class="col-sm-2 col-form-label">장소</label>
 			                  <div class="col-sm-10">
-			                    <input type="text" class="form-control">
+			                    <input type="text" class="form-control" id="location" name="location">
 			                  </div>
 			                </div>
 			                <div class="row mb-3">
-							    <label for="inputDate" class="col-sm-2 col-form-label">날짜</label>
-							    <div class="col-sm-10">
-							        <div class="row">
-							            <div class="col-md-3">
-							                <input type="date" class="form-control">
-							            </div>
-							            <div class="col-md-3">
-							                <input type="time" class="form-control">
-							            </div>
-							            <div class="col-md-3">
-							                <input type="date" class="form-control">
-							            </div>
-							            <div class="col-md-3">
-							                <input type="time" class="form-control">
-							            </div>
-							        </div>
-							    </div>
-							</div>
+		                      <label class="col-sm-2 col-form-label">시작 시간</label>
+		                      <div class="col-sm-10">
+		                        <input type="datetime-local" class="form-control" id="start_time" name="start_time">
+		                      </div>
+		                    </div>
+		                    <div class="row mb-3">
+		                      <label class="col-sm-2 col-form-label">종료 시간</label>
+		                      <div class="col-sm-10">
+		                        <input type="datetime-local" class="form-control" id="end_time" name="end_time">
+		                      </div>
+		                    </div>
 
 			              </form><!-- End floating Labels Form -->      
 	                    </div>
 	                    <div class="modal-footer">
-	                      <button type="button" class="btn btn-primary">등록</button>
+	                      <button type="button" class="btn btn-primary" id="submitEvent">등록</button>
 	                    </div>
 	                  </div>
 	                </div>
 	              </div><!-- End Vertically centered Modal--><br><br>
-			    <ul id="sub-sidebar-content" >
-				    <li><input type="checkbox" id="my-schedule"> <label for="my-schedule">내 일정</label></li>
-				    <li><input type="checkbox" id="company-schedule"> <label for="company-schedule">전사 일정</label></li>
-				    <li><input type="checkbox" id="department-schedule"> <label for="department-schedule">부서 일정</label></li>
-				    <li><input type="checkbox" id="team-schedule"> <label for="team-schedule">팀 일정</label></li>
-				</ul>
+			  <div class="schedule-filters">
+				  <label>
+				    <input type="checkbox" id="my-schedule" data-color="#f6c23e" checked>
+				    내 일정(기본)
+				  </label>
+				  <input type= color>
+				</div>
 			</div>
 	    	<div id='calendar' >
 	    	</div>
 	    </main>
-  </th:block>
-	  <!-- 자바스크립트를 이용한 모달 열기 -->
-	<script>
-	    // 모달 요소 선택
-	    var myModal = new bootstrap.Modal(document.getElementById('verticalycentered'));
+	  
+	 <script>
+      document.addEventListener('DOMContentLoaded', function() {
+       
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          headerToolbar: {
+            left: 'prevYear,prev,next,nextYear today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek,dayGridDay'
+          },
+          navLinks: true,
+          editable: true,
+          locale: 'ko',
+          dayMaxEvents: true,
+          events: [
+        	  
+          ] // 서버에서 가져온 데이터를 추가할 수 있음
+        });
+
+        calendar.render();
+
+        document.getElementById('submitEvent').addEventListener('click', function() {
+        	  var eventType = document.getElementById('schedule_type').value;
+        	  var eventTitle = document.getElementById('schedule_title').value;
+        	  var eventContent = document.getElementById('schedule_content').value;
+        	  var eventLocation = document.getElementById('location').value;
+        	  var startDate = document.getElementById('start_time').value;
+        	  var endDate = document.getElementById('end_time').value;   
+			  var empCode = document.getElementById('calendar_writer_no').value;
+        	  // 서버로 전송할 일정 데이터
+        	  var scheduleData = {
+        	    schedule_type: eventType,
+        	    schedule_title: eventTitle,
+        	    schedule_content: eventContent,
+        	    location: eventLocation,
+        	    start_time: startDate,
+        	    end_time: endDate,
+        	    calendar_writer_no : empCode																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			
+        	  };
+
+        	  // 일정 데이터를 서버로 POST 요청
+        	  const csrfToken = document.getElementById('csrf_token').value;
+        	  fetch('/calendar', {
+        	    method: 'POST',
+        	    headers: {
+        	      'Content-Type': 'application/json;charset=utf-8',
+        	      "Accept" : "application/json",
+        	      'X-CSRF-TOKEN' : csrfToken
+        	    },
+        	    body: JSON.stringify(scheduleData)
+        	  })
+        	  .then(response => response.json())
+        	  .then(data => {
+        	    // 등록된 데이터를 캘린더에 반영
+        	    calendar.addEvent({
+        	      title: data.title,
+        	      start: data.start,
+        	      end: data.end
+        	    });
+        	    // 모달 닫기
+        	    var modal = bootstrap.Modal.getInstance(document.getElementById('verticalycentered'));
+        	    modal.hide();
+        	  })
+        	  .catch(error => {
+        	    console.error('Error:', error);
+        	  });
+          });
+      });
+    </script>
 	
-	    // 모달 열기
-	    myModal.show();
-	</script>
-  
+  </th:block>
+
 	   <!-- Vendor JS Files -->
 	  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
 	  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
