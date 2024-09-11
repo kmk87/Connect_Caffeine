@@ -25,10 +25,8 @@
     </div>
 
     <div class="form-section">
-       
-    	<!-- <ul>
-    	<li> -->
 		<table class="form-group" style="border: 1px solid;">
+    	<a class="getData" th:href="@{dataInfo}">
 			<tr>
 				<td>문서번호</td>
 				<!-- <td th:text="${formDto.appr_docu_no}"></td> -->
@@ -43,11 +41,10 @@
 			</tr>
 			<tr>
 				<td>기안자</td>
-				<!-- <td th:value="${dto.appr_writer_name}"></td> -->
+				<td th:text="${dto.appr_writer_name}"></td>
 			</tr>
+		</a>
 		</table>
-	<!-- 	</li>
-		</ul> -->
     <div class="form-section">
       
         <table>

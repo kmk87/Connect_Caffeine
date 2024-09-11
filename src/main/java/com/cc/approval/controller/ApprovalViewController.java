@@ -58,10 +58,10 @@ public class ApprovalViewController {
 	public String getDataInfo(Model model,ApprovalDto approvalDto, ApprFormDto apprFormDto) {
 		ApprovalDto dto = approvalService.getDataInfo(approvalDto);
 //		ApprFormDto formDto = apprFormService.getDataInfo(apprFormDto);
+		System.out.println("컨트롤러dto : "+dto);
 	
 		model.addAttribute("dto",dto);
 //		model.addAttribute("formDto",formDto);
-		System.out.println("dto : "+dto);
 		return "approval/createVacation";
 	}
 	
