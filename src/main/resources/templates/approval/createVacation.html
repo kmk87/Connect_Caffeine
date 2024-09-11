@@ -14,20 +14,21 @@
 	<div class="approval-form">
     <div class="form-header">
         <h2>휴가신청서</h2>
-        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-        <input type="hidden" id="empNum" th:value="${memId}">
         <form id="draftAdd">
+        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+        <input type="hidden" id="empNum" th:value="${memId ?: ''}">
         <button class="btn-primary">결재선 지정</button>
         <button class="btn-secondary">임시 저장</button>
         <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
         <button class="btn-secondary">취소</button>
+        </form>
     </div>
 
     <div class="form-section">
        
-    	<ul>
-    	<li>
-		<table class="form-group">
+    	<!-- <ul>
+    	<li> -->
+		<table class="form-group" style="border: 1px solid;">
 			<tr>
 				<td>문서번호</td>
 				<!-- <td th:text="${formDto.appr_docu_no}"></td> -->
@@ -38,15 +39,15 @@
 			</tr>
 			<tr>
 				<td>기안일</td>
-				<!-- <td th:text="${#dates.format(dto?.draft_day ?: T(java.time.LocalDateTime).now(), 'yyyy-MM-dd HH:mm')}"></td> -->
+				<td th:text="${dto.getFormattedDraftDay()}"></td>
 			</tr>
 			<tr>
 				<td>기안자</td>
-				<td th:value="${memId}"></td>
+				<!-- <td th:value="${dto.appr_writer_name}"></td> -->
 			</tr>
 		</table>
-		</li>
-		</ul>
+	<!-- 	</li>
+		</ul> -->
     <div class="form-section">
       
         <table>
@@ -73,6 +74,7 @@
     </div>
 
     <div class="form-section">
+        <form id="draftContent">
         <div class="form-group">
             <label for="leave-type">휴가 종류</label>
             <select id="leave-type" name="leave-type">
@@ -106,7 +108,7 @@
 <!-- </a> -->
 </main>
 <script>
-	const form = document.getElementById("draftAdd");
+	const form = document.getElementById("draftContent");
 	// 로그인한 사용자 정보 가져오기
 	document.addEventListener('DOMContentLoaded',function(){
 	const empNum = document.getElementById('empNum').value;

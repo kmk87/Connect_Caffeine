@@ -17,19 +17,38 @@ public class ApprFormService {
 	public ApprFormService(ApprFormRepository apprFormRepository) {
 		this.apprFormRepository = apprFormRepository;
 	}
-//	
-//	public ApprFormDto getDocuOne(ApprFormDto getApprFormDto) {
-//		Long apprFormNo = getApprFormDto.getAppr_form_no();
-//		
-//		ApprForm apprForm = apprFormRepository.findById(apprFormNo);
-//	
-//		ApprFormDto apprFormDto = ApprFormDto.builder()
-//			.appr_form_no(apprForm.getApprFormNo())
-//			.appr_form_type(apprForm.getApprFormType())
-//			.appr_docu_no(apprForm.getApprDocuNo())
-//			.build();
-//	
-//		return apprFormDto;
-//	}
-//	
+	
+	// ApprForm 테이블에서 데이터를 가져오는 메소드
+	public ApprFormDto getDataInfo(ApprFormDto getApprFormDto) {
+		Long apprFormNo = getApprFormDto.getAppr_form_no();
+		System.out.println("apprFormNo : "+apprFormNo);
+		
+		ApprForm apprForm = apprFormRepository.findById(apprFormNo).orElse(null);
+		System.out.println("apprForm : "+apprForm);
+	
+		ApprFormDto apprFormDto = ApprFormDto.builder()
+			.appr_form_no(apprForm.getApprFormNo())
+			.appr_form_type(apprForm.getApprFormType())
+			.appr_docu_no(apprForm.getApprDocuNo())
+			.build();
+	
+		return apprFormDto;
+	}
+	
+	
+	
+	
+	// Approval 테이블의 appr_form_no를 사용하여 appr_docu_no를 가져오는 메소드
+//    public String getApprDocuNoByApproval(Long apprNo) {
+//        // Approval의 appr_form_no를 기준으로 ApprForm의 appr_docu_no를 가져옴
+//        String apprDocuNo = apprFormRepository.findApprDocuNoByApprovalId(apprNo);
+//
+//        if (apprDocuNo == null) {
+//            throw new RuntimeException("Document number not found for approval no: " + apprNo);
+//        }
+//
+//        return apprDocuNo;
+//    }
+	
+	
 }

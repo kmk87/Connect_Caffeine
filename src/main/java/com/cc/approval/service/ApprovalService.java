@@ -18,16 +18,6 @@ public class ApprovalService {
 	private final ApprovalRepository approvalRepository;
 	private final ApprFormRepository apprFormRepository;
 	private final EmployeeRepository employeeRepository;
-
-//	@Autowired
-//    private ApprovalRepository approvalRepository;
-//
-//    @Autowired
-//    private EmployeeRepository employeeRepository;
-//
-//    @Autowired
-//    private ApprFormRepository apprFormRepository;
-//	
 	
 	@Autowired
 	public ApprovalService(ApprovalRepository approvalRepository,ApprFormRepository apprFormRepository,
@@ -38,46 +28,9 @@ public class ApprovalService {
 		this.employeeRepository = employeeRepository;
 	}
 	
-	// 기안서에 기존의 정보 가져오기
-//	public ApprovalDto getDraftInfoOne(Long apprNo,Long apprFormNo) {
-//		
-//		Approval approval = approvalRepository.findByapprNo(apprNo);
-//		ApprForm apprForm = apprFormRepository.findByapprFormNo(apprFormNo);
-//		
-//		
-//	
-//		ApprovalDto approvalDto = ApprovalDto.builder()
-//				.appr_no(approval.getApprNo())
-//				.appr_form_no(apprForm.getApprFormNo())
-//				.appr_state(approval.getApprState())
-//				.appr_title(approval.getApprTitle())
-//				.appr_content(approval.getApprContent())
-//				.draft_day(approval.getDraftDay())
-//				.appr_date(approval.getApprDate())
-//				.appr_writer_code(approval.getApprWriterCode())
-//				.appr_writer_name(approval.getApprWriterName())
-//				.build();
-//	
-//		
-////		return ApprovalDto.builder()
-////				.appr_no(approvalDto.getAppr_no())
-////                .appr_state(approvalDto.getAppr_state())
-////                .appr_title(approvalDto.getAppr_title())
-////                .appr_content(approvalDto.getAppr_content())
-////                .draft_day(approvalDto.getDraft_day())
-////                .appr_date(approvalDto.getAppr_date())
-////                .appr_docu_no(approvalDto.getAppr_docu_no())
-////                .appr_writer_code(approvalDto.getAppr_writer_code())
-////                .appr_writer_name(approvalDto.getAppr_writer_name())
-////                .build();
-//		
-//		return approvalDto;
-//		
-//	}
-	
-	
 	public Approval getDraftInfoOne(ApprovalDto dto) {
 		
+		// 세션
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	    String loggedInUserAccount = authentication.getName();
 	    
@@ -86,11 +39,11 @@ public class ApprovalService {
 	    dto.setAppr_writer_code(employee.getEmpCode());
 	    dto.setAppr_writer_name(employee.getEmpName());
 	    
-		// 작성 코드
+		// 기안서 등록
 		Long apprWriter = dto.getAppr_writer_code();
 		System.out.println("apprWriter:"+apprWriter);
 		Employee emp = employeeRepository.findByempCode(apprWriter);
-		System.out.println("employee:"+employee);
+		System.out.println("employee:"+emp);
 		
 		System.out.println("dto다"+dto);
 		Approval approval = Approval.builder()
@@ -107,17 +60,14 @@ public class ApprovalService {
 		
 	}
 	
-//	@Transactional
-//	public void saveApproval(ApprovalDto approvalDto) {
-//	    // emp_account로 Employee 엔티티 조회
-//	    Employee employee = employeeRepository.findByempCode(approvalDto.getEmp_code());
-//	    ApprForm apprForm = apprFormRepository.findById(approvalDto.getAppr_form_no().getApprFormNo()).orElse(null);
-//	    
-//
-//
-//	    Approval approval = approvalDto.toEntity(employee, apprForm);
-//        approvalRepository.save(approval);
-//	}
+	public ApprovalDto getDataInfo(ApprovalDto approvalDto) {
+		
+		ApprovalDto dto = ApprovalDto.builder()
+				.draft_day(approvalDto.getDraft_day())
+				.build();
+				
+		return dto;
+	}
 	
 	
 	

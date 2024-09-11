@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,14 +33,8 @@ public class ApprovalApiController {
 		this.approvalService = approvalService;
 		this.apprFormService = apprFormService;
 	}
+
 	
-//	
-//	
-//	@GetMapping("/create")
-//    public String showCreateForm() {
-//  
-//        return "approval/createVa"; 
-//    }
 	
 	
 	@ResponseBody
