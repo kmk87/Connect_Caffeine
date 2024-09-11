@@ -32,8 +32,8 @@
                       <label for="notice_title">제목</label>
                 </div>
                 <input type="hidden" id="notice_no" name="notice_no" th:field="*{notice_no}">
-                <input type="hidden" id="notice_writer_name" name="notice_writer_name" th:value="${#authentication.principal.dto.emp_name}">
-                <input type="hidden" id="notice_writer_code" name="notice_writer_code" th:value="${#authentication.principal.dto.emp_code}">
+                <input type="hidden" id="notice_writer_name" name="notice_writer_name" th:field="*{notice_writer_name}">
+                <input type="hidden" id="notice_writer_code" name="notice_writer_code" th:field="*{notice_writer_code}">
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
                 <input type="hidden" id="content_upload" name="content_upload" th:value="${dto.notice_content}">
                 <!-- Quill Editor Container -->
@@ -79,13 +79,16 @@
             // 기존 콘텐츠를 Quill Editor에 로드
             var existingContent = document.querySelector('input[name="content_upload"]').value;
             if (existingContent) {
-                quill.root.innerHTML = existingContent;
+                // 기존 내용을 초기화하고 다시 설정
+                quill.root.innerHTML = ""; // 기존 내용을 삭제
+                quill.root.innerHTML = existingContent; // 기존 내용을 다시 설정
             }
 
             // 폼 제출 시 Quill Editor의 내용을 숨겨진 필드에 업데이트
             document.getElementById('noticeUpdateFrm').addEventListener('submit', (event) => {
                 var noticeContentField = document.querySelector('input[name="content_upload"]');
-                noticeContentField.value = quill.root.innerHTML;
+                var quillContent = quill.root.innerHTML; // 또는 quill.getContents()로 JSON 형태로 가져오기
+                noticeContentField.value = quillContent;
             });
         });
 
@@ -115,9 +118,6 @@
         const payload = new FormData(form);
         const noticeNo = form.notice_no.value;
         payload.append('notice_content', quillContent);  // Quill 내용 추가
-        payload.forEach((value, key) => {
-        	  console.log(key + ": " + value);
-        	});
         fetch('/notice/'+noticeNo,{
         	method : 'POST',
 			body : payload

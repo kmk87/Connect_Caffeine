@@ -9,4 +9,6 @@ import com.cc.notice.domain.NoticeComment;
 public interface NoticeCommentRepository extends JpaRepository<NoticeComment, Long>{
 
 	List<NoticeComment> findByNoticeNoticeNo(Long noticeNo);
+	
+	NoticeComment findBycommentNo(Long commentNo);
 }

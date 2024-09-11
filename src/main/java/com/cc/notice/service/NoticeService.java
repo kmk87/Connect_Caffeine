@@ -65,6 +65,20 @@ public class NoticeService {
 	
 	public Notice updateNotice(NoticeDto dto) {
 		NoticeDto noticeDto = selectNoticeOne(dto.getNotice_no());
+		noticeDto.setNotice_content(dto.getNotice_content());
+		noticeDto.setNotice_comment_status(dto.getNotice_comment_status());
+		noticeDto.setNotice_title(dto.getNotice_title());
+		noticeDto.setNotice_status("Y");
+		Notice notice = noticeDto.toEntity();
+		Notice result = noticeRepository.save(notice);
+		
+		return result;
+	}
+	
+	public Notice deleteNotice(Long notice_no) {
+		NoticeDto noticeDto = selectNoticeOne(notice_no);
+		noticeDto.setNotice_status("N");
+		
 		Notice notice = noticeDto.toEntity();
 		Notice result = noticeRepository.save(notice);
 		

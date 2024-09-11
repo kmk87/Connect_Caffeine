@@ -52,4 +52,51 @@ public class NoticeCommentService {
 				.build();
 		return noticeCommentRepository.save(noticeComment);
 	}
+	
+	public NoticeComment updateComment(NoticeCommentDto dto) {
+		NoticeComment comment = noticeCommentRepository.findBycommentNo(dto.getComment_no());
+		
+		NoticeCommentDto commentDto = NoticeCommentDto.builder()
+				.comment_no(comment.getCommentNo())
+				.notice_no(comment.getNotice().getNoticeNo())
+				.comment_content(comment.getCommentContent())
+				.comment_reg_date(comment.getCommentRegDate())
+				.comment_mod_date(comment.getCommentModDate())
+				.comment_status(comment.getCommentStatus())
+				.comment_writer_code(comment.getCommentWriterCode())
+				.comment_writer_name(comment.getCommentWriterName())
+				.comment_parent_no(comment.getCommentParentNo())
+				.build();
+		
+		commentDto.setComment_content(dto.getComment_content());
+		
+		comment = commentDto.toEntity(comment.getNotice());
+		
+		NoticeComment result = noticeCommentRepository.save(comment);
+		
+		return result;
+	}
+	
+	public NoticeComment deleteComment(Long comment_no) {
+		NoticeComment comment = noticeCommentRepository.findBycommentNo(comment_no);
+		
+		NoticeCommentDto commentDto = NoticeCommentDto.builder()
+				.comment_no(comment.getCommentNo())
+				.notice_no(comment.getNotice().getNoticeNo())
+				.comment_content(comment.getCommentContent())
+				.comment_reg_date(comment.getCommentRegDate())
+				.comment_mod_date(comment.getCommentModDate())
+				.comment_status(comment.getCommentStatus())
+				.comment_writer_code(comment.getCommentWriterCode())
+				.comment_writer_name(comment.getCommentWriterName())
+				.comment_parent_no(comment.getCommentParentNo())
+				.build();
+		
+		commentDto.setComment_status("N");
+		
+		comment = commentDto.toEntity(comment.getNotice());
+		
+		NoticeComment result = noticeCommentRepository.save(comment);
+		return result;
+	}
 }

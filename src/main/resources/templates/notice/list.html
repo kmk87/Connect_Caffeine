@@ -77,11 +77,13 @@
       			</tr>
       		</th:block>
       		<th:block th:if="${!#lists.isEmpty(resultList)}">
-      			<tr th:each="notice : ${resultList}" th:onclick="|location.href='@{/notice/detail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
-      				<td th:text="${notice.notice_no}"></td>
-      				<td th:text="${notice.notice_title}"></td>
-      				<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
-      				<td th:text="${notice.notice_writer_name}"></td>		
+      			<tr th:if="${notice.notice_status.equals('Y')}"
+      			th:each="notice : ${resultList}"
+      			th:onclick="|location.href='@{/notice/detail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
+      					<td th:text="${notice.notice_no}"></td>
+      					<td th:text="${notice.notice_title}"></td>
+      					<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+      					<td th:text="${notice.notice_writer_name}"></td>
       			</tr>
       		</th:block>
       	</tbody>
@@ -98,6 +100,7 @@
     <script>
   
   $(document).ready(function() {
+	  	
 	    $('#notice_list').DataTable({
 	        "lengthChange": false,  // Show entries 숨김
 	        "searching": true,      // 검색 활성화
@@ -107,7 +110,7 @@
 	        },
 	    	"pagingType": "full_numbers"
 	    });
-
+	    
 	});
 </script>
   </main><!-- End #main -->

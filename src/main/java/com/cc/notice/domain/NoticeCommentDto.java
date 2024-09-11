@@ -37,6 +37,7 @@ public class NoticeCommentDto {
 				.commentModDate(comment_mod_date)
 				.commentStatus(comment_status)
 				.commentParentNo(comment_parent_no)
+				.notice(notice)
 				.build();
 	}
 	public NoticeCommentDto toDto(NoticeComment noticeComment) {
