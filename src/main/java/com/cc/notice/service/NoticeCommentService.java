@@ -42,15 +42,29 @@ public class NoticeCommentService {
 		Long noticeNo = dto.getNotice_no();
 		Notice notice = noticeRepository.findById(noticeNo)
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid noticeNo: " + noticeNo));
-		
-		NoticeComment noticeComment = NoticeComment.builder()
-				.commentContent(dto.getComment_content())
-				.commentWriterCode(dto.getComment_writer_code())
-				.commentWriterName(dto.getComment_writer_name())
-				.notice(notice)
-				.commentStatus("Y")
-				.build();
-		return noticeCommentRepository.save(noticeComment);
+		NoticeComment noticeComment = null;
+		NoticeComment result = null;
+		if(dto.getComment_parent_no() == null) {
+			noticeComment = NoticeComment.builder()
+					.commentContent(dto.getComment_content())
+					.commentWriterCode(dto.getComment_writer_code())
+					.commentWriterName(dto.getComment_writer_name())
+					.notice(notice)
+					.commentStatus("Y")
+					.build();
+			result = noticeCommentRepository.save(noticeComment);
+		}else {
+			noticeComment= NoticeComment.builder()
+					.commentContent(dto.getComment_content())
+					.commentWriterCode(dto.getComment_writer_code())
+					.commentWriterName(dto.getComment_writer_name())
+					.notice(notice)
+					.commentStatus("Y")
+					.commentParentNo(dto.getComment_parent_no())
+					.build();
+			result = noticeCommentRepository.save(noticeComment);
+		}
+		return result;
 	}
 	
 	public NoticeComment updateComment(NoticeCommentDto dto) {

@@ -209,12 +209,82 @@
                 	
                     <span th:text="${parentComment.comment_writer_name}"></span><br>
                     <span th:id="'content-display-' + ${parentComment.comment_no}" th:text="${parentComment.comment_content}"></span>
-            		<textarea th:id="'content-edit-' + ${parentComment.comment_no}" style="display:none;" th:utext="${parentComment.comment_content}"></textarea>
+            		<textarea th:id="'content-edit-' + ${parentComment.comment_no}" class="form-control" style="display:none; resize:none;" th:utext="${parentComment.comment_content}"></textarea>
             		<br>
             		<span th:text="${#temporals.format(parentComment.comment_reg_date, 'MM-dd HH:mm')}"></span>
-            		<button type="button" class="btn btn-outline-secondary" style="float:right;">답글</button>
+            		<button type="button" class="btn btn-outline-secondary" style="float:right;" 
+        			th:onclick="|showReplyForm(${parentComment.comment_no})|">답글</button>
+
+    				<!-- 숨겨진 답글 작성 영역 -->
+    				<div th:id="'reply-form-' + ${parentComment.comment_no}" style="display:none; margin-top: 10px;">
+        				<input type="hidden" id="comment_writer_name" name="comment_writer_name" th:value="${#authentication.principal.dto.emp_name}">
+                		<input type="hidden" id="comment_writer_code" name="comment_writer_code" th:value="${#authentication.principal.dto.emp_code}">
+        				<textarea th:id="'reply-textarea-' + ${parentComment.comment_no}" class="form-control" placeholder="답글을 작성하세요"></textarea>
+        				<button type="button" class="btn btn-outline-primary" style="margin-top: 5px; float:right; resize:none;"
+            			th:onclick="|submitReply(${parentComment.comment_no})|">답글 등록</button>
+    				</div>
                 </div>
                 <script>
+                function showReplyForm(commentNo) {
+                	const replyForm = document.getElementById('reply-form-' + commentNo);
+                    if (replyForm.style.display === 'none') {
+                        replyForm.style.display = 'block';
+                    } else {
+                        replyForm.style.display = 'none';
+                    }
+                }
+
+                function submitReply(commentParentNo) {
+                    const replyTextarea = document.getElementById('reply-textarea-' + commentParentNo);
+                    const replyContent = replyTextarea.value;
+					const csrfToken = document.getElementById('csrfToken').value;
+					const noticeNo = document.getElementById('notice_no').value;
+                    const writerCode = document.getElementById('comment_writer_code').value;
+                    const writerName = document.getElementById('comment_writer_name').value;
+                    
+                    const payload = new FormData();
+                    
+                    payload.append('_csrf', csrfToken);
+                    payload.append('comment_parent_no',commentParentNo);
+                    payload.append('comment_content', replyContent);
+                    payload.append('notice_no', noticeNo);
+                    payload.append('comment_writer_code', writerCode);
+                    payload.append('comment_writer_name', writerName);
+                    
+                    if(replyContent == ""){
+                    	alert('답글 내용을 입력하세요.');
+                    }else{
+                    fetch('/comment',{
+                        method: 'post',
+                        body: payload
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.res_code == '200') {
+                            Swal.fire({
+                              icon :'success',
+                              title:'성공',
+                              text : data.res_msg,
+                              confirmButtonText: "닫기"
+                            }).then((result) => {
+                            	window.location.href = window.location.href;
+                            });
+                          } else {
+                            Swal.fire({
+                              icon: 'error',
+                              title: '실패',
+                              text: data.res_msg,
+                              confirmButtonText: "닫기"
+                            });
+                          }
+                        
+                    });
+                    	
+                    }
+                    
+
+                }	
+                
                 	function deleteComment(commentNo){
                 		if(confirm("정말로 삭제하시겠습니까?")){
 	                		const noticeNo = document.getElementById('notice_no').value;
@@ -335,14 +405,21 @@
                         <tr th:each="childComment : ${resultList}" th:if="${childComment.comment_parent_no == parentComment.comment_no}">
                             <td>
                                 <div th:if="${childComment.comment_status != 'N'}">
-                                	<div th:if="${childComment.comment_writer_code == #authentication.principal.dto.emp_code}">
-                						<button type="submit" class="btn btn-outline-danger" style="float: right; margin-left: 10px;">삭제</button>
-                						<button type="submit" class="btn btn-outline-info" style="float:right;">수정</button>
-                					</div>
-                                    <span th:text="${childComment.comment_writer_name}"></span><br>
-                                    <span th:text="${childComment.comment_content}"></span><br>
-                                    <span th:text="${#temporals.format(childComment.comment_reg_date, 'MM-dd HH:mm')}"></span>
-                                </div>
+    								<div th:if="${childComment.comment_writer_code == #authentication.principal.dto.emp_code}">
+        								<input type="hidden" id="csrfToken" name="_csrf" th:value="${_csrf.token}">
+        								<input type="hidden" id="notice_no" name="notice_no" th:value="${childComment.notice_no}">
+        								<button type="submit" class="btn btn-outline-danger" style="float: right; margin-left: 10px;"
+            							th:onclick="|deleteComment(${childComment.comment_no})|">삭제</button>
+        								<button type="button" class="btn btn-outline-info" style="float:right;"
+            							th:onclick="|editComment(${childComment.comment_no})|">수정</button>
+    									
+    								</div>
+									<span th:text="${childComment.comment_writer_name}"></span><br>
+    								<span th:id="'content-display-' + ${childComment.comment_no}" th:text="${childComment.comment_content}"></span>
+    								<textarea th:id="'content-edit-' + ${childComment.comment_no}" class="form-control" style="display:none; resize:none;"
+        							th:utext="${childComment.comment_content}"></textarea><br>
+        							<span th:text="${#temporals.format(parentComment.comment_reg_date, 'MM-dd HH:mm')}"></span>
+								</div>
                                 <div th:if="${childComment.comment_status == 'N'}">삭제된 댓글입니다</div>
                             </td>
                         </tr>
