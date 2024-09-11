@@ -5,14 +5,14 @@
 <head>
 <meta charset="UTF-8">
 <link th:href="@{/css/approval/create.css}" rel="stylesheet" type="text/css">
-<title>기안서 작성</title>
+<title>품의서 작성</title>
 </head>
 <body>
 	<th:block layout:fragment="content">
 	<main id="main" class="main">
 	<div class="approval-form">
     <div class="form-header">
-        <h2>휴가신청서</h2>
+        <h2>품의서</h2>
         <button class="btn-primary">결재선 지정</button>
         <button class="btn-secondary">임시 저장</button>
         <button class="btn-secondary">상신</button>
@@ -20,87 +20,53 @@
     </div>
 
     <div class="form-section">
-        <!-- <div class="form-group">
-            <label>문서 번호</label>
-            <span></span>
-        </div>
-        <div class="form-group">
-            <label>팀명</label>
-            <span></span>
-        </div>
-        <div class="form-group">
-            <label>기안일</label>
-            <span></span>
-        </div>
-        <div class="form-group">
-            <label>기안자</label>
-            <span></span>
-        </div>
-    </div> -->
+    	<ul>
+    	<li>
 		<table class="form-group">
 			<tr>
 				<td>문서번호</td>
-				<td th:text="${dto.appr_docu_no}"></td>
+				<!-- <td th:text="${dto?.appr_docu_no}"></td> -->
 			</tr>
 			<tr>
 				<td>팀명</td>
-				<td th:text="${dto.group_name}"></td>
+				<!-- <td th:text="${dto.group_name}"></td> -->
 			</tr>
 			<tr>
 				<td>기안일</td>
-				<td th:text="${dto.draft_day}"></td>
+				<!-- <td th:text="${#dates.format(dto?.draft_day ?: T(java.time.LocalDateTime).now(), 'yyyy-MM-dd HH:mm')}"></td> -->
 			</tr>
 			<tr>
 				<td>기안자</td>
-				<td th:text="${dto.emp_name}"></td>
+				<!-- <td th:text="${dto?.emp_name}"></td> -->
 			</tr>
 		</table>
+		</li>
+		</ul>
     <div class="form-section">
-        <!-- <div class="approval-line">
-            <div>결재</div>
-            <div>재: 강동원</div>
-            <div>승인</div>
-            <div>참: 인사팀</div>
-            <div>조: 이재훈</div>
-        </div> -->
         <table>
         	<tr>
         		<td>결재</td>
-        		<td th:text="${dto.group_name}"></td>
-        		<td th:text="${dto.group_name}"></td>
+        		<!-- <td th:text="${dto.group_name}"></td>
+        		<td th:text="${dto.group_name}"></td> -->
         	</tr>
         	<tr>
         		<td>서명</td>
         	</tr>
         	<tr>
-        		<td th:text="${dto.emp_name}"></td>
+        		<!-- <td th:text="${dto?.emp_name}"></td> -->
         	</tr>
         </table>
         <table>
         	<tr>
         		<td>참조</td>
-        		<td th:text="${dto.group_name}"></td>
-        		<td th:text="${dto.emp_name}"></td>
+        		<!-- <td th:text="${dto.group_name}"></td> -->
+        		<!-- <td th:text="${dto?.emp_name}"></td> -->
         	</tr>
         </table>
         </div>
     </div>
 
     <div class="form-section">
-        <div class="form-group">
-            <label for="leave-type">휴가 종류</label>
-            <select id="leave-type" name="leave-type">
-                <option>연차</option>
-                <option>경조</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="start-date">기간 및 일수</label>
-            <input type="date" id="start-date" name="start-date" >
-            <span>~</span>
-            <input type="date" id="end-date" name="end-date">
-            <span>사용일수:</span><span> 2일</span>
-        </div>
         <div class="form-group">
             <label for="subject">제목</label>
             <input type="text" id="subject"name="subject" placeholder="제목을 입력해 주세요.">
@@ -116,6 +82,7 @@
         </div>
     </div>
 </div>
+<!-- </a> -->
 </main>
 <script>
 	

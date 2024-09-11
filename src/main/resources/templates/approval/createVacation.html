@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		layout:decorate="~{include/layout}">
+<head>
+<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<meta charset="UTF-8">
+<link th:href="@{/css/approval/create.css}" rel="stylesheet" type="text/css">
+<title>휴가신청서 작성</title>
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<main id="main" class="main">
+	<div class="approval-form">
+    <div class="form-header">
+        <h2>휴가신청서</h2>
+        <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+        <input type="hidden" id="empNum" th:value="${memId}">
+        <form id="draftAdd">
+        <button class="btn-primary">결재선 지정</button>
+        <button class="btn-secondary">임시 저장</button>
+        <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
+        <button class="btn-secondary">취소</button>
+    </div>
+
+    <div class="form-section">
+       
+    	<ul>
+    	<li>
+		<table class="form-group">
+			<tr>
+				<td>문서번호</td>
+				<!-- <td th:text="${formDto.appr_docu_no}"></td> -->
+			</tr>
+			<tr>
+				<td>팀명</td>
+				<!-- <td th:text="${dto.group_name}"></td> -->
+			</tr>
+			<tr>
+				<td>기안일</td>
+				<!-- <td th:text="${#dates.format(dto?.draft_day ?: T(java.time.LocalDateTime).now(), 'yyyy-MM-dd HH:mm')}"></td> -->
+			</tr>
+			<tr>
+				<td>기안자</td>
+				<td th:value="${memId}"></td>
+			</tr>
+		</table>
+		</li>
+		</ul>
+    <div class="form-section">
+      
+        <table>
+        	<tr>
+        		<td>결재</td>
+        		<!-- <td th:text="${dto.group_name}"></td>
+        		<td th:text="${dto.group_name}"></td> -->
+        	</tr>
+        	<tr>
+        		<td>서명</td>
+        	</tr>
+        	<tr>
+        		<!-- <td th:text="${dto.appr_writer_name}"></td> -->
+        	</tr>
+        </table>
+        <table>
+        	<tr>
+        		<td>참조</td>
+        		<!-- <td th:text="${dto.group_name}"></td> -->
+        		<!-- <td th:text="${dto.appr_writer_name}"></td> -->
+        	</tr>
+        </table>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-group">
+            <label for="leave-type">휴가 종류</label>
+            <select id="leave-type" name="leave-type">
+                <option>연차</option>
+                <option>경조</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="start-date">기간 및 일수</label>
+            <input type="date" id="start-date" name="start-date" >
+            <span>~</span>
+            <input type="date" id="end-date" name="end-date">
+            <span>사용일수:</span><input type="text" id="appr_holi_use_count" name="appr_holi_use_count"> <span> 일</span>
+        </div>
+        <div class="form-group">
+            <label for="subject">제목</label>
+            <input type="text" id="appr_title"name="appr_title" placeholder="제목을 입력해 주세요.">
+        </div>
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea id="appr_content" name="appr_content" placeholder="내용을 입력해 주세요."></textarea>
+        </div>
+        <div class="form-group">
+            <label for="attachment">첨부 파일</label>
+            <input type="file" id="attachment">
+            <button class="btn-delete">파일 제거</button>
+        </div>
+        </form>
+    </div>
+</div>
+<!-- </a> -->
+</main>
+<script>
+	const form = document.getElementById("draftAdd");
+	// 로그인한 사용자 정보 가져오기
+	document.addEventListener('DOMContentLoaded',function(){
+	const empNum = document.getElementById('empNum').value;
+		console.log("로그인한 정보"+empNum);
+	});
+	
+	const emp = document.getElementById('empNum').value;
+	
+	form.addEventListener('submit',(e)=>{
+		e.preventDefault();
+		let vali_check = true;
+		let vali_text = "";
+		
+		// 유효성 검사
+		if(form.appr_title.value==""){
+			vali_text = '제목을 입력하세요';
+			form.appr_title.focus();
+			vali_check = false; 
+		} else if(form.appr_content.value==""){
+			vali_text = "내용을 입력하세요";
+			form.appr_content.focus();
+			vali_check = false; 
+		} else if(form.appr_holi_use_count.value ==""){
+			vali_text = '사용일수를 입력하세요';
+			form.appr_holi_use_count.focus();
+			vali_check = false; 
+		}
+		
+		
+		
+		if(vali_check == false){
+			alert(vali_text);
+		} else{
+			// 토큰
+			let obj ={};
+			const payload = new FormData(form);
+			payload.forEach(function(value,key){
+				obj[key] = value;
+			});
+			
+			obj.appr_writer_writer = emp; // empNum 추가
+			
+			const jsonData = JSON.stringify(obj);
+			const csrfToken = document.getElementById("csrf_token").value;
+
+			
+			fetch('/draft',{
+				method: 'POST',
+				headers : {
+					"Content-Type": "application/json;charset=utf-8",
+					"Accept": "application/json",
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body: jsonData,
+				
+			})
+			.then(response => response.json())
+			.then(data =>{
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon: 'success',
+						title: '성공',
+						text: data.res_msg
+					}) .then((result)=>{
+						location.href="/";
+					});
+				} else{
+					Swal.fire({
+						icon: 'error',
+						title: '실패',
+						text: data.res_msg,
+						confirmButtonText: "닫기"
+					});
+				}
+			})
+		}
+	});
+	
+</script>
+</th:block>
+</body>
+</html>

@@ -26,7 +26,7 @@ public class ApprFile {
 	@Id
 	@Column(name="appr_file_no")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long appr_file_no;
+	private Long apprFileNo;
 	
 	@ManyToOne
 	@JoinColumn(name="appr_no")

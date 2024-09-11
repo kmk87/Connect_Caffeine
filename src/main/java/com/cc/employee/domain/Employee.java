@@ -72,7 +72,8 @@ public class Employee {
 	@Column(name="emp_holiday")
 	private Long empHoliday;
 	
-	
+	/*	@Column(name="appr_writer_code")
+		private Long apprWriterCode;*/
 	
 	
 }

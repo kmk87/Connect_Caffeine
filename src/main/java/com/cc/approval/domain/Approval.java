@@ -2,6 +2,9 @@ package com.cc.approval.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.cc.employee.domain.Employee;
 
 import jakarta.persistence.Column;
@@ -32,12 +35,18 @@ public class Approval {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long apprNo;
 	
-	@ManyToOne
-	@JoinColumn(name="emp_code")
-	private Employee employee;
 	
-	@Column(name="appr_state")
-	private String apprState;
+	
+//	@OneToMany(mappedBy = "approval")
+//	private List<ApprForm> apprFormNo;
+	
+	@ManyToOne
+	@JoinColumn(name="appr_form_no")
+	private ApprForm apprForm;
+	
+	
+	@Column(name="appr_state" , columnDefinition = "varchar(1) default 'S'")
+	private String apprState = "S";
 	
 	@Column(name="appr_title")
 	private String apprTitle;
@@ -49,9 +58,11 @@ public class Approval {
 	private String rejectContent;
 	
 	@Column(name="draft_day")
+	@CreationTimestamp
 	private LocalDateTime draftDay;
 	
 	@Column(name="appr_date")
+	@UpdateTimestamp
 	private LocalDateTime apprDate;
 	
 	@Column(name="appr_holi_start")
@@ -75,6 +86,14 @@ public class Approval {
 	@Column(name="referencer_last_no")
 	private int referencerLastNo;
 	
+//	@Column(name="appr_writer_code")
+//	private Long apprWriterCode;
 	
+	@ManyToOne
+	@JoinColumn(name="appr_writer_code")
+	private Employee employee;
+	
+	@Column(name="appr_writer_name")
+	private String apprWriterName;
 	
 }

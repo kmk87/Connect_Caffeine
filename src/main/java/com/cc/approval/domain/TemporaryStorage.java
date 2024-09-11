@@ -1,5 +1,7 @@
 package com.cc.approval.domain;
 
+import com.cc.employee.domain.Employee;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,24 +17,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="appr_form")
+@Table(name="temporary_storage")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
-public class ApprForm {
+public class TemporaryStorage {
 	
 	@Id
-	@Column(name="appr_form_no")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long apprFormNo;
+	@Column(name="tem_no")
+	private Long temNo;
 	
-
-	@Column(name="appr_form_type")
-	private String apprFormType;
+	@ManyToOne
+	@JoinColumn(name="appr_no")
+	private Approval approval;
 	
-	@Column(name="appr_docu_no")
-	private String apprDocuNo;
+	@ManyToOne
+	@JoinColumn(name="emp_code")
+	private Employee employee;
 	
 	
 }
