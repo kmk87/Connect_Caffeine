@@ -1,0 +1,121 @@
+@charset "UTF-8";
+
+/* .homeApp{
+	position: fixed;
+    margin-left: 300px;
+    z-index: 995;
+	
+}*/
+
+.draftForm{
+	margin-left: 250px;
+}
+
+/*전체 레이아웃 컨테이너
+main.main {
+    display: flex; 플렉스박스로 레이아웃 설정
+} */
+.apprSidebar {
+    position: fixed;
+    top: 60px;
+    left: 250px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    bottom: 0;
+    width: 250px; /* 추가 사이드바의 너비 */
+    z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+}
+
+.homeApp {
+    display: flex; /* 플렉스 박스로 설정하여 내부 요소를 가운데 정렬 */
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    width: 300px; /* 너비를 설정하여 글씨와 맞추기 */
+    max-width: 90%; /* 화면에 비해 너무 커지지 않도록 설정 */
+    padding: 10px; /* 패딩을 줄여서 박스 크기 줄이기 */
+    border: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 5px;
+    margin: -10px auto; /* 위아래 여백 추가 및 가운데 정렬 */
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 35px; /* 글씨 크기를 키워서 더 강조 */
+    margin: 0; /* 여백 제거 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+.draftForm {
+    display: flex;
+    justify-content: space-evenly; /* 버튼들 사이의 간격을 균등하게 */
+    flex-wrap: wrap; /* 화면에 맞게 버튼 줄바꿈 */
+    gap: 20px; /* 버튼 사이의 간격 */
+    margin-top: 20px; /* 위에 여백 추가 */
+    padding: 10px; /* 패딩 추가로 좌우 여백 확보 */
+    max-width: 800px; /* 버튼 그룹의 최대 너비 설정 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn {
+    flex: 1 1 200px; /* 버튼이 최소 200px 너비를 가지며, 여유 공간을 차지 */
+    max-width: 250px; /* 버튼의 최대 너비 제한 */
+    padding: 20px 30px; /* 버튼 크기 조정 */
+    font-size: 20px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 40px;
+    
+}
+
+.draftContent {
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+    padding-left: 20px;
+}
+
+.draftDocument {
+    width: 250px;
+    height: 80px;
+    padding: 30px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-left: 170px;
+    font-size: 25px;
+}
+
+.lineWithText {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+}
+
+.line {
+    flex: 1; /* 선을 화면에 꽉 채우기 */
+    height: 2px; /* 선의 두께 설정 */
+    background-color: #ddd; /* 선 색상 */
+}
+
+.textContainer {
+    display: flex;
+    gap: 30px; /* 텍스트 사이 간격 */
+    font-size: 18px;
+    color: #333; /* 텍스트 색상 */
+    justify-content: center; /* 텍스트를 가운데 정렬 */
+    margin-left: 170px; /* 사이드바와의 간격 */
+    margin-top: 10px; /* 텍스트와 위 선의 간격 */
+    margin-bottom: 10px; /* 텍스트와 아래 선의 간격 */
+}

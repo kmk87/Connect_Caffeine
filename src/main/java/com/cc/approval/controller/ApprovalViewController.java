@@ -41,6 +41,12 @@ public class ApprovalViewController {
 //		return "approval/createVacation";
 //	}
 	
+	// 전자결재 홈
+	@GetMapping("/approvalHome")
+	public String homeMain() {
+		
+		return "approval/approvalHome";
+	}
 	
 	@GetMapping("/userInfo")
 	public String showCreateForm(Model model) {
