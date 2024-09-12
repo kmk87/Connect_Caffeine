@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cc.approval.domain.ApprForm;
 import com.cc.approval.domain.ApprFormDto;
@@ -55,13 +56,18 @@ public class ApprovalViewController {
   }
 	
 	@GetMapping("/dataInfo")
-	public String getDataInfo(Model model,ApprovalDto approvalDto, ApprFormDto apprFormDto) {
+	public String getDataInfo(Model model,
+			ApprovalDto approvalDto){
+		
 		ApprovalDto dto = approvalService.getDataInfo(approvalDto);
-//		ApprFormDto formDto = apprFormService.getDataInfo(apprFormDto);
+		//ApprFormDto formDto = apprFormService.getDataInfo(apprFormDto);
+
+		
 		System.out.println("컨트롤러dto : "+dto);
-	
+		
 		model.addAttribute("dto",dto);
 //		model.addAttribute("formDto",formDto);
+		
 		return "approval/createVacation";
 	}
 	

@@ -11,6 +11,61 @@
 <body>
 	<th:block layout:fragment="content">
 	<main id="main" class="main">
+	<!-- 사이드바 -->
+	<i class="bi bi-list toggle-sidebar-btn"></i>
+	 <aside id="apprSidebar" class="apprSidebar">
+    	<ul class="sidebar-nav" id="sidebar-nav">
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-journals"></i><span>결재</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a href="components-alerts.html">
+              					<i class="bi bi-circle"></i><span>결재 대기 문서</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a href="components-accordion.html">
+              					<i class="bi bi-circle"></i><span>결재 수신 문서</span>
+            				</a>
+          				</li>
+        			</ul>
+      		</li>
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_two" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-folder2-open"></i><span>개인 문서함</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_two" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a href="components-alerts.html">
+              					<i class="bi bi-circle"></i><span>기안 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a href="components-accordion.html">
+              					<i class="bi bi-circle"></i><span>결재 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a href="components-accordion.html">
+              					<i class="bi bi-circle"></i><span>참조 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a href="components-accordion.html">
+              					<i class="bi bi-circle"></i><span>임시 저장함</span>
+            				</a>
+          				</li>
+        			</ul>
+        		<a class="nav-link collapsed" data-bs-target="#components-nav"  href="#">
+          			<i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+        		</a>
+      		</li>
+      	</ul>
+     </aside>
+    <!-- 메인콘텐츠 -->
+    <!-- <div class="main-content col-md-9"> -->
 	<div class="approval-form">
     <div class="form-header">
         <h2>휴가신청서</h2>
@@ -21,15 +76,15 @@
         <button class="btn-secondary">임시 저장</button>
         <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
         <button class="btn-secondary">취소</button>
-        </form>
+        
     </div>
 
     <div class="form-section">
 		<table class="form-group" style="border: 1px solid;">
     	<a class="getData" th:href="@{dataInfo}">
 			<tr>
-				<td>문서번호</td>
-				<!-- <td th:text="${formDto.appr_docu_no}"></td> -->
+				<td id="apprDocuNo">문서번호</td>
+				<td></td>
 			</tr>
 			<tr>
 				<td>팀명</td>
@@ -71,7 +126,7 @@
     </div>
 
     <div class="form-section">
-        <form id="draftContent">
+       <!--  <form id="draftContent"> -->
         <div class="form-group">
             <label for="leave-type">휴가 종류</label>
             <select id="leave-type" name="leave-type">
@@ -101,11 +156,14 @@
         </div>
         </form>
     </div>
+    </div>
+   <!--  </div> -->
+</div>
 </div>
 <!-- </a> -->
 </main>
 <script>
-	const form = document.getElementById("draftContent");
+	const form = document.getElementById("draftAdd");
 	// 로그인한 사용자 정보 가져오기
 	document.addEventListener('DOMContentLoaded',function(){
 	const empNum = document.getElementById('empNum').value;
@@ -116,6 +174,7 @@
 	
 	form.addEventListener('submit',(e)=>{
 		e.preventDefault();
+		
 		let vali_check = true;
 		let vali_text = "";
 		
@@ -139,48 +198,50 @@
 		if(vali_check == false){
 			alert(vali_text);
 		} else{
-			// 토큰
-			let obj ={};
-			const payload = new FormData(form);
-			payload.forEach(function(value,key){
-				obj[key] = value;
-			});
+			if(confirm("상신하시겠습니까?")){ 
+				// 토큰
+				let obj ={};
+				const payload = new FormData(form);
+				payload.forEach(function(value,key){
+					obj[key] = value;
+				});
 			
-			obj.appr_writer_writer = emp; // empNum 추가
+				obj.appr_writer_writer = emp; // empNum 추가
 			
-			const jsonData = JSON.stringify(obj);
-			const csrfToken = document.getElementById("csrf_token").value;
+				const jsonData = JSON.stringify(obj);
+				const csrfToken = document.getElementById("csrf_token").value;
 
 			
-			fetch('/draft',{
-				method: 'POST',
-				headers : {
-					"Content-Type": "application/json;charset=utf-8",
-					"Accept": "application/json",
-					'X-CSRF-TOKEN': csrfToken
-				},
-				body: jsonData,
+				fetch('/draft',{
+					method: 'POST',
+					headers : {
+						"Content-Type": "application/json;charset=utf-8",
+						"Accept": "application/json",
+						'X-CSRF-TOKEN': csrfToken
+					},
+					body: jsonData,
 				
-			})
-			.then(response => response.json())
-			.then(data =>{
-				if(data.res_code == '200'){
-					Swal.fire({
-						icon: 'success',
-						title: '성공',
-						text: data.res_msg
-					}) .then((result)=>{
-						location.href="/";
-					});
-				} else{
-					Swal.fire({
-						icon: 'error',
-						title: '실패',
-						text: data.res_msg,
-						confirmButtonText: "닫기"
-					});
-				}
-			})
+				})
+				.then(response => response.json())
+				.then(data =>{
+					if(data.res_code == '200'){
+						Swal.fire({
+							icon: 'success',
+							title: '성공',
+							text: data.res_msg
+						}) .then((result)=>{
+							location.href="/";
+						});
+					} else{
+						Swal.fire({
+							icon: 'error',
+							title: '실패',
+							text: data.res_msg,
+							confirmButtonText: "닫기"
+						});
+					}
+				})
+			}
 		}
 	});
 	

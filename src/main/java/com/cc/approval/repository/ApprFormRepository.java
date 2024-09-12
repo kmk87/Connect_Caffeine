@@ -17,9 +17,9 @@ public interface ApprFormRepository extends JpaRepository<ApprForm,Long>{
 	ApprForm findByapprFormType(String appr_form_type);
 	
 	ApprForm findByapprDocuNo(String appr_docu_no);
-	
-	@Query("SELECT af.apprDocuNo FROM Approval a JOIN a.apprForm af WHERE a.apprNo = :apprNo")
-    String findApprDocuNoByApprovalId(@Param("apprNo") Long apprNo);
+//	
+//	@Query("SELECT af.apprDocuNo FROM Approval a JOIN a.apprForm af WHERE a.apprNo = :apprNo")
+//    String findApprDocuNoByApprovalId(@Param("apprNo") Long apprNo);
 
 
 }

@@ -27,7 +27,7 @@ public class ApprovalDto {
 	private LocalDateTime appr_date;
 	private String appr_docu_no; // 추가된 필드
     private String emp_code;
-    private ApprForm appr_form_no;
+    private Long appr_form_no;
     private Long appr_writer_code;
     private String appr_writer_name;
 
@@ -61,8 +61,8 @@ public class ApprovalDto {
 				.appr_date(approval.getApprDate())
 				.appr_writer_code(approval.getEmployee() != null ? approval.getEmployee().getEmpCode() : null)  // Employee의 empCode 설정
                 .appr_writer_name(approval.getEmployee() != null ? approval.getEmployee().getEmpName() : null)  // Employee의 empName 설정
-                .appr_form_no(approval.getApprForm())  // ApprForm 설정
-				.build();
+                .appr_docu_no(approval.getApprForm() != null ? approval.getApprForm().getApprDocuNo() : null)   // ApprForm의 apprDocuNo 설정
+				.build(); 
 	}
 	
 	
