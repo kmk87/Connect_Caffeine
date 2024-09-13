@@ -58,11 +58,12 @@ public class ApprovalViewController {
 		
 		model.addAttribute("memId",memId);
 		
-      return "approval/createVacation"; 
+      return "approval/createDraft"; 
   }
 	
-	@GetMapping("/dataInfo")
-	public String getDataInfo(Model model,
+	// 휴가신청서
+	@GetMapping("/createDraft")
+	public String getDataInfo(Model model,@RequestParam("formNo") int formNo,
 			ApprovalDto approvalDto){
 		
 		ApprovalDto dto = approvalService.getDataInfo(approvalDto);
@@ -70,13 +71,29 @@ public class ApprovalViewController {
 
 		
 		System.out.println("컨트롤러dto : "+dto);
-		
+		model.addAttribute("apprFormNo", formNo);
 		model.addAttribute("dto",dto);
 //		model.addAttribute("formDto",formDto);
 		
-		return "approval/createVacation";
+		return "approval/createDraft";
 	}
 	
+	// 사유서
+//	@GetMapping("/dataInfoStat")
+//	public String getDataInfoStat(Model model,
+//			ApprovalDto approvalDto){
+//		
+//		ApprovalDto dto = approvalService.getDataInfoStat(approvalDto);
+//		//ApprFormDto formDto = apprFormService.getDataInfo(apprFormDto);
+//
+//		
+//		System.out.println("컨트롤러dto : "+dto);
+//		
+//		model.addAttribute("dto",dto);
+////		model.addAttribute("formDto",formDto);
+//		
+//		return "approval/createStatement";
+//	}
 	
 	
 }

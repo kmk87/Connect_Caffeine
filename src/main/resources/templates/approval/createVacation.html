@@ -65,7 +65,6 @@
       	</ul>
      </aside>
     <!-- 메인콘텐츠 -->
-    <!-- <div class="main-content col-md-9"> -->
 	<div class="approval-form">
     <div class="form-header">
         <h2>휴가신청서</h2>
@@ -160,7 +159,6 @@
    <!--  </div> -->
 </div>
 </div>
-<!-- </a> -->
 </main>
 <script>
 	const form = document.getElementById("draftAdd");
@@ -228,9 +226,10 @@
 						Swal.fire({
 							icon: 'success',
 							title: '성공',
-							text: data.res_msg
+							text: data.res_msg,
+							confirmButtonText: "닫기"
 						}) .then((result)=>{
-							location.href="/";
+							location.href="/approvalHome";
 						});
 					} else{
 						Swal.fire({

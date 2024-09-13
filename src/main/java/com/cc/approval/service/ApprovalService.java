@@ -75,7 +75,20 @@ public class ApprovalService {
 				
 		return dto;
 	}
-	
-	
+// 사유서	
+//	public ApprovalDto getDataInfoStat(ApprovalDto approvalDto) {
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//	    String loggedInUserAccount = authentication.getName();
+//	    Employee employee = employeeRepository.findByempAccount(loggedInUserAccount);
+//	    approvalDto.setAppr_writer_code(employee.getEmpCode());
+//	    approvalDto.setAppr_writer_name(employee.getEmpName());
+//		
+//		ApprovalDto dto = ApprovalDto.builder()
+//				.draft_day(approvalDto.getDraft_day())
+//				.appr_writer_name(approvalDto.getAppr_writer_name()) 
+//				.build();
+//				
+//		return dto;
+//	}
 	
 }

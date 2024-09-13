@@ -36,7 +36,7 @@ public class ApprovalApiController {
 
 	
 	
-	
+	// 휴가신청서
 	@ResponseBody
 	@PostMapping("/draft")
 	public Map<String,String> createDraft(@RequestBody ApprovalDto dto){
@@ -55,6 +55,24 @@ public class ApprovalApiController {
 		return resultMap;
 	}
 	
-	
+	// 사유서
+//	@ResponseBody
+//	@PostMapping("/draftStat")
+//	public Map<String,String> createDraftStat(@RequestBody ApprovalDto dto){
+//		
+//		Map<String,String> resultMap = new HashMap<String,String>();
+//		resultMap.put("res_code", "404");
+//		resultMap.put("res_msg","결재요청 중 오류가 발생했습니다.");
+//		
+//		System.out.println("Api dto: "+dto);
+//		
+//		if(approvalService.getDraftInfoOne(dto) != null) {
+//			resultMap.put("res_code", "200");
+//			resultMap.put("res_msg", "결재요청이 완료되었습니다.");
+//		}
+//		
+//		return resultMap;
+//	}
+//	
 	
 }
