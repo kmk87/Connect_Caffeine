@@ -65,12 +65,12 @@
      </aside>
      
      <!-- 메인콘텐츠 -->
-     <div class="content">
+     <!-- <div class="content">
      	<div class="homeApp">
      		<h1 style="width: 200px;">전자결재</h1>
      	</div>
      	<div class="draftForm">
-			<button type="button" class="btn btn-outline-info">휴가신청서</button>   	
+			<button type="button" class="btn btn-outline-info" th:href="@{/dataInfo}">휴가신청서</button>   	
 			<button type="button" class="btn btn-outline-info">사유서</button> 
 			<button type="button" class="btn btn-outline-info">품의서</button>
      	</div>
@@ -91,7 +91,80 @@
     	<div class="lineWithText">
         	<div class="line"></div>
     	</div>
-     </div>
+     </div> -->
+     <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>전자결재</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item">전자결재</li>
+          <!-- <li class="breadcrumb-item active">General</li> -->
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    
+     <section class="section">
+      <div class="row">
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">기안 진행 문서</h5>
+
+              <!-- Default Table -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">순번</th>
+                    <th scope="col">기안일</th>
+                    <th scope="col">결재양식</th>
+                    <th scope="col">제목</th>
+                    <th scope="col">결재상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">4</th>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">5</th>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                    <td>테스트</td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- End Default Table Example -->
+            </div>
+          </div>
      
      </main>
      
