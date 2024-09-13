@@ -12,5 +12,3 @@ public class EmployeeViewController {
 		return "employee/pages-login";   
 	}
 }
-
-
