@@ -9,7 +9,7 @@ public class EmployeeViewController {
 	
 	@GetMapping("/login")
 	public String loginPage() {
-		return "employee/pages-login";
+		return "employee/pages-login";   
 	}
 }
 
