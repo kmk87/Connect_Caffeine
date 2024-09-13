@@ -17,29 +17,26 @@
     </div><!-- End Page Title -->
     
     <div class="col-xxl-4 col-md-6">
-         <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 800px;">
+         <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px;">
              <div class="card-body">
              	<table id="notice_detail" class="table" style="margin-top: 50px;">
              		<colgroup>
-             			<col width="33%" align="center">
-             			<col width="33%" align="center">
-             			<col width="33%" align="center">
+             			<col width="70%" align="left">
+             			<col width="30%" align="left">
              		</colgroup>
              		<thead>
              			<tr>
-             				<th style="background-color: #FAF0E6; text-align: center;">작성자</th>
-             				<th style="background-color: #FAF0E6; text-align: center;">제목</th>
-             				<th style="background-color: #FAF0E6; text-align: center;">작성일</th>
+             				<th th:text="${dto.notice_title}" style="text-align: left; font-size: 22px;" colspan="2"></th>
+
              			</tr>
              			<tr>
-             				<th th:text="${dto.notice_writer_name}" style="text-align: center;"></th>
-             				<th th:text="${dto.notice_title}" style="text-align: center;"></th>
-             				<th th:text="${#temporals.format(dto.notice_reg_date, 'YYYY-MM-dd HH:MM')}" style="text-align: center;"></th>
+             				<td th:text="'작성자 : ' + ${dto.notice_writer_name}" style="text-align: left; font-size: 12px;" ></td>
+             				<td th:text="${#temporals.format(dto.notice_reg_date, 'YYYY-MM-dd HH:MM')}" style="text-align: right; font-size: 12px;"></td>
              			</tr>
              		</thead>
              		<tbody>
-             			<tr >
-             				<th colspan="3" style="background-color: #FAF0E6; text-align: center;">내용</th>
+             			<tr>
+             				<th colspan="3" style="background-color: #F0F8FF; text-align: center;">내용</th>
              			</tr>
              			<tr>
              				<td th:utext="${dto.notice_content}" colspan="3" style="height: 300px;"></td>
@@ -54,7 +51,7 @@
                 		class="btn btn-outline-danger"
                 		style="float: right; margin-left: 10px;">삭제</button>
                 </form>
-                		<button type="button" th:onclick="|location.href='@{/notice/update/{noticeNo}(noticeNo=${dto.notice_no})}'|" 
+                		<button type="button" th:onclick="|location.href='@{/noticeUpdate/{noticeNo}(noticeNo=${dto.notice_no})}'|" 
                 		class="btn btn-outline-info" style="float: right;">수정</button>
                 </div>
              	<script type="text/javascript">
@@ -64,7 +61,7 @@
              			const payload = new FormData(formDelete);
              			const noticeNo = formDelete.notice_no.value;
              			if(confirm("정말로 삭제하시겠습니까?")){
-             				fetch('/delete/'+noticeNo, {
+             				fetch('/noticeDelete/'+noticeNo, {
              	                method: 'post',
              	               	body : payload
              	            })
@@ -77,7 +74,7 @@
              	                        text: '게시물이 성공적으로 삭제되었습니다.',
              	                        confirmButtonText: "닫기"
              	                    }).then((result) => {
-             	                        location.href = "/notice"; // 삭제 후 목록 페이지로 이동
+             	                        location.href = "/noticeList"; // 삭제 후 목록 페이지로 이동
              	                    });
              	                } else {
              	                    Swal.fire({
@@ -98,7 +95,7 @@
              	<table id="notice_comment" class="table" style="margin-top: 100px">
              	<thead>
              		<tr>
-             			<th style="background-color: #FAF0E6; text-align: center;">댓글 작성</th>
+             			<th style="background-color: #F0F8FF; text-align: center;">댓글 작성</th>
              		</tr>
              	</thead>
              	<tbody>
@@ -145,7 +142,7 @@
              					for (var pair of payload.entries()) {
              					    console.log(pair[0] + ': ' + pair[1]);
              					}
-             					fetch('/comment',{
+             					fetch('/commentCreate',{
              						method : 'POST',
              						body : payload
              					})
@@ -182,7 +179,7 @@
     <th:block th:if="${dto.notice_comment_status.equals('Y')}">
     <th:block th:if="${#lists.isEmpty(resultList)}">
     	<tr>
-   			<th style="background-color: #FAF0E6; text-align: center;">댓글 목록</th>
+   			<th style="background-color: #F0F8FF; text-align: center;">댓글 목록</th>
    		</tr>
     	<tr>
     		<th style="text-align: center;">등록된 댓글이 없습니다.</th>
@@ -190,8 +187,10 @@
     </th:block>
     <th:block th:if="${!#lists.isEmpty(resultList)}">
    	<tr>
-   		<th style="background-color: #FAF0E6; text-align: center;">댓글 목록</th>
+   		<th style="background-color: #F0F8FF; text-align: center;">댓글 목록</th>
    	</tr>
+   		
+   	
         <tr th:each="parentComment : ${resultList}" th:if="${parentComment.comment_parent_no == null}">
             <td>
                 <div th:if="${parentComment.comment_status != 'N'}">
@@ -254,7 +253,7 @@
                     if(replyContent == ""){
                     	alert('답글 내용을 입력하세요.');
                     }else{
-                    fetch('/comment',{
+                    fetch('/commentUpdate',{
                         method: 'post',
                         body: payload
                     })
@@ -294,7 +293,7 @@
                 			payload.append('notice_no', noticeNo);
                 			payload.append('_csrf', csrfToken);
                 			
-                			fetch('/deleteComment/'+commentNo,{
+                			fetch('/commentDelete/'+commentNo,{
                 				method : 'post',
                 				body : payload
                 			})
@@ -371,7 +370,7 @@
 				    
                     // 서버로 업데이트 요청 보내기
                     
-                   fetch('/comment/'+commentNo, {
+                   fetch('/commentCreate/'+commentNo, {
                         method: 'post',
                         body: payload
                     })
@@ -400,31 +399,33 @@
 				</script>
                 
                 <div th:if="${parentComment.comment_status == 'N'}">삭제된 댓글입니다</div>
-                <table style="margin-left: 20px;" class="table">
-                    <tbody>
-                        <tr th:each="childComment : ${resultList}" th:if="${childComment.comment_parent_no == parentComment.comment_no}">
-                            <td>
-                                <div th:if="${childComment.comment_status != 'N'}">
-    								<div th:if="${childComment.comment_writer_code == #authentication.principal.dto.emp_code}">
-        								<input type="hidden" id="csrfToken" name="_csrf" th:value="${_csrf.token}">
-        								<input type="hidden" id="notice_no" name="notice_no" th:value="${childComment.notice_no}">
-        								<button type="submit" class="btn btn-outline-danger" style="float: right; margin-left: 10px;"
-            							th:onclick="|deleteComment(${childComment.comment_no})|">삭제</button>
-        								<button type="button" class="btn btn-outline-info" style="float:right;"
-            							th:onclick="|editComment(${childComment.comment_no})|">수정</button>
-    									
-    								</div>
-									<span th:text="${childComment.comment_writer_name}"></span><br>
-    								<span th:id="'content-display-' + ${childComment.comment_no}" th:text="${childComment.comment_content}"></span>
-    								<textarea th:id="'content-edit-' + ${childComment.comment_no}" class="form-control" style="display:none; resize:none;"
-        							th:utext="${childComment.comment_content}"></textarea><br>
-        							<span th:text="${#temporals.format(parentComment.comment_reg_date, 'MM-dd HH:mm')}"></span>
-								</div>
-                                <div th:if="${childComment.comment_status == 'N'}">삭제된 댓글입니다</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <table class="table">
+    				<tbody>
+        				<tr th:each="childComment : ${resultList}" th:if="${childComment.comment_parent_no == parentComment.comment_no}">
+            				<td style="padding-left: 20px;"> <!-- childComment에만 padding-left 적용 -->
+                				<div th:if="${childComment.comment_status != 'N'}">
+                    				<div th:if="${childComment.comment_writer_code == #authentication.principal.dto.emp_code}">
+                        				<input type="hidden" id="csrfToken" name="_csrf" th:value="${_csrf.token}">
+                        				<input type="hidden" id="notice_no" name="notice_no" th:value="${childComment.notice_no}">
+                        				
+                        				<button type="submit" class="btn btn-outline-danger" style="float: right; margin-left: 10px; "
+                            			th:onclick="|deleteComment(${childComment.comment_no})|">삭제</button>
+                        				<button type="button" class="btn btn-outline-info" style="float:right; margin-left: 10px;"
+                            			th:onclick="|editComment(${childComment.comment_no})|">수정</button>
+                            			
+                    				</div>
+                    				<span th:text="${childComment.comment_writer_name}"></span><br>
+                    				<span th:id="'content-display-' + ${childComment.comment_no}" th:text="${childComment.comment_content}"></span>
+                    				<textarea th:id="'content-edit-' + ${childComment.comment_no}" class="form-control" style="display:none; resize:none;"
+                     		    	th:utext="${childComment.comment_content}"></textarea><br>
+                    				<span th:text="${#temporals.format(parentComment.comment_reg_date, 'MM-dd HH:mm')}"></span>
+                				</div>
+                			<div th:if="${childComment.comment_status == 'N'}">삭제된 댓글입니다</div>
+            			</td>
+        			</tr>
+    			</tbody>
+			</table>
+
             </td>
         </tr>
         

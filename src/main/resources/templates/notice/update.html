@@ -118,7 +118,7 @@
         const payload = new FormData(form);
         const noticeNo = form.notice_no.value;
         payload.append('notice_content', quillContent);  // Quill 내용 추가
-        fetch('/notice/'+noticeNo,{
+        fetch('/noticeUpdate/'+noticeNo,{
         	method : 'POST',
 			body : payload
         })
@@ -131,7 +131,7 @@
               text : data.res_msg,
               confirmButtonText: "닫기"
             }).then((result) => {
-              location.href = "/notice";
+              location.href = "/noticeList";
             });
           } else {
             Swal.fire({

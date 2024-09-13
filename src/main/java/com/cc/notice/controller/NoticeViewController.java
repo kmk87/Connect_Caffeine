@@ -26,9 +26,10 @@ public class NoticeViewController {
 		this.noticeCommentService = noticeCommentService;
 	}
 	
-	@GetMapping("/notice")
+	@GetMapping("/noticeList")
 	public String noticeList(Model model) {
 		List<NoticeDto> resultList = noticeService.selectNoticeList();
+
 		model.addAttribute("resultList", resultList);
 		return "notice/list";
 	}
@@ -38,7 +39,7 @@ public class NoticeViewController {
 		return "notice/create";
 	}
 	
-	@GetMapping("/notice/detail/{notice_no}")
+	@GetMapping("/noticeDetail/{notice_no}")
 	public String selectNoticeOne(Model model,
 			@PathVariable("notice_no") Long notice_no) {
 		NoticeDto noticeDto = noticeService.selectNoticeOne(notice_no);
@@ -48,7 +49,7 @@ public class NoticeViewController {
 		return "notice/detail";
 	}
 	
-	@GetMapping("/notice/update/{notice_no}")
+	@GetMapping("/noticeUpdate/{notice_no}")
 	public String updateNoticePage(Model model,
 			@PathVariable("notice_no") Long notice_no) {
 		NoticeDto dto = noticeService.selectNoticeOne(notice_no);

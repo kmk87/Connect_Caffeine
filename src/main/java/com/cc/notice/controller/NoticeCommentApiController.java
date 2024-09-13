@@ -23,7 +23,7 @@ public class NoticeCommentApiController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/comment")
+	@PostMapping("/commentCreate")
 	public Map<String, String> createComment(NoticeCommentDto dto){
 		System.out.println("확인");
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -38,7 +38,7 @@ public class NoticeCommentApiController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/comment/{comment_no}")
+	@PostMapping("/commentUpdate/{comment_no}")
 	public Map<String, String> updateComment(NoticeCommentDto dto){
 		System.out.println(dto);
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -52,7 +52,7 @@ public class NoticeCommentApiController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/deleteComment/{comment_no}")
+	@PostMapping("/commentDelete/{comment_no}")
 	public Map<String, String> deleteComment(@PathVariable("comment_no") Long comment_no){
 		System.out.println(comment_no);
 		Map<String, String> resultMap = new HashMap<String, String>();

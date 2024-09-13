@@ -24,7 +24,7 @@ public class NoticeApiController {
 	}
 
 	@ResponseBody
-	@PostMapping("/notice")
+	@PostMapping("/noticeCreate")
 	public Map<String, String> createNotice(NoticeDto dto) {
 		System.out.println(dto);
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -40,7 +40,7 @@ public class NoticeApiController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/notice/{notice_no}")
+	@PostMapping("/noticeUpdate/{notice_no}")
 	public Map<String, String> updateNotice(NoticeDto dto){
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
@@ -53,7 +53,7 @@ public class NoticeApiController {
 	}
 	
 	@ResponseBody
-	@PostMapping("/delete/{notice_no}")
+	@PostMapping("/noticeDelete/{notice_no}")
 	public Map<String, String> deleteNotice(@PathVariable("notice_no") Long notice_no){
 		Map<String, String> resultMap = new HashMap<String, String>();
 		
