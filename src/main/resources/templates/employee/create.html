@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     xmlns:sec="http://thymeleaf.org.org/extras/spring-security"
+     layout:decorate="~{include/layout}">
+  <head>
+    <meta charset='utf-8' />
+     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+  <title>사원 등록</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+	.card-body{
+	display: inline-block;
+	}
+  	
+  	.card-body-header {
+		display: flex;
+		justify-content: space-between;
+  	}
+  	
+  	.basic-info {
+	    display: flex;
+	    width: 100%;
+	}
+	
+	.basic-info-left {
+	    flex: 0 0 40%;
+	    padding: 10px;
+	    box-sizing: border-box;
+	    position: relative;
+	    display: inline-block;
+	    cursor: pointer;
+	}
+	
+	.basic-info-left:hover {
+    	cursor: pointer; 
+	}
+	
+	#emp_profile_img{
+	    display: block;
+  		position: absolute;
+	    top: 0;
+	    left: 60%;
+	    transform: translateX(-50%); 
+	    width: 200px;
+	    height: 200px;
+	    object-fit: cover;
+  	}
+	
+	.upload-text {
+	    position: absolute;
+	    bottom: 10px;
+	    left: 50%;
+	    transform: translateX(-50%);
+	    color: white;
+	    background-color: rgba(0, 0, 0, 0.5); 
+	    padding: 5px 10px;
+	    border-radius: 5px;
+	    font-size: 12px;
+	}
+	
+	.basic-info-right {
+	    flex: 0 0 60%;
+	    padding: 10px;
+	    box-sizing: border-box;
+	}
+	
+	.form-control{
+	 width: 200px;
+	}
+	
+	.form-select {
+	 width: 200px;
+	}
+  </style>
+  </head>
+  <body>
+  <th:block layout:fragment="content">
+	<main id="main" class="main">
+	 <div class="pagetitle">
+      <h1>인사 관리</h1>
+     </div>
+     <section class="section dashboard">
+     <div class="col-xxl-4 col-md-6">
+         <div class="card info-card sales-card" style="margin-top: 25px; width: 80vw; height: 90vh;">
+           <div class="card-body">
+           	<div class="card-body-header">
+              <h2 class="card-title">사원 등록</h2>
+           	</div>
+           	<hr>
+            <form id="empAddFrm" method="POST" action="/employee" enctype="multipart/form-data">
+            <input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}"/>
+            <input type="hidden" class="form-control" id="emp_resign" name="emp_resign">
+          	<div class="basic-info">
+              <div class="basic-info-left">
+              	<!-- <img src="/bootstrap/img/basic_profile_img.png" alt="Profile" id="emp_profile_img" class="rounded-circle">
+              	<div class="upload-text">클릭 시 이미지 업로드</div>
+              	<input type="file" id="emp_img_file_name" name="emp_img_file_name"> -->
+              </div>
+              <div class="basic-info-right">
+            	<table class="table table-bordered">
+	            	<colgroup>
+					    <col style="width: 40%;">
+					    <col style="width: 60%;">
+					</colgroup>
+					<tr>
+					   <th>이름</th>
+					   <td><input type="text" class="form-control" id="emp_name" name="emp_name"></td>
+					</tr>
+					<tr>
+					   <th>사원 번호</th>
+					   <td><input type="text" class="form-control" id="emp_account" name="emp_account"></td>
+					</tr>
+					<tr>
+					   <th>사원 비밀번호</th>
+					   <td><input type="text" class="form-control" id="emp_pw" name="emp_pw"></td>
+					</tr>
+					<tr>
+					   <th>생년월일</th>
+					   <td><input type="date" class="form-control" id="emp_reg_no" name="emp_reg_no"></td>
+					</tr>
+					<tr>
+					   <th>주소</th>
+					   <td>
+						<input type="text" class="form-control" id="emp_postcode" name="emp_postcode"placeholder="우편번호" style="display: inline-block;">
+						<button type="button" th:onclick="execDaumPostcode()" class="btn btn-warning rounded-pill"
+						style="height: 30px; font-size:13px;">우편번호 찾기</button><br>
+						<input type="text" class="form-control" id="emp_addr" name="emp_addr" placeholder="주소" style="display: inline-block;">
+						<input type="text" class="form-control" id="emp_addr_detail" name="emp_addr_detail" placeholder="상세 주소" style="display: inline-block;">
+					   </td>
+					</tr>
+					<tr>
+						<th>부서</th>
+						<td>
+							<select id="emp_dept" name="emp_dept" class="form-select" aria-label="Default select example">
+								<option disabled selected>부서를 선택하세요</option>
+								<option th:each="dept:${groupList}" th:value="${dept.group_no}"
+										th:text="${dept.group_name}" th:if="${dept.group_parent_no == null}">
+								</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th>팀</th>
+						<td>
+							<select id="group_no" name="group_no" class="form-select" aria-label="Default select example">
+								<option disabled selected>팀을 선택하세요</option>
+								<option th:each="team:${groupList}" th:value="${team.group_no}"
+										th:text="${team.group_name}" th:if="${team.group_parent_no != null}"
+										th:data-parent-no="${team.group_parent_no}">
+								</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+					   <th>직급</th>
+					   <td>
+						   <select id="job_code" name="job_code" class="form-select" aria-label="Default select example">
+							   <option th:each="j:${jobList}" th:value="${j.job_code}" th:text="${j.job_name}"
+							   		   th:if="${j.job_code != 'J1'} and ${j.job_code != 'J2'}">
+							   </option>
+						   </select>
+					   </td>
+					</tr>
+					<tr>
+					   <th>휴대전화</th>
+					   <td><input type="text" class="form-control" id="emp_phone" name="emp_phone"></td>
+					</tr>
+					<tr>
+					   <th>내선번호</th>
+					   <td><input type="text" class="form-control" id="emp_desk_phone" name="emp_desk_phone"></td>
+					</tr>
+					<tr>
+					   <th>이메일</th>
+					   <td><input type="email" class="form-control"id="emp_email" name="emp_email"></td>
+					</tr>
+					<tr>
+					   <th>입사일</th>
+					   <td><input type="date" class="form-control" id="emp_hiredate" name="emp_hiredate"></td>
+					</tr>
+	         </table>
+              </div>
+             </div>
+             <div class="d-flex align-items-center" style="display: flex; justify-content: flex-end;">
+               <button type="submit" class="btn btn-primary rounded-pill" style="margin-right: 10px;">완료</button>
+               <button type="button" class="btn btn-secondary rounded-pill">취소</button>
+             </div>
+           	</form>
+        </div>
+       </div>
+	  </div>
+     </section>
+	</main>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+	// 1. 이미지 업로드
+	/* document.getElementById('emp_profile_img').addEventListener('click', function() {
+		document.getElementById('emp_img_file_name').click();
+		console.log(typeof(document.getElementById('emp_img_file_name').value));
+	}); */
+	
+	
+	// 2. 주소 등록
+	function execDaumPostcode() {
+		
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일 때 참고 항목을 조합한다.
+                if(data.userSelectedType === 'R'){
+                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있고, 공동 주택일 경우 추가한다.
+                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 표시할 참고 항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+                    // 조합된 참고 항목을 해당 필드에 넣는다.
+                    //document.getElementById("sample6_extraAddress").value = extraAddr;
+                
+                } else {
+                    //document.getElementById("sample6_extraAddress").value = '';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('emp_postcode').value = data.zonecode;
+                document.getElementById("emp_addr").value = addr;
+                // 커서를 상세 주소 필드로 이동한다.
+                document.getElementById("emp_addr_detail").focus();
+            }
+        }).open();
+    }
+
+	
+	// 3. 부서 선택에 따른 팀 목록 출력
+	document.getElementById("emp_dept").addEventListener("change", function() {
+        var selectedDept = this.value;  // 선택한 부서 번호
+        var teamSelect = document.getElementById("group_no");  // 팀 select 요소
+        var options = teamSelect.querySelectorAll("option");
+
+        // 팀 목록 초기화
+        options.forEach(function(option) {
+            if (option.value) {
+                option.style.display = "none";  // 모든 팀 숨기기
+                if (option.getAttribute("data-parent-no") === selectedDept) {
+                    option.style.display = "block";  // 선택한 부서에 해당하는 팀만 표시
+                }
+            }
+        });
+    });
+	
+	// 4. 등록 처리
+	const form = document.getElementById("empAddFrm");
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+	
+	    // 입력 값 가져오기
+	    //const empImgFileName = document.getElementById("emp_img_file_name").value;
+	    const empName = document.getElementById("emp_name").value;
+	    const empAccount = document.getElementById("emp_account").value;
+	    const empPw = document.getElementById("emp_pw").value;
+	    const empRegNo = document.getElementById("emp_reg_no").value;
+	    const empPostcode = document.getElementById("emp_postcode").value;
+	    const empAddr = document.getElementById("emp_addr").value;
+	    const empAddrDetail = document.getElementById("emp_addr_detail").value;
+	    const empDept = document.getElementById("emp_dept").value;
+	    const empTeam = document.getElementById("group_no").value;
+	    const jobCode = document.getElementById("job_code").value;
+	    const empPhone = document.getElementById("emp_phone").value;
+	    const empDeskPhone = document.getElementById("emp_desk_phone").value;
+	    const empEmail = document.getElementById("emp_email").value;
+	    const empHiredate = document.getElementById("emp_hiredate").value;
+	    const empResign = document.getElementById("emp_resign").value;
+	    
+	    console.log(typeof(empImgFileName));
+	    // 유효성 검사
+	    let vali_check = false;
+	    let vali_text = "";
+	    
+	    if (empName === "") {
+	        vali_text += '이름을 입력하세요.\n';
+	    } else if (empAccount === "") {
+	        vali_text += '사원번호를 입력하세요.\n';
+	    } else if (empPw === "") {
+	        vali_text += '사원 비밀번호를 입력하세요.\n'; 
+	    }else if (empRegNo === "") {
+	        vali_text += '생년월일을 입력하세요.\n';
+	    } else if (empDept === "") {
+	        vali_text += '부서를 선택하세요.\n';
+	    } else if (empTeam === "") {
+	        vali_text += '팀을 선택하세요.\n';
+	    } else if (empPhone === "") {
+	        vali_text += '휴대전화 번호를 입력하세요.\n';
+	    } else if (empDeskPhone === "") {
+	        vali_text += '내선 번호를 입력하세요.\n';
+	    } else if (empEmail === "") {
+	        vali_text += '이메일을 입력하세요.\n';
+	    } else if (empHiredate === "") {
+	        vali_text += '입사일을 입력하세요.\n';
+	    } else {
+	        vali_check = true;
+	    }
+		
+	    if (!vali_check) {
+	        alert(vali_text)
+	        return; // 유효성 검사 실패하면 실행 중단
+	    }
+	    
+	    // 문자열 데이터를 날짜 데이터로 전환
+	    let empHiredateISO = null;
+	    let empRegNoISO = null;
+	    
+	    if (empHiredate) {
+	        empHiredateISO = new Date(empHiredate).toISOString();
+	    }
+	
+	    if (empRegNo) {
+	        empRegNoISO = new Date(empRegNo).toISOString();
+	    }
+	    
+	    const obj = {
+            emp_name: empName,
+            emp_account: empAccount,
+            emp_pw: empPw,
+            emp_reg_no: empRegNoISO,
+            emp_postcode: empPostcode,
+            emp_addr: empAddr,
+            emp_addr_detail: empAddrDetail,
+            group_no: empTeam,
+            job_code: jobCode,
+            emp_phone: empPhone,
+            emp_desk_phone: empDeskPhone,
+            emp_email: empEmail,
+            emp_hiredate: empHiredateISO,
+            emp_resign: 'n',
+            //emp_img_file_name: empImgFileName
+        };
+	        
+		const csrfToken = document.getElementById("_csrf").value;
+
+        fetch('/employee', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                "Accept": "application/json",
+                'X-CSRF-TOKEN': csrfToken
+                
+            },
+            body: JSON.stringify(obj)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code === '200') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '성공',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                }).then((result) => {
+                    location.href = "/employeeCreate";
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '실패',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                });
+            }
+        });
+	});
+  </script>
+  </th:block>
+  <!-- Vendor JS Files -->
+  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+  <script src="/bootstrap/vendor/quill/quill.js"></script>
+  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+  <!-- Template Main JS File -->
+  <script src="/bootstrap/js/main.js"></script>
+  </body>
+</html>

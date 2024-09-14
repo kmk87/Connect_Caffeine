@@ -27,7 +27,7 @@ public class WebSecurityConfig {
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)throws Exception{
 		http.authorizeHttpRequests(request -> // 요청에 대한 접근권한을 설정
 				request
-				.requestMatchers("/login","/static/**", "/bootstrap/**").permitAll()
+				.requestMatchers("/login","/static/**", "/employee", "/employee/**", "/bootstrap/**").permitAll()
 				//.requestMatchers("/**").permitAll()
 				.anyRequest().authenticated()
 				) // 루트 URL("/")에 대한 접근을 모든 사용자에게 허용
@@ -55,10 +55,11 @@ public class WebSecurityConfig {
 		
 	}
 	
+	
 	// 재활용하겠다 꼭 있어야함
 //		@Bean
 //		public PasswordEncoder passwordEncoder() {
 //			return new BCryptPasswordEncoder();
 //		}
-//	
+	
 }
