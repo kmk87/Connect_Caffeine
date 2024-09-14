@@ -3,15 +3,15 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{include/layout}">
 <head>
+<script th:inline="javascript">
+    /* Thymeleaf 변수를 JavaScript 변수로 전달 */
+    const apprFormNo = /*[[${apprFormNo}]]*/ 0;  // Thymeleaf에서 ${apprFormNo}가 렌더링될 것입니다.
+</script>
     <meta charset="UTF-8">
     <link th:href="@{/css/approval/create.css}" rel="stylesheet" type="text/css">
     <title>기안서 작성</title>
     <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<script th:inline="javascript">
-    /* Thymeleaf 변수를 JavaScript 변수로 전달 */
-    const apprFormNo = /*[[${apprFormNo}]]*/ 0;  // Thymeleaf에서 ${apprFormNo}가 렌더링될 것입니다.
-</script>
 <body>
     <th:block layout:fragment="content">
     <main id="main" class="main">
@@ -90,7 +90,7 @@
                 <button class="btn-secondary">취소</button>
                 
 			<div class="form-section">
-				<a class="getData" th:href="@{dataInfo}">
+				
 				<table class="form-group" style="border: 1px solid;">
 					<tr>
 						<td id="apprDocuNo">문서번호</td>
@@ -110,9 +110,9 @@
 					</tr>
 				</table>
 				</a>
-				<div class="form-section">
-      
-        	<table>
+				
+			<div class="form-section">
+        		<table>
         		<tr>
         			<td>결재</td>
         		<!-- <td th:text="${dto.group_name}"></td>
@@ -139,7 +139,6 @@
 				
                 <!-- 휴가신청서 폼 -->
                 <div th:if="${apprFormNo == 1}">
-                	
                     <div class="form-group">
                         <label for="leave-type">휴가 종류</label>
                         <select id="leave-type" name="leave-type">
@@ -179,21 +178,29 @@
                         <label for="content">내용</label>
                         <textarea id="appr_content" name="appr_content" placeholder="내용을 입력해 주세요."></textarea>
                     </div>
+                    <div class="form-group">
+            			<label for="attachment">첨부 파일</label>
+            			<input type="file" id="attachment">
+            			<button class="btn-delete">파일 제거</button>
+        			</div>
                 </div>
 
                 <!-- 품의서 폼 -->
                 <div th:if="${apprFormNo == 3}">
                     <div class="form-group">
-                        <label for="approval-type">품의 종류</label>
-                        <select id="approval-type" name="approval-type">
-                            <option>일반 품의</option>
-                            <option>긴급 품의</option>
-                        </select>
+                        <div class="form-group">
+                        <label for="subject">제목</label>
+                        <input type="text" id="appr_title" name="appr_title" placeholder="제목을 입력해 주세요.">
                     </div>
                     <div class="form-group">
-                        <label for="budget">예산</label>
-                        <input type="text" id="budget" name="budget" placeholder="예산을 입력해 주세요.">
+                        <label for="content">내용</label>
+                        <textarea id="appr_content" name="appr_content" placeholder="내용을 입력해 주세요."></textarea>
                     </div>
+                    <div class="form-group">
+            			<label for="attachment">첨부 파일</label>
+            			<input type="file" id="attachment">
+            			<button class="btn-delete">파일 제거</button>
+        			</div>
                 </div>
             </form>
             
@@ -250,13 +257,13 @@
 
 		// 품의서 폼 유효성 검사
 		if (apprFormNo === 3) {
-		    if (form.appr_title.value === "") {
+			if (form.appr_title.value === "") {
 		        vali_text = '제목을 입력하세요';
 		        form.appr_title.focus();
 		        vali_check = false;
-		    } else if (form.budget && form.budget.value === "") {
-		        vali_text = "예산을 입력하세요";
-		        form.budget.focus();
+		    } else if (form.appr_content.value === "") {
+		        vali_text = "내용을 입력하세요";
+		        form.appr_content.focus();
 		        vali_check = false;
 		    }
 		}
