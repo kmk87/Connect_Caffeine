@@ -94,11 +94,11 @@
 				<table class="form-group" style="border: 1px solid;">
 					<tr>
 						<td id="apprDocuNo">문서번호</td>
-						<td></td>
+						<!-- <td th:text="${documentNumber.appr_docu_no}"></td> -->
 					</tr>
 					<tr>
 						<td>팀명</td>
-						<!-- <td th:text="${dto.group_name}"></td> -->
+						<td th:each="groupName : ${groupNames}" th:text="${groupName}"></td>
 					</tr>
 					<tr>
 						<td>기안일</td>
@@ -109,7 +109,7 @@
 						<td th:text="${dto.appr_writer_name}"></td>
 					</tr>
 				</table>
-				</a>
+				
 				
 			<div class="form-section">
         		<table>

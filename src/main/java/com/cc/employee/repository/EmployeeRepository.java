@@ -15,5 +15,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		           "JOIN Approval a ON a.employee.empCode = e.empCode " +
 		           "WHERE e.empAccount = :memId")
 		    String findEmpNameByMemId(@Param("memId") String memId);
-	
+		
+
 }

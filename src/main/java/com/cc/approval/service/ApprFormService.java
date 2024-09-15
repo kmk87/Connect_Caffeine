@@ -1,5 +1,7 @@
 package com.cc.approval.service;
 
+import java.time.Year;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,7 @@ import com.cc.approval.domain.ApprFormDto;
 import com.cc.approval.domain.Approval;
 import com.cc.approval.repository.ApprFormRepository;
 import com.cc.approval.repository.ApprovalRepository;
+import com.cc.empGroup.domain.EmpGroupDto;
 
 @Service
 public class ApprFormService {
@@ -21,43 +24,25 @@ public class ApprFormService {
 		this.approvalRepository = approvalRepository;
 	}
 	
-	// ApprForm 테이블에서 데이터를 가져오는 메소드
-//	public ApprFormDto getDataInfo(ApprFormDto getApprFormDto) {
-//	    Long formDto = getApprFormDto.getAppr_form_no();
-//	    
-//	    System.out.println("apprFormNo : " + formDto);
-//
-//	    ApprForm apprForm = apprFormRepository.findByapprFormNo(formDto);
-//	    System.out.println("apprForm : " + apprForm);
-//
-//	    if (apprForm == null) {
-//	        // ApprForm이 null일 경우 예외 처리 또는 기본값 반환
-//	        throw new RuntimeException("ApprForm not found for appr_form_no: " + formDto);
-//	    }
-//
-//	    ApprFormDto apprFormDto = ApprFormDto.builder()
-//	        .appr_form_no(apprForm.getApprFormNo())
-//	        .appr_form_type(apprForm.getApprFormType())
-//	        .appr_docu_no(apprForm.getApprDocuNo())
-//	        .build();
-//
-//	    return apprFormDto;
-//	}
-	
-	
-	
-	
-	//Approval 테이블의 appr_form_no를 사용하여 appr_docu_no를 가져오는 메소드
-//    public String getApprDocuNoByApproval(Long apprNo) {
-//        // Approval의 appr_form_no를 기준으로 ApprForm의 appr_docu_no를 가져옴
-//        String apprDocuNo = apprFormRepository.findApprDocuNoByApprovalId(apprNo);
-//
-//        if (apprDocuNo == null) {
-//            throw new RuntimeException("Document number not found for approval no: " + apprNo);
-//        }
-//
-//        return apprDocuNo;
-//    }
+	// 문서 번호 가져오기
+	public String generateDocumentNumber(EmpGroupDto groupNameDto) {
+		// 그룹 이름 가져오기 (group_parent_no가 NOT NULL인 경우만)
+        String groupName = groupNameDto.getGroup_parent_no() != null ? groupNameDto.getGroup_name() : "DEFAULT";
+        
+        // 현재 연도의 뒤 2자리
+        String currentYear = String.format("%02d", Year.now().getValue() % 100);
+
+        // 현재 팀과 연도에 맞는 가장 높은 카운트 조회
+        Integer maxCount = apprFormRepository.findMaxCountByTeamAndYear(groupName, currentYear);
+
+        // 새로운 카운트 계산 (기존 카운트 +1)
+        int newCount = (maxCount != null ? maxCount : 0) + 1;
+
+        // 문서번호 생성
+        String documentNumber = String.format("%s-%s-%03d", groupName, currentYear, newCount);
+		
+		return documentNumber;
+	}
 	
 	
 }

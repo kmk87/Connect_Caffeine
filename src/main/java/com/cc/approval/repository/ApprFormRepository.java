@@ -17,9 +17,12 @@ public interface ApprFormRepository extends JpaRepository<ApprForm,Long>{
 	ApprForm findByapprFormType(String appr_form_type);
 	
 	ApprForm findByapprDocuNo(String appr_docu_no);
-//	
-//	@Query("SELECT af.apprDocuNo FROM Approval a JOIN a.apprForm af WHERE a.apprNo = :apprNo")
-//    String findApprDocuNoByApprovalId(@Param("apprNo") Long apprNo);
+	
+	
 
+	@Query("SELECT COALESCE(MAX(CAST(SUBSTRING(a.apprDocuNo, LENGTH(:groupName) + 6, 3) AS int)), 0) " +
+	           "FROM ApprForm a " +
+	           "WHERE a.apprDocuNo LIKE CONCAT(:groupName, '-', LPAD(:year, 2, '0'), '-%')")
+	    Integer findMaxCountByTeamAndYear(@Param("groupName") String teamName, @Param("year") String year);
 
 }

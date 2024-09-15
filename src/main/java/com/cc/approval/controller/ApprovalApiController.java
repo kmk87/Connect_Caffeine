@@ -36,7 +36,7 @@ public class ApprovalApiController {
 
 	
 	
-	// 휴가신청서
+	// 기안서 폼 생성
 	@ResponseBody
 	@PostMapping("/draft")
 	public Map<String,String> createDraft(@RequestBody ApprovalDto dto){
