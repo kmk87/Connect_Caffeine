@@ -1,36 +1,29 @@
 package com.cc.employee.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
-import com.cc.employee.service.FileService;
-import com.cc.group.service.GroupService;
 
 @Controller
 public class EmployeeApiController {
 	
 //	private final FileService fileService;
 	private final EmployeeService employeeService;
-//	private final GroupService groupService;
+//	private final EmpGroupService empGroupService;
 	
 	@Autowired
 	public EmployeeApiController(EmployeeService employeeService) {
 //		this.fileService = fileService;
 		this.employeeService = employeeService;
-//		this.groupService = groupService;
+//		this.empGroupService = empGroupService;
 	}
 	
 	// 등록

@@ -1,8 +1,13 @@
 package com.cc.employee.service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.cc.empGroup.domain.EmpGroup;
+import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
@@ -13,32 +18,29 @@ public class EmployeeService {
 	
 //	private final PasswordEncoder passwordEncoder;
 	private final EmployeeRepository employeeRepository;
+	private final EmpGroupRepository empGroupRepository;
 	
-	public EmployeeService(EmployeeRepository employeeRepository) {
+	public EmployeeService(EmployeeRepository employeeRepository, EmpGroupRepository empGroupRepository) {
 //		this.passwordEncoder = passwordEncoder;
 		this.employeeRepository = employeeRepository;
+		this.empGroupRepository = empGroupRepository;
 	}
 	
-	// 목록
-//	public List<EmployeeDto> selectEmployeeList() {
-//		
-//		List<Employee> employeeList = employeeRepository.findAllEmpList();
-//		
-//		List<EmployeeDto> employeeDtoList = new ArrayList<EmployeeDto>();
-//		
-//		for(Employee e : employeeList) {
-//					
-//			EmployeeDto dto = new EmployeeDto().toDto(e);
-//			employeeDtoList.add(dto);
-//		}
-//		return employeeDtoList;
-//	}
-	
-	// Employee 기준으로 deptName을 가져오는 메소드
-//	private String getDeptNameForEmployee(Employee emp) {
-//		EmployeeDto empDto = employeeRepository.findDtoByempCode(emp.getEmpCode());
-//		 return empDto != null ? empDto.getDept_name() : "Unknown";
-//	}
+	// 목록(list)
+	public List<EmployeeDto> selectEmployeeList() {
+		
+		List<Employee> employeeList = employeeRepository.findAll();
+		
+		List<EmployeeDto> employeeDtoList = new ArrayList<EmployeeDto>();
+		
+		for(Employee e : employeeList) {
+					
+			EmployeeDto dto = new EmployeeDto().toDto(e);
+			employeeDtoList.add(dto);
+		}
+		return employeeDtoList;
+	}
+
 	
 	
 	
@@ -70,13 +72,14 @@ public class EmployeeService {
 	// 등록
 	public Employee createEmployee(EmployeeDto dto) {
 		Employee emp = null;
+		EmpGroup empGroup = empGroupRepository.findBygroupNo(dto.getGroup_no());
 		
 		//if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) == false){	
 		emp = Employee.builder()
 				.empCode(dto.getEmp_code())
 				.empJobCode(dto.getEmp_job_code())
 				.empJobName(dto.getEmp_job_name())
-				.empGroup(dto.getGroup_no())
+				.empGroup(empGroup)
 				.empName(dto.getEmp_name())
 				.empAccount(dto.getEmp_account())
 				.empPw(dto.getEmp_pw())

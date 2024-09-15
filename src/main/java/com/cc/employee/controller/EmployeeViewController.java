@@ -10,25 +10,25 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.cc.empGroup.domain.EmpGroupDto;
+import com.cc.empGroup.service.EmpGroupService;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
-import com.cc.group.domain.EmpGroupDto;
-import com.cc.group.service.GroupService;
 import com.cc.job.service.JobService;
 
 @Controller
 public class EmployeeViewController {
 	
 	private final EmployeeService employeeService;
-	private final GroupService groupService;
+	private final EmpGroupService empGroupService;
 	private final JobService jobService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeViewController.class);
 	
 	@Autowired
-	public EmployeeViewController(EmployeeService employeeService, GroupService groupService, JobService jobService) {
+	public EmployeeViewController(EmployeeService employeeService, EmpGroupService empGroupService, JobService jobService) {
 		this.employeeService = employeeService;
-		this.groupService = groupService;
+		this.empGroupService = empGroupService;
 		this.jobService = jobService;
 	}
 	
@@ -40,7 +40,7 @@ public class EmployeeViewController {
 	// 사원 등록
 	@GetMapping("employeeCreate")
 	public String createEmployeePage(Model model) {
-		List<EmpGroupDto> groupList = groupService.selectGroupList();
+		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
 		List<com.cc.job.domain.JobDto> jobList = jobService.selectJobList();
 		
 		model.addAttribute("groupList", groupList);
@@ -49,15 +49,15 @@ public class EmployeeViewController {
 		return "employee/create";
 	}
 	
-	 //목록
-//	@GetMapping("employeeList")
-//	public String selectEmployeeList(Model model) {
-//		//Page<EmployeeDto> resultList = employeeService.selectEmloyeeList(searchDto, pageable);
-////		List<EmployeeDto> empDtoList = employeeService.selectEmployeeList();
-//		model.addAttribute("empDtoList", empDtoList);
-//		
-//		return "employee/list";
-//	}
+	// 목록(list)
+	@GetMapping("employeeList")
+	public String selectEmployeeList(Model model) {
+		//Page<EmployeeDto> resultList = employeeService.selectEmloyeeList(searchDto, pageable);
+		List<EmployeeDto> empDtoList = employeeService.selectEmployeeList();
+		model.addAttribute("empDtoList", empDtoList);
+		
+		return "employee/list";
+	}
 	
 	
 	// 상세 정보

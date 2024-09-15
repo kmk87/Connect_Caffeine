@@ -5,17 +5,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cc.group.domain.EmpGroup;
-import com.cc.group.domain.EmpGroupDto;
-import com.cc.group.repository.GroupRepository;
+import com.cc.empGroup.domain.EmpGroup;
+import com.cc.empGroup.domain.EmpGroupDto;
+import com.cc.empGroup.repository.EmpGroupRepository;
 
 @Service
-public class GroupService {
+public class EmpGroupService {
 
-	private final GroupRepository groupRepository;
+	private final EmpGroupRepository empGroupRepository;
 	
-	public GroupService(GroupRepository groupRepository) {
-		this.groupRepository = groupRepository;
+	public EmpGroupService(EmpGroupRepository empGroupRepository) {
+		this.empGroupRepository = empGroupRepository;
 	}
 	
 	// 등록
@@ -32,7 +32,7 @@ public class GroupService {
 				.groupLevel(dto.getGroup_level())
 				.groupExplain(dto.getGroup_explain())
 				.build();
-		return groupRepository.save(gr);
+		return empGroupRepository.save(gr);
 	}
 	
 	// 전체 조회
@@ -40,7 +40,7 @@ public class GroupService {
 		// 변수 선언
 		List<EmpGroup> groupList = null;
 		// 값 가져오기
-		groupList = groupRepository.findAll();
+		groupList = empGroupRepository.findAll();
 		// 그릇 만들기
 		List<EmpGroupDto> groupDtoList = new ArrayList<EmpGroupDto>();
 		// 그릇에 담기
@@ -49,6 +49,13 @@ public class GroupService {
 			groupDtoList.add(dto);
 		}
 		return groupDtoList;
+	}
+	
+	// 상세 정보(detail)
+	public EmpGroupDto selectGroupOne(Long group_no){
+		EmpGroup eg = empGroupRepository.findBygroupNo(group_no);
+		EmpGroupDto egd = null;
+		return egd;
 	}
 	
 }

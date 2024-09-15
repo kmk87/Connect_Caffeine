@@ -13,11 +13,12 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		
 		Employee findByempCode(Long emp_code);
 		
-//		EmployeeDto findDtoByempCode(Long emp_code);
+		EmployeeDto findDtoByempCode(Long emp_code);
 		
 		Employee findByempAccount(String emp_account);
 		
-//		@Query("SELECT e FROM Employee e JOIN e.empGroup g")
-//		List<Employee> findAllEmpList();
+//		@Query(value = "SELECT e.id as id, e.name as name, g.group_name as groupName " +
+//	               "FROM employee e JOIN emp_group g ON e.group_no = g.group_no", nativeQuery = true)
+//		List<Employee> findAllEmployeesWithGroup();
 	
 }

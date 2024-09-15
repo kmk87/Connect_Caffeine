@@ -1,7 +1,7 @@
 package com.cc.employee.domain;
 import java.time.LocalDateTime;
 
-import com.cc.group.domain.EmpGroup;
+import com.cc.empGroup.domain.EmpGroup;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,19 +25,20 @@ import lombok.NoArgsConstructor;
 public class Employee {
 	
 	@Id
+	
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="emp_code")
 	private Long empCode;
+	
+	@ManyToOne
+	@JoinColumn(name="group_no")
+	private EmpGroup empGroup;
 	
 	@Column(name="emp_job_code")
 	private String empJobCode;
 	
 	@Column(name="emp_job_name")
 	private String empJobName;
-	
-	@ManyToOne
-	@JoinColumn(name="group_no")
-	private EmpGroup empGroup;
 	
 	@Column(name="emp_name")
 	private String empName;
@@ -78,17 +79,17 @@ public class Employee {
 	@Column(name="emp_resigndate")
 	private LocalDateTime empResigndate;
 	
-//	@Column(name="emp_img_file_name") 
-//	private String empImgFileName;
-//
-//	@Column(name="emp_img_file_path") 
-//	private String empImgFilePath;
-
 	@Column(name="emp_memo")
 	private String empMemo;
 	
 	@Column(name="emp_holiday")
 	private Long empHoliday;
+	
+//	@Column(name="emp_img_file_name") 
+//	private String empImgFileName;
+//
+//	@Column(name="emp_img_file_path") 
+//	private String empImgFilePath;
 
 }
 

@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import com.cc.group.domain.EmpGroup;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +19,9 @@ import lombok.ToString;
 public class EmployeeDto {
 		
 		private Long emp_code;
+		private Long group_no;
+		// dto에 추가된 필드
+		private String group_name;
 		private String emp_job_code;
 		private String emp_job_name;
 		private String emp_name;
@@ -40,13 +41,16 @@ public class EmployeeDto {
 //		private String emp_img_file_path;
 		private String emp_memo;
 		private Long emp_holiday;
-		private EmpGroup group_no;
+		
+		// 검색
+		private int search_type = 1;
+		private String search_text;
 		
 		private List<GrantedAuthority> authorities;
 		
 		
 		// DTO -> Entity
-		public Employee toEntity(EmpGroup empGroup) {
+		public Employee toEntity() {
 			return Employee.builder()
 					.empCode(emp_code)
 					.empJobCode(emp_job_code)
@@ -63,11 +67,11 @@ public class EmployeeDto {
 					.empDeskPhone(emp_desk_phone)
 					.empHiredate(emp_hiredate)
 					.empResign(emp_resign)
+					.empResigndate(emp_resigndate)
 //					.empImgFileName(emp_img_file_name)
 //					.empImgFilePath(emp_img_file_path)
 					.empMemo(emp_memo)
 					.empHoliday(emp_holiday)
-					.empGroup(empGroup)
 					.build();
 		}
 		
@@ -75,8 +79,10 @@ public class EmployeeDto {
 		public EmployeeDto toDto(Employee employee){
 			return EmployeeDto.builder()
 					.emp_code(employee.getEmpCode())
+					.group_name(employee.getEmpGroup().getGroupName())
 					.emp_job_code(employee.getEmpJobCode())
-					.emp_job_name(employee.getEmpJobCode())
+					.emp_job_name(employee.getEmpJobName())
+					.emp_name(employee.getEmpName())
 					.emp_account(employee.getEmpAccount())
 					.emp_pw(employee.getEmpPw())
 					.emp_postcode(employee.getEmpPostcode())
@@ -88,6 +94,7 @@ public class EmployeeDto {
 					.emp_desk_phone(employee.getEmpDeskPhone())
 					.emp_hiredate(employee.getEmpHiredate())
 					.emp_resign(employee.getEmpResign())
+					.emp_resigndate(employee.getEmpResigndate())
 //					.emp_img_file_name(employee.getEmpImgFileName())
 //					.emp_img_file_path(employee.getEmpImgFilePath())
 					.emp_memo(employee.getEmpMemo())
