@@ -17,12 +17,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="schedule")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Builder
 public class Calendar {
 	
@@ -38,10 +40,10 @@ public class Calendar {
 	private String scheduleTitle;
 	
 	@Column(name="schedule_content")
-	private String scheduleConent;
+	private String scheduleContent;
 	
 	@Column(name="schedule_type")
-	private int scheduleType;
+	private Long scheduleType;
 	
 	@Column(name="location")
 	private String location;

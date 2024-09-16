@@ -23,7 +23,7 @@ public class CalendarDto {
 //	private Long color_no;
 	private String schedule_title;
 	private String schedule_content;
-	private int schedule_type;
+	private Long schedule_type;
 	private String location;
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
@@ -33,12 +33,12 @@ public class CalendarDto {
 				.scheduleNo(schedule_no)
 //				.colorNo(color_no)
 				.scheduleTitle(schedule_title)
-				.scheduleConent(schedule_content)
+				.scheduleContent(schedule_content)
 				.scheduleType(schedule_type)
 				.location(location)
 				.startTime(start_time)
 				.endTime(end_time)
-				.employee(employee)
+				.employee(employee) // Employee 객체 설정
 				.build();
 	}
 	
@@ -47,7 +47,7 @@ public class CalendarDto {
 				.schedule_no(calendar.getScheduleNo())
 //				.color_no(calendar.getColorNo())
 				.schedule_title(calendar.getScheduleTitle())
-				.schedule_content(calendar.getScheduleConent())
+				.schedule_content(calendar.getScheduleContent())
 				.schedule_type(calendar.getScheduleType())
 				.location(calendar.getLocation())
 				.start_time(calendar.getStartTime())

@@ -1,0 +1,56 @@
+@charset "UTF-8";
+
+
+.fc-daygrid-day-number {
+  color: black; /* 평일 기본 색상 */
+}
+
+.fc-col-header-cell-cushion {
+  color: black; /* 평일 기본 색상 */
+}
+
+/* 토요일 색상 */
+.fc-day-sat .fc-daygrid-day-number {
+  color: blue !important;
+}
+
+/* 토요일 색상 */
+.fc-day-sat .fc-col-header-cell-cushion {
+  color: blue !important;
+}
+
+/* 일요일 색상 */
+.fc-day-sun .fc-daygrid-day-number {
+  color: red !important;
+}
+
+/* 일요일 색상 */
+.fc-day-sun .fc-col-header-cell-cushion {
+  color: red !important;
+}
+
+/* 일정 텍스트 색상 변경 */
+.fc-event {
+  color: black !important; /* 일정 텍스트 색상 */
+}
+/* 
+.modal-body .row {
+  display: flex; Flexbox 사용
+  align-items: center; 세로(수직) 가운데 정렬
+}
+
+.modal-body label {
+  width: 150px; 일정한 너비를 설정하여 정렬을 균일하게
+}
+
+.modal-body p {
+  margin: 0; p 태그의 기본 여백 제거
+} */
+
+.padding-7-y {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+
+

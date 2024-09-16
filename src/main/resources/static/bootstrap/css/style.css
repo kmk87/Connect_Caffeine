@@ -18,7 +18,23 @@ body {
   background: #f6f9ff;
   color: #444444;
 }
+/* 일요일 */
+.sunday {
+   
+    color: red  !important;
+}
 
+/* 토요일 */
+.saturday {
+   
+    color: blue !important;
+}
+
+/* 평일 */
+.weekday {
+   
+    color: black !important;
+}
 a {
   color: #4154f1;
   text-decoration: none;
@@ -97,6 +113,8 @@ h6 {
     background-color: #fff;
     margin-left: 20px;     
 }
+
+
 
 .pagetitle {
   margin-bottom: 10px;
