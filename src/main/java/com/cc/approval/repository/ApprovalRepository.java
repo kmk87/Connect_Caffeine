@@ -26,9 +26,9 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
 	Approval findByDraftDay(LocalDateTime draft_day);
 	
-	// Employee의 empAccount 필드를 기준으로 Approval을 조회
-    @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :memId") 
-    List<Approval> findByEmployeeAccount(@Param("memId") String memId);
+	// 내림차순 정렬 후 상위 5개의 데이터 조회
+    @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :memId ORDER BY a.draftDay DESC")
+    List<Approval> findTop5ByEmployeeAccountOrderByDraftDayDesc(@Param("memId") String memId);
 	
 	
 	

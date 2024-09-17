@@ -2,6 +2,7 @@ package com.cc.approval.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -91,17 +92,13 @@ public class ApprovalService {
 	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 	    
 	    
-	    // 로그인한 사용자의 상신 리스트만 조회
-	    List<Approval> apprList = approvalRepository.findByEmployeeAccount(currentUserId);
-	    
-	    
-	    List<ApprovalDto> apprDtoList = new ArrayList<ApprovalDto>();
-	    for (Approval a : apprList) {
-	        ApprovalDto approvalDto = new ApprovalDto().toDto(a);
-	        apprDtoList.add(approvalDto);
-	        
-	    }
-	    return apprDtoList;
+	 // 리포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
+        List<Approval> apprList = approvalRepository.findTop5ByEmployeeAccountOrderByDraftDayDesc(currentUserId);
+
+        // Approval 엔티티를 ApprovalDto로 변환
+        return apprList.stream()
+                       .map(approval -> new ApprovalDto().toDto(approval))
+                       .collect(Collectors.toList());
     }
 	
 	

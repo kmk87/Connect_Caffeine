@@ -35,35 +35,16 @@ public class ApprovalViewController {
 		this.apprFormService = apprFormService;
 		this.employeeService = employeeService;
 	}
-	
-	
-	// 기안서 작성
-//	@GetMapping("/create")
-//	public String getDraftInfoOne(Model model,ApprovalDto approvalDto,ApprFormDto apprFormDto) {
-//		Approval dto = approvalService.getDraftInfoOne(approvalDto);
-////		ApprFormDto formDto = apprFormService.getDocuOne(apprFormDto);
-////		
-//		model.addAttribute("dto",dto);
-////		model.addAttribute("formDto",formDto);
-//		System.out.println("dto : "+dto);
-//		return "approval/createVacation";
-//	}
-	
-	// 전자결재 홈
-//	@GetMapping("/approvalHome")
-//	public String homeMain() {
-//		
-//		return "approval/approvalHome";
-//	}
+
 	 @GetMapping("/approvalHome")
 	    public String showApprovalHome(Model model) {
 	        // 데이터베이스에서 결재 진행 문서 리스트를 조회
-	        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); // 모든 결재 문서 조회 메서드
+	        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); 
 	        
-	     // 상위 5개 항목만 가져오기
+	        // 상위 5개 항목만 가져오기-내림차순
 	        List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 5 ? apprDtoList.subList(0, 5) : apprDtoList;
 	        
-	        model.addAttribute("apprDtoList", top5ApprDtoList); // 모델에 데이터 추가
+	        model.addAttribute("apprDtoList", top5ApprDtoList); 
 
 	        
 	        return "approval/approvalHome"; 
