@@ -90,14 +90,16 @@ public class ApprovalService {
 		// 현재 로그인한 사용자의 ID를 가져옴
 	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 	    
+	    
 	    // 로그인한 사용자의 상신 리스트만 조회
 	    List<Approval> apprList = approvalRepository.findByEmployeeAccount(currentUserId);
+	    
 	    
 	    List<ApprovalDto> apprDtoList = new ArrayList<ApprovalDto>();
 	    for (Approval a : apprList) {
 	        ApprovalDto approvalDto = new ApprovalDto().toDto(a);
 	        apprDtoList.add(approvalDto);
-	        System.out.println("서비스 디티오: " + apprDtoList);
+	        
 	    }
 	    return apprDtoList;
     }

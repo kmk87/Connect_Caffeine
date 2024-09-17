@@ -50,11 +50,26 @@ public class ApprovalViewController {
 //	}
 	
 	// 전자결재 홈
-	@GetMapping("/approvalHome")
-	public String homeMain() {
-		
-		return "approval/approvalHome";
-	}
+//	@GetMapping("/approvalHome")
+//	public String homeMain() {
+//		
+//		return "approval/approvalHome";
+//	}
+	 @GetMapping("/approvalHome")
+	    public String showApprovalHome(Model model) {
+	        // 데이터베이스에서 결재 진행 문서 리스트를 조회
+	        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); // 모든 결재 문서 조회 메서드
+	        
+	     // 상위 5개 항목만 가져오기
+	        List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 5 ? apprDtoList.subList(0, 5) : apprDtoList;
+	        
+	        model.addAttribute("apprDtoList", top5ApprDtoList); // 모델에 데이터 추가
+
+	        
+	        return "approval/approvalHome"; 
+	    }
+	
+	
 	
 	@GetMapping("/userInfo")
 	public String showCreateForm(Model model) {
@@ -126,16 +141,16 @@ public class ApprovalViewController {
 	
 	
 	// 전자결재 메인 결재대기리스트 조회
-	@GetMapping("/approvalMain")
-    public String showMainPage(Model model) {
-        // 데이터베이스에서 결재 진행 문서 리스트를 조회
-        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); // 모든 결재 문서 조회 메서드
-        model.addAttribute("apprDtoList", apprDtoList); // 모델에 데이터 추가
-        
-        System.out.println("Approval List: " + apprDtoList);
-        return "approval/approvalHome"; 
-    }
-	
+//	@GetMapping("/approvalMain")
+//    public String showMainPage(Model model) {
+//        // 데이터베이스에서 결재 진행 문서 리스트를 조회
+//        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); // 모든 결재 문서 조회 메서드
+//        model.addAttribute("apprDtoList", apprDtoList); // 모델에 데이터 추가
+//        
+//        System.out.println("Approval List: " + apprDtoList);
+//        return "approval/approvalHome"; 
+//    }
+//	
 	
 	
 	
