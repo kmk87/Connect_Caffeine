@@ -20,7 +20,7 @@ public class EmployeeService {
 		this.employeeRepository = employeeRepository;
 	}
 	
-	
+	// 팀명 가져오기
 	public List<String> getDataInfoName() {
         // 모든 Employee 데이터를 가져온 후 필터링
         List<Employee> employees = employeeRepository.findAll();
@@ -35,5 +35,15 @@ public class EmployeeService {
         return groupNames;
 	
 	}
+	
+	// 로그인한 사용자의 팀명 가져오기
+    public String getUserTeamName(String username) {
+        Employee employee = employeeRepository.findByempAccount(username);
+        // 해당 사용자의 그룹이 존재하고, group_parent_no가 있는 경우에만 팀명 반환
+        if (employee != null && employee.getEmpGroup() != null && employee.getEmpGroup().getGroupParentNo() != null) {
+            return employee.getEmpGroup().getGroupName();
+        }
+        return "DEFAULT"; // 기본값 설정
+    }
 	
 }

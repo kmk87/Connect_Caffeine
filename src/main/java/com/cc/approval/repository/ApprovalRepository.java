@@ -16,11 +16,7 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
 	Approval findByApprForm_ApprFormNo(Long apprFormNo);
 	
-	//List<Approval> findByApprWriterCode(Long apprWriterCode);
-	
 	Approval findByEmployee_EmpCode(Long empCode);
-	
-//	Approval findByApprWriterName(String appr_writer_name);
 	
 	Approval findByApprState(String appr_state);
 	
@@ -30,9 +26,9 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
 	Approval findByDraftDay(LocalDateTime draft_day);
 	
-	//Approval findByEmployeeApprWriterCode(Long apprWriterCode);
-	
-	
+	// Employee의 empAccount 필드를 기준으로 Approval을 조회
+    @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :memId") 
+    List<Approval> findByEmployeeAccount(@Param("memId") String memId);
 	
 	
 	

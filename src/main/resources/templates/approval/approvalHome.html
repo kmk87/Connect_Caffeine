@@ -95,13 +95,20 @@
                   	</tr>
                 </thead>
                 <tbody>
-                	<tr>
-                    	<th scope="row">1</th>
-                    	<td>테스트</td>
-                    	<td>테스트</td>
-                    	<td>테스트</td>
-                    	<td>테스트</td>
-                  	</tr>
+                	<!-- <th:block th:if="${#lists.isEmpty(resultList.content)}">
+							<tr>
+								<td colspan="5">해당하는 내용이 없습니다.</td>
+							</tr>
+						</th:block>
+						 -->
+					<tr th:each="appr, iterStat : ${apprDtoList}">
+						<!-- <td th:text="${(resultList.pageable.pageSize)*(resultList.pageable.pageNumber)+boardStat.count}"></td> -->
+						<td th:text="${iterStat.index + 1}"></td>
+						<td th:text="${#temporals.format(appr.draft_day, 'yyyy-MM-dd')}">기안일</td>
+						<td>결재양식</td>
+						<td th:text="${appr.appr_title}"></td>
+						<td >결재상태</td>
+					</tr>
                   	<tr>
                     	<th scope="row">2</th>
                     	<td>테스트</td>
