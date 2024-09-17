@@ -35,18 +35,14 @@ public class Approval {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long apprNo;
 	
-	
-	
-//	@OneToMany(mappedBy = "approval")
-//	private List<ApprForm> apprFormNo;
-	
+
 	@ManyToOne
 	@JoinColumn(name="appr_form_no")
 	private ApprForm apprForm;
 	
 	
-	@Column(name="appr_state" , columnDefinition = "varchar(1) default 'S'")
-	private String apprState = "S";
+	@Column(name="appr_state" , columnDefinition = "varchar(1) default 's'")
+	private String apprState = "s";
 	
 	@Column(name="appr_title")
 	private String apprTitle;
@@ -85,10 +81,7 @@ public class Approval {
 	
 	@Column(name="referencer_last_no")
 	private int referencerLastNo;
-	
-//	@Column(name="appr_writer_code")
-//	private Long apprWriterCode;
-	
+
 	@ManyToOne
 	@JoinColumn(name="appr_writer_code")
 	private Employee employee;

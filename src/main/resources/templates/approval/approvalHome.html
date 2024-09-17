@@ -101,13 +101,12 @@
 							</tr>
 						</th:block>
 						 -->
-					<tr th:each="appr, iterStat : ${apprDtoList}">
-						<!-- <td th:text="${(resultList.pageable.pageSize)*(resultList.pageable.pageNumber)+boardStat.count}"></td> -->
+					<tr th:each="appr, iterStat : ${apprDtoList}" th:onclick="|location.href='@{/approval/{no}(no=${appr.appr_no})}'|">
 						<td th:text="${iterStat.index + 1}"></td>
 						<td th:text="${#temporals.format(appr.draft_day, 'yyyy-MM-dd')}">기안일</td>
-						<td>결재양식</td>
+						<td th:text="${appr.formName}"></td>
 						<td th:text="${appr.appr_title}"></td>
-						<td >결재상태</td>
+						<td th:text="${appr.getApprStateDisplay()}"></td>
 					</tr>
                 </tbody>
               </table>

@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cc.approval.domain.ApprForm;
@@ -36,8 +37,9 @@ public class ApprovalViewController {
 		this.employeeService = employeeService;
 	}
 
+	// 전자결재 홈
 	 @GetMapping("/approvalHome")
-	    public String showApprovalHome(Model model) {
+	 public String showApprovalHome(Model model) {
 	        // 데이터베이스에서 결재 진행 문서 리스트를 조회
 	        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); 
 	        
@@ -48,13 +50,13 @@ public class ApprovalViewController {
 
 	        
 	        return "approval/approvalHome"; 
-	    }
+	 }
 	
 	
 	
+	// 로그인한 사용자 정보 가져오기
 	@GetMapping("/userInfo")
 	public String showCreateForm(Model model) {
-		// 로그인한 사용자 정보 가져오기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user =(User)authentication.getPrincipal();
 		String memId = user.getUsername();
@@ -63,7 +65,7 @@ public class ApprovalViewController {
 		model.addAttribute("memId",memId);
 		
       return "approval/createDraft"; 
-  }
+	}
 	
 	// 기안서 폼 작성
 	@GetMapping("/createDraft")
@@ -82,21 +84,6 @@ public class ApprovalViewController {
 	    String groupName = employeeService.getUserTeamName(username);
 	    // 문서 번호 생성
 		String documentNumber = apprFormService.generateDocumentNumber(groupName);
-		
-		
-//		// ApprForm 객체 생성 및 저장
-//	    ApprForm apprForm = new ApprForm();
-//	    apprForm.setApprDocuNo(documentNumber);
-//	    apprForm.setApprFormType(getFormType(formNo)); // formNo에 따라 폼 타입 설정 ("휴가신청서", "사유서", "품의서" 등)
-//	    ApprForm savedApprForm = apprFormService.saveApprForm(apprForm); // ApprForm 저장 후 ID 생성됨
-//
-//	    // Approval 객체 생성 및 저장
-//	    Approval approval = new Approval();
-//	    approval.setApprForm(savedApprForm); // 저장된 ApprForm 객체를 설정
-//	    approval.setApprWriterName(dto.getAppr_writer_name()); // 기안자 이름 설정
-//	    approval.setApprTitle(dto.getAppr_title()); // 제목 설정
-//	    approvalService.saveApproval(approval); // Approval 저장
-//	  
         
         model.addAttribute("apprFormNo", formNo);
 		model.addAttribute("groupNames", groupName);
@@ -106,34 +93,29 @@ public class ApprovalViewController {
 		return "approval/createDraft";
 	}
 	
-	// 기안서 타입 
-	private String getFormType(int formNo) {
-	    switch (formNo) {
-	        case 1:
-	            return "휴가신청서";
-	        case 2:
-	            return "사유서";
-	        case 3:
-	            return "품의서";
-	        default:
-	            return "기타";
-	    }
-	}
-	
-	
-	// 전자결재 메인 결재대기리스트 조회
-//	@GetMapping("/approvalMain")
-//    public String showMainPage(Model model) {
-//        // 데이터베이스에서 결재 진행 문서 리스트를 조회
-//        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); // 모든 결재 문서 조회 메서드
-//        model.addAttribute("apprDtoList", apprDtoList); // 모델에 데이터 추가
-//        
-//        System.out.println("Approval List: " + apprDtoList);
-//        return "approval/approvalHome"; 
-//    }
+//	// 기안서 타입 
+//	private String getFormType(int formNo) {
+//	    switch (formNo) {
+//	        case 1:
+//	            return "휴가신청서";
+//	        case 2:
+//	            return "사유서";
+//	        case 3:
+//	            return "품의서";
+//	        default:
+//	            return "기타";
+//	    }
+//	}
 //	
 	
-	
+	// 기안서 상세 조회
+	@GetMapping("/approval/{appr_no}")
+	public String selectapprovalOne(Model model,
+			@PathVariable("appr_no") Long appr_no) {
+		ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
+		model.addAttribute("dto",approvalDto);
+		return "approval/apprDetail";
+	}
 	
 	
 	

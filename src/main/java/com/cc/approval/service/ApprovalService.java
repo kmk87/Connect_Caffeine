@@ -102,4 +102,13 @@ public class ApprovalService {
     }
 	
 	
+	// 기안서 상세 조회
+	public ApprovalDto selectapprovalOne(Long appr_no) {
+		Approval approval = approvalRepository.findByapprNo(appr_no);
+		return new ApprovalDto().toDto(approval);
+	}
+	
+	
+	
+	
 }
