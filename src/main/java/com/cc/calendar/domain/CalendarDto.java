@@ -20,7 +20,7 @@ public class CalendarDto {
 
 	private Long schedule_no;
 	private Long calendar_writer_no;
-//	private Long color_no;
+	private String color_code;
 	private String schedule_title;
 	private String schedule_content;
 	private Long schedule_type;
@@ -28,10 +28,10 @@ public class CalendarDto {
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
 	
-	public Calendar toEntity(Employee employee) {
+	public Calendar toEntity(Employee employee, Color color) {
 		return Calendar.builder()
 				.scheduleNo(schedule_no)
-//				.colorNo(color_no)
+				.color(color)  // Colors 객체 설정
 				.scheduleTitle(schedule_title)
 				.scheduleContent(schedule_content)
 				.scheduleType(schedule_type)
@@ -45,13 +45,13 @@ public class CalendarDto {
 	public CalendarDto toDto(Calendar calendar){
 		return CalendarDto.builder()
 				.schedule_no(calendar.getScheduleNo())
-//				.color_no(calendar.getColorNo())
 				.schedule_title(calendar.getScheduleTitle())
 				.schedule_content(calendar.getScheduleContent())
 				.schedule_type(calendar.getScheduleType())
 				.location(calendar.getLocation())
 				.start_time(calendar.getStartTime())
 				.end_time(calendar.getEndTime())
+				.color_code(calendar.getColor().getColorCode())
 				.build();
 	}
 			

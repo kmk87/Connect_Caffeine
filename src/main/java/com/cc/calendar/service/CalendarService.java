@@ -46,16 +46,18 @@ public class CalendarService {
 		return calendarRepository.save(calendar);
 	}
 	
-	public List<CalendarDto> selectCalendarList(){
-		
-		List<Calendar> calendarList = calendarRepository.findAll();
-		List<CalendarDto> calendarDtoList = new ArrayList<CalendarDto>();
-		for(Calendar calendar : calendarList) {
-			CalendarDto calendarDto = new CalendarDto().toDto(calendar);
-			calendarDtoList.add(calendarDto);
-		}
-		return calendarDtoList;
+	public List<CalendarDto> selectCalendarList() {
+	    List<Calendar> calendarList = calendarRepository.findAllWithColors(); // 조인된 데이터를 가져옴
+	    List<CalendarDto> calendarDtoList = new ArrayList<>();
+
+	    for (Calendar calendar : calendarList) {
+	        CalendarDto calendarDto = new CalendarDto().toDto(calendar);
+	        calendarDto.setColor_code(calendar.getColor().getColorCode());  // 색상 코드 설정
+	        calendarDtoList.add(calendarDto);
+	    }
+	    return calendarDtoList;
 	}
+
 	
 	public CalendarDto selectScheduleOne(Long schedule_no) {
 		Calendar calendar = calendarRepository.findByScheduleNo(schedule_no);

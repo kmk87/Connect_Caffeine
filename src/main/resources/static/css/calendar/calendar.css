@@ -52,5 +52,24 @@
   padding-bottom: 7px;
 }
 
+.schedule-filters {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  gap: 10px; /* 라벨 간의 간격 */
+}
+
+.filter-item {
+  display: flex;
+  align-items: center; /* 아이템을 수직 가운데 정렬 */
+  gap: 10px; /* 체크박스와 컬러 피커 사이의 간격 */
+}
+
+.color-circle {
+  width: 15px; /* 원의 너비 */
+  height: 15px; /* 원의 높이 */
+  border-radius: 50%; /* 원 모양 만들기 */
+  border: 1px solid #ccc; /* 테두리 */
+  margin-left: 5px; /* 텍스트와 컬러 피커 간격 */
+}
 
 
