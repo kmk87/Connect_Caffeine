@@ -84,7 +84,8 @@ public class ApprovalViewController {
 	    String groupName = employeeService.getUserTeamName(username);
 	    // 문서 번호 생성
 		String documentNumber = apprFormService.generateDocumentNumber(groupName);
-        
+        System.out.println("기안서 번호: "+formNo);
+		
         model.addAttribute("apprFormNo", formNo);
 		model.addAttribute("groupNames", groupName);
 		model.addAttribute("documentNumber", documentNumber);

@@ -12,7 +12,7 @@ import com.cc.approval.domain.Approval;
 
 public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
-	Approval findByapprNo(Long appr_no);
+	Approval findByApprNo(Long appr_no);
 	
 	Approval findByApprForm_ApprFormNo(Long apprFormNo);
 	
@@ -31,6 +31,8 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :memId ORDER BY a.draftDay DESC")
     List<Approval> findTop5ByEmployeeAccountOrderByDraftDayDesc(@Param("memId") String memId);
 	
+    // 기안서 삭제 -> 비활성화
+    List<Approval> findByIsDeleted(String isDeleted);
 	
 	
 }

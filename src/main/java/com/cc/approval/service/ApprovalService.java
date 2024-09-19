@@ -1,7 +1,7 @@
 package com.cc.approval.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,11 @@ import org.springframework.stereotype.Service;
 import com.cc.approval.domain.ApprForm;
 import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalDto;
+import com.cc.approval.domain.TemporaryStorage;
+import com.cc.approval.domain.TemporaryStorageDto;
 import com.cc.approval.repository.ApprFormRepository;
 import com.cc.approval.repository.ApprovalRepository;
+import com.cc.approval.repository.TemporaryStorageRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
 
@@ -26,14 +29,16 @@ public class ApprovalService {
 	private final ApprovalRepository approvalRepository;
 	private final ApprFormRepository apprFormRepository;
 	private final EmployeeRepository employeeRepository;
+	private final TemporaryStorageRepository temporaryStorageRepository;
 	
 	@Autowired
 	public ApprovalService(ApprovalRepository approvalRepository,ApprFormRepository apprFormRepository,
-			EmployeeRepository employeeRepository) {
+			EmployeeRepository employeeRepository,TemporaryStorageRepository temporaryStorageRepository) {
 		
 		this.approvalRepository = approvalRepository;
 		this.apprFormRepository = apprFormRepository;
 		this.employeeRepository = employeeRepository;
+		this.temporaryStorageRepository = temporaryStorageRepository;
 	}
 	
 	public Approval getDraftInfoOne(ApprovalDto dto) {
@@ -49,11 +54,9 @@ public class ApprovalService {
 	    
 		// 기안서 등록
 		Long apprWriter = dto.getAppr_writer_code();
-		System.out.println("apprWriter:"+apprWriter);
-		Employee emp = employeeRepository.findByempCode(apprWriter);
-		System.out.println("employee:"+emp);
 		
-		System.out.println("dto다"+dto);
+		Employee emp = employeeRepository.findByempCode(apprWriter);
+		
 		Approval approval = Approval.builder()
 				.apprNo(dto.getAppr_no())
 				.apprTitle(dto.getAppr_title())
@@ -61,7 +64,7 @@ public class ApprovalService {
 				.apprWriterName(emp.getEmpName())
 				.employee(emp)
 				.build();
-		System.out.println("서비스 dto:"+dto);
+		
 		
 		return approvalRepository.save(approval);
 		
@@ -88,11 +91,11 @@ public class ApprovalService {
 	
 	// 전자결재 메인 결재대기리스트 조회
 	public List<ApprovalDto> getAllApprovals() {
-		// 현재 로그인한 사용자의 ID를 가져옴
+		// 현재 로그인한 사용자의 ID 가져오기
 	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 	    
 	    
-	 // 리포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
+	    // 레포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
         List<Approval> apprList = approvalRepository.findTop5ByEmployeeAccountOrderByDraftDayDesc(currentUserId);
 
         // Approval 엔티티를 ApprovalDto로 변환
@@ -104,9 +107,57 @@ public class ApprovalService {
 	
 	// 기안서 상세 조회
 	public ApprovalDto selectapprovalOne(Long appr_no) {
-		Approval approval = approvalRepository.findByapprNo(appr_no);
+		Approval approval = approvalRepository.findByApprNo(appr_no);
 		return new ApprovalDto().toDto(approval);
 	}
+	
+	
+	// 기안서 삭제 -> 비활성화
+	public void disableApproval(Long id) {
+		Optional<Approval> approvalOptional = approvalRepository.findById(id);
+	    
+	    if (approvalOptional.isPresent()) {
+	        Approval approval = approvalOptional.get();
+	        approval.setDeleted();
+	        approvalRepository.save(approval);
+	    } else {
+	        // 예외 없이 처리하는 방법: 로그 남기기, 메시지 출력 등
+	        System.out.println("Approval not found with id: " + id);
+	        // 로그 남기기
+	        // logger.warn("Approval not found with id: {}", id);
+	    }
+	}
+	
+	
+	// 기안서 임시저장
+	public TemporaryStorage updateAppr(TemporaryStorageDto dto, Approval approval, Employee employee,ApprForm apprForm) {
+		TemporaryStorageDto temp = selectTemporaryStorageOne(dto.getAppr_no());
+		
+		temp.setAppr_title(dto.getAppr_title());
+		temp.setAppr_content(dto.getAppr_content());
+		
+		TemporaryStorage temporaryStorage = temp.toEntity(approval,employee,apprForm);
+		
+		TemporaryStorage result = temporaryStorageRepository.save(temporaryStorage);
+		return result;
+	}
+
+
+	public TemporaryStorageDto selectTemporaryStorageOne(Long appr_no) {
+		TemporaryStorage temp = temporaryStorageRepository.findByApprovalApprNo(appr_no);
+		TemporaryStorageDto dto = TemporaryStorageDto.builder()
+				.tem_no(temp.getTemNo())
+				.appr_no(temp.getApproval().getApprNo())
+				.appr_title(temp.getApproval().getApprTitle())
+				.appr_content(temp.getApproval().getApprContent())
+				.build();
+		
+		return dto;
+		
+	}
+	
+	
+	
 	
 	
 	

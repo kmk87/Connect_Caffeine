@@ -30,6 +30,10 @@
     
 }
 
+.pagetitle h1 {
+    margin-top: 10px; /* h1의 상하 여백 제거 */
+}
+
 .main-content {
     margin-left: 400px; /* 메인 사이드바 + 추가 사이드바의 너비 */
     padding: 20px;

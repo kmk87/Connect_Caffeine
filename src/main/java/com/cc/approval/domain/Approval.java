@@ -89,4 +89,10 @@ public class Approval {
 	@Column(name="appr_writer_name")
 	private String apprWriterName;
 	
+	@Column(name="is_deleted", columnDefinition = "varchar(1) default 'N'")
+	private String isDeleted = "N";
+	
+	public void setDeleted() {
+	    this.isDeleted = "Y";
+	}
 }

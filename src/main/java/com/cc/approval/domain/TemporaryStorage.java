@@ -37,5 +37,15 @@ public class TemporaryStorage {
 	@JoinColumn(name="emp_code")
 	private Employee employee;
 	
+	@ManyToOne
+	@JoinColumn(name="appr_form_no")
+	private ApprForm apprForm;
+	
+	@Column(name="appr_title")
+	private String apprTitle;
+	
+	@Column(name="appr_content")
+	private String apprContent;
+	
 	
 }

@@ -85,7 +85,7 @@
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${dto.appr_writer_code != null ? dto.appr_writer_code : ''}">
                 <button class="btn-primary">결재선 지정</button>
-                <button class="btn-secondary">임시 저장</button>
+                <button class="btn-secondary" onclick="disableApproval()">삭제</button>
                 <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
                 <button class="btn-secondary">취소</button>
                 
@@ -98,8 +98,8 @@
 					</tr>
 					<tr>
 						<td>팀명</td>
-						<!-- <td th:each="groupName : ${groupNames}" th:text="${groupName}"></td> -->
-						<td th:text="${dto.group_name}"></td>
+						<td th:each="groupName : ${groupNames}" th:text="${groupName}"></td>
+						<!-- <td th:text="${dto.group_name}"></td> -->
 					</tr>
 					<tr>
 						<td>기안일</td>
@@ -149,7 +149,7 @@
                                 <span>~</span>
                                 <input type="date" id="end-date" name="end-date" >
                                 <span>사용일수:</span>
-                                <input type="text" id="appr_holi_use_count" name="appr_holi_use_count" th:value="${dto.appr_holi_use_count}" disabled> <span> 일</span>
+                                <input type="text" id="appr_holi_use_count" name="appr_holi_use_count" th:value="${dto.appr_holi_use_count}" > <span> 일</span>
                             </div>
                             <div class="form-group">
                                 <label for="subject">제목</label>
@@ -199,10 +199,34 @@
                                 <button type="button" class="btn-delete">파일 제거</button>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
+                	</form>
+        		</div>
         </main>
     </th:block>
+    <script>
+    	function disableApproval(){
+    		const approvalId = document.getElementById('empNum').value;
+    		const csrfToken = document.getElementById('csrf_token').value;
+    		
+    		fetch('/disable/${approvalId}',{
+    			method: 'POST',
+    			headers: {
+        			'Content-type': 'application/json',
+        			'x-CSRF-TOKEN': csrfToken
+    			},
+    			body: JSON.stringift({id: approvalId})
+    		})
+    		.then(response => {
+    			if(response.ok){
+    				alert('기안서가 삭제되었습니다.');
+    				window.location.href='/approval/approvalHome';
+    			} else{
+    				throw new Error('기안서 삭제에 실패하였습니다.');
+    			}
+    		});
+    	
+    		}
+    	
+    </script>
 </body>
 </html>
