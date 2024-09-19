@@ -17,32 +17,20 @@
 	href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i"
 	rel="stylesheet">
 <!-- Vendor CSS Files -->
-<link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-<link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+<link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/boxicons/css/boxicons.min.css"
+	rel="stylesheet">
 <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
 <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
 <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-<link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+<link href="/bootstrap/vendor/simple-datatables/style.css"
+	rel="stylesheet">
 <!-- Template Main CSS File -->
 <link href="/bootstrap/css/style.css" rel="stylesheet">
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-.sub-sidebar {
-	width: 250px;
-	background-color: #fff;
-	padding: 20px;
-	font-size: 15px;
-	font-weight: 600;
-	color: #012970;
-}
-
-.subside_title {
-	font-size: 25px;
-}
-
 .card-body-header {
 	display: flex;
 	justify-content: space-between;
@@ -74,11 +62,6 @@
 	padding: 10px;
 	box-sizing: border-box;
 }
-
-.tight-line {
-	line-height: 1.2;
-	margin: 0;
-}
 </style>
 </head>
 <body>
@@ -87,87 +70,96 @@
 			<div class="sub-sidebar" id="sub-sidebar">
 				<span class="subside_title">인사 관리</span><br> <br>
 				<h5>인사 정보</h5>
-				<h5>팀 정보</h5>
+				<h5>
+					<a th:href="@{/empGroupList}">팀 정보</a>
+				</h5>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
 				<div class="col-xxl-4 col-md-6" style="width: 100%;">
 					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
 						<div class="card-body">
 							<div class="card-body-header">
-								<h2 class="card-title">사원 정보</h2>
+								<h2 class="card-title"><b>그룹 정보</b></h2>
+								<div>
+									<button class="btn btn-primary rounded-pill" style="margin-top: 20px;"
+										th:onclick="|location.href='@{/empGroupCreate}'|">등록</button>
+								</div>
 							</div>
 							<hr>
 							<div class="basic-info">
-								<div class="basic-info-left">
-									<img src="/bootstrap/img/이제훈_프로필.png" alt="Profile"
-										id="emp_profile_img" class="rounded-circle">
-								</div>
-								<div class="basic-info-right">
-									<table class="table table-bordered">
-										<colgroup>
-											<col style="width: 40%;">
-											<col style="width: 60%;">
-										</colgroup>
-										<tr>
-											<th>이름</th>
-											<td th:text="${dto.emp_name}"></td>
-										</tr>
-										<tr>
-											<th>사원 번호</th>
-											<td th:text="${dto.emp_account}"></td>
-										</tr>
-										<tr>
-											<th>생년월일</th>
-											<td th:text="${formattedRegNo}"></td>
-										</tr>
-										<tr>
-											<th>주소</th>
-											<td>
-												<p
-													th:text="'(우편번호: ' + (${#strings.length(dto.emp_postcode) == 4} ? '0'+ ${dto.emp_postcode} : ${dto.emp_postcode}) + ')'"
-													class="tight-line"></p>
-												<p th:text="${dto.emp_addr + ' ' + dto.emp_addr_detail}"
-													class="tight-line"></p>
-											</td>
-										</tr>
-										<tr>
-											<th>부서</th>
-											<td th:text="${empDeptName}"></td>
-										</tr>
-										<tr>
-											<th>팀</th>
-											<td th:text="${dto.group_name}"></td>
-										</tr>
-										<tr>
-											<th>직급</th>
-											<td th:text="${dto.emp_job_name}"></td>
-										</tr>
-										<tr>
-											<th>휴대전화</th>
-											<td th:text="${dto.emp_phone}"></td>
-										</tr>
-										<tr>
-											<th>내선번호</th>
-											<td th:text="${dto.emp_desk_phone}"></td>
-										</tr>
-										<tr>
-											<th>이메일</th>
-											<td th:text="${dto.emp_email}"></td>
-										</tr>
-										<tr>
-											<th>입사일</th>
-											<td
-												th:text="${#temporals.format(dto.emp_hiredate, 'yyyy-MM-dd')}"></td>
-										</tr>
-									</table>
-								</div>
+								<!-- 첫 번째 테이블: 그룹 레벨이 부서(G1)일 때 -->
+								<table class="table table-bordered" th:if="${egDto.group_level == 'G1'}">
+									<colgroup>
+										<col style="width: 40%;">
+										<col style="width: 60%;">
+									</colgroup>
+									<tr>
+										<th>그룹명</th>
+										<td th:text="${deptOri}"></td>
+									</tr>
+									<tr>
+										<th>인원</th>
+										<td th:text="${deptHeadcount}"></td>
+									</tr>
+									<tr>
+										<th>상위 부서</th>
+										<td th:text="본사"></td>
+									</tr>
+									<tr>
+										<th>그룹 설명</th>
+										<td th:text="${egDto.group_explain}"></td>
+									</tr>
+									<tr>
+										<th>책임자</th>
+										<td th:text="${leaderName}"></td>
+									</tr>
+									<tr>
+										<th>책임자 연락처</th>
+										<td th:text="${leaderDeskPhone}"></td>
+									</tr>
+								</table>
+								<!-- 두 번째 테이블: 그룹 레벨이 팀(G2)일 때 -->
+								<table class="table table-bordered" th:if="${egDto.group_level == 'G2'}">
+									<colgroup>
+										<col style="width: 40%;">
+										<col style="width: 60%;">
+									</colgroup>
+									<tr>
+										<th>그룹명</th>
+										<td th:text="${egDto.group_name}"></td>
+									</tr>
+									<tr>
+										<th>인원</th>
+										<td th:text="${egDto.group_headcount}"></td>
+									</tr>
+									<tr>
+										<th>상위 부서</th>
+										<td th:text="${parentDeptName}"></td>
+									</tr>
+									<tr>
+										<th>위치</th>
+										<td th:text="${egDto.group_location}"></td>
+									</tr>
+									<tr>
+										<th>그룹 설명</th>
+										<td th:text="${egDto.group_explain}"></td>
+									</tr>
+									<tr>
+										<th>책임자</th>
+										<td th:text="${leaderName}"></td>
+									</tr>
+									<tr>
+										<th>책임자 연락처</th>
+										<td th:text="${leaderDeskPhone}"></td>
+									</tr>
+								</table>
 							</div>
 							<div class="d-flex align-items-center" style="display: flex; justify-content: flex-end;">
-								<a th:href="@{/employeeUpdate/{emp_code}(emp_code=${dto.emp_code})}">
-									<button type="button" class="btn btn-primary rounded-pill">정보 수정</button>
+								<a th:href="@{/empGroupUpdate/{group_no}(group_no=${egDto.group_no})}">
+									<button type="button" class="btn btn-primary rounded-pill">수정</button>
 								</a>
-								<a th:href="@{/employeeDelete/{emp_code}(emp_code=${dto.emp_code})}">
-									<button type="button" class="btn btn-secondary rounded-pill" style="margin-left: 10px;">퇴사 처리</button>
+								<a th:href="@{/empGroupDelete/{group_no}(group_no=${egDto.group_no})}">
+									<button type="button" class="btn btn-secondary rounded-pill" style="margin-left: 10px;">삭제</button>
 								</a>
 							</div>
 						</div>
@@ -175,6 +167,7 @@
 				</div>
 			</section>
 		</main>
+		<!-- End #main -->
 	</th:block>
 	<!-- ======= Footer ======= -->
 	<!--   <footer id="footer" class="footer">

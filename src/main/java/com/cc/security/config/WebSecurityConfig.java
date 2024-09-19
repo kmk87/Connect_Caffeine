@@ -27,7 +27,8 @@ public class WebSecurityConfig {
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)throws Exception{
 		http.authorizeHttpRequests(request -> // 요청에 대한 접근권한을 설정
 				request
-				.requestMatchers("/login","/static/**", "/employee", "/employeeList", "/bootstrap/**").permitAll()
+				.requestMatchers("/login","/static/**", "/employee", "/employeeList", "/bootstrap/**", "/employeeUpdate/**", "/employeeUpdate"
+						,  "/employeeDelete",  "/employeeDelete/**", "/empGroupList", "/empGroupList/**").permitAll()
 				//.requestMatchers("/**").permitAll()
 				.anyRequest().authenticated()
 				) // 루트 URL("/")에 대한 접근을 모든 사용자에게 허용

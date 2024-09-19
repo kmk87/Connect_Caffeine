@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service;
 import com.cc.empGroup.domain.EmpGroup;
 import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.repository.EmpGroupRepository;
+import com.cc.employee.domain.Employee;
+import com.cc.employee.repository.EmployeeRepository;
 
 @Service
 public class EmpGroupService {
-
+	
+	private final EmployeeRepository employeeRepository;
 	private final EmpGroupRepository empGroupRepository;
 	
-	public EmpGroupService(EmpGroupRepository empGroupRepository) {
+	public EmpGroupService(EmployeeRepository employeeRepository, EmpGroupRepository empGroupRepository) {
+		this.employeeRepository = employeeRepository;
 		this.empGroupRepository = empGroupRepository;
 	}
 	
@@ -53,9 +57,49 @@ public class EmpGroupService {
 	
 	// 상세 정보(detail)
 	public EmpGroupDto selectGroupOne(Long group_no){
+		
 		EmpGroup eg = empGroupRepository.findBygroupNo(group_no);
-		EmpGroupDto egd = null;
-		return egd;
+		EmpGroupDto egDto = new EmpGroupDto().toDto(eg);
+		
+		return egDto;
+	}
+	
+	// 상위 부서명 가져오는 메소드
+	public String getParentDeptNameByGroupNo(Long group_no) {
+		
+		EmpGroup team = empGroupRepository.findBygroupNo(group_no);
+		EmpGroup parentDept = empGroupRepository.findBygroupNo(team.getGroupParentNo());
+		
+		String parentDeptName = parentDept.getGroupName();
+		
+		return parentDeptName;
+	}
+	
+	// 부서명 가져오는 메소드
+	public String getDeptOriNameByGroupNo(Long group_no) {
+		
+		EmpGroup dept = empGroupRepository.findBygroupNo(group_no);
+		
+		String deptOriName = dept.getGroupName();
+		
+		return deptOriName;
+	}
+	
+	// 부서 인원 가져오는 메소드
+	public Long getDeptHeadcountByGroupNo(Long group_no) {
+		
+		Long deptHeadcount = empGroupRepository.deptHeadcountByGroupNo(group_no);
+		
+		return deptHeadcount;
+	}
+	
+	// 책임자 정보 가져오는 메소드
+	public Employee getLeaderInfoByGroupNo(Long group_no) {
+		
+		EmpGroup eg = empGroupRepository.findBygroupNo(group_no);
+		Employee leader = employeeRepository.findByempCode(eg.getGroupLeaderCode());
+
+		return leader;
 	}
 	
 }

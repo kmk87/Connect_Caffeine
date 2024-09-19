@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.cc.empGroup.domain.EmpGroup;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,8 +53,14 @@ public class EmployeeDto {
 		
 		// DTO -> Entity
 		public Employee toEntity() {
+			
+			EmpGroup empGroup = EmpGroup.builder()
+					.groupNo(group_no)
+					.build();
+			
 			return Employee.builder()
 					.empCode(emp_code)
+					.empGroup(empGroup)
 					.empJobCode(emp_job_code)
 					.empJobName(emp_job_name)
 					.empName(emp_name)

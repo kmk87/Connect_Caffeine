@@ -70,11 +70,11 @@
 					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
 						<div class="card-body">
 							<div class="card-body-header">
-								<h2 class="card-title"><b>사원 목록</b></h2>
+								<h2 class="card-title"><b>그룹 목록</b></h2>
 								<div>
 									<button class="btn btn-primary rounded-pill"
 										style="margin-top: 20px;"
-										th:onclick="|location.href='@{/employeeCreate}'|">등록</button>
+										th:onclick="|location.href='@{/empGroupCreate}'|">등록</button>
 								</div>
 							</div>
 							<hr>
@@ -82,25 +82,18 @@
 								<table class="table datatable">
 									<thead>
 										<tr>
-											<th>사원 번호</th>
-											<th>팀</th>
-											<th>직급</th>
-											<th>이름</th>
-											<th>입사일</th>
-											<th>퇴사일</th>
-											<th>재직 여부</th>
+											<th>구분</th>
+											<th>그룹명</th>
+											<th>인원</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr th:each="emp:${empDtoList}"
-											th:onclick="|location.href='@{/employee/{emp_code}(emp_code=${emp.emp_code})}'|">
-											<td th:text="${emp.emp_code}"></td>
-											<td th:text="${emp.group_name}"></td>
-											<td th:text="${emp.emp_job_name}"></td>
-											<td th:text="${emp.emp_name}"></td>
-											<td th:text="${#temporals.format(emp.emp_hiredate, 'yyyy-MM-dd')}"></td>
-											<td th:text="${#temporals.format(emp.emp_resigndate, 'yyyy-MM-dd')}"></td>
-											<td th:text="${emp.emp_resign.toUpperCase() == 'N' ? '재직 중' : '퇴사'}"></td>
+										<tr th:each="egdl:${empGroupDtoList}"
+											th:onclick="|location.href='@{/empGroup/{group_no}(group_no=${egdl.group_no})}'|">
+											<!-- <td th:text="${egdl.group_parent_no != null ? egdl.group_parent_no : '(없음)'}"></td> -->
+											<td th:text="${egdl.group_level == 'G2' ? '팀' : '부서'}"></td>
+											<td th:text="${egdl.group_name}"></td>
+											<td th:text="${egdl.group_headcount}"></td>
 										</tr>
 									</tbody>
 								</table>
