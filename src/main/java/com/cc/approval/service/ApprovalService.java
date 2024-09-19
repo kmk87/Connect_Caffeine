@@ -113,48 +113,48 @@ public class ApprovalService {
 	
 	
 	// 기안서 삭제 -> 비활성화
-	public void disableApproval(Long id) {
-		Optional<Approval> approvalOptional = approvalRepository.findById(id);
-	    
-	    if (approvalOptional.isPresent()) {
-	        Approval approval = approvalOptional.get();
-	        approval.setDeleted();
-	        approvalRepository.save(approval);
-	    } else {
-	        // 예외 없이 처리하는 방법: 로그 남기기, 메시지 출력 등
-	        System.out.println("Approval not found with id: " + id);
-	        // 로그 남기기
-	        // logger.warn("Approval not found with id: {}", id);
-	    }
-	}
-	
-	
-	// 기안서 임시저장
-	public TemporaryStorage updateAppr(TemporaryStorageDto dto, Approval approval, Employee employee,ApprForm apprForm) {
-		TemporaryStorageDto temp = selectTemporaryStorageOne(dto.getAppr_no());
-		
-		temp.setAppr_title(dto.getAppr_title());
-		temp.setAppr_content(dto.getAppr_content());
-		
-		TemporaryStorage temporaryStorage = temp.toEntity(approval,employee,apprForm);
-		
-		TemporaryStorage result = temporaryStorageRepository.save(temporaryStorage);
-		return result;
-	}
-
-
-	public TemporaryStorageDto selectTemporaryStorageOne(Long appr_no) {
-		TemporaryStorage temp = temporaryStorageRepository.findByApprovalApprNo(appr_no);
-		TemporaryStorageDto dto = TemporaryStorageDto.builder()
-				.tem_no(temp.getTemNo())
-				.appr_no(temp.getApproval().getApprNo())
-				.appr_title(temp.getApproval().getApprTitle())
-				.appr_content(temp.getApproval().getApprContent())
-				.build();
-		
-		return dto;
-		
-	}
+//	public void disableApproval(Long id) {
+//		Optional<Approval> approvalOptional = approvalRepository.findById(id);
+//	    
+//	    if (approvalOptional.isPresent()) {
+//	        Approval approval = approvalOptional.get();
+//	        approval.setDeleted();
+//	        approvalRepository.save(approval);
+//	    } else {
+//	        // 예외 없이 처리하는 방법: 로그 남기기, 메시지 출력 등
+//	        System.out.println("Approval not found with id: " + id);
+//	        // 로그 남기기
+//	        // logger.warn("Approval not found with id: {}", id);
+//	    }
+//	}
+//	
+//	
+//	// 기안서 임시저장
+//	public TemporaryStorage updateAppr(TemporaryStorageDto dto, Approval approval, Employee employee,ApprForm apprForm) {
+//		TemporaryStorageDto temp = selectTemporaryStorageOne(dto.getAppr_no());
+//		
+//		temp.setAppr_title(dto.getAppr_title());
+//		temp.setAppr_content(dto.getAppr_content());
+//		
+//		TemporaryStorage temporaryStorage = temp.toEntity(approval,employee,apprForm);
+//		
+//		TemporaryStorage result = temporaryStorageRepository.save(temporaryStorage);
+//		return result;
+//	}
+//
+//
+//	public TemporaryStorageDto selectTemporaryStorageOne(Long appr_no) {
+//		TemporaryStorage temp = temporaryStorageRepository.findByApprovalApprNo(appr_no);
+//		TemporaryStorageDto dto = TemporaryStorageDto.builder()
+//				.tem_no(temp.getTemNo())
+//				.appr_no(temp.getApproval().getApprNo())
+//				.appr_title(temp.getApproval().getApprTitle())
+//				.appr_content(temp.getApproval().getApprContent())
+//				.build();
+//		
+//		return dto;
+//		
+//	}
 	
 	
 	

@@ -14,7 +14,7 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
 	Approval findByApprNo(Long appr_no);
 	
-	Approval findByApprForm_ApprFormNo(Long apprFormNo);
+	//Approval findByApprForm_ApprFormNo(Long apprFormNo);
 	
 	Approval findByEmployee_EmpCode(Long empCode);
 	
