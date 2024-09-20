@@ -4,7 +4,7 @@
       layout:decorate="~{include/layout}">
 <head>
     <meta charset="UTF-8">
-    <link th:href="@{/css/approval/create.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/approval/tempStorage.css}" rel="stylesheet" type="text/css">
     <title>임시저장 문서함</title>
     <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -74,20 +74,18 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">임시저장 문서함</h5>
-              <p>Add lightweight datatables to your project with using the <a href="https://github.com/fiduswriter/Simple-DataTables" target="_blank">Simple DataTables</a> library. Just add <code>.datatable</code> class name to any table you wish to conver to a datatable. Check for <a href="https://fiduswriter.github.io/simple-datatables/demos/" target="_blank">more examples</a>.</p>
+              <h5 class="card-title">임시저장함</h5>
+              
 
               <!-- Table with stripped rows -->
               <table class="table datatable">
                 <thead>
                   <tr>
-                    <th>
-                      <b>N</b>ame
-                    </th>
-                    <th>Ext.</th>
-                    <th>City</th>
-                    <th data-type="date" data-format="YYYY/DD/MM">Start Date</th>
-                    <th>Completion</th>
+                    <th>순번</th>
+                    <th>결재양식</th>
+                    <th>제목</th>
+                    <th data-type="date" data-format="YYYY/DD/MM">기안일</th>
+                    <th>결재상태</th>
                   </tr>
                 </thead>
                 <tbody>

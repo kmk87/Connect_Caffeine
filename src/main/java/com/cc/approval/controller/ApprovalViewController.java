@@ -113,6 +113,11 @@ public class ApprovalViewController {
 	@GetMapping("/approval/{appr_no}")
 	public String selectapprovalOne(Model model,
 			@PathVariable("appr_no") Long appr_no) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String username = user.getUsername();
+	    String groupName = employeeService.getUserTeamName(username);
+	    model.addAttribute("groupNames", groupName);
 		ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
 		model.addAttribute("dto",approvalDto);
 		return "approval/apprDetail";
