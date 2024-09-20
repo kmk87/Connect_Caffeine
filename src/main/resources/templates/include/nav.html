@@ -5,66 +5,50 @@
   <title>Navigation</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-  <!-- Favicons -->
-  <link href="/bootstrap/img/쿼카.png" rel="icon">
-  <link href="/bootstrap/img/쿼카.png" rel="apple-touch-icon">
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  <!-- Vendor CSS Files -->
-  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
-  <!-- Template Main CSS File -->
-  <link href="/bootstrap/css/style.css" rel="stylesheet">
 </head>
+<body>
 <th:block th:fragment="navLayout">
-  <body>
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
       <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-          <a class="nav-link " th:href="@{/}">
+          <a class="nav-link" th:href="@{/}" onclick="setActiveMenu(this)">
             <i class="bi bi-grid"></i>
             <span>메인화면</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
             <i class="ri-briefcase-line"></i><span>근태 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
             <i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
           </a>
         </li>
-          <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
             <i class="ri-time-line"></i><span>예약 관리</span>
           </a>
         </li>
-          <li class="nav-item">
-          <a class="nav-link collapsed"  th:href="@{/calendar}">
+        <li class="nav-item">
+          <a class="nav-link collapsed" th:href="@{/calendar}" onclick="setActiveMenu(this)">
             <i class="ri-calendar-2-line"></i><span>일정 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
             <i class="bx bxs-folder-open"></i><span>문서 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
             <i class="bi bi-shop"></i><span>점포 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
             <i class="bx bxs-category"></i><span>게시판</span>
           </a>
         </li>
@@ -74,24 +58,48 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
             <i class="bx bx-chat"></i><span>채팅</span>
           </a>
         </li>
+        
         <!-- Other nav items omitted for brevity -->
       </ul>
     </aside><!-- End Sidebar-->
-  <!-- Vendor JS Files -->
-  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
-  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
-  <script src="/bootstrap/vendor/quill/quill.js"></script>
-  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
-  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
-  <!-- Template Main JS File -->
-  <script src="/bootstrap/js/main.js"></script>
-  </body>
 </th:block>
+
+<script>
+
+//모든 메뉴 항목을 선택
+const menuItems = document.querySelectorAll('.sidebar-nav .nav-link');
+
+// 메뉴 항목 클릭 시 active 상태를 변경
+function setActiveMenu(event, clickedItem) {
+    event.preventDefault(); // href="#"로 인해 상단 이동 방지
+    menuItems.forEach(item => {
+        item.classList.remove('active'); // 모든 항목에서 active 제거
+    });
+    clickedItem.classList.add('active'); // 클릭된 항목에 active 추가
+}
+
+// 각 메뉴 항목에 클릭 이벤트 리스너 등록
+menuItems.forEach(item => {
+    item.addEventListener('click', function(event) {
+        setActiveMenu(event, item);
+    });
+});
+
+// 현재 경로에 맞는 메뉴 항목을 강조
+window.addEventListener('DOMContentLoaded', () => {
+    const currentPath = window.location.pathname;
+
+    menuItems.forEach(item => {
+        const link = item.getAttribute('href');
+        if (link === currentPath || link === "#") {
+            item.classList.add('active');
+        }
+    });
+});
+</script>
+</body>
 </html>
