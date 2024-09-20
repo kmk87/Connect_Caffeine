@@ -14,22 +14,35 @@ import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.service.EmpGroupService;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
+import com.cc.employee.service.EmployeeService;
 
 @Controller
 public class GroupViewController {
 	
+	private final EmployeeService employeeService;
 	private final EmpGroupService empGroupService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GroupViewController.class);
 	
 	@Autowired
-	public GroupViewController(EmpGroupService empGroupService) {
+	public GroupViewController(EmployeeService employeeService, EmpGroupService empGroupService) {
+		this.employeeService = employeeService;
 		this.empGroupService = empGroupService;
 	}
 	
+	// 팀 등록(create)
 	@GetMapping("/empGroupCreate")
-	public String createGroupPage() {
+	public String createGroupPage(Model model) {
+		List<EmployeeDto> empList = employeeService.selectEmployeeList();
+		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
+		
+		System.out.println(empList);
+		
+		model.addAttribute("groupList", groupList);
+		model.addAttribute("empList", empList);
+		
 		return "empGroup/create";
 	}
+	
 	
 	// 상세 정보(detail)
 	@GetMapping("/empGroup/{group_no}")
@@ -49,7 +62,6 @@ public class GroupViewController {
 			
 			// 인원 수 가져오기
 			Long deptHeadcount = empGroupService.getDeptHeadcountByGroupNo(group_no);
-			System.out.println("컨트롤러 속 부서 인원: " + deptHeadcount);
 			
 			model.addAttribute("deptOri", deptOri);
 			model.addAttribute("deptHeadcount", deptHeadcount);

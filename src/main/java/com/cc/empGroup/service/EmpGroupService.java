@@ -24,18 +24,21 @@ public class EmpGroupService {
 	
 	// 등록
 	public EmpGroup createGroup(EmpGroupDto dto) {
+		
+		System.out.println("서비스의 dto"+dto);
 		EmpGroup gr = EmpGroup.builder()
 				.groupNo(dto.getGroup_no())
 				.groupParentNo(dto.getGroup_parent_no())
 				.groupName(dto.getGroup_name())
 				.groupLeaderCode(dto.getGroup_leader_code())
-				.groupRegDate(dto.getGroup_reg_date())
+//				.groupRegDate(dto.getGroup_reg_date())
 				.groupHeadcount(dto.getGroup_headcount())
 				.groupLocation(dto.getGroup_location())
 				.groupStatus(dto.getGroup_status())
 				.groupLevel(dto.getGroup_level())
 				.groupExplain(dto.getGroup_explain())
 				.build();
+		
 		return empGroupRepository.save(gr);
 	}
 	
