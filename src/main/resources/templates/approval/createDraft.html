@@ -60,7 +60,7 @@
             				</a>
           				</li>
           				<li>
-            				<a href="components-accordion.html">
+            				<a th:href="@{/apprTempStorage}">
               					<i class="bi bi-circle"></i><span>임시 저장함</span>
             				</a>
           				</li>
@@ -257,7 +257,8 @@
 	});
 	
 	const emp = document.getElementById('empNum').value;
-		
+	
+	// 기안서 등록
 	form.addEventListener('submit',(e)=>{
 			e.preventDefault();
 			
@@ -367,7 +368,7 @@
 	}); 
 	
 	
-	/* 결재선 지정 모달창  */
+	// 결재선 지정 모달창
 	document.getElementById("saveDesignation").addEventListener("click",function(){
 		let selectdeApprover = "직원1";
 		

@@ -119,5 +119,13 @@ public class ApprovalViewController {
 	}
 	
 	
+	// 임시저장함
+	@GetMapping("/apprTempStorage")
+	public String showApprTempStorage() {
+		        
+		        
+		return "approval/apprTempStorage"; 
+	}
+	
 	
 }
