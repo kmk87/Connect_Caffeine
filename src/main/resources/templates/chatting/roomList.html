@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -15,36 +16,24 @@
             background-color: #fff; /* 원하는 배경색으로 변경 */
         }
     </style>
-  <link href="/bootstrap/img/쿼카.png" rel="icon">
-  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  <!-- DataTables CSS -->
-<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
 
 <!-- DataTables JS -->
+
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   
   <!-- Vendor CSS Files -->
-  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+
   
-  <!-- Template Main CSS File -->
-  <link href="/bootstrap/css/style.css" rel="stylesheet">
+
   
 </head>
 <body>
  <th:block layout:fragment="content">
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>공지사항</h1>
+      <h1>채팅방 목록</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -55,51 +44,41 @@
     <div class="col-xxl-4 col-md-6">
          <div class="card info-card sales-card" style="margin-top: 25px; width: 90vw; height: 90vh;">
              <div class="card-body">
-      <table id="notice_list" class="table datatable">
-      	<colgroup>
-      		<col width="10%">
-			<col width="20%">
-			<col width="20%">
-			<col width="20%">
-      	</colgroup>
-      	<thead>
-      		<tr>
-      			<th>번호</th>
-      			<th>제목</th>
-      			<th>작성일</th>
-      			<th>작성자명</th>
-      		</tr>
-      	</thead>
-      	<tbody>
-      		<th:block th:if="${#lists.isEmpty(resultList)}">
-      			<tr>
-      				<td colspan="4">해당하는 공지사항이 없습니다.</td> 
-      			</tr>
-      		</th:block>
-      		<th:block th:if="${!#lists.isEmpty(resultList)}">
-      			<tr th:if="${notice.notice_status.equals('Y')}"
-      			th:each="notice : ${resultList}"
-      			th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
-      					<td th:text="${notice.notice_no}"></td>
-      					<td th:text="${notice.notice_title}"></td>
-      					<td th:text="${#temporals.format(notice.notice_reg_date, 'yyyy-MM-dd')}"></td>
-      					<td th:text="${notice.notice_writer_name}"></td>
-      			</tr>
-      		</th:block>
-      	</tbody>
-      	
-      </table>
-      <th:block>
-	  	<button type="button" class="btn btn-primary rounded-pill"
-	  	style="float:right;" th:onclick="|location.href='@{/noticeCreate}'|">등록</button>
-      </th:block>
-      </div>
+      			<table id="chatRoom_list" class="table datatable">
+    <thead>
+        <tr>
+            <th>채팅방 목록</th>
+        </tr>
+    </thead>
+    <tbody>
+        <th:block th:if="${#lists.isEmpty(resultList)}">
+            <tr>
+                <td>참여하고 있는 채팅방이 없습니다.</td>
+            </tr>
+        </th:block>
+        <th:block th:unless="${#lists.isEmpty(resultList)}">
+            <tr th:if="${room.room_status.equals('Y')}"
+            th:each="room : ${resultList}"
+            th:onclick="|location.href='@{/chatDetail/{roomNo}(roomNo=${room.room_no})}'|">
+                <td>
+                    <p th:text="${room.room_name}"></p>
+                    <p th:text="${room.last_msg}"></p>
+                    <p th:text="${#temporals.format(room.last_date, 'yyyy-MM-dd')}"></p>
+                </td>
+            </tr>
+        </th:block>
+    </tbody>
+</table>
+
+      				</div>
                 </div>
               </div>
       
     <script>
-  		$(document).ready(function() {	
-	    $('#notice_list').DataTable({
+  
+  		$(document).ready(function() {
+	  	
+	    $('#chatRoom_list').DataTable({
 	        "lengthChange": false,  // Show entries 숨김
 	        "searching": true,      // 검색 활성화
 	        "responsive": true,

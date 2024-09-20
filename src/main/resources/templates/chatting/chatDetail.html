@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     layout:decorate="~{include/layout}">
+ <th:block layout:fragment="content">
+<link href="/bootstrap/chat/chat.css" rel="stylesheet">
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>채팅</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">목록</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    
+      
+      <section class="section">
+          <div class="row">
+              <div class="col-md-6">
+                  <div class="card">
+                      <div class="card-header">
+                          <div class="media d-flex align-items-center">
+                              <div class="avatar me-3">
+                                  
+                                  <span class="avatar-status bg-success"></span>
+                              </div>
+                              <div class="name flex-grow-1">
+                                  <h6 class="mb-0" th:text="${roomResult.room_name}"></h6>
+                                  
+                              </div>
+                              <button class="btn btn-sm">
+                                  <i data-feather="x"></i>
+                              </button>
+                          </div>
+                      </div>
+                      <div class="card-body pt-4 bg-grey" th:each="chatMessage : ${msgResult}">
+                           <div class="chat-content">
+                              <div class="chat">
+                                  <div class="chat-body">
+                                      <div class="chat-message" 
+                                      th:if="${chatMessage.emp_code == #authentication.principal.dto.emp_code}"
+                                      th:text="${chatMessage.message_content}"></div>
+                                  </div>
+                              </div>
+                          
+                              <div class="chat chat-left">
+                                  <div class="chat-body">
+                                      <div class="chat-message"
+                                      th:if="${chatMessage.emp_code != #authentication.principal.dto.emp_code}"
+                                      th:text="${chatMessage.message_content}"></div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="card-footer">
+                          <div class="message-form d-flex flex-direction-column align-items-center">
+                              <a href="http://" class="black"><i data-feather="smile"></i></a>
+                              <div class="d-flex flex-grow-1 ml-4">
+                                  <input type="text" class="form-control" placeholder="Type your message..">
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+  </main>
+
+</th:block>
+
+</html>

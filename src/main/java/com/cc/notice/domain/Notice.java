@@ -3,7 +3,6 @@ package com.cc.notice.domain;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DialectOverride.ColumnDefault;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
