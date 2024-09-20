@@ -43,6 +43,10 @@ public class EmployeeDto {
 //		private String emp_img_file_path;
 		private String emp_memo;
 		private Long emp_holiday;
+		private Long group_no;
+		private String group_name;
+		private Long group_parent_no;
+		
 		
 		// 검색
 		private int search_type = 1;
@@ -107,6 +111,8 @@ public class EmployeeDto {
 //					.emp_img_file_path(employee.getEmpImgFilePath())
 					.emp_memo(employee.getEmpMemo())
 					.emp_holiday(employee.getEmpHoliday())
+					.group_name(employee.getEmpGroup().getGroupName())
+					.group_parent_no(employee.getEmpGroup().getGroupParentNo())
 					.build();
 		}
 }

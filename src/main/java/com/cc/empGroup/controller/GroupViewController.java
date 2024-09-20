@@ -1,5 +1,6 @@
 package com.cc.empGroup.controller;
 
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -92,5 +93,6 @@ public class GroupViewController {
 		
 		return "empGroup/list";
 	}
+
 
 }

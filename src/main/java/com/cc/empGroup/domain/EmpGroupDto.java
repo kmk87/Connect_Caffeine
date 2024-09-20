@@ -1,12 +1,8 @@
 package com.cc.empGroup.domain;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-
-import com.cc.employee.domain.EmployeeDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,4 +61,3 @@ public class EmpGroupDto {
 				.build();
 	}
 	
-}

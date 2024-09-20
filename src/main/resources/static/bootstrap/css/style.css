@@ -58,37 +58,24 @@ h6 {
 /*--------------------------------------------------------------
 # Page Title
 --------------------------------------------------------------*/
-.sub-sidebar {
-    width: 250px;           /* 원하는 너비 설정 */
-    background-color: #fff;
-    padding: 20px;
-    font-size: 15px;
-	font-weight: 600;
-	color: #012970;
-}
-.subside_title{
-	font-size: 25px;
-}
-#sub-sidebar-content {
-    list-style-type: none;  /* 목록 앞의 인덱스(기본 점 또는 숫자) 제거 */
-    padding-left: 0;        /* 기본 들여쓰기 제거 (옵션) */
-}
 
-#sub-sidebar-content li {
-    margin-bottom: 10px;  /* 항목 간의 간격 */
-}
-
-#sub-sidebar-content input[type="checkbox"] {
-    margin-right: 10px;  /* 체크박스와 텍스트 간의 간격 */
+.apprSidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  z-index: 996;
+  transition: all 0.3s;
+  padding: 20px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #aab7cf transparent;
+  box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+  background-color: #fff;
 }
 
 
-#calendar {
-    flex-grow: 1;           /* 남은 공간을 채우도록 설정 */
-    padding: 20px;
-    background-color: #fff;
-    margin-left: 20px;      /* sub-sidebar와의 간격 */
-}
 .pagetitle {
   margin-bottom: 10px;
 }
@@ -398,7 +385,7 @@ h6 {
 }
 
 .logo img {
- 
+  
   margin-right: 6px;
 }
 
@@ -635,7 +622,7 @@ h6 {
   top: 60px;
   left: 0;
   bottom: 0;
-  width: 300px;
+  width: 250px;
   z-index: 996;
   transition: all 0.3s;
   padding: 20px;
@@ -644,6 +631,7 @@ h6 {
   scrollbar-color: #aab7cf transparent;
   box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
+  position: fixed
 }
 
 
