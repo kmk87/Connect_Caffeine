@@ -42,7 +42,7 @@ public class Approval {
 	
 	
 	@Column(name="appr_state" , columnDefinition = "varchar(1) default 's'")
-	private String apprState = "s";
+	private String apprState;
 	
 	@Column(name="appr_title")
 	private String apprTitle;

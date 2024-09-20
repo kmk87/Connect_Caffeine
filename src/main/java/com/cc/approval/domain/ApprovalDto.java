@@ -33,6 +33,7 @@ public class ApprovalDto {
     private String formName;
     private String group_name;
     private Integer appr_holi_use_count;
+    //private Long apprFormNo;
 
     // 날짜를 문자열로 변환하는 메서드 추가
     public String getFormattedDraftDay() {

@@ -85,7 +85,7 @@
                 <h1 th:if="${apprFormNo == 3}">품의서</h1>
       		</div>
             <form id="draftAdd">
-            	
+            	<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${apprFormNo}">
             	<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${memId ?: ''}">
                 <button class="btn-primary">결재선 지정</button>
@@ -326,6 +326,8 @@
 						});
 					}
 				})
+				
+				
 			}
 		}
 		

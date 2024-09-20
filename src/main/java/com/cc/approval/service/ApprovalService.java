@@ -56,13 +56,18 @@ public class ApprovalService {
 		Long apprWriter = dto.getAppr_writer_code();
 		
 		Employee emp = employeeRepository.findByempCode(apprWriter);
+		System.out.println("appr_form_no: " + dto.getAppr_form_no());
+		ApprForm apprFo = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
+		
 		
 		Approval approval = Approval.builder()
 				.apprNo(dto.getAppr_no())
 				.apprTitle(dto.getAppr_title())
 				.apprContent(dto.getAppr_content())
 				.apprWriterName(emp.getEmpName())
+				.apprForm(apprFo)
 				.employee(emp)
+				.apprState(dto.getAppr_state() != null ? dto.getAppr_state() : "s")
 				.build();
 		
 		
