@@ -22,8 +22,8 @@
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
 </head>
-<th:block th:fragment="navLayout">
   <body>
+<th:block th:fragment="navLayout">
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
       <ul class="sidebar-nav" id="sidebar-nav">
@@ -34,12 +34,12 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" >
             <i class="ri-briefcase-line"></i><span>근태 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed"  th:href="@{/employeeList}">
             <i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
           </a>
         </li>
@@ -69,7 +69,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed"  th:href="@{/approvalHome}">
             <i class="ri-file-edit-line"></i><span>전자 결재</span>
           </a>
         </li>
@@ -81,6 +81,9 @@
         <!-- Other nav items omitted for brevity -->
       </ul>
     </aside><!-- End Sidebar-->
+   
+</th:block>
+  
   <!-- Vendor JS Files -->
   <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -93,5 +96,4 @@
   <!-- Template Main JS File -->
   <script src="/bootstrap/js/main.js"></script>
   </body>
-</th:block>
 </html>
