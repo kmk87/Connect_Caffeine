@@ -2,6 +2,9 @@ package com.cc.employee.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
+
+import com.cc.empGroup.domain.EmpGroup;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +21,6 @@ public class EmployeeDto {
 		
 		private Long emp_code;
 		private String job_code;
-		private Long group_no;
 		private String emp_name;
 		private String emp_account;
 		private String emp_pw;
@@ -33,6 +35,10 @@ public class EmployeeDto {
 		private String emp_img_file_path;
 		private String emp_memo;
 		private Long emp_holiday;
+		private Long group_no;
+		private String group_name;
+		private Long group_parent_no;
+		
 		
 		private List<GrantedAuthority> authorities;
 		
@@ -40,7 +46,6 @@ public class EmployeeDto {
 			return Employee.builder()
 					.empCode(emp_code)
 					.jobCode(job_code)
-					.groupNo(group_no)
 					.empName(emp_name)
 					.empAccount(emp_account)
 					.empPw(emp_pw)
@@ -62,7 +67,6 @@ public class EmployeeDto {
 			return EmployeeDto.builder()
 					.emp_code(employee.getEmpCode())
 					.job_code(employee.getJobCode())
-					.group_no(employee.getGroupNo())
 					.emp_name(employee.getEmpName())
 					.emp_account(employee.getEmpAccount())
 					.emp_pw(employee.getEmpPw())
@@ -77,6 +81,8 @@ public class EmployeeDto {
 					.emp_img_file_path(employee.getEmpImgFilePath())
 					.emp_memo(employee.getEmpMemo())
 					.emp_holiday(employee.getEmpHoliday())
+					.group_name(employee.getEmpGroup().getGroupName())
+					.group_parent_no(employee.getEmpGroup().getGroupParentNo())
 					.build();
 		}
 }

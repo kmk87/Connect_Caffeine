@@ -1,10 +1,15 @@
 package com.cc.employee.domain;
 import java.time.LocalDateTime;
+
+import com.cc.empGroup.domain.EmpGroup;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,8 +32,9 @@ public class Employee {
 	@Column(name="job_code")
 	private String jobCode;
 	
-	@Column(name="group_no")
-	private Long groupNo;
+	@ManyToOne
+	@JoinColumn(name="group_no")
+	private EmpGroup empGroup;
 	
 	@Column(name="emp_name")
 	private String empName;
