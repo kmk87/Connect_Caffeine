@@ -3,7 +3,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,4 +61,3 @@ public class EmpGroupDto {
 				.build();
 	}
 	
-}

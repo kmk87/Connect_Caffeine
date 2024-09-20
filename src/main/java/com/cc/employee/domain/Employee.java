@@ -25,16 +25,20 @@ import lombok.NoArgsConstructor;
 public class Employee {
 	
 	@Id
+	
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="emp_code")
 	private Long empCode;
 	
-	@Column(name="job_code")
-	private String jobCode;
-	
 	@ManyToOne
 	@JoinColumn(name="group_no")
 	private EmpGroup empGroup;
+	
+	@Column(name="emp_job_code")
+	private String empJobCode;
+	
+	@Column(name="emp_job_name")
+	private String empJobName;
 	
 	@Column(name="emp_name")
 	private String empName;
@@ -45,8 +49,14 @@ public class Employee {
 	@Column(name="emp_pw")
 	private String empPw;
 	
+	@Column(name="emp_postcode")
+	private Long empPostcode;
+	
 	@Column(name="emp_addr")
 	private String empAddr;
+	
+	@Column(name="emp_addr_detail")
+	private String empAddrDetail;
 	
 	@Column(name="emp_reg_no")
 	private String empRegNo;
@@ -66,11 +76,8 @@ public class Employee {
 	@Column(name="emp_resign")
 	private String empResign;
 	
-	@Column(name="emp_img_file_name")
-	private String empImgFileName;
-	
-	@Column(name="emp_img_file_path")
-	private String empImgFilePath;
+	@Column(name="emp_resigndate")
+	private LocalDateTime empResigndate;
 	
 	@Column(name="emp_memo")
 	private String empMemo;
@@ -78,9 +85,12 @@ public class Employee {
 	@Column(name="emp_holiday")
 	private Long empHoliday;
 	
-	
-	
-	
+//	@Column(name="emp_img_file_name") 
+//	private String empImgFileName;
+//
+//	@Column(name="emp_img_file_path") 
+//	private String empImgFilePath;
+
 }
 
 
