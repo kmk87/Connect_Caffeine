@@ -94,20 +94,6 @@ public class ApprovalViewController {
 		return "approval/createDraft";
 	}
 	
-//	// 기안서 타입 
-//	private String getFormType(int formNo) {
-//	    switch (formNo) {
-//	        case 1:
-//	            return "휴가신청서";
-//	        case 2:
-//	            return "사유서";
-//	        case 3:
-//	            return "품의서";
-//	        default:
-//	            return "기타";
-//	    }
-//	}
-//	
 	
 	// 기안서 상세 조회
 	@GetMapping("/approval/{appr_no}")
@@ -127,9 +113,49 @@ public class ApprovalViewController {
 	// 임시저장함
 	@GetMapping("/apprTempStorage")
 	public String showApprTempStorage() {
-		        
+		
 		        
 		return "approval/apprTempStorage"; 
+	}
+	
+	// 기안문서함
+	@GetMapping("/draftStorage")
+	public String showDraftStorage() {
+			
+			        
+		return "approval/draftStorage"; 
+	}
+	
+	// 결재문서함
+	@GetMapping("/apprStorage")
+	public String showApprStorage() {
+				
+				        
+		return "approval/apprStorage"; 
+	}
+	
+	// 참조문서함
+	@GetMapping("/referenceStorage")
+	public String showReferebceStorage() {
+					
+					        
+		return "approval/referenceStorage"; 
+	}
+	
+	// 결재대기문서
+	@GetMapping("/standByDraft")
+	public String showStandByDraft() {
+					
+					        
+		return "approval/standByDraft"; 
+	}
+	
+	// 결재수신문서
+	@GetMapping("/receiveDraft")
+	public String showReceiveDraft() {
+					
+					        
+		return "approval/receiveDraft"; 
 	}
 	
 	
