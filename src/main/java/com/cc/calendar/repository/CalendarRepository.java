@@ -15,7 +15,7 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long>{
     List<Calendar> findByScheduleTypeAndEmployee_EmpCode(Long scheduleType, Long empCode);
     
  // CalendarRepository.java
-    @Query("SELECT c FROM Calendar c JOIN c.color color")  // 조인 쿼리 추가
-    List<Calendar> findAllWithColors();
+   
+    List<Calendar> findAll();
 
 }

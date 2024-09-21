@@ -200,23 +200,27 @@
 	  
 	 <script  th:inline="javascript">
 	 document.addEventListener('DOMContentLoaded', function() {
-		 var userColors = /*[[${userColors}]]*/ {};
-		    console.log(userColors);
-		    // FullCalendar 초기화 및 설정
+		  var userColors = /*[[${userColors}]]*/ {};
+		    console.log("User Colors: ", userColors);  // userColors 확인
+		    
 		    var calendarEl = document.getElementById('calendar');
 		    var events = /*[[${resultList}]]*/ [];
-		    console.log(events); // 콘솔에 찍어서 데이터가 잘 넘어오는지 확인
+
 		    events = events.map(function(event) {
+		        var scheduleType = parseInt(event.schedule_type);  // 명시적으로 숫자로 변환
+		        var colorCode = userColors[scheduleType];  // 일정 유형에 따른 색상 코드 가져오기
+		        console.log("Schedule Type: ", scheduleType, " Color Code: ", colorCode);  // 색상 코드 확인
+		        
 		        return {
 		            id: event.schedule_no,
 		            title: event.schedule_title,
-		            start: event.start_time,
-		            end: event.end_time,
+		            start: new Date(event.start_time),
+		            end: new Date(event.end_time),
 		            description: event.schedule_content,
 		            location: event.location,
-		            schedule_type: event.schedule_type,
-		            backgroundColor: event.color_code, // 색상 적용
-		            borderColor: event.color_code      // 테두리 색상 적용 
+		            schedule_type: scheduleType,
+		            backgroundColor: colorCode,  // 색상 적용
+		            borderColor: colorCode       // 테두리 색상 적용
 		        };
 		    });
 
@@ -568,6 +572,10 @@
 		        .then(data => {
 		            if (data.res_code === '200') {
 		                console.log('색상 업데이트 성공!');
+
+		                // 캘린더의 해당 일정 유형의 색상 업데이트
+		                updateCalendarEventColors(scheduleType, colorCode);
+
 		            } else {
 		                console.error('색상 업데이트 실패:', data.res_msg);
 		            }
@@ -575,6 +583,19 @@
 		        .catch(error => console.error('Error updating color:', error));
 		    }
 
+		    // 이벤트 색상 업데이트 함수 추가
+		    function updateCalendarEventColors(scheduleType, colorCode) {
+		        const events = calendar.getEvents();  // 현재 캘린더의 모든 이벤트를 가져옴
+		        
+		        events.forEach(event => {
+		            if (event.extendedProps.schedule_type == scheduleType) {
+		                event.setProp('backgroundColor', colorCode);  // 배경색 업데이트
+		                event.setProp('borderColor', colorCode);      // 테두리색 업데이트
+		            }
+		        });
+
+		        calendar.render();  // 캘린더 다시 렌더링 (이벤트 색상 반영)
+		    }
 
 
 

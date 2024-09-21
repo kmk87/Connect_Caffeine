@@ -31,10 +31,10 @@ public class CalendarDto {
 	private Long team_no;
 	
 	
-	public Calendar toEntity(Employee employee, Color color) {
+	public Calendar toEntity(Employee employee) {
 		return Calendar.builder()
 				.scheduleNo(schedule_no)
-				.color(color)  // Colors 객체 설정
+				//.userScheduleColor(userScheduleColor) 
 				.scheduleTitle(schedule_title)
 				.scheduleContent(schedule_content)
 				.scheduleType(schedule_type)
@@ -54,7 +54,7 @@ public class CalendarDto {
 				.location(calendar.getLocation())
 				.start_time(calendar.getStartTime())
 				.end_time(calendar.getEndTime())
-				.color_code(calendar.getColor().getColorCode())
+				//.color_code(calendar.getUserScheduleColor().getColor().getColorCode())
 				.dept_no(calendar.getEmployee().getEmpGroup().getGroupParentNo())
 				.team_no(calendar.getEmployee().getEmpGroup().getGroupNo())
 				.build();

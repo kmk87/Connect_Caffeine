@@ -59,7 +59,7 @@ public class CalendarService {
 //	    }
 //	    return calendarDtoList;
 		 // 모든 일정을 가져오되, 사용자의 empCode, deptNo, teamNo에 따라 필터링
-		 List<Calendar> calendarList = calendarRepository.findAllWithColors();
+		 List<Calendar> calendarList = calendarRepository.findAll();
 		    List<CalendarDto> calendarDtoList = new ArrayList<>();
 
 		    for (Calendar calendar : calendarList) {
@@ -79,7 +79,7 @@ public class CalendarService {
 		        // 일정 추가 (includeEvent가 true일 때만)
 		        if (includeEvent) {
 		            CalendarDto calendarDto = new CalendarDto().toDto(calendar);
-		            calendarDto.setColor_code(calendar.getColor().getColorCode()); // 색상 코드 설정
+		           
 		            calendarDtoList.add(calendarDto);
 		        }
 		    }

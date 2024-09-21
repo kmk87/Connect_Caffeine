@@ -58,12 +58,15 @@ public class CalendarViewController {
 		  System.out.println("teamNo : "+teamNo);
 		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
 		  System.out.println("deptNo : "+deptNo);
+		 
 		  
 		  // 일정 데이터 가져오기
 	        List<CalendarDto> resultList = calendarService.selectCalendarList(empCode, deptNo, teamNo);
 	        model.addAttribute("resultList", resultList);
 	        // 데이터가 제대로 전달되고 있는지 확인
 	        System.out.println("일정 리스트: " + resultList);
+	        
+	        
 	        // 색상 데이터 가져오기(팔레트)
 	        List<String> colors = colorService.getAllColors(); // ColorService를 통해 색상 목록을 가져옴
 	        model.addAttribute("colors", colors); // 색상 목록을 모델에 추가
