@@ -26,4 +26,16 @@ public class EmployeeService {
 		return dto;
 	}
 	
+	 public Long findEmpCodeByEmpName(String empAccount) {
+	        return employeeRepository.findEmpCodeByEmpName(empAccount);
+	    }
+	
+	// empCode를 이용해 Employee 객체를 조회하는 메서드
+	    public Employee findByEmpCode(Long empCode) {
+	        return employeeRepository.findByempCode(empCode);   
+	    }
+
+	
+	
+	
 }

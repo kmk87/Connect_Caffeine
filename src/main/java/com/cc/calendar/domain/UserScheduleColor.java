@@ -20,24 +20,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="color")
+@Table(name="user_schedule_color")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
 @Setter
 @Builder
-public class Color {
+public class UserScheduleColor {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="color_no")
-	private Long colorNo;
+	@Column(name="schedule_color_no")
+	private Long scheduleColorNo;
 	
-	@Column(name="color_name")
-	private String colorName;
+	@Column(name="schedule_type")
+	private Long scheduleType;
 	
-	@Column(name="color_code")
-	private String colorCode;
+	@ManyToOne
+    @JoinColumn(name="emp_code") 
+    private Employee employee; 
+	
+	@ManyToOne
+    @JoinColumn(name="color_no") 
+    private Color color; 
 	
 	
 }

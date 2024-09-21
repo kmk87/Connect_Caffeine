@@ -1,7 +1,9 @@
 package com.cc.calendar.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,21 +76,6 @@ public class CalendarService {
 		return dto;
 	}
 	
-//	@Transactional
-//	public Calendar updateSchedule(CalendarDto dto) {
-//		CalendarDto temp = selectScheduleOne(dto.getSchedule_no());
-//		temp.setSchedule_title(dto.getSchedule_title());
-//		temp.setSchedule_content(dto.getSchedule_content());
-//		temp.setLocation(dto.getLocation());
-//		temp.setStart_time(dto.getStart_time());
-//		temp.setEnd_time(dto.getEnd_time());
-//		temp.setCalendar_writer_no(dto.getCalendar_writer_no());
-//		
-//		Calendar calendar = temp.toEntity();
-//		Calendar result = calendarRepository.save(calendar);
-//		return result;
-//	}
-	
 	@Transactional
 	public Calendar updateSchedule(CalendarDto dto) {
 	    // 기존 일정 엔티티를 조회
@@ -117,7 +104,7 @@ public class CalendarService {
 		return result;
 	}
 
-
+	
 
 		
 		

@@ -72,4 +72,27 @@
   margin-left: 5px; /* 텍스트와 컬러 피커 간격 */
 }
 
+.color-palette-modal {
+    position: absolute;
+    width: 200px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.color-palette {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+}
 

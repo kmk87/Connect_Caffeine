@@ -2,6 +2,8 @@ package com.cc.calendar.domain;
 
 import java.time.LocalDateTime;
 
+import com.cc.employee.domain.Employee;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +22,7 @@ public class ColorDto {
 	private Long color_no;
 	private String color_name;
 	private String color_code;
+	
 	
 	public Color toEntity() {
 		return Color.builder()
