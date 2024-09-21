@@ -48,16 +48,43 @@ public class CalendarService {
 		return calendarRepository.save(calendar);
 	}
 	
-	public List<CalendarDto> selectCalendarList() {
-	    List<Calendar> calendarList = calendarRepository.findAllWithColors(); // 조인된 데이터를 가져옴
-	    List<CalendarDto> calendarDtoList = new ArrayList<>();
+	public List<CalendarDto> selectCalendarList(Long empCode, Long deptNo, Long teamNo) {
+//	    List<Calendar> calendarList = calendarRepository.findAllWithColors(); // 조인된 데이터를 가져옴
+//	    List<CalendarDto> calendarDtoList = new ArrayList<>();
+//
+//	    for (Calendar calendar : calendarList) {
+//	        CalendarDto calendarDto = new CalendarDto().toDto(calendar);
+//	        calendarDto.setColor_code(calendar.getColor().getColorCode());  // 색상 코드 설정
+//	        calendarDtoList.add(calendarDto);
+//	    }
+//	    return calendarDtoList;
+		 // 모든 일정을 가져오되, 사용자의 empCode, deptNo, teamNo에 따라 필터링
+		 List<Calendar> calendarList = calendarRepository.findAllWithColors();
+		    List<CalendarDto> calendarDtoList = new ArrayList<>();
 
-	    for (Calendar calendar : calendarList) {
-	        CalendarDto calendarDto = new CalendarDto().toDto(calendar);
-	        calendarDto.setColor_code(calendar.getColor().getColorCode());  // 색상 코드 설정
-	        calendarDtoList.add(calendarDto);
-	    }
-	    return calendarDtoList;
+		    for (Calendar calendar : calendarList) {
+		        boolean includeEvent = false;
+		        
+		        // 일정 타입에 따라 필터링
+		        if (calendar.getScheduleType() == 1) { // 내일정
+		            includeEvent = calendar.getEmployee().getEmpCode().equals(empCode); // 로그인한 사용자가 작성한 일정만 표시
+		        } else if (calendar.getScheduleType() == 2) { // 전사일정
+		            includeEvent = true; // 모든 사용자에게 보임
+		        } else if (calendar.getScheduleType() == 3) { // 부서일정
+		            includeEvent = calendar.getEmployee().getEmpGroup().getGroupParentNo().equals(deptNo); // 같은 부서일 경우에만 표시
+		        } else if (calendar.getScheduleType() == 4) { // 팀일정
+		            includeEvent = calendar.getEmployee().getEmpGroup().getGroupNo().equals(teamNo); // 같은 팀일 경우에만 표시
+		        }
+
+		        // 일정 추가 (includeEvent가 true일 때만)
+		        if (includeEvent) {
+		            CalendarDto calendarDto = new CalendarDto().toDto(calendar);
+		            calendarDto.setColor_code(calendar.getColor().getColorCode()); // 색상 코드 설정
+		            calendarDtoList.add(calendarDto);
+		        }
+		    }
+
+		    return calendarDtoList;
 	}
 
 	

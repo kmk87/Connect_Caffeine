@@ -27,6 +27,8 @@ public class CalendarDto {
 	private String location;
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
+	private Long dept_no;
+	private Long team_no;
 	
 	
 	public Calendar toEntity(Employee employee, Color color) {
@@ -53,6 +55,8 @@ public class CalendarDto {
 				.start_time(calendar.getStartTime())
 				.end_time(calendar.getEndTime())
 				.color_code(calendar.getColor().getColorCode())
+				.dept_no(calendar.getEmployee().getEmpGroup().getGroupParentNo())
+				.team_no(calendar.getEmployee().getEmpGroup().getGroupNo())
 				.build();
 	}
 			

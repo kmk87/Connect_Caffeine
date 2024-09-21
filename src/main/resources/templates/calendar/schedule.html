@@ -205,6 +205,7 @@
 		    // FullCalendar 초기화 및 설정
 		    var calendarEl = document.getElementById('calendar');
 		    var events = /*[[${resultList}]]*/ [];
+		    console.log(events); // 콘솔에 찍어서 데이터가 잘 넘어오는지 확인
 		    events = events.map(function(event) {
 		        return {
 		            id: event.schedule_no,
@@ -215,7 +216,7 @@
 		            location: event.location,
 		            schedule_type: event.schedule_type,
 		            backgroundColor: event.color_code, // 색상 적용
-		            borderColor: event.color_code      // 테두리 색상 적용
+		            borderColor: event.color_code      // 테두리 색상 적용 
 		        };
 		    });
 

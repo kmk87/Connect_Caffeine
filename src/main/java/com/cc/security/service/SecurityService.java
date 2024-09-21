@@ -25,18 +25,18 @@ public class SecurityService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Employee employee = employeeRepository.findByempAccount(username);
 		if(employee != null) {
+			
 			EmployeeDto dto = new EmployeeDto().toDto(employee);
 			
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-			authorities.add(new SimpleGrantedAuthority(employee.getJobCode()));
+//			authorities.add(new SimpleGrantedAuthority(employee.getJobCode()));
 			dto.setAuthorities(authorities);
 			
-			System.out.println("로그인 정보");
-			System.out.println(dto);
 			
 			return new SecurityUser(dto);
 		} else {
 			throw new UsernameNotFoundException(username);
 		}
 	}
+	
 }

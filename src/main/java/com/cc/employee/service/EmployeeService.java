@@ -34,6 +34,13 @@ public class EmployeeService {
 	    public Employee findByEmpCode(Long empCode) {
 	        return employeeRepository.findByempCode(empCode);   
 	    }
+	    
+	 // 그룹 번호 가져오는 메소드
+	 		public Long getGroupNoByEmpCode(Long emp_code) {
+	 			Employee emp = employeeRepository.findById(emp_code).orElseThrow();
+	 			Long groupNo = emp.getEmpGroup().getGroupNo();
+	 			return groupNo;
+	 		}
 
 	
 	

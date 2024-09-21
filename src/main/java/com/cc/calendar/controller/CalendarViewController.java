@@ -18,6 +18,7 @@ import com.cc.calendar.domain.CalendarDto;
 import com.cc.calendar.service.CalendarService;
 import com.cc.calendar.service.ColorService;
 import com.cc.calendar.service.UserScheduleColorService;
+import com.cc.empGroup.service.EmpGroupService;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.employee.service.EmployeeService;
 
@@ -30,35 +31,45 @@ public class CalendarViewController {
 	private final EmployeeRepository employeeRepository;
 	private final ColorService colorService;
 	private final UserScheduleColorService userScheduleColorService;
+	private final EmpGroupService empGroupService;
 	
 	@Autowired
 	public CalendarViewController(CalendarService calendarService, EmployeeService employeeService, 
-			EmployeeRepository employeeRepository,ColorService colorService,UserScheduleColorService userScheduleColorService) {
+			EmployeeRepository employeeRepository,ColorService colorService,UserScheduleColorService userScheduleColorService,
+			EmpGroupService empGroupService) {
 		this.calendarService = calendarService;
 		this.employeeService = employeeService;
 		this.employeeRepository = employeeRepository;
 		this.colorService = colorService;
 		this.userScheduleColorService = userScheduleColorService;
+		this.empGroupService = empGroupService;
 	}
 	
 	  @GetMapping("/calendar")
 	    public String calendarView(Model model) {
-	        // 일정 데이터 가져오기
-	        List<CalendarDto> resultList = calendarService.selectCalendarList();
+
+		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		  User user =(User)authentication.getPrincipal();
+		  String empAccount = user.getUsername();
+		  System.out.println("empAccount : "+empAccount);
+		  Long empCode = employeeService.findEmpCodeByEmpName(empAccount);  
+		  System.out.println("empCode : "+empCode);
+		  Long teamNo = employeeService.getGroupNoByEmpCode(empCode);
+		  System.out.println("teamNo : "+teamNo);
+		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
+		  System.out.println("deptNo : "+deptNo);
+		  
+		  // 일정 데이터 가져오기
+	        List<CalendarDto> resultList = calendarService.selectCalendarList(empCode, deptNo, teamNo);
 	        model.addAttribute("resultList", resultList);
-	        
+	        // 데이터가 제대로 전달되고 있는지 확인
+	        System.out.println("일정 리스트: " + resultList);
 	        // 색상 데이터 가져오기(팔레트)
 	        List<String> colors = colorService.getAllColors(); // ColorService를 통해 색상 목록을 가져옴
 	        model.addAttribute("colors", colors); // 색상 목록을 모델에 추가
 	        
 	        
 	        
-	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        User user =(User)authentication.getPrincipal();
-	        String empAccount = user.getUsername();
-	        System.out.println("empAccount : "+empAccount);
-	        Long empCode = employeeService.findEmpCodeByEmpName(empAccount);  
-	        System.out.println("empCode : "+empCode);
 	       
 	        // 일정 타입별로 색상을 가져오기
 	        Map<Long, String> userColors = new HashMap<>();
