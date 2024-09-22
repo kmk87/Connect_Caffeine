@@ -32,7 +32,7 @@ public class TemporaryStorageDto {
 		return TemporaryStorage.builder()
 				.temNo(tem_no)
 				.apprTitle(appr_title)
-				.apprContent(appr_content)
+	            .apprContent(appr_content)
 				.approval(approval)
 				.employee(employee)
 				.apprForm(apprform)
@@ -49,6 +49,7 @@ public class TemporaryStorageDto {
                 .appr_content(temporaryStorage.getApprContent())
 				.build();
 	}
+	
 	
 	
 }

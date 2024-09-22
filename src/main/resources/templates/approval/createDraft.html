@@ -89,7 +89,7 @@
             	<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${memId ?: ''}">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">결재선 지정</button>
-                <button class="btn-secondary">임시 저장</button>
+                <button type="button" class="btn btn-secondary" id="tempSaveBtn">임시 저장</button>
                 <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
                 <button class="btn-secondary" th:href="${approvalHome}">취소</button>
                 
@@ -323,7 +323,7 @@
 					obj[key] = value;
 				});
 			
-				obj.appr_writer_writer = emp; // empNum 추가
+				obj.appr_writer_code = emp; // empNum 추가
 				
 			
 				const jsonData = JSON.stringify(obj);
@@ -387,6 +387,55 @@
 		});
 	});
 	
+	
+	// 임시저장
+	document.getElementById("tempSaveBtn").addEventListener("click",function(){
+		const apprNo = document.getElementById("appr_form_no").value;
+		const empNum = document.getElementById("empNum").value;
+		const csrfToken = document.getElementById("csrf_token").value;
+		const apprTitle = document.getElementById("appr_title").value;
+		const apprContent = document.getElementById("appr_content").value;
+		
+		const obj = {
+				appr_no: apprNo,
+				appr_title: apprTitle,
+				appr_content: apprContent,
+				employee: { empCode: empNum},
+				approval: {apprNo: apprNo}
+		};
+		
+		
+		
+		fetch(`/apprSave/${apprNo}`,{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
+			},
+			body: JSON.stringify(obj)
+		})
+		.then(response => response.json())
+		.then(data => {
+			if(data.res_code == '200'){
+				Swal.fire({
+					icon: 'success',
+					title: '성공',
+					text: data.res_msg,
+					confirmButtonText: "닫기"
+				}) .then((result)=>{
+					location.href="/approvalHome";
+				});
+			} else{
+				Swal.fire({
+					icon: 'error',
+					title: '실패',
+					text: data.res_msg,
+					confirmButtonText: "닫기"
+				});
+			}
+		});
+		
+	});
 	
 	
 	

@@ -134,32 +134,55 @@ public class ApprovalService {
 //	}
 //	
 //	
-//	// 기안서 임시저장
-//	public TemporaryStorage updateAppr(TemporaryStorageDto dto, Approval approval, Employee employee,ApprForm apprForm) {
-//		TemporaryStorageDto temp = selectTemporaryStorageOne(dto.getAppr_no());
-//		
-//		temp.setAppr_title(dto.getAppr_title());
-//		temp.setAppr_content(dto.getAppr_content());
-//		
-//		TemporaryStorage temporaryStorage = temp.toEntity(approval,employee,apprForm);
-//		
-//		TemporaryStorage result = temporaryStorageRepository.save(temporaryStorage);
-//		return result;
-//	}
-//
-//
-//	public TemporaryStorageDto selectTemporaryStorageOne(Long appr_no) {
-//		TemporaryStorage temp = temporaryStorageRepository.findByApprovalApprNo(appr_no);
-//		TemporaryStorageDto dto = TemporaryStorageDto.builder()
-//				.tem_no(temp.getTemNo())
-//				.appr_no(temp.getApproval().getApprNo())
-//				.appr_title(temp.getApproval().getApprTitle())
-//				.appr_content(temp.getApproval().getApprContent())
-//				.build();
-//		
-//		return dto;
-//		
-//	}
+	// 기안서 임시저장
+	public boolean updateApprWithEmpCode(TemporaryStorageDto dto) {
+	    // 로그인된 사용자의 memId(empAccount)를 통해 empCode 가져오기
+	    String memId = SecurityContextHolder.getContext().getAuthentication().getName(); // 로그인된 사용자 ID
+	    System.out.println("서비스memId: "+memId);
+	    
+	    Employee employee = employeeRepository.findByempAccount(memId);
+	    System.out.println("서비스employee: "+employee);
+	    
+	    if (employee == null) {
+	        return false;  // 사원 정보가 없으면 false 반환
+	    }
+	    
+	    dto.setEmp_code(employee.getEmpCode());  // DTO에 empCode 설정
+
+	    return updateAppr(dto) != null;  // 임시 저장 수행
+	}
+	
+	
+	
+	public TemporaryStorage updateAppr(TemporaryStorageDto dto) {
+		TemporaryStorageDto temp = selectTemporaryStorageOne(dto.getAppr_no());
+		
+		temp.setAppr_title(dto.getAppr_title());
+		temp.setAppr_content(dto.getAppr_content());
+		
+		// Approval, Employee, ApprForm 객체를 넘겨주어야 함
+	    Approval approval = approvalRepository.findByApprNo(dto.getAppr_no());
+	    Employee employee = employeeRepository.findByempCode(dto.getEmp_code());
+	    ApprForm apprForm = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
+	    
+	    System.out.println("emp code: "+employee);
+	    
+	    TemporaryStorage temporaryStorage = temp.toEntity(approval, employee, apprForm);  // 필요한 객체들 전달
+	
+		
+		return temporaryStorageRepository.save(temporaryStorage);
+	}
+
+
+	public TemporaryStorageDto selectTemporaryStorageOne(Long appr_no) {
+	    TemporaryStorage temp = temporaryStorageRepository.findByApprovalApprNo(appr_no); // appr_no로 조회
+	    return TemporaryStorageDto.builder()
+	            .tem_no(temp.getTemNo())
+	            .appr_no(temp.getApproval().getApprNo())
+	            .appr_title(temp.getApproval().getApprTitle())
+	            .appr_content(temp.getApproval().getApprContent())
+	            .build();
+	}
 	
 	
 	

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import com.cc.approval.domain.TemporaryStorageDto;
 import com.cc.approval.service.ApprFormService;
 import com.cc.approval.service.ApprovalService;
 import com.cc.employee.domain.Employee;
+import com.cc.employee.service.EmployeeService;
 
 
 
@@ -29,12 +31,14 @@ public class ApprovalApiController {
 	
 	private final ApprovalService approvalService;
 	private final ApprFormService apprFormService;
+	private final EmployeeService employeeService;
 	
 	@Autowired
 	public ApprovalApiController(ApprovalService approvalService,
-			ApprFormService apprFormService) {
+			ApprFormService apprFormService,EmployeeService employeeService) {
 		this.approvalService = approvalService;
 		this.apprFormService = apprFormService;
+		this.employeeService = employeeService;
 	}
 
 	
@@ -72,27 +76,23 @@ public class ApprovalApiController {
 //	
 	
 	// 기안서 임시저장
-//	@ResponseBody
-//	@PostMapping("/apprSave/{appr_no}")
-//	public Map<String,String> updateAppr(@PathVariable Long appr_no,@RequestParam("formNo") int formNo,@RequestBody TemporaryStorageDto dto,
-//			Employee employee, Approval approval,ApprForm apprForm){
-//		Map<String, String> resultMap = new HashMap<String, String>();
-//		resultMap.put("res_code", "404");
-//		resultMap.put("res_msg","임시저장 중 오류가 발생했습니다.");
-//		
-//		
-//			dto.setAppr_no(appr_no);
-//		
-//			if(approvalService.updateAppr(dto,approval,employee,apprForm) != null) {
-//				resultMap.put("res_code","200");
-//				resultMap.put("res_msg", "임시저장 되었습니다.");
-//			}
-//		
-//	    
-//		return resultMap;
-//		
-//	
-//	}
+	@ResponseBody
+	@PostMapping("/apprSave/{appr_no}")
+	public Map<String,String> updateAppr(@PathVariable ("appr_no") Long apprNo,@RequestBody TemporaryStorageDto dto){
+		Map<String, String> resultMap = new HashMap<String, String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg","임시저장 중 오류가 발생했습니다.");
+		
+		// 서비스에서 로그인된 사용자의 empCode(사원 코드)를 가져와 DTO에 설정
+	    if (approvalService.updateApprWithEmpCode(dto)) {
+	        resultMap.put("res_code","200");
+	        resultMap.put("res_msg", "임시저장 되었습니다.");
+	    }
+	    
+		return resultMap;
+		
+	
+	}
 	
 	
 	
