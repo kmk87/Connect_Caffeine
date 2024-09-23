@@ -23,6 +23,7 @@ public class TemporaryStorageDto {
 	private String appr_content;
 	private Long appr_form_no;
 	private String formName;
+	private Integer appr_holi_use_count;
 	
 	// 결재 양식 이름 설정 메소드
     public void setFormName() {
@@ -52,6 +53,7 @@ public class TemporaryStorageDto {
 				.temNo(tem_no)
 				.apprTitle(appr_title)
 	            .apprContent(appr_content)
+	            .apprHoliUseCount(appr_holi_use_count)
 				.employee(employee)
 				.apprForm(apprform)
 				.build();
@@ -64,6 +66,7 @@ public class TemporaryStorageDto {
 		        .emp_code(temporaryStorage.getEmployee().getEmpCode())
 		        .appr_title(temporaryStorage.getApprTitle())
 		        .appr_content(temporaryStorage.getApprContent())
+		        .appr_holi_use_count(temporaryStorage.getApprHoliUseCount())
 		        .appr_form_no(temporaryStorage.getApprForm().getApprFormNo()) // appr_form_no 값 설정
 		        .build();
 		    

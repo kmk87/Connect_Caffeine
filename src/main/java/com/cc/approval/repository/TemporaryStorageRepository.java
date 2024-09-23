@@ -19,10 +19,10 @@ public interface TemporaryStorageRepository extends JpaRepository<TemporaryStora
 	
 	TemporaryStorage findByApprContent(String appr_content);
 	
-//	@Query("SELECT t FROM TemporaryStorage t WHERE t.approval.apprNo = :apprNo")
-//    TemporaryStorage findByApprovalApprNo(@Param("apprNo") Long apprNo);
+	
 	
 	@Query("SELECT a FROM TemporaryStorage a WHERE a.employee.empAccount = :memId ORDER BY a.temNo DESC")
     List<TemporaryStorage> findTop5ByEmployeeEmpAccountOrderByTemNoDesc(@Param("memId") String memId);
+	
 	
 }

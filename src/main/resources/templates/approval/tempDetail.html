@@ -74,21 +74,22 @@
         
         <!-- 메인 콘텐츠 -->
             <div class="form-header">
-                <h2 th:if="${dto.appr_form_no == 1}">휴가신청서</h2>
-                <h2 th:if="${dto.appr_form_no == 2}">사유서</h2>
-                <h2 th:if="${dto.appr_form_no == 3}">품의서</h2>
+                <h2 th:if="${apprDto.appr_form_no == 1}">휴가신청서</h2>
+                <h2 th:if="${apprDto.appr_form_no == 2}">사유서</h2>
+                <h2 th:if="${apprDto.appr_form_no == 3}">품의서</h2>
             </div>
         <div class="approval-form">
         	<div class="pagetitle">
-      			<h1 th:if="${dto.appr_form_no == 1}">휴가신청서</h1>
-                <h1 th:if="${dto.appr_form_no == 2}">사유서</h1>
-                <h1 th:if="${dto.appr_form_no == 3}">품의서</h1>
+      			<h1 th:if="${apprDto.appr_form_no == 1}">휴가신청서</h1>
+                <h1 th:if="${apprDto.appr_form_no == 2}">사유서</h1>
+                <h1 th:if="${apprDto.appr_form_no == 3}">품의서</h1>
       		</div>
             <form id="draftAdd">
+            	<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${apprFormNo}">
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-                <input type="hidden" id="empNum" th:value="${dto.appr_writer_code != null ? dto.appr_writer_code : ''}">
+                <input type="hidden" id="empNum" th:value="${memId ?: ''}">
                 <button class="btn-primary">결재선 지정</button>
-                <button class="btn-secondary" onclick="deleteTemp()">삭제</button>
+                <button class="btn-secondary">삭제</button>
                 <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
                 <button class="btn-secondary">취소</button>
                 
@@ -138,7 +139,7 @@
 				
 				
                 <!-- 휴가신청서 폼 -->
-                <div th:if="${dto.appr_form_no == 1}">
+                <div th:if="${apprDto.appr_form_no == 1}">
                     <div class="form-group">
                         <label for="leave-type">휴가 종류</label>
                         <select id="leave-type" name="leave-type">
@@ -152,15 +153,15 @@
                                 <span>~</span>
                                 <input type="date" id="end-date" name="end-date" >
                                 <span>사용일수:</span>
-                                <input type="text" id="appr_holi_use_count" name="appr_holi_use_count" th:value="${dto.appr_holi_use_count}" > <span> 일</span>
+                                <input type="text" id="appr_holi_use_count" name="appr_holi_use_count" th:value="${tempDto.appr_holi_use_count}" > <span> 일</span>
                             </div>
                             <div class="form-group">
                                 <label for="subject">제목</label>
-                                <input type="text" id="appr_title" name="appr_title" th:value="${dto.appr_title}" disabled>
+                                <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="content">내용</label>
-                                <textarea id="appr_content" name="appr_content" th:text="${dto.appr_content}" disabled></textarea>
+                                <textarea id="appr_content" name="appr_content" th:text="${tempDto.appr_content}" disabled></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="attachment">첨부 파일</label>
@@ -170,14 +171,14 @@
                         </div>
 
                         <!-- 사유서 폼 -->
-                        <div th:if="${dto.appr_form_no == 2}">
+                        <div th:if="${apprDto.appr_form_no == 2}">
                             <div class="form-group">
                                 <label for="subject">제목</label>
-                                <input type="text" id="appr_title" name="appr_title" th:value="${dto.appr_title}" disabled>
+                                <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="content">내용</label>
-                                <textarea id="appr_content" name="appr_content" th:text="${dto.appr_content}" disabled></textarea>
+                                <textarea id="appr_content" name="appr_content" th:text="${tempDto.appr_content}" disabled></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="attachment">첨부 파일</label>
@@ -187,14 +188,14 @@
                         </div>
 
                         <!-- 품의서 폼 -->
-                        <div th:if="${dto.appr_form_no == 3}">
+                        <div th:if="${apprDto.appr_form_no == 3}">
                             <div class="form-group">
                                 <label for="subject">제목</label>
-                                <input type="text" id="appr_title" name="appr_title" th:value="${dto.appr_title}" disabled>
+                                <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="content">내용</label>
-                                <textarea id="appr_content" name="appr_content" th:text="${dto.appr_content}" disabled></textarea>
+                                <textarea id="appr_content" name="appr_content" th:text="${tempDto.appr_content}" disabled></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="attachment">첨부 파일</label>
@@ -207,7 +208,7 @@
         </main>
     </th:block>
     <script>
-    	function deleteTemp(){
+    	/* function deleteTemp(){
     		const approvalId = document.getElementById('empNum').value;
     		const csrfToken = document.getElementById('csrf_token').value;
     		
@@ -228,7 +229,7 @@
     			}
     		});
     	
-    		}
+    		} */
     	
     </script>
 </body>

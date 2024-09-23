@@ -127,16 +127,19 @@ public class ApprovalViewController {
 	}
 	
 	// 임시저장 상세조회
-	@GetMapping("/temporaryStorag/{tem_no}")
-	public String selecttemproaryOne(Model model,
-			@PathVariable("tem_no") Long tem_no) {
+	@GetMapping("/temporaryStorage/{tem_no}")
+	public String selecttemproaryOne(@PathVariable("tem_no") Long tem_no,
+			Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	    User user = (User) authentication.getPrincipal();
 	    String username = user.getUsername();
 	    String groupName = employeeService.getUserTeamName(username);
 	    model.addAttribute("groupNames", groupName);
-	    ApprovalDto approvalDto = approvalService.selectapprovalOne(tem_no);
+	    // 임시 저장된 제목과 내용을 가져옴
 	    TemporaryStorageDto temporaryStorageDto = approvalService.selecttemproaryOne(tem_no);
+
+	    // 결재 관련 정보(문서번호, 팀명, 기안일, 기안자)를 가져옴
+	    ApprovalDto approvalDto = approvalService.selectapprovalOne(temporaryStorageDto.getAppr_form_no());
 		model.addAttribute("apprDto",approvalDto);
 		model.addAttribute("tempDto",temporaryStorageDto);
 		return "approval/tempDetail";

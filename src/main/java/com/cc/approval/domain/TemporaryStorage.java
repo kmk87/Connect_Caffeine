@@ -45,5 +45,7 @@ public class TemporaryStorage {
 	@Column(name="appr_content")
 	private String apprContent;
 	
+	@Column(name="appr_holi_use_count")
+	private Integer apprHoliUseCount;
 	
 }
