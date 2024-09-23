@@ -195,9 +195,26 @@ public class ApprovalService {
 	            .build();
 	}
 	
+	// 임시저장함 데이터 가져오기
+	public List<TemporaryStorageDto> getAllTemporaryStorage(){
+		// 현재 로그인한 사용자의 ID 가져오기
+	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+	    
+	    
+	    // 레포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
+        List<TemporaryStorage> tempList = temporaryStorageRepository.findTop5ByEmployeeEmpAccountOrderByTemNoDesc(currentUserId);
+
+        // Approval 엔티티를 ApprovalDto로 변환
+        return tempList.stream()
+                       .map(temporaryStorage -> new TemporaryStorageDto().toDto(temporaryStorage))
+                       .collect(Collectors.toList());
+	}
 	
-	
-	
+	// 임시저장함 상세 조회
+	public TemporaryStorageDto selecttemproaryOne(Long tem_no) {
+		TemporaryStorage temporaryStorage = temporaryStorageRepository.findByTemNo(tem_no);
+		return new TemporaryStorageDto().toDto(temporaryStorage);
+	}
 	
 	
 	

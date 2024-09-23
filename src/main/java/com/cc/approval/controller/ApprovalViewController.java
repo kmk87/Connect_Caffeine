@@ -16,6 +16,7 @@ import com.cc.approval.domain.ApprForm;
 import com.cc.approval.domain.ApprFormDto;
 import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalDto;
+import com.cc.approval.domain.TemporaryStorageDto;
 import com.cc.approval.service.ApprFormService;
 import com.cc.approval.service.ApprovalService;
 import com.cc.empGroup.domain.EmpGroupDto;
@@ -110,13 +111,37 @@ public class ApprovalViewController {
 	}
 	
 	
-	// 임시저장함
+
+	// 임시저장함 데이터리스트
 	@GetMapping("/apprTempStorage")
-	public String showApprTempStorage() {
-		
-		        
+	public String showApprTempStorage(Model model) {
+		// 데이터베이스에서 결재 진행 문서 리스트를 조회
+        List<TemporaryStorageDto> tempDtoList = approvalService.getAllTemporaryStorage(); 
+        
+        // 상위 5개 항목만 가져오기-내림차순
+        List<TemporaryStorageDto> top5TempDtoList = tempDtoList.size() > 5 ? tempDtoList.subList(0, 5) : tempDtoList;
+        
+        model.addAttribute("tempDtoList", top5TempDtoList); 
+
 		return "approval/apprTempStorage"; 
 	}
+	
+	// 임시저장 상세조회
+	@GetMapping("/temporaryStorag/{tem_no}")
+	public String selecttemproaryOne(Model model,
+			@PathVariable("tem_no") Long tem_no) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String username = user.getUsername();
+	    String groupName = employeeService.getUserTeamName(username);
+	    model.addAttribute("groupNames", groupName);
+	    ApprovalDto approvalDto = approvalService.selectapprovalOne(tem_no);
+	    TemporaryStorageDto temporaryStorageDto = approvalService.selecttemproaryOne(tem_no);
+		model.addAttribute("apprDto",approvalDto);
+		model.addAttribute("tempDto",temporaryStorageDto);
+		return "approval/tempDetail";
+	}
+	
 	
 	// 기안문서함
 	@GetMapping("/draftStorage")

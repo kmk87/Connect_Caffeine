@@ -1,9 +1,12 @@
 package com.cc.approval.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.TemporaryStorage;
 
 public interface TemporaryStorageRepository extends JpaRepository<TemporaryStorage,Long>{
@@ -18,4 +21,8 @@ public interface TemporaryStorageRepository extends JpaRepository<TemporaryStora
 	
 //	@Query("SELECT t FROM TemporaryStorage t WHERE t.approval.apprNo = :apprNo")
 //    TemporaryStorage findByApprovalApprNo(@Param("apprNo") Long apprNo);
+	
+	@Query("SELECT a FROM TemporaryStorage a WHERE a.employee.empAccount = :memId ORDER BY a.temNo DESC")
+    List<TemporaryStorage> findTop5ByEmployeeEmpAccountOrderByTemNoDesc(@Param("memId") String memId);
+	
 }

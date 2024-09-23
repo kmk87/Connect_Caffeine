@@ -22,9 +22,29 @@ public class TemporaryStorageDto {
 	private String appr_title;
 	private String appr_content;
 	private Long appr_form_no;
-
+	private String formName;
 	
-	
+	// 결재 양식 이름 설정 메소드
+    public void setFormName() {
+        if (this.appr_form_no != null) {
+            switch (this.appr_form_no .intValue()) {
+                case 1:
+                    this.formName = "휴가신청서";
+                    break;
+                case 2:
+                    this.formName = "사유서";
+                    break;
+                case 3:
+                    this.formName = "품의서";
+                    break;
+                default:
+                    this.formName = "알 수 없음"; 
+                    break;
+            }
+        } else {
+            this.formName = "알 수 없음";
+        }
+    }
 	
 	
 	public TemporaryStorage toEntity(Employee employee,ApprForm apprform) {
@@ -39,12 +59,18 @@ public class TemporaryStorageDto {
 	
 	
 	public TemporaryStorageDto toDto(TemporaryStorage temporaryStorage) {
-		return TemporaryStorageDto.builder()
-				.tem_no(temporaryStorage.getTemNo())
-                .emp_code(temporaryStorage.getEmployee().getEmpCode())
-                .appr_title(temporaryStorage.getApprTitle())
-                .appr_content(temporaryStorage.getApprContent())
-				.build();
+		TemporaryStorageDto dto = TemporaryStorageDto.builder()
+		        .tem_no(temporaryStorage.getTemNo())
+		        .emp_code(temporaryStorage.getEmployee().getEmpCode())
+		        .appr_title(temporaryStorage.getApprTitle())
+		        .appr_content(temporaryStorage.getApprContent())
+		        .appr_form_no(temporaryStorage.getApprForm().getApprFormNo()) // appr_form_no 값 설정
+		        .build();
+		    
+		    // formName 설정 메소드 호출
+		    dto.setFormName();
+		    
+		    return dto;
 	}
 	
 	

@@ -35,7 +35,7 @@ public class ApprovalDto {
     private Integer appr_holi_use_count;
     //private Long apprFormNo;
 
-    // 날짜를 문자열로 변환하는 메서드 추가
+    // 날짜를 문자열로 변환하는 메소드 추가
     public String getFormattedDraftDay() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return draft_day != null ? draft_day.format(formatter) : LocalDateTime.now().format(formatter);
