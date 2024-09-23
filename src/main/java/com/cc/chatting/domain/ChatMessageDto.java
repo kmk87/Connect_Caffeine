@@ -22,6 +22,8 @@ public class ChatMessageDto {
     private String message_content;   // 메시지 내용
     private LocalDateTime message_date; // 메시지 날짜
 
+    private String chat_type;
+    
     // ChatInvite 정보를 사용하여 ChatMessage 엔티티로 변환
     public ChatMessage toEntity(ChatInvite chatInvite) {
         return ChatMessage.builder()
