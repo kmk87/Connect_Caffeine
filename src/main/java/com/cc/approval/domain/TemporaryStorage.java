@@ -15,12 +15,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="temporary_storage")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Builder
 public class TemporaryStorage {
 	
@@ -28,10 +30,6 @@ public class TemporaryStorage {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="tem_no")
 	private Long temNo;
-	
-	@ManyToOne
-	@JoinColumn(name="appr_no")
-	private Approval approval;
 	
 	@ManyToOne
 	@JoinColumn(name="emp_code")
@@ -43,7 +41,7 @@ public class TemporaryStorage {
 	
 	@Column(name="appr_title")
 	private String apprTitle;
-	
+
 	@Column(name="appr_content")
 	private String apprContent;
 	

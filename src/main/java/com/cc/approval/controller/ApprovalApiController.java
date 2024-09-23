@@ -77,14 +77,14 @@ public class ApprovalApiController {
 	
 	// 기안서 임시저장
 	@ResponseBody
-	@PostMapping("/apprSave/{apprFormNo}")
-	public Map<String,String> updateAppr(@PathVariable ("apprFormNo") Long apprFormNo,@RequestBody TemporaryStorageDto dto){
+	@PostMapping("/apprSave")
+	public Map<String,String> updateAppr(@RequestBody TemporaryStorageDto dto){
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg","임시저장 중 오류가 발생했습니다.");
 		
 		// DTO에 appr_form_no 설정
-	    dto.setAppr_form_no(apprFormNo);
+	    //dto.setAppr_form_no(apprFormNo);
 		
 		// 서비스에서 로그인된 사용자의 empCode(사원 코드)를 가져와 DTO에 설정
 	    if (approvalService.updateApprWithEmpCode(dto)) {

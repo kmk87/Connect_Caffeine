@@ -16,6 +16,6 @@ public interface TemporaryStorageRepository extends JpaRepository<TemporaryStora
 	
 	TemporaryStorage findByApprContent(String appr_content);
 	
-	@Query("SELECT t FROM TemporaryStorage t WHERE t.approval.apprNo = :apprNo")
-    TemporaryStorage findByApprovalApprNo(@Param("apprNo") Long apprNo);
+//	@Query("SELECT t FROM TemporaryStorage t WHERE t.approval.apprNo = :apprNo")
+//    TemporaryStorage findByApprovalApprNo(@Param("apprNo") Long apprNo);
 }

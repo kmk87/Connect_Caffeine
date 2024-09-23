@@ -149,38 +149,49 @@ public class ApprovalService {
 	    
 	    dto.setEmp_code(employee.getEmpCode());  // DTO에 empCode 설정
 
-	    return updateAppr(dto) != null;  // 임시 저장 수행
+	    // 임시 저장 로직 호출 (tem_no 사용)
+	    return updateAppr(dto) != null;
+	    
 	}
 	
 	
 	
 	public TemporaryStorage updateAppr(TemporaryStorageDto dto) {
-		TemporaryStorageDto temp = selectTemporaryStorageOne(dto.getAppr_no());
+		// tem_no로 임시 저장된 데이터 조회
+	    TemporaryStorage temp = temporaryStorageRepository.findByTemNo(dto.getTem_no());
 		
-		temp.setAppr_title(dto.getAppr_title());
-		temp.setAppr_content(dto.getAppr_content());
-		
-		// Approval, Employee, ApprForm 객체를 넘겨주어야 함
-	    Approval approval = approvalRepository.findByApprNo(dto.getAppr_no());
+	    if (temp == null) {
+	        // Builder를 사용하여 객체 생성
+	        temp = TemporaryStorage.builder()
+	                .apprTitle(dto.getAppr_title())
+	                .apprContent(dto.getAppr_content())
+	                .build();
+	    } else {
+	        // 기존 객체 업데이트
+	        temp.setApprTitle(dto.getAppr_title());
+	        temp.setApprContent(dto.getAppr_content());
+	    }
+
+
+	    // Employee 및 ApprForm 객체 조회
 	    Employee employee = employeeRepository.findByempCode(dto.getEmp_code());
 	    ApprForm apprForm = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
-	    
-	    System.out.println("emp code: "+employee);
-	    
-	    TemporaryStorage temporaryStorage = temp.toEntity(approval, employee, apprForm);  // 필요한 객체들 전달
-	
+
+	    // 엔티티 변환 후 저장
+	    temp.setEmployee(employee);
+	    temp.setApprForm(apprForm);
+
+	    return temporaryStorageRepository.save(temp);
 		
-		return temporaryStorageRepository.save(temporaryStorage);
 	}
 
 
-	public TemporaryStorageDto selectTemporaryStorageOne(Long appr_no) {
-	    TemporaryStorage temp = temporaryStorageRepository.findByApprovalApprNo(appr_no); // appr_no로 조회
+	public TemporaryStorageDto selectTemporaryStorageOne(Long tem_no) {
+		TemporaryStorage temp = temporaryStorageRepository.findByTemNo(tem_no); // tem_no로 조회
 	    return TemporaryStorageDto.builder()
-	            .tem_no(temp.getTemNo())
-	            .appr_no(temp.getApproval().getApprNo())
-	            .appr_title(temp.getApproval().getApprTitle())
-	            .appr_content(temp.getApproval().getApprContent())
+	    		.tem_no(temp.getTemNo())
+	            .appr_title(temp.getApprTitle())
+	            .appr_content(temp.getApprContent())
 	            .build();
 	}
 	
