@@ -5,8 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <link th:href="@{/css/approval/tempStorage.css}" rel="stylesheet" type="text/css">
+    <!-- DataTables CSS -->
+	<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
     <title>임시저장 문서함</title>
     <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- DataTables JS -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
     <th:block layout:fragment="content">
@@ -69,7 +74,7 @@
         </aside>
      </main>
         <section class="section">
-      <div class="row">
+      	<div class="row">
         <div class="col-lg-12">
 
           <div class="card">
@@ -79,7 +84,7 @@
               
 
               <!-- Table with stripped rows -->
-              <table class="table datatable">
+              <table class="table" id="page_list">
                 <thead>
                   <tr>
                     <th>순번</th>
@@ -91,22 +96,45 @@
                 <tbody>
     				<tr th:each="temp, iterStat : ${tempDtoList}" th:onclick="|location.href='@{/temporaryStorage/{no}(no=${temp.tem_no})}'|">
 						<td th:text="${iterStat.index + 1}"></td>
-        				<!-- <td th:text="${temp.apprForm.appr_form_no}"></td> -->
         				<td th:text="${temp.formName}"></td>
         				<td th:text="${temp.appr_title}"></td>
-        				<!-- <td th:text="${temp.appr_content}"></td> -->
-        				<!-- <td th:text="${temp.apprStatus}"></td> -->
     				</tr>
 				</tbody>
               </table>
-              <!-- End Table with stripped rows -->
-
+            
             </div>
           </div>
 
         </div>
       </div>
     </section>
+        <script>
+        $(document).ready(function() {   
+	       	$('#page_list').DataTable({
+	       		"lengthChange": false,
+	           "searching": true,      // 검색 활성화
+	           "responsive": true,
+	           "language": {
+	               url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json' // 한국어 번역 적용
+	           },
+	           "initComplete": function() {
+	               // 한국어 번역 로드 후 paginate 옵션 덮어쓰기
+	               var table = this.api();
+	               table.settings()[0].oLanguage.oPaginate.sPrevious = "<<";
+	               table.settings()[0].oLanguage.oPaginate.sNext = ">>";
+	           },
+	           "pagingType": "simple_numbers",
+	           "pageLength": 5,              // 한 페이지에 보여질 항목 수 설정
+	           "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)
+	           "columnDefs": [
+	               { "orderable": false, "targets": 1 },  // 1번째(결재양식) 컬럼의 정렬 비활성화
+	               { "orderable": false, "targets": 2 }
+	           ]
+	           
+	       	});
+       
+   		});
+		</script>
         </th:block>
 </body>
 </html>

@@ -33,10 +33,13 @@ public class ApprFormService {
         String currentYear = String.format("%02d", Year.now().getValue() % 100);
 
         // 현재 팀과 연도에 맞는 가장 높은 카운트 조회
-        Integer maxCount = apprFormRepository.findMaxCountByTeamAndYear(groupNameChecked, currentYear);
+        int maxCount = apprFormRepository.findMaxCountByTeamAndYear(groupNameChecked, currentYear);
 
         // 새로운 카운트 계산 (기존 카운트 +1)
-        int newCount = (maxCount != null ? maxCount : 0) + 1;
+        int newCount = (maxCount == 0? maxCount : 0) + 1;
+        
+        System.out.println("카운트:"+newCount);
+        System.out.println("맥스카운트:"+maxCount);
 
         // 문서번호 생성
         return String.format("%s-%s-%05d", groupNameChecked, currentYear, newCount);

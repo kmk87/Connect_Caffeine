@@ -88,10 +88,10 @@
             	<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${apprFormNo}">
             	<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${memId ?: ''}">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">결재선 지정</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" id="designateBtn">결재선 지정</button>
                 <button type="button" class="btn btn-secondary" id="tempSaveBtn">임시 저장</button>
-                <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
-                <button class="btn-secondary" th:href="${approvalHome}">취소</button>
+                <input type="submit" class="btn-secondary" id="approvalBtn" name="approval" value="상신">
+                <button class="btn-secondary" id="cancelBtn">취소</button>
                 
 			<div class="form-section">
 				
@@ -249,7 +249,7 @@
     <!-- JavaScript for Form Submission -->
     <script>
    
-    const form = document.getElementById("draftAdd");
+    
 	// 로그인한 사용자 정보 가져오기
 	document.addEventListener('DOMContentLoaded',function(){
 	const empNum = document.getElementById('empNum').value;
@@ -257,12 +257,14 @@
 	});
 	
 	const emp = document.getElementById('empNum').value;
+
 	
 	// 기안서 등록
-	form.addEventListener('submit',(e)=>{
-			e.preventDefault();
+	// 상신 버튼의 유효성 검사 및 제출 처리
+	document.getElementById("draftAdd").addEventListener("submit", function(e) {
+		e.preventDefault();
 			
-			
+		let form = this;
 		let vali_check = true;
 		let vali_text = "";
 		
@@ -388,7 +390,7 @@
 	});
 	
 	
-	// 임시저장
+	// 임시 저장 버튼 이벤트 리스너
 	document.getElementById("tempSaveBtn").addEventListener("click",function(){
 		const apprFormNo = document.getElementById("appr_form_no").value;
 		const empNum = document.getElementById("empNum").value;
@@ -435,6 +437,13 @@
 			}
 		});
 		
+	});
+	
+	// 취소 버튼 이벤트 리스너
+	document.getElementById("cancelBtn").addEventListener("click", function() {
+	    if (confirm("작성을 취소하시겠습니까?")) {
+	        location.href = "/approvalHome";  // 취소 시 홈으로 이동
+	    }
 	});
 	
 	

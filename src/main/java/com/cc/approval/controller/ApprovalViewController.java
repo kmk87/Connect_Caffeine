@@ -118,10 +118,7 @@ public class ApprovalViewController {
 		// 데이터베이스에서 결재 진행 문서 리스트를 조회
         List<TemporaryStorageDto> tempDtoList = approvalService.getAllTemporaryStorage(); 
         
-        // 상위 5개 항목만 가져오기-내림차순
-        List<TemporaryStorageDto> top5TempDtoList = tempDtoList.size() > 5 ? tempDtoList.subList(0, 5) : tempDtoList;
-        
-        model.addAttribute("tempDtoList", top5TempDtoList); 
+        model.addAttribute("tempDtoList", tempDtoList); 
 
 		return "approval/apprTempStorage"; 
 	}
@@ -140,6 +137,9 @@ public class ApprovalViewController {
 
 	    // 결재 관련 정보(문서번호, 팀명, 기안일, 기안자)를 가져옴
 	    ApprovalDto approvalDto = approvalService.selectapprovalOne(temporaryStorageDto.getAppr_form_no());
+	    
+	    
+	    
 	    
 		model.addAttribute("apprDto",approvalDto);
 		model.addAttribute("tempDto",temporaryStorageDto);

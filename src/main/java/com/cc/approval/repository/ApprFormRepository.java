@@ -22,6 +22,6 @@ public interface ApprFormRepository extends JpaRepository<ApprForm,Long>{
 	@Query("SELECT COALESCE(MAX(CAST(SUBSTRING(a.apprDocuNo, LENGTH(:groupName) + 6, 3) AS int)), 0) " +
 	           "FROM ApprForm a " +
 	           "WHERE a.apprDocuNo LIKE CONCAT(:groupName, '-', LPAD(:year, 2, '0'), '-%')")
-	    Integer findMaxCountByTeamAndYear(@Param("groupName") String teamName, @Param("year") String year);
+	   int findMaxCountByTeamAndYear(@Param("groupName") String teamName, @Param("year") String year);
 
 }

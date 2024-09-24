@@ -67,7 +67,8 @@ public class ApprovalService {
 				.apprWriterName(emp.getEmpName())
 				.apprForm(apprFo)
 				.employee(emp)
-				.apprState(dto.getAppr_state() != null ? dto.getAppr_state() : "s")
+				.apprState(dto.getAppr_state() != null ? dto.getAppr_state() : "S")
+				.isDeleted(dto.getIs_deleted() != null ? dto.getIs_deleted() : "N")
 				.build();
 		
 		

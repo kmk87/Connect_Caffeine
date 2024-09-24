@@ -33,12 +33,19 @@ public class ApprovalDto {
     private String formName;
     private String group_name;
     private Integer appr_holi_use_count;
-    //private Long apprFormNo;
+    private String is_deleted;
 
     // 날짜를 문자열로 변환하는 메소드 추가
     public String getFormattedDraftDay() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return draft_day != null ? draft_day.format(formatter) : LocalDateTime.now().format(formatter);
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // draft_day가 null이면 현재 날짜로 설정
+        if (draft_day == null) {
+            draft_day = LocalDateTime.now();
+        }
+
+        // draft_day를 문자열로 변환
+        return draft_day.format(formatter);
     }
     
     // 결재 양식 이름 설정 메소드
@@ -89,26 +96,12 @@ public class ApprovalDto {
 				.apprContent(appr_content)
 				.draftDay(draft_day)
 				.apprDate(appr_date)
+				.isDeleted(is_deleted)
 				.employee(employee) 
                 .apprForm(apprForm)
 				.build();
 	}
 	
-//	public ApprovalDto toDto(Approval approval) {
-//		return ApprovalDto.builder()
-//				.appr_no(approval.getApprNo())
-//				.appr_state(approval.getApprState())
-//				.appr_title(approval.getApprTitle())
-//				.appr_content(approval.getApprContent())
-//				.draft_day(approval.getDraftDay())
-//				.appr_date(approval.getApprDate())
-//				.appr_writer_code(approval.getEmployee() != null ? approval.getEmployee().getEmpCode() : null)  // Employee의 empCode 설정
-//                .appr_writer_name(approval.getEmployee() != null ? approval.getEmployee().getEmpName() : null)  // Employee의 empName 설정
-//                .appr_docu_no(approval.getApprForm() != null ? approval.getApprForm().getApprDocuNo() : null)   // ApprForm의 apprDocuNo 설정
-//                .appr_form_no(approval.getApprForm().getApprFormNo())
-//                .build(); 
-//		
-//	}
 	
 	public ApprovalDto toDto(Approval approval) {
 	    ApprovalDto dto = ApprovalDto.builder()
@@ -118,6 +111,7 @@ public class ApprovalDto {
 	            .appr_content(approval.getApprContent())
 	            .draft_day(approval.getDraftDay())
 	            .appr_date(approval.getApprDate())
+	            .is_deleted(approval.getIsDeleted())
 	            .appr_writer_code(approval.getEmployee() != null ? approval.getEmployee().getEmpCode() : null)  // Employee의 empCode 설정
 	            .appr_writer_name(approval.getEmployee() != null ? approval.getEmployee().getEmpName() : null)  // Employee의 empName 설정
 	            .appr_docu_no(approval.getApprForm() != null ? approval.getApprForm().getApprDocuNo() : null)   // ApprForm의 apprDocuNo 설정
