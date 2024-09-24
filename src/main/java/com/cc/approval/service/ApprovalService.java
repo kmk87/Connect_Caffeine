@@ -225,6 +225,18 @@ public class ApprovalService {
 		return new TemporaryStorageDto().toDto(temporaryStorage);
 	}
 	
+	// 임시저장함 삭제
+	public int deleteTempStorage(Long tem_no) {
+		int result = 0;
+		try {
+			temporaryStorageRepository.deleteById(tem_no);
+			result = 1;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	
 	
 }

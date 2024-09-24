@@ -89,7 +89,7 @@
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${memId ?: ''}">
                 <button class="btn-primary">결재선 지정</button>
-                <button class="btn-secondary">삭제</button>
+                <button class="btn-secondary" th:onclick="tempDelete([[${tempDto.tem_no}]]);">삭제</button>
                 <input type="submit" class="btn-secondary" id="approval" name="approval" value="재상신">
                 <button class="btn-secondary">취소</button>
                 
@@ -209,28 +209,47 @@
         </main>
     </th:block>
     <script>
-    	/* function deleteTemp(){
-    		const approvalId = document.getElementById('empNum').value;
+    
+    	const tempDelete =  function(temNo){
+    		const emp = document.getElementById('empNum').value;
     		const csrfToken = document.getElementById('csrf_token').value;
-    		
-    		fetch('/disable/${approvalId}',{
-    			method: 'POST',
-    			headers: {
-        			'Content-type': 'application/json',
-        			'x-CSRF-TOKEN': csrfToken
-    			},
-    			body: JSON.stringift({id: approvalId})
-    		})
-    		.then(response => {
-    			if(response.ok){
-    				alert('기안서가 삭제되었습니다.');
-    				window.location.href='/approval/approvalHome';
-    			} else{
-    				throw new Error('기안서 삭제에 실패하였습니다.');
-    			}
-    		});
-    	
-    		} */
+    		if(confirm("정말 삭제하시겠습니까?")){
+    			let obj ={};
+    			obj.appr_writer_code = emp;
+    			const jsonData = JSON.stringify(obj);
+	    		fetch('/deleteTemp/'+temNo,{
+	    			method: 'DELETE',
+	    			headers : {
+						"Content-Type": "application/json;charset=utf-8",
+						"Accept": "application/json",
+						'X-CSRF-TOKEN': csrfToken
+					},
+					body: jsonData,
+	    		})
+	    		.then(response => response.json())
+	    		.then(data => {
+	    			if(data.res_code == '200'){
+	    				Swal.fire({
+	    					icon : 'success',
+	    					title : '성공',
+	    					text : data.res_msg,
+	    					confirmButtonText : '닫기'
+	    				}).then((result)=>{
+	    					location.href='/apprTempStorage';
+	    				});
+	    			}else{
+	    				Swal.fire({
+	    					icon: 'error',
+	    					title : '오류',
+	    					text : data.res_msg,
+	    					confirmButtonText : '닫기'
+	    				});
+	    			}
+	    		})
+	    		
+	    	
+	    		} 
+    		}
     	
     </script>
 </body>
