@@ -37,7 +37,15 @@
   <th:block layout:fragment="content">
 	   <main id="main" class="main">
 		   <div class="sub-sidebar" id="sub-sidebar">
-		    	<span class="subside_title">캘린더</span><br><br>
+		    	<div class="pagetitle">
+			      <h1>일정관리</h1>
+			      <nav>
+			        <ol class="breadcrumb">
+			          <li class="breadcrumb-item"><a href="index.html">메인화면</a></li>
+			          <li class="breadcrumb-item active">일정관리</li>
+			        </ol>
+			      </nav>
+			    </div><!-- End Page Title -->
 			      <!-- Vertically centered Modal -->
 	              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered" style="margin-left:50px">
 	               일정 등록
@@ -166,22 +174,30 @@
 			 	</div>
 	             
 				<div class="schedule-filters">
-				    <label class="filter-item">
-				        <input type="checkbox" class="event-filter" value="1"> 내 일정
-				    </label>
+					<div>
+					   <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="1"> 내 일정
+					   </label>
 				       <span class="color-circle" th:style="'background-color: ' + ${userColors[1]}"></span>
-				    <label class="filter-item">
-				        <input type="checkbox" class="event-filter" value="2"> 전사 일정
-				    </label>
+				    </div>
+				    <div>
+					    <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="2"> 전사 일정
+					    </label>
 				        <span class="color-circle" th:style="'background-color: ' + ${userColors[2]}"></span>
-				    <label class="filter-item">
-				        <input type="checkbox" class="event-filter" value="3"> 부서 일정
-				    </label>
+				    </div>
+				    <div>
+					    <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="3"> 부서 일정
+					    </label>
 				        <span class="color-circle" th:style="'background-color: ' + ${userColors[3]}"></span>
-				    <label class="filter-item">
-				        <input type="checkbox" class="event-filter" value="4"> 팀 일정
-				    </label>
+				    </div>
+				    <div>
+					    <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="4"> 팀 일정
+					    </label>
 				        <span class="color-circle" th:style="'background-color: ' + ${userColors[4]}"></span>
+					</div>
 				</div>
 				<!-- 모달 형식의 팔레트 -->
 				<div class="color-palette-modal" style="display: none;">
