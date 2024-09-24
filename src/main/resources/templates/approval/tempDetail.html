@@ -73,24 +73,24 @@
         </aside>
         
         <!-- 메인 콘텐츠 -->
-            <div class="form-header">
-                <h2 th:if="${apprDto.appr_form_no == 1}">휴가신청서</h2>
-                <h2 th:if="${apprDto.appr_form_no == 2}">사유서</h2>
-                <h2 th:if="${apprDto.appr_form_no == 3}">품의서</h2>
+           <div class="form-header">
+                <h2 th:if="${tempDto.appr_form_no == 1}">휴가신청서</h2>
+                <h2 th:if="${tempDto.appr_form_no == 2}">사유서</h2>
+                <h2 th:if="${tempDto.appr_form_no == 3}">품의서</h2>
             </div>
         <div class="approval-form">
         	<div class="pagetitle">
-      			<h1 th:if="${apprDto.appr_form_no == 1}">휴가신청서</h1>
-                <h1 th:if="${apprDto.appr_form_no == 2}">사유서</h1>
-                <h1 th:if="${apprDto.appr_form_no == 3}">품의서</h1>
+      			<h1 th:if="${tempDto.appr_form_no == 1}">휴가신청서</h1>
+                <h1 th:if="${tempDto.appr_form_no == 2}">사유서</h1>
+                <h1 th:if="${tempDto.appr_form_no == 3}">품의서</h1>
       		</div>
             <form id="draftAdd">
-            	<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${apprFormNo}">
+            	<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${appr_form_no}">
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${memId ?: ''}">
                 <button class="btn-primary">결재선 지정</button>
                 <button class="btn-secondary">삭제</button>
-                <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
+                <input type="submit" class="btn-secondary" id="approval" name="approval" value="재상신">
                 <button class="btn-secondary">취소</button>
                 
 			<div class="form-section">
@@ -136,10 +136,11 @@
        			 	</div>
     			</div>
 
+
 				
 				
                 <!-- 휴가신청서 폼 -->
-                <div th:if="${apprDto.appr_form_no == 1}">
+                <div th:if="${tempDto.appr_form_no == 1}">
                     <div class="form-group">
                         <label for="leave-type">휴가 종류</label>
                         <select id="leave-type" name="leave-type">
@@ -171,7 +172,7 @@
                         </div>
 
                         <!-- 사유서 폼 -->
-                        <div th:if="${apprDto.appr_form_no == 2}">
+                        <div th:if="${tempDto.appr_form_no == 2}">
                             <div class="form-group">
                                 <label for="subject">제목</label>
                                 <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" disabled>
@@ -188,7 +189,7 @@
                         </div>
 
                         <!-- 품의서 폼 -->
-                        <div th:if="${apprDto.appr_form_no == 3}">
+                        <div th:if="${tempDto.appr_form_no == 3}">
                             <div class="form-group">
                                 <label for="subject">제목</label>
                                 <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" disabled>

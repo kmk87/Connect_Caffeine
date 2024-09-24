@@ -138,17 +138,18 @@ public class ApprovalService {
 	public boolean updateApprWithEmpCode(TemporaryStorageDto dto) {
 	    // 로그인된 사용자의 memId(empAccount)를 통해 empCode 가져오기
 	    String memId = SecurityContextHolder.getContext().getAuthentication().getName(); // 로그인된 사용자 ID
-	    System.out.println("서비스memId: "+memId);
+
 	    
 	    Employee employee = employeeRepository.findByempAccount(memId);
-	    System.out.println("서비스employee: "+employee);
+
 	    
 	    if (employee == null) {
 	        return false;  // 사원 정보가 없으면 false 반환
 	    }
 	    
 	    dto.setEmp_code(employee.getEmpCode());  // DTO에 empCode 설정
-
+	    
+	    
 	    // 임시 저장 로직 호출 (tem_no 사용)
 	    return updateAppr(dto) != null;
 	    
@@ -160,6 +161,8 @@ public class ApprovalService {
 		// tem_no로 임시 저장된 데이터 조회
 	    TemporaryStorage temp = temporaryStorageRepository.findByTemNo(dto.getTem_no());
 		
+	   
+
 	    if (temp == null) {
 	        // Builder를 사용하여 객체 생성
 	        temp = TemporaryStorage.builder()
@@ -171,15 +174,20 @@ public class ApprovalService {
 	        temp.setApprTitle(dto.getAppr_title());
 	        temp.setApprContent(dto.getAppr_content());
 	    }
-
+	    
+	   
 
 	    // Employee 및 ApprForm 객체 조회
 	    Employee employee = employeeRepository.findByempCode(dto.getEmp_code());
 	    ApprForm apprForm = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
-
+	    
+	   
+	    
 	    // 엔티티 변환 후 저장
 	    temp.setEmployee(employee);
 	    temp.setApprForm(apprForm);
+	    
+	   
 
 	    return temporaryStorageRepository.save(temp);
 		

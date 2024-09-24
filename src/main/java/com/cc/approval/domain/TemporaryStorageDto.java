@@ -77,5 +77,7 @@ public class TemporaryStorageDto {
 	}
 	
 	
+	//System.out.println("temporaryStorageDto.appr_form_no: " + temporaryStorageDto.getAppr_form_no());
+	
 	
 }

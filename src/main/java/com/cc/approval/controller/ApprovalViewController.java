@@ -141,7 +141,6 @@ public class ApprovalViewController {
 	    // 결재 관련 정보(문서번호, 팀명, 기안일, 기안자)를 가져옴
 	    ApprovalDto approvalDto = approvalService.selectapprovalOne(temporaryStorageDto.getAppr_form_no());
 	    
-	    System.out.println("approvalDto : "+approvalDto);
 		model.addAttribute("apprDto",approvalDto);
 		model.addAttribute("tempDto",temporaryStorageDto);
 		return "approval/tempDetail";

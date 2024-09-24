@@ -21,6 +21,7 @@ public interface TemporaryStorageRepository extends JpaRepository<TemporaryStora
 	
 	
 	
+	
 	@Query("SELECT a FROM TemporaryStorage a WHERE a.employee.empAccount = :memId ORDER BY a.temNo DESC")
     List<TemporaryStorage> findTop5ByEmployeeEmpAccountOrderByTemNoDesc(@Param("memId") String memId);
 	
