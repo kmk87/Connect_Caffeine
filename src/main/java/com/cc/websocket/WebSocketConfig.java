@@ -1,4 +1,4 @@
-package com.cc.websocket.chatting;
+package com.cc.websocket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -7,23 +7,25 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
+import com.cc.websocket.chatting.ChatWebSocketHandler;
+
 @Configuration
 @EnableWebSocket
-public class ChatWebSocketConfig implements WebSocketConfigurer{
+public class WebSocketConfig implements WebSocketConfigurer{
 	
 	private final ChatWebSocketHandler chatWebSocketHandler;
 	
 	@Autowired
-	public ChatWebSocketConfig(ChatWebSocketHandler chatWebSocketHandler) {
+	public WebSocketConfig(ChatWebSocketHandler chatWebSocketHandler) {
 		this.chatWebSocketHandler = chatWebSocketHandler;
 	}
 	
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry
-			.addHandler(chatWebSocketHandler, "/chatting")
-			.addInterceptors(new HttpSessionHandshakeInterceptor())
-			.setAllowedOrigins("*");
+	    registry
+	        .addHandler(chatWebSocketHandler, "/chatting")
+	        .setAllowedOrigins("*")
+	        .addInterceptors(new HttpSessionHandshakeInterceptor());
 	}
 	
 }

@@ -46,20 +46,20 @@
                                   </div>
                               </div>
                           		
-                              <div class="chat chat-left">
+                              <div class="chat chat-left" th:if="${chatMessage.emp_code != #authentication.principal.dto.emp_code}">
+                                  	  <span th:text="${chatMessage.emp_name}"></span>
                                   <div class="chat-body">
                                       <div class="chat-message"
-                                      th:if="${chatMessage.emp_code != #authentication.principal.dto.emp_code}"
                                       th:text="${chatMessage.message_content}"></div>
                                   </div>
                               </div>
                           </div>
+                              	  <input type="hidden" id="room_no" name="room_no" th:value="${chatMessage.room_no}">
                       </div>
                       <div class="card-footer">
                           <div class="message-form d-flex flex-direction-column align-items-center">
                               <a href="http://" class="black"><i data-feather="smile"></i></a>
                               <div class="d-flex flex-grow-1 ml-4">
-                              	  <input type="hidden" id="room_no" name="room_no" th:value="${chatMessage.room_no}">
                               	  <input type="hidden" id="emp_code" name="emp_code" th:value="${#authentication.principal.dto.emp_code}">
                                   <input type="text" id="txt_msg" class="form-control" placeholder="메세지를 입력하세요.">
                                   <input type="button" class="btn btn-primary rounded-pill" id="send_btn" value="보내기">
@@ -71,58 +71,93 @@
           </div>
       </section>
       <script type="text/javascript">
-      		const websocket = new WebSocket("ws://localhost:8100/chatting");
-      		
-      		websocket.onmessage = (response) => {
-      			const resp = JOSN.parse(response.data);
-      			if(resp.res_code == '200'){
-      				const roomNo = document.getElementById("room_no").value;
-      				
-      				if(roomNo == resp.room_no){
-      					printMsg(resp.message_content);
-      				}
-      			}else{
-  					alert(resp.res_msg);
-  				}
-      		}
-      		
-      		const printMsg = function(msg){
-      			const div = document.createElement("div");
-      			const textNode = document.createTextNode(msg);
-      			div.appendChild(textNode);
-      			div.className += 'chat-message';
-      			document.getElementById("chat-container").appendChild(div);
-      		}
-      		
-      		document.getElementById('send_btn').addEventListner('click',function(){
-      			const msg = document.getElementById('txt_msg').value;
-      			const obj = setMsgObj('msg',msg);
-      			websocket.send(JSON.stringify(obj));
-      			document.getElementById('txt_msg').value="";
-      		});
-      		
-      		websocket.onclose = (response) =>{
-      			const obj = setMsgObj('open','');
-      			websocket.send(JSON.stringify(obj));
-      		}
-      		
-      		websocket.onopen = (data) =>{
-      			const obj = setMsgObj('open','');
-      			websocket.send(JSON.stringify(obj));
-      		}
-      		
-      		let setMsgObj = function(chatType,chatMsg){
-      			const sender = document.getElementById("emp_code").value;
-      			const roomNo = document.getElementById("room_no").value;
-      			const obj = {
-      					chat_type : chatType,
-      					message_content : chatMsg,
-      					emp_code : sender,
-      					room_no : roomNo
-      			}
-      			return obj;
-      		}
-      </script>
+    let websocket;
+
+    // WebSocket을 열고 연결이 완료되면 메시지를 전송하는 함수
+    function connectAndSendMessage(msg) {
+        // WebSocket 객체를 새로 생성하고 연결 시도
+        websocket = new WebSocket("ws://localhost:8100/chatting");
+
+        // WebSocket 연결이 열렸을 때 실행될 이벤트
+        websocket.onopen = () => {
+            console.log("WebSocket 연결 성공");
+            const obj = setMsgObj('msg', msg);
+            websocket.send(JSON.stringify(obj));
+            document.getElementById('txt_msg').value = "";
+        };
+
+        // WebSocket 메시지를 수신했을 때 실행될 이벤트
+        websocket.onmessage = (response) => {
+    		const resp = JSON.parse(response.data);
+    		if (resp.res_code == '200') {
+        		const roomNo = document.getElementById("room_no").value;
+        		if (roomNo == resp.room_no) {
+            		printMsg(resp.message_content);
+        			}
+    			}else {
+        			alert(resp.res_msg);
+    				}
+				};
+
+
+        // WebSocket 연결이 닫혔을 때 실행될 이벤트
+        websocket.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
+
+        // WebSocket 연결에서 오류가 발생했을 때 실행될 이벤트
+        websocket.onerror = (error) => {
+            console.error("WebSocket 오류 발생:", error);
+            alert("WebSocket 오류가 발생했습니다.");
+        };
+    }
+
+    	// 메시지를 화면에 출력하는 함수
+    	const printMsg = function(msg) {
+    	const div = document.createElement("div");
+    	const textNode = document.createTextNode(msg);
+    	div.appendChild(textNode);
+    	div.className += 'chat-message'; // 메시지 스타일 설정
+    	document.getElementById("chat-container").appendChild(div);
+
+    	// 새로운 메시지로 스크롤 이동
+    	document.getElementById("chat-container").scrollTop = document.getElementById("chat-container").scrollHeight;
+	};
+
+
+    // 메시지 전송 버튼 클릭 이벤트
+    document.getElementById('send_btn').addEventListener('click', function () {
+        const msg = document.getElementById('txt_msg').value;
+        if (msg.trim() === "") {
+            alert("메시지를 입력하세요.");
+            return;
+        }
+
+        // WebSocket이 열려 있는 경우 바로 메시지를 전송
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            const obj = setMsgObj('msg', msg);
+            websocket.send(JSON.stringify(obj));
+            document.getElementById('txt_msg').value = "";
+        } else {
+            // WebSocket이 닫혀 있는 경우 새로 연결하고 메시지를 전송
+            connectAndSendMessage(msg);
+        }
+    });
+
+    // 메시지 객체를 생성하는 함수
+    let setMsgObj = function (chatType, chatMsg) {
+        const empCode = document.getElementById("emp_code").value;
+        const roomNo = document.getElementById("room_no").value;
+        const obj = {
+            chat_type: chatType,
+            message_content: chatMsg,
+            emp_code: empCode,
+            room_no: roomNo
+        };
+        return obj;
+    }
+</script>
+
   </main>
 
 </th:block>

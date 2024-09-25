@@ -7,5 +7,5 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		Employee findByempCode(Long emp_code);
 		
 		Employee findByempAccount(String emp_account);
-	
+		
 }

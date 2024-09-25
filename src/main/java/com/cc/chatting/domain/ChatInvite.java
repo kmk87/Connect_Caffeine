@@ -23,7 +23,8 @@ import lombok.Setter;
 @Getter
 @Builder
 public class ChatInvite {
-
+	
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invite_no")
@@ -36,6 +37,7 @@ public class ChatInvite {
     @ManyToOne
     @JoinColumn(name = "room_no", nullable = false)
     private ChatRoom chatRoom;
+
 
 }
 

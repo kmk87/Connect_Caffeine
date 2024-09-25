@@ -28,23 +28,29 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChatMessage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // AUTO_INCREMENT로 설정된 PK
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "message_no")
     private Long messageNo;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-        @JoinColumn(name = "emp_code", referencedColumnName = "emp_code", insertable = false, updatable = false),
-        @JoinColumn(name = "room_no", referencedColumnName = "room_no", insertable = false, updatable = false)
-    })
-    private ChatInvite chatInvite;
-    
-    
+
+    @Column(name = "emp_code")
+    private Long empCode;
+
+    @Column(name = "room_no")
+    private Long roomNo;
+
     @Column(name = "message_content")
     private String messageContent;
 
     @Column(name = "message_date")
     @CreationTimestamp
     private LocalDateTime messageDate;
+
+    // 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+        @JoinColumn(name = "emp_code", referencedColumnName = "emp_code", insertable = false, updatable = false),
+        @JoinColumn(name = "room_no", referencedColumnName = "room_no", insertable = false, updatable = false)
+    })
+    private ChatInvite chatInvite;
 }

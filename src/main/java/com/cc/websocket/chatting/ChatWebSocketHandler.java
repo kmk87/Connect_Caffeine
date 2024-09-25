@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,59 +22,57 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ChatWebSocketHandler extends TextWebSocketHandler{
 	
 	private final ChattingService chattingService;
-	private Map<String, List<WebSocketSession>> roomClients = new HashMap<>();
-	
-	@Autowired
-	public ChatWebSocketHandler(ChattingService chattingService) {
-		this.chattingService = chattingService;
-	}
-	
-	@Override
-	public void afterConnectionEstablished(WebSocketSession session) throws Exception{
-		
-	}
-	
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		String payload = message.getPayload();
-		ObjectMapper objectMapper = new ObjectMapper();
-		ChatMessageDto msg = objectMapper.readValue(payload, ChatMessageDto.class);
-		
-		Map<String, String> resultMap = new HashMap<String, String>();
-		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "채팅 전솔중 오류가 발생하였습니다.");
-		
-		switch(msg.getChat_type()) {
-		case "open" :
-			roomClients.computeIfAbsent(String.valueOf(msg.getRoom_no()), k -> new ArrayList<>()).add(session);
-			break;
-		case "msg" :
-			if(chattingService.createChatMessage(msg) > 0) {
-				resultMap.put("res_code", "200");
-				resultMap.put("message_content", msg.getMessage_content());
-				resultMap.put("emp_code", String.valueOf(msg.getEmp_code()));
-				resultMap.put("roomNo", String.valueOf(msg.getEmp_code()));
-				
-				TextMessage resultMsg
-				= new TextMessage(objectMapper.writeValueAsString(resultMap));
-				
-				List<WebSocketSession> sessions = roomClients.get(String.valueOf(msg.getRoom_no()));
-				if(session != null) {
-					for(WebSocketSession clientSession : sessions) {
-						if(clientSession.isOpen()) {
-							clientSession.sendMessage(resultMsg);
-						}
-					}
-				}
-				break;
-			}
-		}
-	}
-	@Override
-	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		roomClients.values().removeAll(Arrays.asList(session));
-		System.out.println("=== 삭제 확인 === ");
-		for(String userId : roomClients.keySet()) {
-			System.out.println(userId + " : " + roomClients);
-		}
-	}
+    private final WebSocketSessionManager sessionManager;
+
+    @Autowired
+    public ChatWebSocketHandler(ChattingService chattingService, WebSocketSessionManager sessionManager) {
+        this.chattingService = chattingService;
+        this.sessionManager = sessionManager;
+    }
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        Long empCode = getEmpCodeFromSession(session); // 세션에서 empCode 추출 로직 구현 필요
+        sessionManager.addSession(empCode, session);
+        System.out.println("WebSocket 연결됨: " + empCode);
+    }
+
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        String payload = message.getPayload();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ChatMessageDto msg = objectMapper.readValue(payload, ChatMessageDto.class);
+
+        switch (msg.getChat_type()) {
+            case "open":
+                // 특정 방에 세션 추가
+                sessionManager.addSessionToRoom(String.valueOf(msg.getRoom_no()), session);
+                break;
+            case "msg":
+                // 메시지 전송 및 저장 로직
+                if (chattingService.createChatMessage(msg) > 0) {
+                    // 방에 속한 사용자들에게 메시지 전송
+                    List<WebSocketSession> sessions = sessionManager.getSessionsInRoom(String.valueOf(msg.getRoom_no()));
+                    TextMessage resultMsg = new TextMessage(objectMapper.writeValueAsString(msg));
+                    for (WebSocketSession clientSession : sessions) {
+                        if (clientSession.isOpen()) {
+                            clientSession.sendMessage(resultMsg);
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        Long empCode = getEmpCodeFromSession(session);
+        sessionManager.removeSession(empCode);
+        System.out.println("WebSocket 연결 종료: " + empCode);
+    }
+
+    private Long getEmpCodeFromSession(WebSocketSession session) {
+        // 세션에서 사용자 ID(empCode)를 추출하는 로직 구현 필요
+        return Long.valueOf(session.getAttributes().get("empCode").toString());
+    }
 }

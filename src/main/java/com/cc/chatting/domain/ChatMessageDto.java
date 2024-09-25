@@ -16,33 +16,31 @@ import lombok.ToString;
 @ToString
 @Builder
 public class ChatMessageDto {
-    private Long message_no;         // 메시지 번호
+	private Long message_no;         // 메시지 번호
     private Long emp_code;           // 사원 코드
     private Long room_no;            // 방 번호
-    private String message_content;   // 메시지 내용
+    private String message_content;  // 메시지 내용
     private LocalDateTime message_date; // 메시지 날짜
+    private String chat_type;        // 채팅 타입 (ex: 메시지 전송, 방 입장 등)
+    private String emp_name;
 
-    private String chat_type;
-    
-    // ChatInvite 정보를 사용하여 ChatMessage 엔티티로 변환
-    public ChatMessage toEntity(ChatInvite chatInvite) {
+    // DTO에서 ChatMessage 엔티티로 변환
+    public ChatMessage toEntity() {
         return ChatMessage.builder()
                 .messageNo(message_no) // 메시지 번호
-                .chatInvite(chatInvite) // ChatInvite 설정
-                .messageContent(message_content) // 메시지 내용
-                .messageDate(message_date) // 메시지 날짜
+                .roomNo(room_no) // 방 번호 설정
+                .empCode(emp_code) // 사원 코드 설정
+                .messageContent(message_content) // 메시지 내용 설정
+                .messageDate(message_date != null ? message_date : LocalDateTime.now()) // 메시지 날짜 설정
                 .build();
     }
 
-    // ChatMessage 엔티티를 DTO로 변환
+    // ChatMessage 엔티티에서 DTO로 변환
     public static ChatMessageDto toDto(ChatMessage chatMessage) {
-        ChatInvite chatInvite = chatMessage.getChatInvite();
         return ChatMessageDto.builder()
                 .message_no(chatMessage.getMessageNo()) // 메시지 번호
-                .emp_code(chatInvite != null && chatInvite.getEmployee() != null ? 
-                         chatInvite.getEmployee().getEmpCode() : null) // ChatInvite에서 사원 코드 추출
-                .room_no(chatInvite != null && chatInvite.getChatRoom() != null ? 
-                         chatInvite.getChatRoom().getRoomNo() : null) // ChatInvite에서 방 번호 추출
+                .emp_code(chatMessage.getEmpCode()) // 사원 코드
+                .room_no(chatMessage.getRoomNo()) // 방 번호
                 .message_content(chatMessage.getMessageContent()) // 메시지 내용
                 .message_date(chatMessage.getMessageDate()) // 메시지 날짜
                 .build();
