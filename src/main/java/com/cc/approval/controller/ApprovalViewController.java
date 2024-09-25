@@ -42,12 +42,12 @@ public class ApprovalViewController {
 	 @GetMapping("/approvalHome")
 	 public String showApprovalHome(Model model) {
 	        // 데이터베이스에서 결재 진행 문서 리스트를 조회
-	        List<ApprovalDto> apprDtoList = approvalService.getAllApprovals(); 
+	        List<ApprovalDto> top5Approvals = approvalService.getAllApprovals(5); 
 	        
 	        // 상위 5개 항목만 가져오기-내림차순
-	        List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 5 ? apprDtoList.subList(0, 5) : apprDtoList;
+	        //List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 5 ? apprDtoList.subList(0, 5) : apprDtoList;
 	        
-	        model.addAttribute("apprDtoList", top5ApprDtoList); 
+	        model.addAttribute("apprDtoList", top5Approvals); 
 
 	        
 	        return "approval/approvalHome"; 
@@ -116,7 +116,7 @@ public class ApprovalViewController {
 	@GetMapping("/apprTempStorage")
 	public String showApprTempStorage(Model model) {
 		// 데이터베이스에서 결재 진행 문서 리스트를 조회
-        List<TemporaryStorageDto> tempDtoList = approvalService.getAllTemporaryStorage(); 
+        List<TemporaryStorageDto> tempDtoList = approvalService.getAllTemporaryStorage(10); 
         
         model.addAttribute("tempDtoList", tempDtoList); 
 
@@ -149,8 +149,14 @@ public class ApprovalViewController {
 	
 	// 기안문서함
 	@GetMapping("/draftStorage")
-	public String showDraftStorage() {
-			
+	public String showDraftStorage(Model model) {
+		// 데이터베이스에서 결재 진행 문서 리스트를 조회
+        List<ApprovalDto> top10Approvals  = approvalService.getAllApprovals(10); 
+        
+        // 상위 10개 항목만 가져오기-내림차순
+        //List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 10 ? apprDtoList.subList(0, 10) : apprDtoList;
+        
+        model.addAttribute("apprDraftDtoList", top10Approvals);
 			        
 		return "approval/draftStorage"; 
 	}

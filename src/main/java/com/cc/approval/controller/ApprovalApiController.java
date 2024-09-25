@@ -102,6 +102,8 @@ public class ApprovalApiController {
 	@ResponseBody
 	@DeleteMapping("/deleteTemp/{tem_no}")
 	public Map<String,String> deleteTempStorage(@PathVariable("tem_no") Long tem_no){
+		
+		
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("res_code", "404");
 		map.put("res_msg","삭제 중 오류가 발생했습니다.");

@@ -73,13 +73,13 @@ public class ApprovalDto {
     // 결재 상태를 문자열로 변환하는 메소드
     public String getApprStateDisplay() {
         switch (this.appr_state) {
-            case "s":
+            case "S":
                 return "결재대기";
-            case "r":
+            case "R":
                 return "반려";
-            case "c":
+            case "C":
                 return "결재완료";
-            case "a":
+            case "A":
                 return "1차승인";
             default:
                 return "알 수 없음"; 

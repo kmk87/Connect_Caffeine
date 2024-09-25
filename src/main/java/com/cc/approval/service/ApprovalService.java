@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -96,14 +98,19 @@ public class ApprovalService {
 
 	
 	// 전자결재 메인 결재대기리스트 조회
-	public List<ApprovalDto> getAllApprovals() {
+	public List<ApprovalDto> getAllApprovals(int size) {
 		// 현재 로그인한 사용자의 ID 가져오기
 	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 	    
+	    // 페이지 크기를 동적으로 받아서 처리 (예: 5개 또는 10개)
+	    Pageable pageable = PageRequest.of(0, size); 
 	    
 	    // 레포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
-        List<Approval> apprList = approvalRepository.findTop5ByEmployeeAccountOrderByDraftDayDesc(currentUserId);
-
+        List<Approval> apprList = approvalRepository.findByEmployeeAccountOrderByDraftDayDesc(currentUserId, pageable).getContent();
+        
+        // 로그 추가
+        System.out.println("Retrieved approvals: " + apprList.size());
+        
         // Approval 엔티티를 ApprovalDto로 변환
         return apprList.stream()
                        .map(approval -> new ApprovalDto().toDto(approval))
@@ -205,13 +212,14 @@ public class ApprovalService {
 	}
 	
 	// 임시저장함 데이터 가져오기
-	public List<TemporaryStorageDto> getAllTemporaryStorage(){
+	public List<TemporaryStorageDto> getAllTemporaryStorage(int size){
 		// 현재 로그인한 사용자의 ID 가져오기
 	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 	    
+	    Pageable pageable = PageRequest.of(0, size);
 	    
 	    // 레포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
-        List<TemporaryStorage> tempList = temporaryStorageRepository.findTop5ByEmployeeEmpAccountOrderByTemNoDesc(currentUserId);
+        List<TemporaryStorage> tempList = temporaryStorageRepository.findTop5ByEmployeeEmpAccountOrderByTemNoDesc(currentUserId, pageable).getContent();
 
         // Approval 엔티티를 ApprovalDto로 변환
         return tempList.stream()
