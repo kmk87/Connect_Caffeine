@@ -39,9 +39,9 @@ public class WebSecurityConfig {
 						 .passwordParameter("mem_pw") // 로그인 폼에서 비밀번호 필드의 이름을 설정
 						 .permitAll() // 로그인 페이지의 접근을 모든 사용자에게 허용
 						 .failureHandler(new MyLoginFailureHandler())
-						 .successHandler(new MyLoginSuccessHandler()));
+						 .successHandler(new MyLoginSuccessHandler()))
 						
-			//.logout(logout -> logout.permitAll())); // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
+			.logout(logout -> logout.permitAll()); // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
 		return http.build(); // 설정된 HttpSecurity 객체를 빌드하여 securityFilterChain을 반환
 	}
 	
