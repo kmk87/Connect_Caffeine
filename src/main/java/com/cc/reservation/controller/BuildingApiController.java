@@ -1,4 +1,4 @@
-package com.cc.reservation.contoller;
+package com.cc.reservation.controller;
 
 import java.util.HashMap;
 import java.util.Map;

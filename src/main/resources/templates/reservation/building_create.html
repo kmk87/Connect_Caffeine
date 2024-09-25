@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.1googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
+  <link href="/bootstrap/css/nav_sider.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+<body>
+ <th:block layout:fragment="content">
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>건물 등록</h1>
+      <aside id="apprSidebar" class="apprSidebar">
+     <div class="reservation-box">
+        <div class="reservation-header">
+            <h3>예약 목록</h3>
+            </div> 
+          <div th:each="building : ${buildings}">
+          	<h2 th:text="${building.building_name}">Building Name</h2>
+          	   <div class="building-name">
+  			   	<button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|">
+      		   <i class="bi bi-gear"></i>
+  			   </button> 
+			</div>
+          	<ul>
+				<li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}">
+            		<a href="#"><span th:text="${meeting.meeting_name}"></span></a>
+        		</li>
+            </ul>
+			</div>
+        <a th:href="@{/Building}"><button class="building-register-btn">+ 건물 등록</button></a>
+    </div>
+    </aside>
+</div>
+	<div>
+		<button class="tab-button active" onclick="showBuildingTab()">건물</button>
+		<button class="tab-button" onclick="showMeetingTab()">회의실</button>
+	</div>
+	<hr>
+<div class="register_board_form" >
+<form id="buildingAddFrm" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+    <p>건물명: <input type="text" name="building_name" id="building_name" placeholder="이름"></p>
+    <p>주소: <input type="text" name="building_postcode" id="building_postcode" placeholder="우편번호"></p>
+    <p> <input type="text" name="building_address" id="building_address" placeholder="건물 주소"></p>
+    <p> <input type="text" name="building_addr_detail" id="building_addr_detail" placeholder="상세 주소"></p>
+    <button type="submit" class="btn btn-primary rounded-pill">등록</button>
+</form>
+<button onclick="execDaumPostcode()">주소 검색</button>
+</div>
+<script>
+//HTML에서 CSRF 토큰 값을 가져옴
+
+const form = document.getElementById("buildingAddFrm");
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let vali_check = false;
+    let vali_text = "";
+
+    if (form.building_name.value == "") {
+        vali_text += "이름을 입력하세요.";
+        form.building_name.focus();
+    } else if (form.building_postcode.value == '') {
+        vali_text += "우편번호를 입력하세요";
+        form.building_postcode.focus();
+    } else if (form.building_address.value == '') {
+        vali_text += "주소를 입력하세요";
+        form.building_address.focus();
+    } else if (form.building_addr_detail.value == '') {
+        vali_text += "상세 주소를 입력하세요";
+        form.building_addr_detail.focus();
+    } else {
+        vali_check = true;
+    }
+
+    if (!vali_check) {
+        alert(vali_text);
+    } else {
+        const payload = new FormData(form);
+        
+        const csrfToken = form.querySelector('input[name="_csrf"]').value;
+
+        
+        // FormData의 모든 값을 출력하여 확인
+        for (var pair of payload.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]);
+        }        
+
+        fetch('/buildingCreate', {
+            method: 'POST',
+            body: payload,
+            headers: {
+                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 헤더에 추가
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code === '200') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '등록되었습니다',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                }).then((result) => {
+                    location.href = "/Building";
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '등록되지 않았습니다.',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                });
+            }
+        });
+    }
+});
+
+	
+	function execDaumPostcode() {
+		new daum.Postcode({
+			oncomplete: function(data) {
+				// 팝업에서 검색결과 선택시 입력값 세팅
+				document.getElementById('building_postcode').value = data.zonecode; // 우편번호
+				document.getElementById('building_address').value = data.address; // 기본 주소
+				document.getElementById('building_addr_detail').focus();
+			}
+			}).open();
+	}
+</script>
+</main>
+</th:block>
+</body>
+</html>
