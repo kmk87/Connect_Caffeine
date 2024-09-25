@@ -245,6 +245,21 @@ public class ApprovalService {
 		return result;
 	}
 	
+	// 전자서명 설정
+//	@Transactional
+//    public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {
+//        // empAccount로 Employee 조회
+//        Employee employee = employeeRepository.findByempAccount(empAccount);
+//        if (employee == null) {
+//            return false; // 사원을 찾을 수 없는 경우
+//        }
+//
+//        // empCode 추출 및 서명 경로 업데이트
+//        employee.setEmpSignatureImagePath(filePath);
+//        employeeRepository.save(employee); // 업데이트 수행
+//        return true;
+//    }
+	
 	
 	
 }

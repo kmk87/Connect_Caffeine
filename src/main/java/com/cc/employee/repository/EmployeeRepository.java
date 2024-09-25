@@ -1,5 +1,6 @@
 package com.cc.employee.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,5 +17,12 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		           "WHERE e.empAccount = :memId")
 		    String findEmpNameByMemId(@Param("memId") String memId);
 		
+		@Modifying
+		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")
+		int updateEmployeeSignatureByAccount(@Param("empAccount") String empAccount, @Param("filePath") String filePath);
 
+		
+		
+		
+		
 }

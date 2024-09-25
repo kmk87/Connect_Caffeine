@@ -16,11 +16,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 @Entity
 @Table(name="employee")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Builder
 public class Employee {
 	
@@ -78,7 +80,8 @@ public class Employee {
 	@Column(name="emp_holiday")
 	private Long empHoliday;
 	
-	
+	@Column(name="emp_signature_Image_Path")
+	private String empSignatureImagePath;
 	
 	
 }

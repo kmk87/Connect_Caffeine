@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
+
+import jakarta.transaction.Transactional;
 @Service
 public class EmployeeService {
 	
@@ -44,6 +46,13 @@ public class EmployeeService {
             return employee.getEmpGroup().getGroupName();
         }
         return "DEFAULT"; // 기본값 설정
+    }
+    
+    // 전자서명 설정
+    @Transactional
+    public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {
+        int updatedRows = employeeRepository.updateEmployeeSignatureByAccount(empAccount, filePath);
+        return updatedRows > 0;
     }
 	
 }

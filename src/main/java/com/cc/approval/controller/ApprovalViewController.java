@@ -193,5 +193,13 @@ public class ApprovalViewController {
 		return "approval/receiveDraft"; 
 	}
 	
+	// 전자결재 환경설정
+		 @GetMapping("/signSetting")
+		 public String showsignSetting(Model model) {
+		        
+
+		        
+		        return "approval/signSetting"; 
+		 }
 	
 }

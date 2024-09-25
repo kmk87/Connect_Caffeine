@@ -38,6 +38,7 @@ public class EmployeeDto {
 		private Long group_no;
 		private String group_name;
 		private Long group_parent_no;
+		private String emp_Signature_Image_Path;
 		
 		
 		private List<GrantedAuthority> authorities;
@@ -60,6 +61,7 @@ public class EmployeeDto {
 					.empImgFilePath(emp_img_file_path)
 					.empMemo(emp_memo)
 					.empHoliday(emp_holiday)
+					.empSignatureImagePath(emp_Signature_Image_Path)
 					.build();
 		}
 		
@@ -83,6 +85,7 @@ public class EmployeeDto {
 					.emp_holiday(employee.getEmpHoliday())
 					.group_name(employee.getEmpGroup().getGroupName())
 					.group_parent_no(employee.getEmpGroup().getGroupParentNo())
+					.emp_Signature_Image_Path(employee.getEmpSignatureImagePath())
 					.build();
 		}
 }
