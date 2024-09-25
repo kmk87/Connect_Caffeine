@@ -87,9 +87,9 @@
             <form id="draftAdd">
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${dto.appr_writer_code != null ? dto.appr_writer_code : ''}">
-                <button class="btn-primary">결재선 지정</button>
+                <!-- <button class="btn-primary">결재선 지정</button>
                 <button class="btn-secondary" onclick="disableApproval()">삭제</button>
-                <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
+                <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신"> -->
                 <button type="button" class="btn-secondary" id="cancelBtn">취소</button>
                 
 			<div class="form-section">

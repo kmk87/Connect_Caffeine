@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{include/layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
 <head>
 <script th:inline="javascript">
     /* Thymeleaf 변수를 JavaScript 변수로 전달 */
@@ -9,207 +9,242 @@
     const temNo = /*[[${tempDto.tem_no}]]*/ 0;
     console.log("temNo:", temNo);
 </script>
-    <meta charset="UTF-8">
-    <link th:href="@{/css/approval/create.css}" rel="stylesheet" type="text/css">
-    <title>임시저장문서 상세 조회</title>
-    <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<meta charset="UTF-8">
+<link th:href="@{/css/approval/create.css}" rel="stylesheet"
+	type="text/css">
+<title>임시저장문서 상세 조회</title>
+<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <th:block layout:fragment="content">
-    <main id="main" class="main">
-        <!-- 사이드바 -->
-        <i class="bi bi-list toggle-sidebar-btn"></i>
-        <aside id="apprSidebar" class="apprSidebar">
-        	<div class="pagetitle">
-      			<h1>전자결재</h1>
-    		</div>
-            <ul class="sidebar-nav" id="sidebar-nav">
-      		<li class="nav-item">
-        		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
-          			<i class="bi bi-journals"></i><span>결재</span><i class="bi bi-chevron-down ms-auto"></i>
-        		</a>
-        			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          				<li>
-            				<a th:href="@{/standByDraft}">
-              					<i class="bi bi-circle"></i><span>결재 대기 문서</span>
-            				</a>
-          				</li>
-          				<li>
-            				<a th:href="@{/receiveDraft}">
-              					<i class="bi bi-circle"></i><span>결재 수신 문서</span>
-            				</a>
-          				</li>
-        			</ul>
-      		</li>
-      		<li class="nav-item">
-        		<a class="nav-link collapsed" data-bs-target="#components-nav_two" data-bs-toggle="collapse" href="#">
-          			<i class="bi bi-folder2-open"></i><span>개인 문서함</span><i class="bi bi-chevron-down ms-auto"></i>
-        		</a>
-        			<ul id="components-nav_two" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          				<li>
-            				<a th:href="@{/draftStorage}">
-              					<i class="bi bi-circle"></i><span>기안 문서함</span>
-            				</a>
-          				</li>
-          				<li>
-            				<a th:href="@{/apprStorage}">
-              					<i class="bi bi-circle"></i><span>결재 문서함</span>
-            				</a>
-          				</li>
-          				<li>
-            				<a th:href="@{/referenceStorage}">
-              					<i class="bi bi-circle"></i><span>참조 문서함</span>
-            				</a>
-          				</li>
-          				<li>
-            				<a th:href="@{/apprTempStorage}">
-              					<i class="bi bi-circle"></i><span>임시 저장함</span>
-            				</a>
-          				</li>
-        			</ul>
-        		<a class="nav-link collapsed" data-bs-target="#components-nav"  href="#">
-          			<i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
-        		</a>
-      		</li>
-      	</ul>
-        </aside>
-        
-        <!-- 메인 콘텐츠 -->
-           <div class="form-header">
-                <h2 th:if="${tempDto.appr_form_no == 1}">휴가신청서</h2>
-                <h2 th:if="${tempDto.appr_form_no == 2}">사유서</h2>
-                <h2 th:if="${tempDto.appr_form_no == 3}">품의서</h2>
-            </div>
-        <div class="approval-form">
-        	<div class="pagetitle">
-      			<h1 th:if="${tempDto.appr_form_no == 1}">휴가신청서</h1>
-                <h1 th:if="${tempDto.appr_form_no == 2}">사유서</h1>
-                <h1 th:if="${tempDto.appr_form_no == 3}">품의서</h1>
-      		</div>
-            <form id="draftAdd">
-            	<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${appr_form_no}">
-                <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-                <input type="hidden" id="empNum" th:value="${memId ?: ''}">
-                <button class="btn-primary">결재선 지정</button>
-                <button type="button" class="btn-secondary" id="deleteBtn">삭제</button>
-                <input type="submit" class="btn-secondary" id="approval" name="approval" value="재상신">
-                <button type="button" class="btn-secondary" id="cancelBtn">취소</button>
-                
-			<div class="form-section">
-				
-				<table class="form-group" style="border: 1px solid;">
-					<tr>
-						<td id="apprDocuNo">문서번호</td>
-						<td th:text="${apprDto.appr_docu_no}"></td>
-					</tr>
-					<tr>
-						<td>팀명</td>
-						<td th:each="groupName : ${groupNames}" th:text="${groupName}"></td>
-						<!-- <td th:text="${dto.group_name}"></td> -->
-					</tr>
-					<tr>
-						<td>기안일</td>
-						<td th:text="${#temporals.format(apprDto.draft_day, 'yyyy-MM-dd')}"></td>
-					</tr>
-					<tr>
-						<td>기안자</td>
-						<td th:text="${apprDto.appr_writer_name}"></td>
-					</tr>
-				</table>
-				
-				
-			<div class="form-section">
-        		<div class="form-section">
-                            <table>
-                                <tr>
-                                    <td>결재</td>
-                                    <!-- <td th:text="${dto.appr_state}"></td> 결재 상태 표시  -->
-                                </tr>
-                                <tr>
-                                    <td>서명</td>
-                                    <td>서명 이미지나 데이터 추가 가능</td>
-                                </tr>
-                                <tr>
-                                    <td>참조</td>
-                                    <td>참조 정보 추가 가능</td>
-                                </tr>
-                            </table>
-                        </div>
-       			 	</div>
-    			</div>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<!-- 사이드바 -->
+			<i class="bi bi-list toggle-sidebar-btn"></i>
+			<aside id="apprSidebar" class="apprSidebar">
+				<div class="pagetitle">
+					<h1>전자결재</h1>
+				</div>
+				<ul class="sidebar-nav" id="sidebar-nav">
+					<li class="nav-item"><a class="nav-link collapsed"
+						data-bs-target="#components-nav_one" data-bs-toggle="collapse"
+						href="#"> <i class="bi bi-journals"></i><span>결재</span><i
+							class="bi bi-chevron-down ms-auto"></i>
+					</a>
+						<ul id="components-nav_one" class="nav-content collapse "
+							data-bs-parent="#sidebar-nav">
+							<li><a th:href="@{/standByDraft}"> <i
+									class="bi bi-circle"></i><span>결재 대기 문서</span>
+							</a></li>
+							<li><a th:href="@{/receiveDraft}"> <i
+									class="bi bi-circle"></i><span>결재 수신 문서</span>
+							</a></li>
+						</ul></li>
+					<li class="nav-item"><a class="nav-link collapsed"
+						data-bs-target="#components-nav_two" data-bs-toggle="collapse"
+						href="#"> <i class="bi bi-folder2-open"></i><span>개인
+								문서함</span><i class="bi bi-chevron-down ms-auto"></i>
+					</a>
+						<ul id="components-nav_two" class="nav-content collapse "
+							data-bs-parent="#sidebar-nav">
+							<li><a th:href="@{/draftStorage}"> <i
+									class="bi bi-circle"></i><span>기안 문서함</span>
+							</a></li>
+							<li><a th:href="@{/apprStorage}"> <i
+									class="bi bi-circle"></i><span>결재 문서함</span>
+							</a></li>
+							<li><a th:href="@{/referenceStorage}"> <i
+									class="bi bi-circle"></i><span>참조 문서함</span>
+							</a></li>
+							<li><a th:href="@{/apprTempStorage}"> <i
+									class="bi bi-circle"></i><span>임시 저장함</span>
+							</a></li>
+						</ul> <a class="nav-link collapsed" data-bs-target="#components-nav"
+						href="#"> <i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+					</a></li>
+				</ul>
+			</aside>
+
+			<!-- 메인 콘텐츠 -->
+			<div class="form-header">
+				<h2 th:if="${tempDto.appr_form_no == 1}">휴가신청서</h2>
+				<h2 th:if="${tempDto.appr_form_no == 2}">사유서</h2>
+				<h2 th:if="${tempDto.appr_form_no == 3}">품의서</h2>
+			</div>
+			<div class="approval-form">
+				<div class="pagetitle">
+					<h1 th:if="${tempDto.appr_form_no == 1}">휴가신청서</h1>
+					<h1 th:if="${tempDto.appr_form_no == 2}">사유서</h1>
+					<h1 th:if="${tempDto.appr_form_no == 3}">품의서</h1>
+				</div>
+				<hr>
+				<form id="draftAdd">
+					<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${appr_form_no}"> 
+					<input type="hidden" id="csrf_token" th:value="${_csrf.token}"> 
+					<input type="hidden" id="empNum" th:value="${memId ?: ''}">
+					<button type="button" class="btn btn-outline-success" id="deleteBtn">삭제</button>
+					<input type="submit" class="btn btn-outline-warning" id="approval" name="approval" value="재상신">
+					<button type="button" class="btn btn-outline-danger" id="cancelBtn">돌아가기</button>
+
+					<div class="form-content">
+						<div class="left-content-box">
+							<div class="form-section">
+								<table>
+									<tr>
+										<td>문서번호</td>
+										<td th:text="${documentNumber}"></td>
+									</tr>
+									<tr>
+										<td>팀명</td>
+										<td th:text="${groupNames}"></td>
+									</tr>
+									<tr>
+										<td>기안일</td>
+										<td th:text="${apprDto.getFormattedDraftDay()}"></td>
+									</tr>
+									<tr>
+										<td>기안자</td>
+										<td th:text="${apprDto.appr_writer_name}"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<!-- 결재선 테이블 -->
+						<div class="left-content">
+							<table class="approval-line-table">
+								<colgroup>
+									<col style="background-color: #d3d3d3;">
+								</colgroup>
+								<thead>
+									<tr>
+										<td rowspan="4"><b>결재선</b></td>
+										<td><button onclick="apprAdd()"
+												class="btn btn-outline-primary">1차 결재선 지정</button></td>
+										<td><button onclick="apprAdd()"
+												class="btn btn-outline-primary">2차 결재선 지정</button></td>
+									</tr>
+									<tr>
+										<td>대표이사</td>
+										<td>차장</td>
+									</tr>
+									<tr>
+										<td>서명</td>
+										<td>서명</td>
+									</tr>
+									<tr>
+										<td>결재자1</td>
+										<td>결재자2</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+
+						<!-- 참조선 테이블 -->
+						<div class="right-content">
+							<table class="reference-line-table">
+								<colgroup>
+									<col style="background-color: #d3d3d3;">
+								</colgroup>
+								<thead>
+									<tr>
+										<td rowspan="3"><b>참조선</b></td>
+										<td><button onclick="referAdd()"
+												class="btn btn-outline-primary">1차 참조선 지정</button></td>
+										<td><button onclick="referAdd()"
+												class="btn btn-outline-primary">2차 참조선 지정</button></td>
+									</tr>
+									<tr>
+										<td>대표이사</td>
+										<td>차장</td>
+									</tr>
+									<tr>
+										<td>결재자1</td>
+										<td>결재자2</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
 
 
-				
-				
-                <!-- 휴가신청서 폼 -->
-                <div th:if="${tempDto.appr_form_no == 1}">
-                    <div class="form-group">
-                        <label for="leave-type">휴가 종류</label>
-                        <select id="leave-type" name="leave-type">
-                            <option>연차</option>
-                            <option>경조</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                                <label for="start-date">기간 및 일수</label>
-                                <input type="date" id="start-date" name="start-date" >
-                                <span>~</span>
-                                <input type="date" id="end-date" name="end-date" >
-                                <span>사용일수:</span>
-                                <input type="text" id="appr_holi_use_count" name="appr_holi_use_count" th:value="${tempDto.appr_holi_use_count}" > <span> 일</span>
-                            </div>
-                            <div class="form-group">
-                                <label for="subject">제목</label>
-                                <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" >
-                            </div>
-                            <div class="form-group">
-                                <label for="content">내용</label>
-                                <textarea id="appr_content" name="appr_content" th:text="${tempDto.appr_content}" ></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="attachment">첨부 파일</label>
-                                <input type="file" id="attachment" disabled>
-                                <button type="button" class="btn-delete">파일 제거</button>
-                            </div>
-                        </div>
 
-                        <!-- 사유서 폼 -->
-                        <div th:if="${tempDto.appr_form_no == 2}">
-                            <div class="form-group">
-                                <label for="subject">제목</label>
-                                <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" >
-                            </div>
-                            <div class="form-group">
-                                <label for="content">내용</label>
-                                <textarea id="appr_content" name="appr_content" th:text="${tempDto.appr_content}" ></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="attachment">첨부 파일</label>
-                                <input type="file" id="attachment" disabled>
-                                <button type="button" class="btn-delete">파일 제거</button>
-                            </div>
-                        </div>
+					<!-- 휴가신청서 폼 -->
+					<div th:if="${tempDto.appr_form_no == 1}">
+						<div class="form-group">
+							<label for="leave-type">휴가 종류</label> <select id="leave-type"
+								name="leave-type">
+								<option>연차</option>
+								<option>경조</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="start-date">기간 및 일수</label> <input type="date"
+								id="start-date" name="start-date"> <span>~</span> <input
+								type="date" id="end-date" name="end-date"> <span>사용일수:</span>
+							<input type="text" id="appr_holi_use_count"
+								name="appr_holi_use_count"
+								th:value="${tempDto.appr_holi_use_count}"> <span>
+								일</span>
+						</div>
+						<div class="form-group">
+							<label for="subject">제목</label> <input type="text"
+								id="appr_title" name="appr_title"
+								th:value="${tempDto.appr_title}">
+						</div>
+						<div class="form-group">
+							<label for="content">내용</label>
+							<textarea id="appr_content" name="appr_content"
+								th:text="${tempDto.appr_content}"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="attachment">첨부 파일</label> <input type="file"
+								id="attachment" disabled>
+							<button type="button" class="btn-delete">파일 제거</button>
+						</div>
+					</div>
+					<div class="formDiv">
+						<!-- 사유서 폼 -->
+						<div th:if="${tempDto.appr_form_no == 2}">
+							<div class="form-group">
+								<label for="subject">제목</label> <input type="text"
+									id="appr_title" name="appr_title"
+									th:value="${tempDto.appr_title}">
+							</div>
+							<div class="form-group">
+								<label for="content">내용</label>
+								<textarea id="appr_content" name="appr_content"
+									th:text="${tempDto.appr_content}"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="attachment">첨부 파일</label> <input type="file"
+									id="attachment" disabled>
+								<button type="button" class="btn-delete">파일 제거</button>
+							</div>
+						</div>
 
-                        <!-- 품의서 폼 -->
-                        <div th:if="${tempDto.appr_form_no == 3}">
-                            <div class="form-group">
-                                <label for="subject">제목</label>
-                                <input type="text" id="appr_title" name="appr_title" th:value="${tempDto.appr_title}" >
-                            </div>
-                            <div class="form-group">
-                                <label for="content">내용</label>
-                                <textarea id="appr_content" name="appr_content" th:text="${tempDto.appr_content}" ></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="attachment">첨부 파일</label>
-                                <input type="file" id="attachment" disabled>
-                                <button type="button" class="btn-delete">파일 제거</button>
-                            </div>
-                        </div>
-                	</form>
-        		</div>
-        </main>
-    <script>
+						<!-- 품의서 폼 -->
+						<div th:if="${tempDto.appr_form_no == 3}">
+							<div class="form-group">
+								<label for="subject">제목</label> <input type="text"
+									id="appr_title" name="appr_title"
+									th:value="${tempDto.appr_title}">
+							</div>
+							<div class="form-group">
+								<label for="content">내용</label>
+								<textarea id="appr_content" name="appr_content"
+									th:text="${tempDto.appr_content}"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="attachment">첨부 파일</label> <input type="file"
+									id="attachment" disabled>
+								<button type="button" class="btn-delete">파일 제거</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</main>
+		<script>
     
 	    document.getElementById('deleteBtn').onclick = function(){
 	    	console.log("temNo value in tempDelete function:", temNo);
@@ -267,6 +302,6 @@
 	 	});
 
     </script>
-    </th:block>
+	</th:block>
 </body>
 </html>

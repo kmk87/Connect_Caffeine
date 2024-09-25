@@ -1,5 +1,4 @@
 @charset "UTF-8";
-/* Container styling */
 .apprSidebar {
     position: fixed;
     top: 60px;
@@ -17,15 +16,16 @@
 }
 
 .approval-form {
-    width: 85%; /* 부모 컨테이너에 맞게 100% 사용 */
+    width: 95%; /* 부모 컨테이너에 맞게 100% 사용 */
     /* max-width: 700px; 최대 너비 설정 */
     /* margin: 200px; 가운데 정렬 */
     border: 1px solid #ddd;
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;
-    margin-left: 100px;
+    margin-left: 75px;
     margin-top: 20px;
+    height: 790px;
     
     
 }
@@ -34,155 +34,113 @@
     margin-top: 10px; /* h1의 상하 여백 제거 */
 }
 
-.main-content {
-    margin-left: 400px; /* 메인 사이드바 + 추가 사이드바의 너비 */
-    padding: 20px;
-    background-color: #f9f9f9;
-    min-height: 100vh;
+.formDiv{
+	margin-top: 90px;
 }
 
-/* Header styling */
-.form-header {
+
+.form-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    justify-content: space-between; /* 결재선/참조선과 입력 폼을 좌우로 배치 */
+    align-items: flex-start; /* 각 섹션 상단 정렬 */
 }
 
-.form-header h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #333;
+.left-content-box{
+	width: 30%;
+}
+.left-content {
+    width: 30%; /* 왼쪽 섹션 너비 */
+    margin-top: 40px;
 }
 
-/* .btn-primary {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    margin-left: 5px;
-    cursor: pointer;
-    border-radius: 3px;
+.right-content {
+    width: 30%; /* 오른쪽 결재선/참조선 섹션 너비 */
+    margin-top: 3px;
 }
 
-.btn-secondary {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 10px 15px;
-    margin-left: 5px;
-    cursor: pointer;
-    border-radius: 3px;
-} */
-
-.btn-primary, .btn-secondary {
-    margin-left: 5px; /* 좌측 여백 */
-    border-radius: 3px; /* 둥근 모서리 */
-}
-
-.btn-primary {
-    background-color: #4CAF50; /* 버튼 색상 */
-    color: white; /* 글자 색상 */
-}
-
-.btn-secondary {
-    background-color: #f0f0f0; /* 버튼 배경색 */
-    color: #333; /* 글자 색상 */
-    border: 1px solid #ccc; /* 테두리 */
-}
-
-.btn-delete {
-    background-color: #ff4d4d; /* 삭제 버튼 색상 */
-    color: white; /* 글자 색상 */
-    padding: 5px 10px; /* 패딩 */
-    border: none; /* 테두리 없음 */
-    border-radius: 3px; /* 둥근 모서리 */
-    cursor: pointer; /* 마우스 커서 */
-}
-
-.btn-delete:hover {
-    background-color: #ff1a1a; /* 호버 시 색상 */
-}
-
-
-/* Section styling */
-.form-section {
+table {
+	margin-top: 50px;
+    width: 100%;
+    border-collapse: collapse;
     margin-bottom: 20px;
+    
 }
 
-.form-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+th, td {
+    border: 1px solid #000;
+    text-align: center;
+    padding: 10px;
 }
 
-.form-group label {
-    width: 100px;
-    margin-right: 10px;
+th {
+    background-color: #f0f0f0;
     font-weight: bold;
 }
 
-.form-group span, .form-group input, .form-group select, .form-group textarea {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+thead th {
+    background-color: #e8e8e8;
+}
+
+tbody td {
+    background-color: #fff;
+}
+
+.approval-line-table{
+	margin-top: 10px;
+}
+
+.approval-line-table th, .reference-line-table th {
+    width: 80px;
+}
+
+/* 첫 번째 열(결재선/참조선) 넓이 */
+.approval-line-table th[rowspan="2"],
+.reference-line-table th[rowspan="2"] {
+    width: 80px;
+}
+
+/* Form Section Styling */
+.form-section {
+    margin-bottom: 15px;
 }
 
 textarea {
-    resize: none;
+    width: 50%;
     height: 100px;
+    resize: none;
 }
 
-/* Approval line styling */
-.approval-line {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    margin-bottom: 10px;
-}
-
-.approval-line div {
-    padding: 5px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-
-/* Button delete styling */
 .btn-delete {
     background-color: #ff4d4d;
     color: white;
-    border: none;
     padding: 5px 10px;
-    cursor: pointer;
+    border: none;
     border-radius: 3px;
+    cursor: pointer;	
 }
 
 .btn-delete:hover {
     background-color: #ff1a1a;
 }
 
-.form-content {
-    display: flex; /* Flexbox로 레이아웃 설정 */
-    justify-content: space-between; /* 요소들을 양쪽에 배치 */
-}
-
-.form-details {
-    flex: 3; /* 왼쪽 콘텐츠 부분 넓이 비율 설정 */
-}
-
-.approval-line {
-    flex: 1; /* 오른쪽 결재, 서명, 참조 부분의 넓이 비율 설정 */
+.form-group {
     display: flex;
-    flex-direction: column; /* 세로 정렬 */
-    justify-content: flex-start; /* 위쪽 정렬 */
-    gap: 10px; /* 각 요소 사이 간격 */
-    padding: 10px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    margin-left: 20px; /* 왼쪽 콘텐츠와의 간격 */
-    border-radius: 5px;
+    align-items: center;
+    margin-bottom: 20px; /* 기존보다 더 넓은 간격 */
+    
+}
+
+.form-group label {
+    width: 150px; /* 레이블의 너비를 늘려 텍스트 간격 확보 */
+    margin-right: 15px; /* 레이블과 입력 필드 간의 간격을 늘림 */
+    font-weight: bold;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    padding: 10px; /* 입력 필드 안의 텍스트와 경계 사이의 간격 증가 */
+    margin-left: 10px; /* 입력 필드 사이 간격 증가 */
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
