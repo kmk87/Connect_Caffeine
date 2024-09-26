@@ -1,6 +1,8 @@
 package com.cc.security.vo;
 import org.springframework.security.core.userdetails.User;
+
 import com.cc.employee.domain.EmployeeDto;
+
 import lombok.Getter;
 @Getter
 public class SecurityUser extends User{

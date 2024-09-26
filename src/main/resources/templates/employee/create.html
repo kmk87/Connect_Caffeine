@@ -63,6 +63,7 @@
 
 .basic-info-left {
 	flex: 0 0 40%;
+	height: 300px;
 	padding: 10px;
 	box-sizing: border-box;
 	position: relative;
@@ -70,11 +71,7 @@
 	cursor: pointer;
 }
 
-.basic-info-left:hover {
-	cursor: pointer;
-}
-
-#emp_profile_img {
+#emp_img_file_name {
 	display: block;
 	position: absolute;
 	top: 0;
@@ -84,6 +81,12 @@
 	height: 200px;
 	object-fit: cover;
 }
+
+#emp_img_file_name:hover{
+	cursor: pointer;
+}
+
+
 
 .upload-text {
 	position: absolute;
@@ -118,8 +121,8 @@
 			<div class="sub-sidebar" id="sub-sidebar">
 				<span class="subside_title">인사 관리</span><br>
 				<br>
-				<h5>인사 정보</h5>
-				<h5><a th:href="@/empGroupList">팀 정보</a></h5>
+				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
+				<h5>팀 정보</h5>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
 				<div class="col-xxl-4 col-md-6" style="width: 100%;">
@@ -129,16 +132,15 @@
 								<h2 class="card-title"><b>사원 등록</b></h2>
 							</div>
 							<hr>
-							<form id="empAddFrm" method="POST" action="/employee"
-								enctype="multipart/form-data">
-								<input type="hidden" id="_csrf" name="_csrf"
-									th:value="${_csrf.token}" /> <input type="hidden"
-									class="form-control" id="emp_resign" name="emp_resign">
+							<form id="empAddFrm" action="/employeeCreate" method="POST" enctype="multipart/form-data">
+								<input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}" />
+								<input type="hidden" class="form-control" id="emp_resign" name="emp_resign" th:value="N">
+								<input type="hidden" class="form-control" id="emp_holiday" name="emp_holiday" th:value="15">
 								<div class="basic-info">
 									<div class="basic-info-left">
-										<!-- <img src="/bootstrap/img/basic_profile_img.png" alt="Profile" id="emp_profile_img" class="rounded-circle">
-							              	<div class="upload-text">클릭 시 이미지 업로드</div>
-							              	<input type="file" id="emp_img_file_name" name="emp_img_file_name"> -->
+										<img src="bootstrap/img/basic_profile.png" alt="Profile" class="rounded-circle" style="width:200px; height:200px;">
+							              	<!-- <div class="upload-text">클릭 시 이미지 업로드</div> -->
+							              	<input type="file" id="img_file" name="emp_img_file">
 									</div>
 									<div class="basic-info-right">
 										<table class="table table-bordered">
@@ -186,8 +188,7 @@
 											</tr>
 											<tr>
 												<th>부서</th>
-												<td><select id="emp_dept" name="emp_dept"
-													class="form-select" aria-label="Default select example">
+												<td><select id="emp_dept" class="form-select" aria-label="Default select example">
 														<option disabled selected value="">부서를 선택하세요</option>
 														<option th:each="dept:${groupList}"
 															th:value="${dept.group_no}" th:text="${dept.group_name}"
@@ -207,7 +208,7 @@
 											</tr>
 											<tr>
 												<th>직급</th>
-												<td><select id="job_code" name="job_code"
+												<td><select id="emp_job_code" name="emp_job_code"
 													class="form-select" aria-label="Default select example">
 														<option disabled selected value="">직급을 선택하세요</option>
 														<option th:each="j:${jobList}" th:value="${j.job_code}"
@@ -255,14 +256,7 @@
 		</main>
 		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 		<script>
-	// 1. 이미지 업로드
-	/* document.getElementById('emp_profile_img').addEventListener('click', function() {
-		document.getElementById('emp_img_file_name').click();
-		console.log(typeof(document.getElementById('emp_img_file_name').value));
-	}); */
-	
-	
-	// 2. 주소 등록
+	// 1. 주소 등록
 	function execDaumPostcode() {
 		
         new daum.Postcode({
@@ -313,7 +307,7 @@
     }
 
 	
-	// 3. 부서 선택에 따른 팀 목록 출력
+	// 2. 부서 선택에 따른 팀 목록 출력
 	document.getElementById("emp_dept").addEventListener("change", function() {
         var selectedDept = this.value;  // 선택한 부서 번호
         var teamSelect = document.getElementById("group_no");  // 팀 select 요소
@@ -330,80 +324,67 @@
         });
     });
 	
-	// 4. 등록 처리
+	// 3. 등록 처리
 	const form = document.getElementById("empAddFrm");
 	form.addEventListener('submit', (e) => {
 		e.preventDefault();
 	
-	    // 입력 값 가져오기
-	    //const empImgFileName = document.getElementById("emp_img_file_name").value;
-	    const empName = document.getElementById("emp_name").value;
-	    const empAccount = document.getElementById("emp_account").value;
-	    const empPw = document.getElementById("emp_pw").value;
-	    const empRegNo = document.getElementById("emp_reg_no").value;
-	    const empPostcode = document.getElementById("emp_postcode").value;
-	    const empAddr = document.getElementById("emp_addr").value;
-	    const empAddrDetail = document.getElementById("emp_addr_detail").value;
-	    const empDept = document.getElementById("emp_dept").value;
-	    const empTeam = document.getElementById("group_no").value;
-	    const jobCode = document.getElementById("job_code").value;
-	    const empPhone = document.getElementById("emp_phone").value;
-	    const empDeskPhone = document.getElementById("emp_desk_phone").value;
-	    const empEmail = document.getElementById("emp_email").value;
-	    const empHiredate = document.getElementById("emp_hiredate").value;
-	    const empResign = document.getElementById("emp_resign").value;
-	    
-	    // console.log(typeof(empImgFileName));
 	    // 유효성 검사
 	    let vali_check = false;
 	    let vali_text = "";
 	    
-	    if (empName === "") {
+	    if(form.emp_img_file.value == ""){
+	    	vali_text += '사원의 이미지를 첨부하세요.\n';
+	        form.emp_img_file.focus();
+	    }else if (form.emp_name.value === "") {
 	        vali_text += '이름을 입력하세요.\n';
 	        form.emp_name.focus();
-	    } else if (empAccount === "") {
+	    } else if (form.emp_account.value === "") {
 	        vali_text += '사원 번호를 입력하세요.\n';
 	        form.emp_account.focus();
-	    } else if (!/^b\d{5}$/.test(empAccount)) {
+	    } else if (!/^b\d{5}$/.test(form.emp_account.value)) {
 	        vali_text += '사원 번호를 알맞은 형태에 맞게 기입해 주세요.\n';
 	        form.emp_account.focus();
-	    } else if (empPw === "") {
+	    } else if (form.emp_pw.value === "") {
 	        vali_text += '사원 비밀번호를 입력하세요.\n'; 
 	        form.emp_pw.focus();
-	    } else if(!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,12}$/.test(empPw)){
+	    } else if(!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,12}$/.test(form.emp_pw.value)){
 	    	vali_text += '비밀번호는 4자리 이상 12자리 이하, 영문과 숫자를 조합해야 합니다.\n'; 
 	        form.emp_pw.focus();
-	    }else if (empRegNo === "") {
+	    }else if (form.emp_reg_no.value === "") {
 	        vali_text += '주민 등록 번호를 입력하세요.\n';
 	        form.emp_reg_no.focus();
-	    } else if (!/^\d{6}-[1-4]\d{6}$/.test(empRegNo)){
+	    } else if (!/^\d{6}-[1-4]\d{6}$/.test(form.emp_reg_no.value)){
 	        vali_text += '주민 등록 번호를 알맞은 형태로 입력하세요.\n';
 	        form.emp_reg_no.focus();
-	    } else if(empPostcode === ""){
+	    } else if(form.emp_postcode.value === ""){
 	    	vali_text += '주소를 입력하세요.\n';
 	    	form.emp_postcode.focus();
-	    } else if (empDept === "") {
+	    } else if (form.emp_dept.value === "") {
 	        vali_text += '부서를 선택하세요.\n';
 	        form.emp_dept.focus();
-	    } else if (empTeam === "") {
+	    } else if (form.group_no.value === "") {
 	        vali_text += '팀을 선택하세요.\n';
-	        form.emp_team.focus();
-	    } else if (empPhone === "") {
+	        form.group_no.focus();
+	    } else if(form.emp_job_code.value === ""){
+	    	vali_text += '직급을 선택하세요.\n';
+	    	form.emp_job_code.focus();
+	    } else if (form.emp_phone.value === "") {
 	        vali_text += '휴대전화 번호를 입력하세요.\n';
 	        form.emp_phone.focus();
-	    } else if (!/^01[0-9]-\d{3,4}-\d{4}$/.test(empPhone)) {
+	    } else if (!/^01[0-9]-\d{3,4}-\d{4}$/.test(form.emp_phone.value)) {
 	        vali_text += '휴대전화 번호를 알맞은 형태로 입력하세요.\n';
 	        form.emp_phone.focus();
-	    } else if (empDeskPhone === "") {
+	    } else if (form.emp_desk_phone.value === "") {
 	        vali_text += '내선 번호를 입력하세요.\n';
 	        form.emp_desk_phone.focus();
-	    } else if (!/^(02|0\d{2})-\d{3,4}-\d{4}$/.test(empDeskPhone)) {
+	    } else if (!/^(02|0\d{2})-\d{3,4}-\d{4}$/.test(form.emp_desk_phone.value)) {
 	        vali_text += '내선 번호를 알맞은 형태로 입력하세요.\n';
 	        form.emp_desk_phone.focus();
-	    } else if (empEmail === "") {
+	    } else if (form.emp_email.value === "") {
 	        vali_text += '이메일을 입력하세요.\n';
 	        form.emp_email.focus();
-	    } else if (empHiredate === "") {
+	    } else if (form.emp_hiredate.value === "") {
 	        vali_text += '입사일을 입력하세요.\n';
 	        form.emp_hiredate.focus();
 	    } else {
@@ -415,66 +396,59 @@
 	        alert(vali_text)
 	        return; 
 	    }
-	    
-	    // 문자열 데이터를 날짜 데이터로 전환
-	    let empHiredateISO = null;
-	    
-	    if (empHiredate) {
-	        empHiredateISO = new Date(empHiredate).toISOString();
-	    }
-	
-	    // 객체에 담아 보내기
-	    const obj = {
-            emp_name: empName,
-            emp_account: empAccount,
-            emp_pw: empPw,
-            emp_reg_no: empRegNo,
-            emp_postcode: empPostcode,
-            emp_addr: empAddr,
-            emp_addr_detail: empAddrDetail,
-            group_no: empTeam,
-            job_code: jobCode,
-            emp_phone: empPhone,
-            emp_desk_phone: empDeskPhone,
-            emp_email: empEmail,
-            emp_hiredate: empHiredateISO,
-            emp_resign: 'n'
-            //emp_img_file_name: empImgFileName
-        };
-	        
-		const csrfToken = document.getElementById("_csrf").value;
-
-        fetch('/employee', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                "Accept": "application/json",
-                'X-CSRF-TOKEN': csrfToken
-                
-            },
-            body: JSON.stringify(obj)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.res_code === '200') {
-                Swal.fire({
-                    icon: 'success',
-                    title: '성공',
-                    text: data.res_msg,
-                    confirmButtonText: "닫기"
-                }).then((result) => {
-                    location.href = "/employeeCreate";
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: '실패',
-                    text: data.res_msg,
-                    confirmButtonText: "닫기"
-                });
-            }
-        });
+		
+	    // SweetAlert을 통해 확인 메시지 띄우기
+	    Swal.fire({
+	        icon: 'success',
+	        title: '성공',
+	        text: '사원 등록에 성공하였습니다.',
+	        confirmButtonText: '닫기'
+	    }).then((result) => {
+	        if (result.isConfirmed) {
+	            form.submit();
+	        }
+	    });
 	});
+	
+	 /* // 입력 값 가져오기
+    const empImgFile = document.getElementById("emp_img_file").files[0];
+    const empName = document.getElementById("emp_name").value;
+    const empAccount = document.getElementById("emp_account").value;
+    const empPw = document.getElementById("emp_pw").value;
+    const empRegNo = document.getElementById("emp_reg_no").value;
+    const empPostcode = document.getElementById("emp_postcode").value;
+    const empAddr = document.getElementById("emp_addr").value;
+    const empAddrDetail = document.getElementById("emp_addr_detail").value;
+    const empDept = document.getElementById("emp_dept").value;
+    const empTeam = document.getElementById("group_no").value;
+    const empJobCode = document.getElementById("emp_job_code").value;
+    const empPhone = document.getElementById("emp_phone").value;
+    const empDeskPhone = document.getElementById("emp_desk_phone").value;
+    const empEmail = document.getElementById("emp_email").value;
+    const empHiredate = document.getElementById("emp_hiredate").value; */
+    
+	/* {
+	group_no: empTeam,
+	emp_job_code: jobCode,
+	emp_name: empName,
+	emp_account: empAccount,
+	emp_pw: empPw,
+	emp_postcode: empPostcode,
+	emp_addr: empAddr,
+	emp_addr_detail: empAddrDetail,
+	emp_reg_no: empRegNo,
+	emp_email:empEmail,
+	emp_phone: empPhone,
+	emp_desk_phone:empDeskPhone,
+	emp_hiredate:empHiredateISO,
+	emp_holiday: 15,
+	emp_img_file_name: empImgFileName,
+	emp_resign: 'n'
+	}
+	
+	const payload = new FormData(form);*/
+            
+            
   </script>
 	</th:block>
 	<!-- Vendor JS Files -->

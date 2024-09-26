@@ -5,8 +5,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.cc.empGroup.domain.EmpGroup;
 
-import com.cc.empGroup.domain.EmpGroup;
-
 public interface EmpGroupRepository extends JpaRepository<EmpGroup,Long>{
 	
 	EmpGroup findBygroupNo(Long group_no);

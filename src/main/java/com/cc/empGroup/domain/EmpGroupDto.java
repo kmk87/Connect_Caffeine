@@ -1,8 +1,4 @@
 package com.cc.empGroup.domain;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,14 +18,14 @@ public class EmpGroupDto {
 	private Long group_parent_no;
 	private String group_name;
 	private Long group_leader_code;
-	private LocalDateTime group_reg_date;
+//	private LocalDateTime group_reg_date;
 	private Long group_headcount;
 	private String group_location;
 	private String group_status;
 	private String group_level;
 	private String group_explain;
 	
-	private List<GrantedAuthority> authorities;
+//	private List<GrantedAuthority> authorities;
 	
 	public EmpGroup toEntity() {
 		return EmpGroup.builder()
@@ -37,7 +33,7 @@ public class EmpGroupDto {
 				.groupParentNo(group_parent_no)
 				.groupName(group_name)
 				.groupLeaderCode(group_leader_code)
-				.groupRegDate(group_reg_date)
+//				.groupRegDate(group_reg_date)
 				.groupHeadcount(group_headcount)
 				.groupLocation(group_location)
 				.groupStatus(group_status)
@@ -52,7 +48,7 @@ public class EmpGroupDto {
 				.group_parent_no(empGroup.getGroupParentNo())
 				.group_name(empGroup.getGroupName())
 				.group_leader_code(empGroup.getGroupLeaderCode())
-				.group_reg_date(empGroup.getGroupRegDate())
+//				.group_reg_date(empGroup.getGroupRegDate())
 				.group_headcount(empGroup.getGroupHeadcount())
 				.group_location(empGroup.getGroupLocation())
 				.group_status(empGroup.getGroupStatus())
@@ -60,4 +56,5 @@ public class EmpGroupDto {
 				.group_explain(empGroup.getGroupExplain())
 				.build();
 	}
+}
 	

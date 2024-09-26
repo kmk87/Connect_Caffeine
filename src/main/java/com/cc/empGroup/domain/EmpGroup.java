@@ -1,6 +1,5 @@
 package com.cc.empGroup.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cc.employee.domain.Employee;
@@ -40,8 +39,8 @@ public class EmpGroup {
 	@Column(name="group_leader_code")
 	private Long groupLeaderCode;
 	
-	@Column(name="group_reg_date")
-	private LocalDateTime groupRegDate;
+//	@Column(name="group_reg_date")
+//	private LocalDateTime groupRegDate;
 	
 	@Column(name="group_headcount")
 	private Long groupHeadcount;

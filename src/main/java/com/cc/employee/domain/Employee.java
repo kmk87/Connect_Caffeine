@@ -85,11 +85,11 @@ public class Employee {
 	@Column(name="emp_holiday")
 	private Long empHoliday;
 	
-//	@Column(name="emp_img_file_name") 
-//	private String empImgFileName;
-//
-//	@Column(name="emp_img_file_path") 
-//	private String empImgFilePath;
+	@Column(name="emp_img_file_name") 
+	private String empImgFileName;
+
+	@Column(name="emp_img_file_path") 
+	private String empImgFilePath;
 
 }
 

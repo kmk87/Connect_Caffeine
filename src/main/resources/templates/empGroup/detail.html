@@ -9,8 +9,8 @@
 <meta content="" name="description">
 <meta content="" name="keywords">
 <!-- Favicons -->
-<link href="/bootstrap/img/쿼카.png" rel="icon">
-<link href="/bootstrap/img/쿼카.png" rel="쿼카">
+<link href="bootstrap/img/쿼카.png" rel="icon">
+<link href="bootstrap/img/쿼카.png" rel="쿼카">
 <!-- Google Fonts -->
 <link href="https://fonts.gstatic.com" rel="preconnect">
 <link
@@ -30,6 +30,9 @@
 	rel="stylesheet">
 <!-- Template Main CSS File -->
 <link href="/bootstrap/css/style.css" rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 .card-body-header {
 	display: flex;
@@ -41,26 +44,17 @@
 	width: 100%;
 }
 
-.basic-info-left {
-	flex: 0 0 40%;
-	padding: 10px;
-	box-sizing: border-box;
-	position: relative;
+.sub-sidebar {
+    width: 250px;          
+    background-color: #fff;
+    padding: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #012970;
 }
 
-#emp_profile_img {
-	position: absolute;
-	top: 0;
-	left: 60%;
-	transform: translateX(-50%);
-	width: 200px;
-	height: 200px;
-}
-
-.basic-info-right {
-	flex: 0 0 60%;
-	padding: 10px;
-	box-sizing: border-box;
+.subside_title {
+    font-size: 25px;
 }
 </style>
 </head>
@@ -69,9 +63,9 @@
 		<main id="main" class="main">
 			<div class="sub-sidebar" id="sub-sidebar">
 				<span class="subside_title">인사 관리</span><br> <br>
-				<h5>인사 정보</h5>
+				<h5>사원 정보</h5>
 				<h5>
-					<a th:href="@{/empGroupList}">팀 정보</a>
+					<a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a>
 				</h5>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
@@ -82,6 +76,9 @@
 								<h2 class="card-title"><b>팀 정보</b></h2>
 							</div>
 							<hr>
+							<form id="groupDeleteFrm" method="POST" action="/empGroup">
+								<input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}" />
+								<input type=hidden id="group_no" name="group_no" th:value="${egDto.group_no}">
 							<div class="basic-info">
 								<!-- 첫 번째 테이블: 그룹 레벨이 부서(G1)일 때 -->
 								<table class="table table-bordered" th:if="${egDto.group_level == 'G1'}">
@@ -90,12 +87,12 @@
 										<col style="width: 60%;">
 									</colgroup>
 									<tr>
-										<th>그룹명</th>
-										<td th:text="${deptOri}"></td>
+										<th>부서명</th>
+										<td th:text="${deptOri}" id="group_name" th:value="${deptOri}"></td>
 									</tr>
 									<tr>
 										<th>인원</th>
-										<td th:text="${deptHeadcount}"></td>
+										<td th:text="${deptHeadcount}" id="group_headcount" th:value="${deptHeadcount}"></td>
 									</tr>
 									<tr>
 										<th>상위 부서</th>
@@ -103,15 +100,15 @@
 									</tr>
 									<tr>
 										<th>그룹 설명</th>
-										<td th:text="${egDto.group_explain}"></td>
+										<td th:text="${egDto.group_explain}" id="group_explain" th:value="${egDto.group_explain}"></td>
 									</tr>
 									<tr>
 										<th>책임자</th>
-										<td th:text="${leaderName}"></td>
+										<td th:text="${leaderName}" id="group_leader" th:value="${egDto.group_leader_code}"></td>
 									</tr>
 									<tr>
 										<th>책임자 연락처</th>
-										<td th:text="${leaderDeskPhone}"></td>
+										<td th:text="${leaderDeskPhone}" id="group_leader_desk_phone"></td>
 									</tr>
 								</table>
 								<!-- 두 번째 테이블: 그룹 레벨이 팀(G2)일 때 -->
@@ -121,32 +118,53 @@
 										<col style="width: 60%;">
 									</colgroup>
 									<tr>
-										<th>그룹명</th>
-										<td th:text="${egDto.group_name}"></td>
+										<th>팀명</th>
+										<td>
+											<span th:text="${egDto.group_name}"></span>
+											<input type="hidden" name="group_name" id="group_name" th:value="${egDto.group_name}">
+										</td>
 									</tr>
 									<tr>
 										<th>인원</th>
-										<td th:text="${egDto.group_headcount}"></td>
+										<td>
+											<span th:text="${egDto.group_headcount}"></span>
+											<input type="hidden" name="group_headcount" id="group_headcount" th:value="${egDto.group_headcount}">
+										</td>
 									</tr>
 									<tr>
 										<th>상위 부서</th>
-										<td th:text="${parentDeptName}"></td>
+										<td>
+										 	<span th:text="${parentDeptName}"></span> 
+										 	<input type="hidden" name="parent_group" id="parent_group" th:value="${egDto.group_parent_no}">
+										 </td>
 									</tr>
 									<tr>
 										<th>위치</th>
-										<td th:text="${egDto.group_location}"></td>
+										<td>  
+											<span th:text="${egDto.group_location}"></span>
+											<input type="hidden" name="group_location" id="group_location" th:field="*{egDto.group_location}">
+										</td>
 									</tr>
 									<tr>
 										<th>그룹 설명</th>
-										<td th:text="${egDto.group_explain}"></td>
+										<td>  
+											<span th:text="${egDto.group_explain}"></span>
+											<input type="hidden" name="group_explain" id="group_explain" th:value="${egDto.group_explain}">
+										</td>
 									</tr>
 									<tr>
 										<th>책임자</th>
-										<td th:text="${leaderName}"></td>
+										<td>  
+											<span th:text="${leaderName}"></span>
+											<input type="hidden" name="group_leader" id="group_leader" th:value="${egDto.group_leader_code}">
+										</td>
 									</tr>
 									<tr>
 										<th>책임자 연락처</th>
-										<td th:text="${leaderDeskPhone}"></td>
+										<td>  
+											<span th:text="${leaderDeskPhone}"></span>
+											<input type="hidden" name="group_leader_desk_phone" id="group_leader_desk_phone" th:value="${leaderDeskPhone}">
+										</td>
 									</tr>
 								</table>
 							</div>
@@ -154,19 +172,85 @@
 								<a th:href="@{/empGroupUpdate/{group_no}(group_no=${egDto.group_no})}">
 									<button type="button" class="btn btn-primary rounded-pill">수정</button>
 								</a>
-								<a th:href="@{/empGroupDelete/{group_no}(group_no=${egDto.group_no})}">
-									<button type="button" class="btn btn-secondary rounded-pill" style="margin-left: 10px;">삭제</button>
-								</a>
+								<button type="button" class="btn btn-primary rounded-pill" onclick="confirmDelete()" style="margin-left: 10px;">삭제</button>
 							</div>
+							</form>
 						</div>
 					</div>
 				</div>
 			</section>
 		</main>
 		<!-- End #main -->
+	<script>
+	function confirmDelete() {
+	    if (!confirm("팀 정보를 정말 삭제하시겠습니까?")) {
+	        return;
+	    }
+	    
+		const form = document.getElementById("groupDeleteFrm");
+
+		
+		// 입력 값 가져오기
+		const groupNo = document.getElementById("group_no").value;
+		const groupName = document.getElementById("group_name").value;
+		const groupHeadcount = document.getElementById("group_headcount").value;
+		const parentGroup = document.getElementById("parent_group").value;
+		const groupLocation = document.getElementById("group_location").value;
+		const groupExplain = document.getElementById("group_explain").value;
+		const groupLeaderCode = document.getElementById("group_leader").value;
+	
+		
+		// 객체에 담아 보내기
+		const obj = {
+				group_no : groupNo,
+				group_name : groupName,
+				group_headcount : groupHeadcount,
+				group_parent_no : parentGroup,
+				group_location : groupLocation,
+				group_explain : groupExplain,
+				group_leader_code : groupLeaderCode,
+				group_status : 'N',
+				group_level : 'G2'
+		};
+		
+		const csrfToken = document.getElementById("_csrf").value;
+
+	        fetch('/empGroupDelete/'+ groupNo, {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json;charset=utf-8',
+	                "Accept": "application/json",
+	                'X-CSRF-TOKEN': csrfToken
+	                
+	            },
+	            body: JSON.stringify(obj)
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.res_code === '200') {
+	                Swal.fire({
+	                    icon: 'success',
+	                    title: '성공',
+	                    text: data.res_msg,
+	                    confirmButtonText: "닫기"
+	                }).then((result) => {
+	                    location.href = "/empGroupList";
+	                });
+	            } else {
+	                Swal.fire({
+	                    icon: 'error',
+	                    title: '실패',
+	                    text: data.res_msg,
+	                    confirmButtonText: "닫기"
+	                });
+	            }
+	        });
+		}
+		
+	</script>
 	</th:block>
 	<!-- ======= Footer ======= -->
-	<!--   <footer id="footer" class="footer">
+	<footer id="footer" class="footer">
     <div class="copyright">
       &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
     </div>
