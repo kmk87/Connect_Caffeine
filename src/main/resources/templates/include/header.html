@@ -151,25 +151,36 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" th:href="@{/employeeProfile}">
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
                 <i class="bi bi-person"></i>
-                <span>My Profile</span>
+                <span>내 프로필</span>
               </a>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="#" onclick="confirmLogout(event);">
                 <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
+                <span>로그아웃</span>
               </a>
             </li>
+            <form id="logoutForm" method="post" th:action="@{/logout}" style="display:none;">
+    			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+			</form>
           </ul><!-- End Profile Dropdown Items -->
         </li><!-- End Profile Nav -->
       </ul>
     </nav><!-- End Icons Navigation -->
   </header><!-- End Header -->
+	<script>
+			function confirmLogout(event) {
+				event.preventDefault(); // a 태그의 기본 동작 막기
+				if (confirm("정말 로그아웃하시겠습니까?")) {
+					document.getElementById('logoutForm').submit(); // 확인을 누르면 로그아웃 폼 제출
+				}
+			}
+	</script>
 </th:block>
 </body>
 </html>
