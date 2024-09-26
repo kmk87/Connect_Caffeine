@@ -18,7 +18,7 @@ public class ReservationViewController {
 	
 	@GetMapping("/Reservation")
 	public String Reservation(Model model) {
-		return "/reservation/reservation";
+		return "reservation/reservation";
 	}
 	
 }
