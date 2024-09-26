@@ -81,12 +81,15 @@ textarea {
 						<div class="card-body">
 							<div class="card-body-header">
 								<h2 class="card-title">
-									<b>팀 등록</b>
+									<b>팀 정보 수정</b>
 								</h2>
 							</div>
 							<hr>
-							<form id="groupAddFrm" method="POST" action="/empGroup">
-								<input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}" />
+							<form id="groupUpdateFrm" method="POST" action="/empGroup">
+								<input type="hidden" id="_csrf" name="_csrf"
+									th:value="${_csrf.token}" />
+								<input type=hidden id="group_no" name="group_no" 
+									th:value="${egDto.group_no}">
 								<div class="basic-info">
 									<table class="table table-bordered">
 										<colgroup>
@@ -96,40 +99,40 @@ textarea {
 										<tr>
 											<th>팀명</th>
 											<td><input type="text" class="form-control"
-												id="group_name" name="group_name" placeholder="팀명"></td>
+												id="group_name" name="group_name" th:field="*{egDto.group_name}"></td>
 										</tr>
 										<tr>
 											<th>인원</th>
 											<td><input type="number" class="form-control"
-												id="group_headcount" name="group_headcount"></td>
+												id="group_headcount" name="group_headcount" th:field="*{egDto.group_headcount}"></td>
 										</tr>
 										<tr>
 											<th>상위 부서</th>
 											<td><select id="parent_group" name="parent_group"
 												class="form-select" aria-label="select dept">
-													<option disabled selected value="">상위 부서를 선택하세요</option>
 													<option th:each="dept:${groupList}"
 														th:value="${dept.group_no}" th:text="${dept.group_name}"
+														th:selected="${dept.group_no == egDto.group_parent_no}"
 														th:if="${dept.group_parent_no == null}"></option>
 											</select></td>
 										</tr>
 										<tr>
 											<th>위치</th>
 											<td><input type="text" class="form-control"
-												id="group_location" name="group_location"></td>
+												id="group_location" name="group_location" th:field="*{egDto.group_location}"></td>
 										</tr>
 										<tr>
 											<th>그룹 설명</th>
-											<td><textarea class="form-control" id="group_explain" name="group_explain"></textarea></td>
+											<td><textarea class="form-control" id="group_explain" name="group_explain" th:field="*{egDto.group_explain}"></textarea></td>
 										</tr>
 										<tr>
 											<th>책임자</th>
 											<td><select id="group_leader" name="group_leader"
 												class="form-select" aria-label="select leader"
 												onchange="updateLeaderContact()">
-													<option disabled selected value="">책임자를 선택하세요.</option>
 													<option th:each="emp:${empList}" th:value="${emp.emp_code}"
 														th:text="${emp.emp_name}" th:if="${emp.emp_code != 1}"
+														th:selected="${emp.emp_code == egDto.group_leader_code}"
 														th:data-phone="${emp.emp_desk_phone}"></option>
 											</select></td>
 										</tr>
@@ -143,8 +146,6 @@ textarea {
 								<div class="d-flex align-items-center"
 									style="display: flex; justify-content: flex-end;">
 									<button type="submit" class="btn btn-primary rounded-pill">완료</button>
-									<button type="button" class="btn btn-secondary rounded-pill"
-										style="margin-left: 10px;">취소</button>
 								</div>
 							</form>
 						</div>
@@ -154,27 +155,27 @@ textarea {
 		</main>
 		<!-- End #main -->
 		<script>
-		// 1. 리더 연락처 자동 완성
-		function updateLeaderContact() {
-		    
-		    const selectedEmp = document.getElementById("group_leader");
-		    
-		    // 선택된 옵션의 연락처 가져오기
-		    const selectedOption = selectedEmp.options[selectedEmp.selectedIndex];
-		    const phone = selectedOption.getAttribute("data-phone");
-		    
-		    // 연락처를 입력 필드에 설정
-		    document.getElementById("group_leader_desk_phone").value = phone || '';
-		}
+		// 1. 리더 연락처 자동 완성&수정
+		document.addEventListener("DOMContentLoaded", function() {
+			  // 페이지 로딩 시 초기 연락처 설정
+			  const initialContact = document.querySelector('#group_leader option:checked').getAttribute('data-phone');
+			  document.getElementById('group_leader_desk_phone').value = initialContact || '';
+
+			  // 책임자 선택 변경 시 연락처 업데이트
+			  window.updateLeaderContact = function() {
+			    const selectedPhone = document.querySelector('#group_leader option:checked').getAttribute('data-phone');
+			    document.getElementById('group_leader_desk_phone').value = selectedPhone || '';
+			  }
+			});
 		
-		
-		// 2. 등록 처리
-		const form = document.getElementById("groupAddFrm");
+		// 2. 수정 처리
+		const form = document.getElementById("groupUpdateFrm");
 		
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 			
 			// 입력 값 가져오기
+			const groupNo = document.getElementById("group_no").value;
 			const groupName = document.getElementById("group_name").value;
 			const groupHeadcount = document.getElementById("group_headcount").value;
 			const parentGroup = document.getElementById("parent_group").value;
@@ -182,7 +183,6 @@ textarea {
 			const groupExplain = document.getElementById("group_explain").value;
 			const groupLeaderCode = document.getElementById("group_leader").value;
 			const groupLeaderDeskPhone = document.getElementById("group_leader_desk_phone").value;
-			
 			
 			// 유효성 검사
 			let vali_check = false;
@@ -225,6 +225,7 @@ textarea {
 			
 			// 객체에 담아 보내기
 			const obj = {
+					group_no : groupNo,
 					group_name : groupName,
 					group_headcount : groupHeadcount,
 					group_parent_no : parentGroup,
@@ -235,10 +236,9 @@ textarea {
 					group_level : 'G2'
 			};
 			
-			
 			const csrfToken = document.getElementById("_csrf").value;
 
-	        fetch('/empGroup', {
+	        fetch('/empGroupUpdate/'+ groupNo, {
 	            method: 'POST',
 	            headers: {
 	                'Content-Type': 'application/json;charset=utf-8',

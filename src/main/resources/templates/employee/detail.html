@@ -86,7 +86,7 @@
 		<main id="main" class="main">
 			<div class="sub-sidebar" id="sub-sidebar">
 				<span class="subside_title">인사 관리</span><br> <br>
-				<h5>인사 정보</h5>
+				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
 				<h5>팀 정보</h5>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
@@ -94,9 +94,18 @@
 					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
 						<div class="card-body">
 							<div class="card-body-header">
-								<h2 class="card-title">사원 정보</h2>
+								<h2 class="card-title"><b>사원 정보</b></h2>
 							</div>
-							<hr>
+							<ul class="nav nav-tabs nav-tabs-bordered">
+			                <li class="nav-item">
+			                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">기본 정보</button>
+			                </li>
+			                <li class="nav-item">
+			                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">근태 현황</button>
+			                </li>
+			              </ul>
+			              <div class="tab-content pt-2">
+			                <div class="tab-pane fade show active profile-overview" id="profile-overview">
 							<div class="basic-info">
 								<div class="basic-info-left">
 									<img src="/bootstrap/img/이제훈_프로필.png" alt="Profile"
@@ -157,7 +166,12 @@
 										<tr>
 											<th>입사일</th>
 											<td
-												th:text="${#temporals.format(dto.emp_hiredate, 'yyyy-MM-dd')}"></td>
+												th:text="${dto.emp_hiredate}"></td>
+										</tr>
+										<tr th:if="${dto.emp_resign.toUpperCase() == 'Y'}">
+											<th>퇴사일</th>
+											<td
+												th:text="${dto.emp_resigndate}"></td>
 										</tr>
 									</table>
 								</div>
@@ -172,12 +186,17 @@
 							</div>
 						</div>
 					</div>
+					<div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+					<h2>근태현황 테이블 넣기</h2>
+					</div>
+				</div>
+				</div>
 				</div>
 			</section>
 		</main>
 	</th:block>
 	<!-- ======= Footer ======= -->
-	<!--   <footer id="footer" class="footer">
+	<footer id="footer" class="footer">
     <div class="copyright">
       &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
     </div>
@@ -187,7 +206,7 @@
       Licensing information: https://bootstrapmade.com/license/
       Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
       Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-    </div> -->
+    </div>
 	</footer>
 	<!-- End Footer -->
 	<a href="#"

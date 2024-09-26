@@ -30,24 +30,35 @@ public class GroupViewController {
 		this.empGroupService = empGroupService;
 	}
 	
-	// 팀 등록(create)
+	// 1. 팀 등록(create)
 	@GetMapping("/empGroupCreate")
 	public String createGroupPage(Model model) {
+		
 		List<EmployeeDto> empList = employeeService.selectEmployeeList();
 		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
 		
-		System.out.println(empList);
-		
-		model.addAttribute("groupList", groupList);
 		model.addAttribute("empList", empList);
+		model.addAttribute("groupList", groupList);
 		
 		return "empGroup/create";
 	}
 	
 	
-	// 상세 정보(detail)
+	// 2-1. 목록(list)
+	@GetMapping("/empGroupList")
+	public String selectEmpGroupList(Model model) {
+		
+		List<EmpGroupDto> empGroupDtoList = empGroupService.selectGroupList();	
+		
+		model.addAttribute("empGroupDtoList", empGroupDtoList);
+		
+		return "empGroup/list";
+	}
+	
+	
+	// 2-2. 상세 정보(detail)
 	@GetMapping("/empGroup/{group_no}")
-	public String detailTeamPage(Model model, @PathVariable("group_no") Long group_no) {
+	public String detailTeamPage(@PathVariable("group_no") Long group_no, Model model) {
 		
 		EmpGroupDto egDto = empGroupService.selectGroupOne(group_no);
 		
@@ -83,16 +94,27 @@ public class GroupViewController {
 	}
 	
 	
-	// 목록(list)
-	@GetMapping("/empGroupList")
-	public String selectEmpGroupList(Model model) {
+	
+	// 3. 수정(update)
+	@GetMapping("/empGroupUpdate/{group_no}")
+	public String updateEmpGroup(@PathVariable("group_no")Long group_no, Model model) {
 		
-		List<EmpGroupDto> empGroupDtoList = empGroupService.selectGroupList();	
+		EmpGroupDto egDto = empGroupService.selectGroupOne(group_no);
+		List<EmployeeDto> empList = employeeService.selectEmployeeList();
+		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
 		
-		model.addAttribute("empGroupDtoList", empGroupDtoList);
+		System.out.println("뷰컨트롤러의 egdto: " + egDto);
 		
-		return "empGroup/list";
+		
+		model.addAttribute("egDto", egDto);
+		model.addAttribute("empList", empList);
+		model.addAttribute("groupList", groupList);
+		
+		return "empGroup/update";
 	}
-
+	
+	
+	// 4. 삭제(delete)
+	
 
 }
