@@ -1,4 +1,4 @@
-package com.cc.reservation.contoller;
+package com.cc.reservation.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class BuildingApiController {
 	
 	@ResponseBody
 	@PostMapping("/buildingCreate")
-	public Map<String, String> createBuilding(BuildingDto dto){
+	public Map<String, String> createBuilding(BuildingDto dto){   
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "건물등록중 오류가 발생했습니다.");

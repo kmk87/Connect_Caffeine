@@ -22,7 +22,6 @@ import lombok.ToString;
 public class EmployeeDto {
 		
 		private Long emp_code;
-		private Long group_no;
 		// dto에 추가된 필드
 		private String group_name;
 		private String emp_job_code;
@@ -45,7 +44,6 @@ public class EmployeeDto {
 		private String emp_img_file_path;
 		private String emp_memo;
 		private Long emp_holiday;
-
 		private Long group_parent_no;
 		
 		
