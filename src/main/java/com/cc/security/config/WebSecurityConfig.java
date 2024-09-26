@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -41,6 +39,7 @@ public class WebSecurityConfig {
 						 .loginProcessingUrl("/login") // 로그인 처리를 수행할 URL을 설정. 폼에서 로그인 요청이 "/login"으로 보내질때 처리
 						 .usernameParameter("emp_account") // 로그인 폼에서 아이디 필드의 이름을 설정
 						 .passwordParameter("emp_pw") // 로그인 폼에서 비밀번호 필드의 이름을 설정
+						 
 						 .permitAll() // 로그인 페이지의 접근을 모든 사용자에게 허용
 						 .failureHandler(new MyLoginFailureHandler())
 						 .successHandler(new MyLoginSuccessHandler()));
