@@ -42,9 +42,11 @@ public class EmployeeViewController {
 	public String createEmployeePage(Model model) {
 		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
 		List<com.cc.job.domain.JobDto> jobList = jobService.selectJobList();
+		String inputAccount = employeeService.getInputAccount();
 		
 		model.addAttribute("groupList", groupList);
 		model.addAttribute("jobList", jobList);
+		model.addAttribute("inputAccount", inputAccount);
 		
 		return "employee/create";
 	}

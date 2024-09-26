@@ -37,7 +37,6 @@ public class EmployeeService {
 	// 0. 메인
 	public EmployeeDto getEmployeeOne(String emp_account) {
 		
-		
 		return null;
 	}
 	
@@ -101,6 +100,11 @@ public class EmployeeService {
 		return employeeDtoList;
 	}
 	
+	// 1-1. 사원번호 카운트 부여
+	public String getInputAccount() {
+		String inputAccount = employeeRepository.getInputAccount();
+		return inputAccount;
+	}
 	
 	// 2-2. 상세 조회(detail), 수정(update)
 	public EmployeeDto selectEmployeeOne(Long emp_code) {

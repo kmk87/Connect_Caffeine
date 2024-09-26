@@ -44,9 +44,6 @@ public class EmployeeApiController {
 
         Employee savedEmployee = employeeService.createEmployee(dto);
          
-        
-            
-	    System.out.println("컨트롤러의 갔다온 employee: "+savedEmployee);
 	    return "redirect:/employeeList"; 
 	}
 	

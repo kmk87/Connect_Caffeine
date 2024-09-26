@@ -62,13 +62,15 @@
 }
 
 .basic-info-left {
-	flex: 0 0 40%;
-	height: 300px;
-	padding: 10px;
-	box-sizing: border-box;
-	position: relative;
-	display: inline-block;
-	cursor: pointer;
+	display: flex;
+    flex: 0 0 40%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 300px;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
 }
 
 #emp_img_file_name {
@@ -138,9 +140,9 @@
 								<input type="hidden" class="form-control" id="emp_holiday" name="emp_holiday" th:value="15">
 								<div class="basic-info">
 									<div class="basic-info-left">
-										<img src="bootstrap/img/basic_profile.png" alt="Profile" class="rounded-circle" style="width:200px; height:200px;">
-							              	<!-- <div class="upload-text">클릭 시 이미지 업로드</div> -->
-							              	<input type="file" id="img_file" name="emp_img_file">
+										<img src="bootstrap/img/basic_profile.png" id="profile_img" alt="Profile" class="rounded-circle" style="width:200px; height:200px;">
+							            <br><br>
+							            <input type="file" id="img_file" name="emp_img_file" accept="image/*" onchange="previewImage(event)">
 									</div>
 									<div class="basic-info-right">
 										<table class="table table-bordered">
@@ -156,7 +158,7 @@
 											<tr>
 												<th>사원 번호</th>
 												<td><input type="text" class="form-control"
-													id="emp_account" name="emp_account" placeholder="예) b20125"></td>
+													id="emp_account" name="emp_account" th:value="${inputAccount}"></td>
 											</tr>
 											<tr>
 												<th>사원 비밀번호</th>
@@ -256,7 +258,23 @@
 		</main>
 		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 		<script>
-	// 1. 주소 등록
+		// 1. 이미지 표현
+		function previewImage(event) {
+	    // FileReader 객체를 생성
+		    var reader = new FileReader();
+		    
+		    // 파일이 로드된 후 실행될 콜백 함수 정의
+		    reader.onload = function() {
+		        // img 태그의 src 속성을 파일의 데이터 URL로 설정
+		        var output = document.getElementById('profile_img');
+		        output.src = reader.result;
+		    };
+		    
+		    // input에서 선택된 파일을 읽음
+		    reader.readAsDataURL(event.target.files[0]);
+		}
+		
+	// 2. 주소 등록
 	function execDaumPostcode() {
 		
         new daum.Postcode({
@@ -307,7 +325,7 @@
     }
 
 	
-	// 2. 부서 선택에 따른 팀 목록 출력
+	// 3. 부서 선택에 따른 팀 목록 출력
 	document.getElementById("emp_dept").addEventListener("change", function() {
         var selectedDept = this.value;  // 선택한 부서 번호
         var teamSelect = document.getElementById("group_no");  // 팀 select 요소
@@ -324,7 +342,7 @@
         });
     });
 	
-	// 3. 등록 처리
+	// 4. 등록 처리
 	const form = document.getElementById("empAddFrm");
 	form.addEventListener('submit', (e) => {
 		e.preventDefault();
