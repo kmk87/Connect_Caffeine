@@ -92,9 +92,9 @@
 	    </div>
 			<div class="information">
 			  <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
-   			  <button class="tab-button" th:data-building-no="${}" onclick="showMeetingTab()">회의실</button>
+   			  <button class="tab-button" onclick="showMeetingTab()">회의실</button>
+			<hr>
 			</div>
-	<hr>
 	    <div class="register_board_form" >
 	        <form id="buildingUpdateFrm" method="post">
 	            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
@@ -120,7 +120,6 @@
 	    if (isNaN(parsedBuildingNo)) {
 	        return;
 	    }
-	    console.log(`/building_information/${parsedBuildingNo}`);
 	    window.location.href = `/building_information/${parsedBuildingNo}`;
 	}
 
