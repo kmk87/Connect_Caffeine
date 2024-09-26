@@ -1,8 +1,10 @@
 package com.cc.empGroup.domain;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,8 +30,9 @@ public class EmpGroupDto {
 	private String group_status;
 	private String group_level;
 	private String group_explain;
-	
+
 	private List<GrantedAuthority> authorities;
+
 	
 	public EmpGroup toEntity() {
 		return EmpGroup.builder()

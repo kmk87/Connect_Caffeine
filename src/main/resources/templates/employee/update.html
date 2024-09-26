@@ -93,8 +93,8 @@
     </div>End Page Title -->
 			<div class="sub-sidebar" id="sub-sidebar">
 				<span class="subside_title">인사 관리</span><br> <br>
-				<h5>인사 정보</h5>
-				<h5><a th:href="@/empGroupList">팀 정보</a></h5>
+				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
+				<h5>팀 정보</h5>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
 				<div class="col-xxl-4 col-md-6" style="width: 100%;">
@@ -109,8 +109,7 @@
 								action="/employee" enctype="multipart/form-data">
 								<input type="hidden" id="_csrf" name="_csrf"
 									th:value="${_csrf.token}" /> <input type=hidden
-									name="emp_code" th:field="*{emp_code}"
-									th:value="${dto.emp_code}">
+									name="emp_code" th:value="${dto.emp_code}">
 								<div class="basic-info">
 									<div class="basic-info-left">
 										<!-- <img src="/bootstrap/img/이제훈_프로필.png" alt="Profile" id="emp_profile_img" class="rounded-circle"> -->
