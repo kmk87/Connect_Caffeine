@@ -11,5 +11,7 @@
         <foreach item="room_no" index="index" collection="roomNoList" open="(" separator="," close=")">
             #{room_no}
         </foreach>
+        ORDER BY 
+        last_date DESC
     </select>
 </mapper>
