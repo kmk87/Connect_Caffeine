@@ -59,10 +59,13 @@ public class ApprovalApiController {
 	public Map<String,String> createDraft(@RequestBody ApprovalDto dto){
 		
 		Map<String,String> resultMap = new HashMap<String,String>();
+		
+	
+		
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg","결재요청 중 오류가 발생했습니다.");
 		
-		System.out.println("Api dto: "+dto);
+		
 		
 		if(approvalService.getDraftInfoOne(dto) != null) {
 			resultMap.put("res_code", "200");

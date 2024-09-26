@@ -1,5 +1,7 @@
 package com.cc.approval.domain;
 
+import java.time.LocalDate;
+
 import com.cc.employee.domain.Employee;
 
 import jakarta.persistence.Column;
@@ -47,5 +49,11 @@ public class TemporaryStorage {
 	
 	@Column(name="appr_holi_use_count")
 	private Integer apprHoliUseCount;
+	
+	@Column(name="appr_holi_start")
+	private LocalDate apprHoliStart;
+	
+	@Column(name="appr_holi_end")
+	private LocalDate apprHoliEnd;
 	
 }

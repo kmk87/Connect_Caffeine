@@ -3,11 +3,12 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{include/layout}">
 <head>
-<script th:inline="javascript">
-    /* Thymeleaf 변수를 JavaScript 변수로 전달 */
-    const apprFormNo = /*[[${apprFormNo}]]*/ 0;  
-</script>
 <meta charset="UTF-8">
+<script th:inline="javascript">
+    		/* Thymeleaf 변수를 JavaScript 변수로 전달 */
+    		const apprFormNo = /*[[${apprFormNo}]]*/ 0;  
+    		console.log("apprFormNo from Thymeleaf: " + apprFormNo);
+</script>
 <link th:href="@{/css/approval/create.css}" rel="stylesheet"
 	type="text/css">
 <title>기안서 작성</title>
@@ -211,17 +212,18 @@
 				<!-- 휴가신청서 폼 -->
 				<div th:if="${apprFormNo == 1}">
 					<div class="form-group">
-						<label for="leave-type">휴가 종류</label> <select id="leave-type"
-							name="leave-type">
+						<label for="leave-type">휴가 종류</label> 
+						<!-- <select id="leave-type"name="leave-type">
 							<option>연차</option>
 							<option>경조</option>
-						</select>
+						</select> -->
+						<input type="text" class="leave-type" value="연차" disabled>
 					</div>
 					<div class="form-group">
-						<label for="start-date">기간 및 일수</label> <input type="date"
-							id="start-date" name="start-date"> <span>~</span> <input
-							type="date" id="end-date" name="end-date"> <span>사용일수:</span><input
-							type="number" id="appr_holi_use_count" name="appr_holi_use_count">
+						<label for="start-date">기간 및 일수</label> 
+						<input type="date"id="start-date" name="appr_holi_start"> <span>~</span> 
+						<input type="date" id="end-date" name="appr_holi_end"> <span>사용일수:</span>
+						<input type="number" id="appr_holi_use_count" name="appr_holi_use_count">
 						<span> 일</span>
 					</div>
 					<div class="form-group">
@@ -284,204 +286,211 @@
 
 		<!-- JavaScript for Form Submission -->
 		<script>
+		
    
     
-	// 로그인한 사용자 정보 가져오기
-	document.addEventListener('DOMContentLoaded',function(){
-	const empNum = document.getElementById('empNum').value;
-		console.log("로그인한 정보"+empNum);
-	});
-	
-	const emp = document.getElementById('empNum').value;
-
-	
-	// 기안서 등록
-	// 상신 버튼의 유효성 검사 및 제출 처리
-	document.getElementById("draftAdd").addEventListener("submit", function(e) {
-		e.preventDefault();
-			
-		let form = this;
-		let vali_check = true;
-		let vali_text = "";
+		// 로그인한 사용자 정보 가져오기
+		document.addEventListener('DOMContentLoaded',function(){
+		const empNum = document.getElementById('empNum').value;
+			console.log("로그인한 정보"+empNum);
+		/* }); */
 		
-		// 휴가신청서 폼 유효성 검사
-		if (apprFormNo === 1) {
-		    if (form.appr_title.value === "") {
-		        vali_text = '제목을 입력하세요';
-		        form.appr_title.focus();
-		        vali_check = false;
-		    } else if (form.appr_content.value === "") {
-		        vali_text = "내용을 입력하세요";
-		        form.appr_content.focus();
-		        vali_check = false;
-		    } else if (form.appr_holi_use_count && form.appr_holi_use_count.value === "") {
-		        vali_text = '사용일수를 입력하세요';
-		        form.appr_holi_use_count.focus();
-		        vali_check = false;
-		    }
-		}
+		/* const emp = document.getElementById('empNum').value; */
 
-		// 사유서 폼 유효성 검사
-		if (apprFormNo === 2) {
-		    if (form.appr_title.value === "") {
-		        vali_text = '제목을 입력하세요';
-		        form.appr_title.focus();
-		        vali_check = false;
-		    } else if (form.appr_content.value === "") {
-		        vali_text = "내용을 입력하세요";
-		        form.appr_content.focus();
-		        vali_check = false;
-		    }
-		}
-
-		// 품의서 폼 유효성 검사
-		if (apprFormNo === 3) {
-			if (form.appr_title.value === "") {
-		        vali_text = '제목을 입력하세요';
-		        form.appr_title.focus();
-		        vali_check = false;
-		    } else if (form.appr_content.value === "") {
-		        vali_text = "내용을 입력하세요";
-		        form.appr_content.focus();
-		        vali_check = false;
-		    }
-		}
 		
-		
-		
-		if(vali_check == false){
-			alert(vali_text);
-			
-		} else {
-			if(confirm("상신하시겠습니까?")){
-				// 토큰
-				let obj ={};
-				const payload = new FormData(form);
-				payload.forEach(function(value,key){
-					obj[key] = value;
-				});
-			
-				obj.appr_writer_code = emp; // empNum 추가
+		// 기안서 등록
+		// 상신 버튼의 유효성 검사 및 제출 처리
+		document.getElementById("draftAdd").addEventListener("submit", function(e) {
+			e.preventDefault();
 				
+			let form = this;
+			let vali_check = true;
+			let vali_text = "";
 			
-				const jsonData = JSON.stringify(obj);
-				const csrfToken = document.getElementById("csrf_token").value;
-
-			
-				fetch('/draft',{
-					method: 'POST',
-					headers : {
-						"Content-Type": "application/json;charset=utf-8",
-						"Accept": "application/json",
-						'X-CSRF-TOKEN': csrfToken
-					},
-					body: jsonData,
-				
-				})
-				.then(response => response.json())
-				.then(data =>{
-					if(data.res_code == '200'){
-						Swal.fire({
-							icon: 'success',
-							title: '성공',
-							text: data.res_msg,
-							confirmButtonText: "닫기"
-						}) .then((result)=>{
-							location.href="/approvalHome";
-						});
-					} else{
-						Swal.fire({
-							icon: 'error',
-							title: '실패',
-							text: data.res_msg,
-							confirmButtonText: "닫기"
-						});
-					}
-				})
-				
-				
+			// 휴가신청서 폼 유효성 검사
+			if (apprFormNo === 1) {
+			    if (form.appr_title.value === "") {
+			        vali_text = '제목을 입력하세요';
+			        form.appr_title.focus();
+			        vali_check = false;
+			    } else if (form.appr_content.value === "") {
+			        vali_text = "내용을 입력하세요";
+			        form.appr_content.focus();
+			        vali_check = false;
+			    } else if (form.appr_holi_use_count && form.appr_holi_use_count.value === "") {
+			        vali_text = '사용일수를 입력하세요';
+			        form.appr_holi_use_count.focus();
+			        vali_check = false;
+			    }
 			}
-		}
-		
-	}); 
-	
-	
-	// 결재선 지정 모달창
-	document.getElementById("saveDesignation").addEventListener("click",function(){
-		let selectdeApprover = "직원1";
-		
-		fetch('apprDesignation',{
-			method: 'POST',
-			headers: {
-				"content-Type": "application/json;charset=utf-8"
-			},
-			body: JSON.stringify({ approver:selectedApprover})
-		})
-		.then(response => response.json())
-		.then(data => {
-			alert('결재선이 저장되었습니다.');
-			const modal = bootstrap.Modal.getInstance(document.getElementById('apprDesignationModal'));
-			modal.hide();
-		});
-	});
-	
-	
-	// 임시 저장 버튼 이벤트 리스너
-	document.getElementById("tempSaveBtn").addEventListener("click",function(){
-		const apprFormNo = document.getElementById("appr_form_no").value;
-		const empNum = document.getElementById("empNum").value;
-		const csrfToken = document.getElementById("csrf_token").value;
-		const apprTitle = document.getElementById("appr_title").value;
-		const apprContent = document.getElementById("appr_content").value;
-		
-		
-		const obj = {
-				appr_form_no: apprFormNo,
-				appr_title: apprTitle,
-				appr_content: apprContent,
-				employee: { empCode: empNum},
-		};
-		
-		
-		
-		fetch('/apprSave',{
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRF-TOKEN': csrfToken
-			},
-			body: JSON.stringify(obj)
-		})
-		.then(response => response.json())
-		.then(data => {
-			if(data.res_code == '200'){
-				Swal.fire({
-					icon: 'success',
-					title: '성공',
-					text: data.res_msg,
-					confirmButtonText: "닫기"
-				}) .then((result)=>{
-					location.href="/approvalHome";
-				});
-			} else{
-				Swal.fire({
-					icon: 'error',
-					title: '실패',
-					text: data.res_msg,
-					confirmButtonText: "닫기"
-				});
+
+			// 사유서 폼 유효성 검사
+			if (apprFormNo === 2) {
+			    if (form.appr_title.value === "") {
+			        vali_text = '제목을 입력하세요';
+			        form.appr_title.focus();
+			        vali_check = false;
+			    } else if (form.appr_content.value === "") {
+			        vali_text = "내용을 입력하세요";
+			        form.appr_content.focus();
+			        vali_check = false;
+			    }
 			}
+
+			// 품의서 폼 유효성 검사
+			if (apprFormNo === 3) {
+				if (form.appr_title.value === "") {
+			        vali_text = '제목을 입력하세요';
+			        form.appr_title.focus();
+			        vali_check = false;
+			    } else if (form.appr_content.value === "") {
+			        vali_text = "내용을 입력하세요";
+			        form.appr_content.focus();
+			        vali_check = false;
+			    }
+			}
+			
+			
+			
+			if(vali_check == false){
+				alert(vali_text);
+				
+			} else {
+				if(confirm("상신하시겠습니까?")){
+					// 토큰
+					let obj ={};
+					const payload = new FormData(form);
+					payload.forEach(function(value,key){
+						obj[key] = value;
+					});
+				
+					obj.appr_writer_code = empNum; // empNum 추가
+					
+					console.log("Payload before sending:", obj);
+				
+					const jsonData = JSON.stringify(obj);
+					const csrfToken = document.getElementById("csrf_token").value;
+
+				
+					fetch('/draft',{
+						method: 'POST',
+						headers : {
+							"Content-Type": "application/json;charset=utf-8",
+							"Accept": "application/json",
+							'X-CSRF-TOKEN': csrfToken
+						},
+						body: jsonData,
+					
+					})
+					.then(response => response.json())
+					.then(data =>{
+						if(data.res_code == '200'){
+							Swal.fire({
+								icon: 'success',
+								title: '성공',
+								text: data.res_msg,
+								confirmButtonText: "닫기"
+							}) .then((result)=>{
+								location.href="/approvalHome";
+							});
+						} else{
+							Swal.fire({
+								icon: 'error',
+								title: '실패',
+								text: data.res_msg,
+								confirmButtonText: "닫기"
+							});
+						}
+					});
+					
+					
+				}
+			}
+			
+		}); 
+	});
+		
+		// 결재선 지정 모달창
+		document.getElementById("saveDesignation").addEventListener("click",function(){
+			let selectdeApprover = "직원1";
+			
+			fetch('apprDesignation',{
+				method: 'POST',
+				headers: {
+					"content-Type": "application/json;charset=utf-8"
+				},
+				body: JSON.stringify({ approver:selectedApprover})
+			})
+			.then(response => response.json())
+			.then(data => {
+				alert('결재선이 저장되었습니다.');
+				const modal = bootstrap.Modal.getInstance(document.getElementById('apprDesignationModal'));
+				modal.hide();
+			});
 		});
 		
-	});
-	
-	// 취소 버튼 이벤트 리스너
-	document.getElementById("cancelBtn").addEventListener("click", function() {
-	    if (confirm("작성을 취소하시겠습니까?")) {
-	        location.href = "/approvalHome";  // 취소 시 홈으로 이동
-	    }
-	});
-	
+		
+		// 임시 저장 버튼 이벤트 리스너
+		document.getElementById("tempSaveBtn").addEventListener("click",function(){
+			const apprFormNo = document.getElementById("appr_form_no").value;
+			const empNum = document.getElementById("empNum").value;
+			const csrfToken = document.getElementById("csrf_token").value;
+			const apprTitle = document.getElementById("appr_title").value;
+			const apprContent = document.getElementById("appr_content").value;
+			const apprHoliStart = document.getElementById("start-date").value;
+		    const apprHoliEnd = document.getElementById("end-date").value;
+		    const apprHoliUseCount = document.getElementById("appr_holi_use_count").value;
+			
+			const obj = {
+					appr_form_no: apprFormNo,
+					appr_title: apprTitle,
+					appr_content: apprContent,
+					employee: { empCode: empNum},
+					appr_holi_start: apprHoliStart,
+			        appr_holi_end: apprHoliEnd,
+			        appr_holi_use_count: apprHoliUseCount,
+			};
+			
+			
+			
+			fetch('/apprSave',{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body: JSON.stringify(obj)
+			})
+			.then(response => response.json())
+			.then(data => {
+				if(data.res_code == '200'){
+					Swal.fire({
+						icon: 'success',
+						title: '성공',
+						text: data.res_msg,
+						confirmButtonText: "닫기"
+					}) .then((result)=>{
+						location.href="/approvalHome";
+					});
+				} else{
+					Swal.fire({
+						icon: 'error',
+						title: '실패',
+						text: data.res_msg,
+						confirmButtonText: "닫기"
+					});
+				}
+			});
+			
+		});
+		
+		// 취소 버튼 이벤트 리스너
+		document.getElementById("cancelBtn").addEventListener("click", function() {
+		    if (confirm("작성을 취소하시겠습니까?")) {
+		        location.href = "/approvalHome";  // 취소 시 홈으로 이동
+		    }
+		});
+
 	
 	
 	

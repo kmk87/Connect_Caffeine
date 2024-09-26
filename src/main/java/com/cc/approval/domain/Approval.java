@@ -1,5 +1,6 @@
 package com.cc.approval.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -55,32 +56,32 @@ public class Approval {
 	
 	@Column(name="draft_day")
 	@CreationTimestamp
-	private LocalDateTime draftDay;
+	private LocalDate draftDay;
 	
 	@Column(name="appr_date")
 	@UpdateTimestamp
-	private LocalDateTime apprDate;
+	private LocalDate apprDate;
 	
 	@Column(name="appr_holi_start")
-	private LocalDateTime apprHoliStart;
+	private LocalDate apprHoliStart;
 	
 	@Column(name="appr_holi_end")
-	private LocalDateTime apprHoliEnd;
+	private LocalDate apprHoliEnd;
 	
 	@Column(name="appr_holi_use_count")
-	private int apprHoliUseCount;
+	private Integer apprHoliUseCount;
 	
 	@Column(name="appr_first_no")
 	private int apprFirstNo;
 	
 	@Column(name="appr_last_no")
-	private int apprLastNo;
+	private Integer apprLastNo;
 	
 	@Column(name="referencer_first_no")
-	private int referencerFirstNo;
+	private Integer referencerFirstNo;
 	
 	@Column(name="referencer_last_no")
-	private int referencerLastNo;
+	private Integer referencerLastNo;
 
 	@ManyToOne
 	@JoinColumn(name="appr_writer_code")

@@ -10,6 +10,7 @@ import com.cc.approval.domain.ApprFormDto;
 import com.cc.approval.domain.Approval;
 import com.cc.approval.repository.ApprFormRepository;
 import com.cc.approval.repository.ApprovalRepository;
+import com.cc.empGroup.domain.EmpGroup;
 import com.cc.empGroup.domain.EmpGroupDto;
 
 @Service
@@ -24,31 +25,31 @@ public class ApprFormService {
 		this.approvalRepository = approvalRepository;
 	}
 	
+
 	// 문서 번호 생성
-	public String generateDocumentNumber(String groupName) {
-		// 그룹 이름 확인
-        String groupNameChecked = groupName != null ? groupName : "DEFAULT";
-        
-        // 현재 연도의 뒤 2자리
-        String currentYear = String.format("%02d", Year.now().getValue() % 100);
+		public String generateDocumentNumber(String groupName) {
+			// 그룹 이름 확인
+	        String groupNameChecked = groupName != null ? groupName : "DEFAULT";
+	        
+	        // 현재 연도의 뒤 2자리
+	        String currentYear = String.format("%02d", Year.now().getValue() % 100);
 
-        // 현재 팀과 연도에 맞는 가장 높은 카운트 조회
-        int maxCount = apprFormRepository.findMaxCountByTeamAndYear(groupNameChecked, currentYear);
+	        // 현재 팀과 연도에 맞는 가장 높은 카운트 조회
+	        int maxCount = apprFormRepository.findMaxCountByTeamAndYear(groupNameChecked, currentYear);
 
-        // 새로운 카운트 계산 (기존 카운트 +1)
-        int newCount = (maxCount == 0? maxCount : 0) + 1;
-        
-        System.out.println("카운트:"+newCount);
-        System.out.println("맥스카운트:"+maxCount);
+	        // 새로운 카운트 계산 (기존 카운트 +1)
+	        int newCount = (maxCount == 0? maxCount : 0) + 1;
+	        
+	        System.out.println("카운트:"+newCount);
+	        System.out.println("맥스카운트:"+maxCount);
 
-        // 문서번호 생성
-        return String.format("%s-%s-%05d", groupNameChecked, currentYear, newCount);
-	}
-	
-	public void saveApprForm(ApprFormDto apprFormDto) {
-        // ApprFormDto를 엔티티로 변환하여 저장
-        ApprForm apprForm = apprFormDto.toEntity();
-        apprFormRepository.save(apprForm);
-    }
-	
+	        // 문서번호 생성
+	        return String.format("%s-%s-%05d", groupNameChecked, currentYear, newCount);
+		}
+		
+		public void saveApprForm(ApprFormDto apprFormDto) {
+	        // ApprFormDto를 엔티티로 변환하여 저장
+	        ApprForm apprForm = apprFormDto.toEntity();
+	        apprFormRepository.save(apprForm);
+ 	}
 }

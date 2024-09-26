@@ -11,4 +11,5 @@ public interface EmpGroupRepository extends JpaRepository<EmpGroup,Long>{
 	EmpGroup findBygroupNo(Long group_no);
 	
 
+
 }

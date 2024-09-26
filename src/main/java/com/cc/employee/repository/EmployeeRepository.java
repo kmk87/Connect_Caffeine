@@ -21,7 +21,9 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")
 		int updateEmployeeSignatureByAccount(@Param("empAccount") String empAccount, @Param("filePath") String filePath);
 
-		
+		// empAccount로 empCode 가져오기
+//	    @Query("SELECT e.empCode FROM Employee e WHERE e.empAccount = :empAccount")
+//	    Long findEmpCodeByEmpAccount(@Param("empAccount") String empAccount);
 		
 		
 		

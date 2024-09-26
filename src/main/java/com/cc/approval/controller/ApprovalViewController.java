@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cc.approval.domain.ApprForm;
@@ -19,7 +20,9 @@ import com.cc.approval.domain.ApprovalDto;
 import com.cc.approval.domain.TemporaryStorageDto;
 import com.cc.approval.service.ApprFormService;
 import com.cc.approval.service.ApprovalService;
+import com.cc.empGroup.domain.EmpGroup;
 import com.cc.empGroup.domain.EmpGroupDto;
+import com.cc.empGroup.service.EmpGroupService;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 
@@ -29,13 +32,15 @@ public class ApprovalViewController {
 	private final ApprovalService approvalService;
 	private final ApprFormService apprFormService;
 	private final EmployeeService employeeService;
+	private final EmpGroupService empGroupService;
 	
 	@Autowired
 	public ApprovalViewController(ApprovalService approvalService,ApprFormService apprFormService,
-			EmployeeService employeeService) {
+			EmployeeService employeeService,EmpGroupService empGroupService) {
 		this.approvalService = approvalService;
 		this.apprFormService = apprFormService;
 		this.employeeService = employeeService;
+		this.empGroupService = empGroupService;
 	}
 
 	// 전자결재 홈
@@ -68,8 +73,16 @@ public class ApprovalViewController {
       return "approval/createDraft"; 
 	}
 	
+	
+	// emp_account로 empCode 가져오기
+//    @GetMapping("/employees/{empAccount}/empCode")
+//    public Long getEmpCodeByAccount(@PathVariable("empAccount") String empAccount) {
+//        return employeeService.getEmpCodeByEmpAccount(empAccount);
+//    }
+	
+	
 	// 기안서 폼 작성
-	@GetMapping("/createDraft")
+    @GetMapping("/createDraft")
 	public String getDataInfo(Model model,@RequestParam("formNo") int formNo,
 			ApprovalDto approvalDto,EmployeeDto employeeDto){
 	    
@@ -86,6 +99,10 @@ public class ApprovalViewController {
 	    // 문서 번호 생성
 		String documentNumber = apprFormService.generateDocumentNumber(groupName);
         System.out.println("기안서 번호: "+formNo);
+        
+        
+        // DTO에 문서번호 설정
+        approvalDto.setAppr_docu_no(documentNumber);
 		
         model.addAttribute("apprFormNo", formNo);
 		model.addAttribute("groupNames", groupName);
@@ -94,6 +111,7 @@ public class ApprovalViewController {
 		
 		return "approval/createDraft";
 	}
+	
 	
 	
 	// 기안서 상세 조회
@@ -194,12 +212,12 @@ public class ApprovalViewController {
 	}
 	
 	// 전자결재 환경설정
-		 @GetMapping("/signSetting")
-		 public String showsignSetting(Model model) {
+	@GetMapping("/signSetting")
+	public String showsignSetting(Model model) {
 		        
 
 		        
-		        return "approval/signSetting"; 
-		 }
+		return "approval/signSetting"; 
+	}
 	
 }

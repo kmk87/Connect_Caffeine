@@ -1,5 +1,6 @@
 package com.cc.approval.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -23,8 +24,8 @@ public class ApprovalDto {
 	private String appr_state;
 	private String appr_title;
 	private String appr_content;
-	private LocalDateTime draft_day;
-	private LocalDateTime appr_date;
+	private LocalDate draft_day;
+	private LocalDate appr_date;
 	private String appr_docu_no; // 추가된 필드
     private String emp_code;
     private Long appr_form_no;
@@ -34,6 +35,8 @@ public class ApprovalDto {
     private String group_name;
     private Integer appr_holi_use_count;
     private String is_deleted;
+    private LocalDate appr_holi_start; 
+    private LocalDate appr_holi_end;
 
     // 날짜를 문자열로 변환하는 메소드 추가
     public String getFormattedDraftDay() {
@@ -41,7 +44,7 @@ public class ApprovalDto {
 
         // draft_day가 null이면 현재 날짜로 설정
         if (draft_day == null) {
-            draft_day = LocalDateTime.now();
+            draft_day = LocalDate.now();
         }
 
         // draft_day를 문자열로 변환
@@ -87,8 +90,11 @@ public class ApprovalDto {
     }
     
     
+    
 	
 	public Approval toEntity(Employee employee, ApprForm apprForm) {
+		
+		
 		return Approval.builder()
 				.apprNo(appr_no)
 				.apprState(appr_state)
@@ -96,6 +102,9 @@ public class ApprovalDto {
 				.apprContent(appr_content)
 				.draftDay(draft_day)
 				.apprDate(appr_date)
+				.apprHoliStart(appr_holi_start) 
+	            .apprHoliEnd(appr_holi_end)     
+	            .apprHoliUseCount(appr_holi_use_count)
 				.isDeleted(is_deleted)
 				.employee(employee) 
                 .apprForm(apprForm)

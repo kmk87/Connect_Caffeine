@@ -1,5 +1,7 @@
 package com.cc.approval.domain;
 
+import java.time.LocalDate;
+
 import com.cc.employee.domain.Employee;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +26,8 @@ public class TemporaryStorageDto {
 	private Long appr_form_no;
 	private String formName;
 	private Integer appr_holi_use_count;
+	private LocalDate appr_holi_start;
+	private LocalDate appr_holi_end;
 	
 	// 결재 양식 이름 설정 메소드
     public void setFormName() {
@@ -54,6 +58,8 @@ public class TemporaryStorageDto {
 				.apprTitle(appr_title)
 	            .apprContent(appr_content)
 	            .apprHoliUseCount(appr_holi_use_count)
+	            .apprHoliStart(appr_holi_start) 
+	            .apprHoliEnd(appr_holi_end)
 				.employee(employee)
 				.apprForm(apprform)
 				.build();
@@ -77,7 +83,7 @@ public class TemporaryStorageDto {
 	}
 	
 	
-	//System.out.println("temporaryStorageDto.appr_form_no: " + temporaryStorageDto.getAppr_form_no());
+	
 	
 	
 }

@@ -48,6 +48,13 @@ public class EmployeeService {
         return "DEFAULT"; // 기본값 설정
     }
     
+    
+    // emp_account로 empCode 가져오기
+// 	public Long getEmpCodeByEmpAccount(String empAccount) {
+//         return employeeRepository.findEmpCodeByEmpAccount(empAccount);
+//     }
+//    
+    
     // 전자서명 설정
     @Transactional
     public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {

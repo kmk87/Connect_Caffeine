@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class WebSecurityConfig {
@@ -42,7 +42,8 @@ public class WebSecurityConfig {
 						 .successHandler(new MyLoginSuccessHandler()))
 						
 			.logout(logout -> logout.permitAll()); // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
-		return http.build(); // 설정된 HttpSecurity 객체를 빌드하여 securityFilterChain을 반환
+			
+			return http.build(); // 설정된 HttpSecurity 객체를 빌드하여 securityFilterChain을 반환
 	}
 	
 	@Bean

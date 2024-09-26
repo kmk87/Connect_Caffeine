@@ -54,11 +54,15 @@ public class ApprovalService {
 	    dto.setAppr_writer_code(employee.getEmpCode());
 	    dto.setAppr_writer_name(employee.getEmpName());
 	    
+	    
+	    
+	    
 		// 기안서 등록
 		Long apprWriter = dto.getAppr_writer_code();
 		
 		Employee emp = employeeRepository.findByempCode(apprWriter);
-		System.out.println("appr_form_no: " + dto.getAppr_form_no());
+		
+		
 		ApprForm apprFo = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
 		
 		
@@ -67,6 +71,9 @@ public class ApprovalService {
 				.apprTitle(dto.getAppr_title())
 				.apprContent(dto.getAppr_content())
 				.apprWriterName(emp.getEmpName())
+				.apprHoliStart(dto.getAppr_holi_start())
+				.apprHoliEnd(dto.getAppr_holi_end())
+				.apprHoliUseCount(dto.getAppr_holi_use_count())
 				.apprForm(apprFo)
 				.employee(emp)
 				.apprState(dto.getAppr_state() != null ? dto.getAppr_state() : "S")
@@ -157,6 +164,18 @@ public class ApprovalService {
 	    
 	    dto.setEmp_code(employee.getEmpCode());  // DTO에 empCode 설정
 	    
+//	    dto.setAppr_holi_start(form.getAppr_holi_start()); // form에서 가져온 값을 dto에 설정
+//	    dto.setAppr_holi_end(form.getAppr_holi_end());
+//	    dto.setAppr_holi_use_count(form.getAppr_holi_use_count());
+	    
+//	    TemporaryStorage temporaryStorage = TemporaryStorage.builder()
+//	    		.temNo(dto.getTem_no())
+//	    		.apprTitle(dto.getAppr_title())
+//	    		.apprContent(dto.getAppr_content())
+//	    		.apprHoliStart(dto.getAppr_holi_start())
+//	    		.apprHoliEnd(dto.getAppr_holi_end())
+//	    		.apprHoliUseCount(dto.getAppr_holi_use_count())
+//	    		.build();
 	    
 	    // 임시 저장 로직 호출 (tem_no 사용)
 	    return updateAppr(dto) != null;
@@ -176,11 +195,17 @@ public class ApprovalService {
 	        temp = TemporaryStorage.builder()
 	                .apprTitle(dto.getAppr_title())
 	                .apprContent(dto.getAppr_content())
+	                .apprHoliStart(dto.getAppr_holi_start())
+		    		.apprHoliEnd(dto.getAppr_holi_end())
+		    		.apprHoliUseCount(dto.getAppr_holi_use_count())
 	                .build();
 	    } else {
 	        // 기존 객체 업데이트
 	        temp.setApprTitle(dto.getAppr_title());
 	        temp.setApprContent(dto.getAppr_content());
+	        temp.setApprHoliStart(dto.getAppr_holi_start());
+	        temp.setApprHoliEnd(dto.getAppr_holi_end());
+	        temp.setApprHoliUseCount(dto.getAppr_holi_use_count());
 	    }
 	    
 	   
@@ -208,6 +233,8 @@ public class ApprovalService {
 	    		.tem_no(temp.getTemNo())
 	            .appr_title(temp.getApprTitle())
 	            .appr_content(temp.getApprContent())
+	            .appr_holi_start(temp.getApprHoliStart())	     
+	            .appr_holi_end(temp.getApprHoliEnd())
 	            .build();
 	}
 	
@@ -245,20 +272,6 @@ public class ApprovalService {
 		return result;
 	}
 	
-	// 전자서명 설정
-//	@Transactional
-//    public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {
-//        // empAccount로 Employee 조회
-//        Employee employee = employeeRepository.findByempAccount(empAccount);
-//        if (employee == null) {
-//            return false; // 사원을 찾을 수 없는 경우
-//        }
-//
-//        // empCode 추출 및 서명 경로 업데이트
-//        employee.setEmpSignatureImagePath(filePath);
-//        employeeRepository.save(employee); // 업데이트 수행
-//        return true;
-//    }
 	
 	
 	
