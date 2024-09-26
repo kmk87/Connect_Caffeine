@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -27,7 +25,11 @@ public class WebSecurityConfig {
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)throws Exception{
 		http.authorizeHttpRequests(request -> // 요청에 대한 접근권한을 설정
 				request
-				.requestMatchers("/login","/static/**", "/bootstrap/**").permitAll()
+				.requestMatchers("/login","/static/**", "/employee", "/employeeCreate", "/employeeList", "/bootstrap/**", "/employeeUpdate/**", "/employeeUpdate"
+						, "/employeeDelete",  "/employeeDelete/**", "/empGroupList", "/empGroupList/**"
+						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**",
+						"/empGroupUpdate", "/empGroupUpdate/**", "/empGroupDelete", "/empGroupDelete/**", "employeeCreate").permitAll()
+
 				//.requestMatchers("/**").permitAll()
 				.anyRequest().authenticated()
 				) // 루트 URL("/")에 대한 접근을 모든 사용자에게 허용
@@ -35,8 +37,9 @@ public class WebSecurityConfig {
 			.formLogin(login -> // 폼 기반의 인증 설정
 					login.loginPage("/login") // 사용자정의 로그인 페이지 설정,"/login"경로의 페이지를 로그인 페이지로 사용
 						 .loginProcessingUrl("/login") // 로그인 처리를 수행할 URL을 설정. 폼에서 로그인 요청이 "/login"으로 보내질때 처리
-						 .usernameParameter("mem_id") // 로그인 폼에서 아이디 필드의 이름을 설정
-						 .passwordParameter("mem_pw") // 로그인 폼에서 비밀번호 필드의 이름을 설정
+						 .usernameParameter("emp_account") // 로그인 폼에서 아이디 필드의 이름을 설정
+						 .passwordParameter("emp_pw") // 로그인 폼에서 비밀번호 필드의 이름을 설정
+						 
 						 .permitAll() // 로그인 페이지의 접근을 모든 사용자에게 허용
 						 .failureHandler(new MyLoginFailureHandler())
 						 .successHandler(new MyLoginSuccessHandler()))
@@ -55,10 +58,11 @@ public class WebSecurityConfig {
 		
 	}
 	
-	// 재활용하겠다 꼭 있어야함
+	
+	// 재활용하겠다 꼭 있어야 함
 //		@Bean
 //		public PasswordEncoder passwordEncoder() {
 //			return new BCryptPasswordEncoder();
 //		}
-//	
+	
 }
