@@ -76,7 +76,6 @@ public class EmployeeApiController {
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "퇴사 처리 중 오류가 발생하였습니다.");
 
-		System.out.println("컨트롤러로 넘어온 객체: " + dto);
 
 		if (employeeService.deleteEmployee(dto) != null) {
 			resultMap.put("res_code", "200");

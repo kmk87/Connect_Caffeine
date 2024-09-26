@@ -111,8 +111,7 @@
 									th:value="${dto.emp_code}">
 								<div class="basic-info">
 									<div class="basic-info-left">
-										<img src="/bootstrap/img/이제훈_프로필.png" alt="Profile"
-											id="emp_profile_img" class="rounded-circle">
+										<img th:src="@{'/uploadImg/'+${dto.emp_img_file_path}}" alt="Profile" id="emp_profile_img" class="rounded-circle"/>
 									</div>
 									<div class="basic-info-right">
 										<table class="table table-bordered">

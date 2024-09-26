@@ -23,9 +23,12 @@
 <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
 <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
 <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-<link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
-<!-- Template Main CSS File -->
 <link href="/bootstrap/css/style.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<!-- Template Main CSS File -->
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -123,8 +126,34 @@
 	<a href="#"
 		class="back-to-top d-flex align-items-center justify-content-center"><i
 		class="bi bi-arrow-up-short"></i></a>
-	<!-- Vendor JS Files -->
+	
 	<script>
+	$(document).ready(function() {   
+        $('#page_list').DataTable({
+           "lengthChange": false,
+         "searching": true,      // 검색 활성화
+         "responsive": true,
+         "language": {
+             url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json' // 한국어 번역 적용
+         },
+         "initComplete": function() {
+             // 한국어 번역 로드 후 paginate 옵션 덮어쓰기
+             var table = this.api();
+             table.settings()[0].oLanguage.oPaginate.sPrevious = "<<";
+             table.settings()[0].oLanguage.oPaginate.sNext = ">>";
+         },
+         "pagingType": "simple_numbers",
+         "pageLength": 10,              // 한 페이지에 보여질 항목 수 설정
+         "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)
+         "columnDefs": [
+             { "orderable": false, "targets": 1 },  // 1번째(결재양식) 컬럼의 정렬 비활성화
+             { "orderable": false, "targets": 2 }
+         ]
+         
+        });
+  
+    });
+	
 	 document.addEventListener("DOMContentLoaded", function () {
         const message = /*[[${message}]]*/ '';  // 서버에서 전달된 메시지
         const alertType = /*[[${alertType}]]*/ '';  // 성공 또는 오류 타입
@@ -138,6 +167,7 @@
             });
         }
     });
+
 	 </script>
 	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
 	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -4,9 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -87,6 +88,13 @@ public class EmployeeService {
 	}
 	
 	
+	// 1-1. 사원번호 카운트 부여
+	public String getInputAccount() {
+		String inputAccount = employeeRepository.getInputAccount();
+		return inputAccount;
+	}
+	
+	
 	// 2-1. 목록(list)
 	public List<EmployeeDto> selectEmployeeList() {
 		
@@ -102,11 +110,21 @@ public class EmployeeService {
 		return employeeDtoList;
 	}
 	
-	// 1-1. 사원번호 카운트 부여
-	public String getInputAccount() {
-		String inputAccount = employeeRepository.getInputAccount();
-		return inputAccount;
-	}
+	
+	// 2-1. 리스트
+//	public Map<Long, String> getDepartmentInfoForEmployees() {
+//	    List<Employee> employees = employeeRepository.findAll();
+//	    Map<Long, String> employeeDeptMap = new HashMap<>();
+//
+//	    for (Employee employee : employees) {
+//	        EmpGroup team = employee.getEmpGroup();  // 팀 정보 가져오기
+//	        if (team != null && team.getGroupParentNo() != null) {
+//	            EmpGroup dept = employeeRepository.findDeptByGroupNo(team.getGroupParentNo());
+//	            employeeDeptMap.put(employee.getEmpCode(), dept.getGroupName());  // 사원의 부서 정보를 Map에 저장
+//	        }
+//	    }
+//	    return employeeDeptMap;  // 사원별 부서 정보 Map 리턴
+//	}
 	
 	// 2-2. 상세 조회(detail), 수정(update)
 	public EmployeeDto selectEmployeeOne(Long emp_code) {
@@ -141,7 +159,6 @@ public class EmployeeService {
 	 			return groupNo;
 	 		}
 
-	
 	
 	
 	
@@ -269,12 +286,6 @@ public class EmployeeService {
 			
 			return deptName;
 		}
-		
-		// 그룹 번호 가져오는 메소드
-		public Long getGroupNoByEmpCode(Long emp_code) {
-			Employee emp = employeeRepository.findById(emp_code).orElseThrow();
-			Long groupNo = emp.getEmpGroup().getGroupNo();
-			return groupNo;
-		}
+	
 	
 }

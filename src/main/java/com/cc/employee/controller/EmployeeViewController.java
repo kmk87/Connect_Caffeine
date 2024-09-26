@@ -1,6 +1,7 @@
 package com.cc.employee.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.service.EmpGroupService;
+import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 import com.cc.job.service.JobService;
@@ -51,6 +53,8 @@ public class EmployeeViewController {
 		return "employee/create";
 	}
 	
+	
+	
 	// 2-1. 목록(list)
 	@GetMapping("employeeList")
 	public String selectEmployeeList(Model model) {
@@ -58,9 +62,18 @@ public class EmployeeViewController {
 		List<EmployeeDto> empDtoList = employeeService.selectEmployeeList();
 		
 		model.addAttribute("empDtoList", empDtoList);
-		
+
 		return "employee/list";
 	}
+	
+	// 2-1. 조회
+//	@GetMapping("/employeeList")
+//	public String getEmployeeList(Model model) {
+//	    List<EmployeeDto> empDtoList = employeeService.getSortedEmpDtoList();  // 정렬된 리스트 가져오기
+//	    model.addAttribute("empDtoList", empDtoList);
+//	    return "employeeList";  // 뷰 이름 리턴
+//	}
+	
 	
 	
 	// 2-2. 상세 정보(detail)
