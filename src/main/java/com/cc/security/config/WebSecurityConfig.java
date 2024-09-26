@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -26,7 +24,13 @@ public class WebSecurityConfig {
 	@Bean // 이 메소드를 Bean으로 등록하여 spring에서 관리
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)throws Exception{
 		http.authorizeHttpRequests(request -> // 요청에 대한 접근권한을 설정
-				request.requestMatchers("/login","/static/**", "/bootstrap/**","/calendar").permitAll()
+
+				request
+				.requestMatchers("/login","/static/**", "/employee", "/employeeCreate", "/employeeList", "/bootstrap/**", "/employeeUpdate/**", "/employeeUpdate"
+						, "/employeeDelete",  "/employeeDelete/**", "/empGroupList", "/empGroupList/**"
+						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**",
+						"/empGroupUpdate", "/empGroupUpdate/**", "/empGroupDelete", "/empGroupDelete/**", "employeeCreate").permitAll()
+                               
 				//.requestMatchers("/**").permitAll()
 //				.requestMatchers("/calendar/**").authenticated()
 				.anyRequest().authenticated()
@@ -37,11 +41,12 @@ public class WebSecurityConfig {
 						 .loginProcessingUrl("/login") // 로그인 처리를 수행할 URL을 설정. 폼에서 로그인 요청이 "/login"으로 보내질때 처리
 						 .usernameParameter("emp_account") // 로그인 폼에서 아이디 필드의 이름을 설정
 						 .passwordParameter("emp_pw") // 로그인 폼에서 비밀번호 필드의 이름을 설정
+						 
 						 .permitAll() // 로그인 페이지의 접근을 모든 사용자에게 허용
 						 .failureHandler(new MyLoginFailureHandler())
-						 .successHandler(new MyLoginSuccessHandler()));
+						 .successHandler(new MyLoginSuccessHandler()))
 						
-			//.logout(logout -> logout.permitAll())); // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
+			.logout(logout -> logout.permitAll()); // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
 		return http.build(); // 설정된 HttpSecurity 객체를 빌드하여 securityFilterChain을 반환
 	}
 	
@@ -55,10 +60,11 @@ public class WebSecurityConfig {
 		
 	}
 	
-	// 재활용하겠다 꼭 있어야함
+	
+	// 재활용하겠다 꼭 있어야 함
 //		@Bean
 //		public PasswordEncoder passwordEncoder() {
 //			return new BCryptPasswordEncoder();
 //		}
-//	
+	
 }
