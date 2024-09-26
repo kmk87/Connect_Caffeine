@@ -39,11 +39,13 @@ public class EmployeeDto {
 		private String emp_desk_phone;
 		private String emp_hiredate;
 		private String emp_resign;
+
 		private String emp_resigndate;
 		private String emp_img_file_name;
 		private String emp_img_file_path;
 		private String emp_memo;
 		private Long emp_holiday;
+
 		private Long group_parent_no;
 		
 		
@@ -53,9 +55,7 @@ public class EmployeeDto {
 		
 		private List<GrantedAuthority> authorities;
 		
-		
-		
-		
+
 		// DTO -> Entity
 		public Employee toEntity() {
 			
@@ -63,6 +63,7 @@ public class EmployeeDto {
 					.groupNo(group_no)
 					.build();
 			
+
 			  // DateTimeFormatter를 이용해 문자열을 파싱할 형식 지정
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -70,6 +71,7 @@ public class EmployeeDto {
 	        LocalDateTime emp_hiredate_iso = LocalDateTime.parse(emp_hiredate, formatter);
 	        LocalDateTime emp_resigndate_iso = LocalDateTime.parse(emp_resigndate, formatter);
 			
+
 			return Employee.builder()
 					.empCode(emp_code)
 					.empGroup(empGroup)
@@ -87,9 +89,11 @@ public class EmployeeDto {
 					.empDeskPhone(emp_desk_phone)
 					.empHiredate(emp_hiredate_iso)
 					.empResign(emp_resign)
+
 					.empResigndate(emp_resigndate_iso)
 					.empImgFileName(emp_img_file_name)
 					.empImgFilePath(emp_img_file_path)
+
 					.empMemo(emp_memo)
 					.empHoliday(emp_holiday)
 					.build();
@@ -138,4 +142,3 @@ public class EmployeeDto {
 					.build();
 		}
 }
-

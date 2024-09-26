@@ -5,6 +5,8 @@ import org.springframework.data.repository.query.Param;
 
 import com.cc.empGroup.domain.EmpGroup;
 
+import com.cc.empGroup.domain.EmpGroup;
+
 public interface EmpGroupRepository extends JpaRepository<EmpGroup,Long>{
 	
 	EmpGroup findBygroupNo(Long group_no);
@@ -12,5 +14,5 @@ public interface EmpGroupRepository extends JpaRepository<EmpGroup,Long>{
 	// 부서 인원 구하기
 	@Query("SELECT SUM(g.groupHeadcount) FROM EmpGroup g WHERE g.groupParentNo = :group_no")
     Long deptHeadcountByGroupNo(@Param("group_no") Long group_no);
-}
 
+}

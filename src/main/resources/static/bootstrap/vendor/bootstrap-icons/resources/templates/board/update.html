@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+     <th:block layout:fragment="content">
+       	<link th:href="@{/css/board/create.css}" rel="stylesheet" type="text/css">
+      	<section>
+			<div id="section_wrap">
+				<div class="word">
+					<h3>게시글 수정</h3>
+				</div><br>
+				<div class="register_board_form">
+					<form id="boardUpdateFrm" th:object="${dto}">	
+						<input type="hidden" name="board_no" th:field="*{board_no}">
+						<input type="text" name="board_title" th:field="*{board_title}"> <br>
+						<input type="text" name="board_content" th:field="*{board_content}"> <br>
+						<input type="file" name="file"><br>
+						<span> ※ 이미지 파일을 수정하시려면 새로운 파일을 등록하세요. </span><br>
+						<input type="submit" value="수정"> 
+					</form>
+				</div>
+			</div>
+		</section>
+		<script>
+			const form = document.getElementById("boardUpdateFrm");
+			form.addEventListener('submit',(e)=>{
+				e.preventDefault();
+				const payload = new FormData(form);
+				const boardNo = form.board_no.value
+				fetch('/board/'+boardNo,{
+					method:'post',
+					body:payload
+				})
+				.then(response=>response.json())
+				.then(data =>{
+					if(data.res_code == '200'){
+						Swal.fire({
+							icon :'success',
+							title:'성공',
+							text : data.res_msg ,
+							confirmButtonText:"닫기"
+						}).then((result)=>{
+							location.href="/board";
+						});
+					} else{
+						Swal.fire({
+							icon:'error',
+							title:'실패',
+							text: data.res_msg,
+							confirmButtonText:"닫기"
+						});
+					}
+				})
+			})
+		</script>		
+     </th:block>
+</html>

@@ -24,13 +24,15 @@ public class WebSecurityConfig {
 	@Bean // 이 메소드를 Bean으로 등록하여 spring에서 관리
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)throws Exception{
 		http.authorizeHttpRequests(request -> // 요청에 대한 접근권한을 설정
+
 				request
 				.requestMatchers("/login","/static/**", "/employee", "/employeeCreate", "/employeeList", "/bootstrap/**", "/employeeUpdate/**", "/employeeUpdate"
 						, "/employeeDelete",  "/employeeDelete/**", "/empGroupList", "/empGroupList/**"
 						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**",
 						"/empGroupUpdate", "/empGroupUpdate/**", "/empGroupDelete", "/empGroupDelete/**", "employeeCreate").permitAll()
-
+                               
 				//.requestMatchers("/**").permitAll()
+//				.requestMatchers("/calendar/**").authenticated()
 				.anyRequest().authenticated()
 				) // 루트 URL("/")에 대한 접근을 모든 사용자에게 허용
 					   

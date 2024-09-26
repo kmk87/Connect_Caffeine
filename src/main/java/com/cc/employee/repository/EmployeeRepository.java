@@ -18,6 +18,14 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		Employee findByempAccount(String emp_account);
 
 		
+		Employee findByempName(String emp_name);
+
+		// empAccount(사용자 이름)로 emp_code를 찾는 메서드
+	    @Query("SELECT e.empCode FROM Employee e WHERE e.empAccount = :empAccount")
+	    Long findEmpCodeByEmpName(@Param("empAccount") String empAccount);
+
+
+		
 		@Query("SELECT e.empName FROM Employee e " +
 		           "JOIN Approval a ON a.employee.empCode = e.empCode " +
 		           "WHERE e.empAccount = :memId")
@@ -29,4 +37,5 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 			       "LPAD(CAST(COUNT(e) + 1 AS string), 3, '0')) " +
 			       "FROM Employee e WHERE YEAR(e.empHiredate) = YEAR(CURRENT_DATE)")
 		String getInputAccount();
+
 }

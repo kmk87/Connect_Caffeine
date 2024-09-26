@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+     <th:block layout:fragment="content">
+       	<link th:href="@{/css/board/list.css}" rel="stylesheet" type="text/css">
+       	<link th:href="@{/css/include/paging.css}" rel="stylesheet" type="text/css">
+       	<section> 
+		<div id="section_wrap">
+			<div class="word">
+				<h3>채팅 목록</h3>
+			</div><br>
+			<div class="book_list">
+				<table>
+					<colgroup>
+						<col width="10%">
+						<col width="20%">
+						<col width="30%">
+						<col width="30%">
+						<col width="10%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>번호</th>
+							<th>상대방</th>
+							<th>마지막 채팅</th>
+							<th>마지막 일자</th>
+							<th>채팅 시작</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- 1. resultList.content에서 목록 꺼내기 -->
+						<th:block th:if="${#lists.isEmpty(resultList.content)}">
+							<tr>
+								<td colspan="5">해당하는 게시글이 없습니다.</td>
+							</tr>
+						</th:block>
+						<!-- 2. pageable을 활용해서 게시글 번호 수정 -->
+						<th:block th:if="${!#lists.isEmpty(resultList.content)}">
+							<tr th:each="chatRoom, chatRoomStat : ${resultList.content}">
+								<td th:text="${(resultList.pageable.pageSize)*(resultList.pageable.pageNumber)+chatRoomStat.count}"></td>
+								<td th:text="${chatRoom.not_me_name}"></td>
+								<td th:text="${chatRoom.last_msg != null} ? ${chatRoom.last_msg} : '대화없음'"></td>
+								<td th:text="${chatRoom.last_date != null} ? ${#temporals.format(chatRoom.last_date, 'yy-MM-dd HH:mm:ss')} : 대화없음"></td>
+								<td>
+									<a th:href="@{/chat/{no}(no=${chatRoom.room_no})}">대화시작</a>
+								</td>
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
+				<br>
+				<!-- 3. 페이징 관련 로직 추가 -->
+				<div class="center" th:if="${!resultList.isEmpty()}">
+					<div class="pagination"
+						th:with="
+						pageNumber = ${resultList.pageable.pageNumber},
+						pageSize = ${resultList.pageable.pageSize},
+						totalPages = ${resultList.totalPages},
+						startPage = ${T(java.lang.Math).floor(pageNumber / pageSize) * pageSize + 1},
+						tempEndPage = ${startPage + pageSize - 1},
+						endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})
+						">
+						<th:block th:if="${!resultList.first}">
+							<a th:href="${resultList.first} ? '#' : @{/chat(page=${pageNumber - 1})}">&lt;</a>
+						</th:block>
+						<th:block th:each="page: ${#numbers.sequence(startPage, endPage)}">
+							<a th:text="${page}" th:href="@{/chat(page=${page} - 1)}" 
+							th:classappend="${page == pageNumber + 1} ? 'active'">1</a>
+						</th:block>
+						<th:block th:if="${!resultList.last}">
+							<a th:href="${resultList.last} ? '#' : @{/chat(page=${pageNumber + 1})}">&gt;</a>
+						</th:block>
+					</div>
+				</div>
+				<input type="button" value="채팅 생성" style="float:right;"
+				th:onclick="chatCreate();">
+				<input type="hidden" value="" id="parent_input">
+				<input type="hidden" id="from_id" th:value="${#authentication.principal.dto.mem_id}">
+				<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+			</div>
+		</div>
+	</section>
+	<script>
+		const chatCreate = function(){
+			let newWin = window.open('/chat/create','_blank','width=300,height=300');
+			let timer = setInterval(function(){
+				if(newWin.closed){
+					clearInterval(timer);
+					const pVal = document.getElementById('parent_input').value;
+					if(pVal != ""){
+						const fromId = document.getElementById('from_id').value;
+						let obj = {
+							to_id : pVal,
+							from_id :fromId
+						};
+						const jsonData = JSON.stringify(obj);
+						const csrfToken = document.getElementById('csrf_token').value;
+						fetch('/chat/create',{
+							method : 'post',
+							body : jsonData,
+							headers : {
+								"Content-Type": "application/json;charset=utf-8",
+								"Accept": "application/json",
+								'X-CSRF-TOKEN': csrfToken
+							}
+						})
+						.then(response => response.json())
+						.then(data => {
+							alert(data.res_msg);
+							if(data.res_code == '200'){
+								location.href='/chat';
+								document.getElementById('parent_input').value = '';
+							}
+						})
+					}
+				}
+				
+			},1000);
+		}
+	</script>
+     </th:block>
+</html>
