@@ -1,0 +1,38 @@
+@charset "UTF-8";
+section {
+	margin: 15px 0;
+	}
+#section_wrap {
+	width: 240px;
+	margin: 0 auto;
+	}
+#section_wrap .word {
+	width: 205px;
+	margin: 0 auto;
+	text-align: center;
+	}
+#section_wrap .member_list {
+	width: 205px;
+	margin: 0 auto;
+	}
+#section_wrap .member_list table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: .9em;
+	}
+#section_wrap .member_list table thead tr th {
+	border: 1px solid #e1e1e1;
+	padding: 10px 3px;
+	text-align: center;
+	color: #fff;
+	background-color: #a5a5a5;
+	}
+	
+#section_wrap .member_list table tbody tr:nth-child(2n-1) {
+	background-color: #f3f3f3;
+}
+#section_wrap .member_list table tbody tr td {
+	border: 1px solid #e1e1e1;
+	padding: 10px 3px;
+	text-align: center;
+	}

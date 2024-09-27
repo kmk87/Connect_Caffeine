@@ -1,14 +1,12 @@
 package com.cc.employee.service;
 
 import java.io.File;
-import java.net.URLDecoder;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
 
 @Service
@@ -22,7 +20,7 @@ public class FileService {
 		this.employeeRepository = employeeRepository;
 	}
 	
-	// 업로드
+	// 1. 업로드
 	public String upload(MultipartFile file) {
 		
 		String newFileName = null;

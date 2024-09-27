@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+
+<!-- Include jsTree CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" /> <!-- // 여기 -->
+
+<!-- 조직도 끝 -->
   <meta charset="UTF-8">
   <title>Navigation</title>
   <meta content="" name="description">
@@ -21,6 +27,8 @@
   <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
+  <!-- 조직도 시작 -->
+
 </head>
   <body>
 <th:block th:fragment="navLayout">
@@ -79,12 +87,30 @@
           </a>
         </li>
         <!-- Other nav items omitted for brevity -->
+        <li>
+        	<a class="nav-link collapsed" th:href="@{/toOrganization}">조직도</a>
+        </li>
       </ul>
     </aside><!-- End Sidebar-->
-   
+    <!-- 모달 -->
+<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 50%; margin-top: 50px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orgChartModalLabel">조직도</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<!-- 조직도가 표시될 곳 -->
+                <div id="treeContainer"></div> 
+            </div>
+        </div>
+    </div>
+</div>
+
 </th:block>
-  
   <!-- Vendor JS Files -->
+   <!-- Include jQuery -->
   <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>

@@ -1,5 +1,6 @@
 package com.cc.employee.domain;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -35,14 +36,14 @@ public class EmployeeDto {
 		private String emp_email;
 		private String emp_phone;
 		private String emp_desk_phone;
-		private LocalDateTime emp_hiredate;
+		private String emp_hiredate;
 		private String emp_resign;
-		private LocalDateTime emp_resigndate;
-//		private String emp_img_file_name;
-//		private String emp_img_file_path;
+
+		private String emp_resigndate;
+		private String emp_img_file_name;
+		private String emp_img_file_path;
 		private String emp_memo;
 		private Long emp_holiday;
-		private Long group_no;
 		private Long group_parent_no;
 		
 		
@@ -52,7 +53,7 @@ public class EmployeeDto {
 		
 		private List<GrantedAuthority> authorities;
 		
-		
+
 		// DTO -> Entity
 		public Employee toEntity() {
 			
@@ -60,6 +61,15 @@ public class EmployeeDto {
 					.groupNo(group_no)
 					.build();
 			
+
+			  // DateTimeFormatter를 이용해 문자열을 파싱할 형식 지정
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	        // 문자열을 LocalDateTime으로 변환
+	        LocalDateTime emp_hiredate_iso = LocalDateTime.parse(emp_hiredate, formatter);
+	        LocalDateTime emp_resigndate_iso = LocalDateTime.parse(emp_resigndate, formatter);
+			
+
 			return Employee.builder()
 					.empCode(emp_code)
 					.empGroup(empGroup)
@@ -75,11 +85,13 @@ public class EmployeeDto {
 					.empEmail(emp_email)
 					.empPhone(emp_phone)
 					.empDeskPhone(emp_desk_phone)
-					.empHiredate(emp_hiredate)
+					.empHiredate(emp_hiredate_iso)
 					.empResign(emp_resign)
-					.empResigndate(emp_resigndate)
-//					.empImgFileName(emp_img_file_name)
-//					.empImgFilePath(emp_img_file_path)
+
+					.empResigndate(emp_resigndate_iso)
+					.empImgFileName(emp_img_file_name)
+					.empImgFilePath(emp_img_file_path)
+
 					.empMemo(emp_memo)
 					.empHoliday(emp_holiday)
 					.build();
@@ -87,6 +99,20 @@ public class EmployeeDto {
 		
 		// Entity -> DTO
 		public EmployeeDto toDto(Employee employee){
+			
+			
+			// DateTimeFormatter를 이용해 원하는 형식 지정
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	        // LocalDateTime을 String으로 변환
+	        String empHiredateStr = null;
+	        if(employee.getEmpHiredate() != null)
+	        	empHiredateStr = employee.getEmpHiredate().format(formatter);
+	        
+	        String empResigndateStr = null;
+	        if(employee.getEmpResigndate() != null)
+	        	empResigndateStr = employee.getEmpResigndate().format(formatter);
+			
 			return EmployeeDto.builder()
 					.emp_code(employee.getEmpCode())
 					.group_name(employee.getEmpGroup().getGroupName())
@@ -102,11 +128,11 @@ public class EmployeeDto {
 					.emp_email(employee.getEmpEmail())
 					.emp_phone(employee.getEmpPhone())
 					.emp_desk_phone(employee.getEmpDeskPhone())
-					.emp_hiredate(employee.getEmpHiredate())
+					.emp_hiredate(empHiredateStr)
 					.emp_resign(employee.getEmpResign())
-					.emp_resigndate(employee.getEmpResigndate())
-//					.emp_img_file_name(employee.getEmpImgFileName())
-//					.emp_img_file_path(employee.getEmpImgFilePath())
+					.emp_resigndate(empResigndateStr)
+					.emp_img_file_name(employee.getEmpImgFileName())
+					.emp_img_file_path(employee.getEmpImgFilePath())
 					.emp_memo(employee.getEmpMemo())
 					.emp_holiday(employee.getEmpHoliday())
 					.group_name(employee.getEmpGroup().getGroupName())
@@ -114,4 +140,3 @@ public class EmployeeDto {
 					.build();
 		}
 }
-
