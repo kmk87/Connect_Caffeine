@@ -70,7 +70,7 @@
               </div>
           </div>
       </section>
-      <script type="text/javascript">
+      <script>
     let websocket;
 
     // WebSocket을 열고 연결이 완료되면 메시지를 전송하는 함수
@@ -87,18 +87,17 @@
         };
 
         // WebSocket 메시지를 수신했을 때 실행될 이벤트
-        websocket.onmessage = (response) => {
-    		const resp = JSON.parse(response.data);
-    		if (resp.res_code == '200') {
-        		const roomNo = document.getElementById("room_no").value;
-        		if (roomNo == resp.room_no) {
-            		printMsg(resp.message_content);
-        			}
-    			}else {
-        			alert(resp.res_msg);
-    				}
-				};
-
+        websocket.onmessage = function(response) {
+    const resp = JSON.parse(response.data);
+    if (resp.res_code === '200') {
+        const roomNo = document.getElementById("room_no").value;
+        if (roomNo == resp.room_no) {
+            printMsg(resp.message_content);  // 메시지를 화면에 출력
+        }
+    } else {
+        alert(resp.res_msg);
+    }
+};
 
         // WebSocket 연결이 닫혔을 때 실행될 이벤트
         websocket.onclose = () => {
@@ -113,16 +112,20 @@
     }
 
     	// 메시지를 화면에 출력하는 함수
-    	const printMsg = function(msg) {
-    	const div = document.createElement("div");
-    	const textNode = document.createTextNode(msg);
-    	div.appendChild(textNode);
-    	div.className += 'chat-message'; // 메시지 스타일 설정
-    	document.getElementById("chat-container").appendChild(div);
+    function printMsg(msg) {
+    const chatContainer = document.getElementById("chat-container");
 
-    	// 새로운 메시지로 스크롤 이동
-    	document.getElementById("chat-container").scrollTop = document.getElementById("chat-container").scrollHeight;
-	};
+    // 새로운 메시지 div 생성
+    const div = document.createElement("div");
+    div.className = "chat-message";  // 스타일을 위해 class 추가
+    div.textContent = msg;  // 메시지 내용을 div에 추가
+
+    // 메시지를 화면에 추가
+    chatContainer.appendChild(div);
+
+    // 새로운 메시지로 자동 스크롤
+    	chatContainer.scrollTop = chatContainer.scrollHeight;
+	}
 
 
     // 메시지 전송 버튼 클릭 이벤트

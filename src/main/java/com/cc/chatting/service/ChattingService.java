@@ -91,45 +91,49 @@ public class ChattingService {
 		return msgdtoList;
 	}
 	
-	public int createChatMessage(ChatMessageDto dto) {
-        int result = -1;
+
+
+public int createChatMessage(ChatMessageDto dto) {
+    int result = -1;
+    try {
+        // ChatMessage 엔티티 생성 및 저장
+        ChatMessage msg = ChatMessage.builder()
+                .roomNo(dto.getRoom_no())
+                .messageContent(dto.getMessage_content())
+                .messageDate(LocalDateTime.now())
+                .empCode(dto.getEmp_code())
+                .build();
+        chatMessageRepository.save(msg);
+
+        // 채팅방에 속한 사용자 리스트 조회
+        List<ChatInvite> invites = chatInviteRepository.findByChatRoomRoomNo(dto.getRoom_no());
+
+        // 조회된 사용자의 WebSocket 세션에 메시지 전송
+        for (ChatInvite invite : invites) {
+            Long empCode = invite.getEmployee().getEmpCode();
+            sendMessageToUser(empCode, msg);  // WebSocket 세션이 있는 경우 메시지 전송
+        }
+
+        result = 1; // 성공 시 1 반환
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return result;
+}
+
+// 특정 사용자에게 메시지 전송
+private void sendMessageToUser(Long empCode, ChatMessage message) {
+    // WebSocket 세션에서 사용자 세션을 가져옴
+	// empCode를 String으로 변환하여 세션을 가져옵니다.
+	WebSocketSession session = sessionManager.getSession(empCode.toString());
+
+    if (session != null && session.isOpen()) {
         try {
-            // ChatMessage 엔티티 생성
-            ChatMessage msg = ChatMessage.builder()
-                    .roomNo(dto.getRoom_no())
-                    .messageContent(dto.getMessage_content())
-                    .messageDate(LocalDateTime.now())
-                    .empCode(dto.getEmp_code())
-                    .build();
-            chatMessageRepository.save(msg);
-
-            // room_no를 기준으로 room_invite 테이블에서 사용자 리스트 조회
-            List<ChatInvite> invites = chatInviteRepository.findByChatRoomRoomNo(dto.getRoom_no());
-
-            // 조회된 사용자의 WebSocket 세션에 메시지 전송
-            for (ChatInvite invite : invites) {
-                Long empCode = invite.getEmployee().getEmpCode();
-                sendMessageToUser(empCode, msg);
-            }
-
-            result = 1; // 성공 시 1 반환
-        } catch (Exception e) {
+            session.sendMessage(new TextMessage(message.toString()));
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
     }
-
-    // 특정 사용자에게 메시지 전송
-    private void sendMessageToUser(Long empCode, ChatMessage message) {
-        // WebSocket 연결 관리 로직을 통해 사용자 세션을 찾아 메시지 전송
-        WebSocketSession session = sessionManager.getSession(empCode); // 사용자 세션 관리 로직 필요
-        if (session != null && session.isOpen()) {
-            try {
-                session.sendMessage(new TextMessage(message.toString()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+}
 
 }

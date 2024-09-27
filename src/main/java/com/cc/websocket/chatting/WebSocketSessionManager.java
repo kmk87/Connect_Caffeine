@@ -10,40 +10,43 @@ import org.springframework.web.socket.WebSocketSession;
 
 @Component
 public class WebSocketSessionManager {
-	private Map<Long, WebSocketSession> userSessions = new ConcurrentHashMap<>();
-    private Map<String, List<WebSocketSession>> roomClients = new ConcurrentHashMap<>();
 
-    // 특정 사용자 세션 추가
-    public void addSession(Long empCode, WebSocketSession session) {
-        userSessions.put(empCode, session);
-    }
+	// 방 번호별 세션 리스트 관리 (roomNo -> List of WebSocketSession)
+    private Map<String, List<WebSocketSession>> roomSessions = new ConcurrentHashMap<>();
 
-    // 사용자 세션 제거
-    public void removeSession(Long empCode) {
-        WebSocketSession session = userSessions.remove(empCode);
-        roomClients.values().forEach(sessions -> sessions.remove(session));
-    }
-
-    // 사용자 세션 가져오기
-    public WebSocketSession getSession(Long empCode) {
-        return userSessions.get(empCode);
-    }
-
-    // 특정 방에 속한 사용자 세션 추가
+    // 특정 방에 세션 추가
     public void addSessionToRoom(String roomNo, WebSocketSession session) {
-        roomClients.computeIfAbsent(roomNo, k -> new ArrayList<>()).add(session);
-    }
-
-    // 특정 방에 속한 사용자 세션들 가져오기
-    public List<WebSocketSession> getSessionsInRoom(String roomNo) {
-        return roomClients.getOrDefault(roomNo, new ArrayList<>());
+        roomSessions.computeIfAbsent(roomNo, key -> new ArrayList<>()).add(session);
     }
 
     // 특정 방에서 세션 제거
     public void removeSessionFromRoom(String roomNo, WebSocketSession session) {
-        List<WebSocketSession> sessions = roomClients.get(roomNo);
+        List<WebSocketSession> sessions = roomSessions.get(roomNo);
         if (sessions != null) {
             sessions.remove(session);
+            if (sessions.isEmpty()) {
+                roomSessions.remove(roomNo);
+            }
         }
+    }
+
+    // 특정 방의 모든 세션을 가져오기
+    public List<WebSocketSession> getSessionsInRoom(String roomNo) {
+        return roomSessions.getOrDefault(roomNo, new ArrayList<>());
+    }
+
+    // 사용자별 세션 관리 (기존 코드와 연결해서 사용 가능)
+    private Map<String, WebSocketSession> userSessions = new ConcurrentHashMap<>();
+
+    public void addSession(String userId, WebSocketSession session) {
+        userSessions.put(userId, session);
+    }
+
+    public void removeSession(String userId) {
+        userSessions.remove(userId);
+    }
+
+    public WebSocketSession getSession(String userId) {
+        return userSessions.get(userId);
     }
 }

@@ -32,10 +32,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler{
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        Long empCode = getEmpCodeFromSession(session); // 세션에서 empCode 추출 로직 구현 필요
-        sessionManager.addSession(empCode, session);
-        System.out.println("WebSocket 연결됨: " + empCode);
+        Long empCode = getEmpCodeFromSession(session);       // 세션에서 Long 타입의 empCode 추출
+        sessionManager.addSession(empCode.toString(), session);  // empCode를 String으로 변환하여 세션 등록
     }
+    
+    
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -60,19 +61,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler{
                         }
                     }
                 }
-                break;
+            break;
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        Long empCode = getEmpCodeFromSession(session);
-        sessionManager.removeSession(empCode);
-        System.out.println("WebSocket 연결 종료: " + empCode);
+        Long empCode = getEmpCodeFromSession(session);       // 세션에서 Long 타입의 empCode 추출
+        sessionManager.removeSession(empCode.toString());    // empCode를 String으로 변환하여 세션 삭제
     }
 
     private Long getEmpCodeFromSession(WebSocketSession session) {
-        // 세션에서 사용자 ID(empCode)를 추출하는 로직 구현 필요
-        return Long.valueOf(session.getAttributes().get("empCode").toString());
+        // 예시로 HttpSession에서 가져오는 방식 (프로젝트에 맞게 수정)
+        Map<String, Object> attributes = session.getAttributes();
+        return (Long) attributes.get("empCode");  // empCode를 Long으로 캐스팅
     }
 }
