@@ -2,10 +2,10 @@ package com.cc.approval.service;
 
 import java.time.Year;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -62,9 +62,6 @@ public class ApprovalService {
 	    dto.setAppr_writer_code(employee.getEmpCode());
 	    dto.setAppr_writer_name(employee.getEmpName());
 	    
-	    
-	    
-	    
 		// 기안서 등록
 		Long apprWriter = dto.getAppr_writer_code();
 		
@@ -96,6 +93,76 @@ public class ApprovalService {
 		
 	}
 	
+		// 문서번호 생성하여 가져오기
+		public String generateDocumentNumber(String teamName) {
+			String currentYear = String.valueOf(Year.now().getValue());
+			        
+			// 팀명과 연도를 기준으로 가장 최근에 생성된 문서번호 가져오기
+		    List<Approval> approvals = approvalRepository.findTop1ByTeamNameAndYearOrderByDocuNoDesc(teamName, currentYear);
+
+	        // 마지막 문서번호에서 카운트를 추출
+	        int nextDocuNo = 1;  // 초기값
+	        if (!approvals.isEmpty()) {
+	            String lastDocuNo = approvals.get(0).getDocuNo();
+	            String[] parts = lastDocuNo.split("-");
+	            
+	            if (parts.length == 3 && parts[0].equalsIgnoreCase(teamName)&& parts[1].equals(currentYear)) {
+	                nextDocuNo = Integer.parseInt(parts[2]) + 1;  // 카운트를 1 증가
+	                System.out.println("Invalid document number format: " + nextDocuNo);
+	            }
+	        }
+
+	        // 최종 문서번호 생성
+	        String generatedDocNo = String.format("%s-%s-%05d", teamName, currentYear, nextDocuNo);
+	        System.out.println("Generated Document Number: " + generatedDocNo);
+	        return generatedDocNo;
+			
+		}
+
+		@Transactional
+		public Approval saveApproval(ApprovalDto approvalDto) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			String groupName = employeeService.getUserTeamName(username);
+			
+			Employee employee = employeeRepository.findByempAccount(username);
+			
+			// 기안 작성자 이름 설정
+		    approvalDto.setAppr_writer_name(employee.getEmpName());
+		    
+			
+	        // 문서번호 생성
+	        String documentNumber = generateDocumentNumber(groupName);
+	        System.out.println("Generated Document Number: " + documentNumber);
+	        
+	        // ApprForm 조회
+	        ApprForm apprForm = apprFormRepository.findByapprFormNo(approvalDto.getAppr_form_no());
+
+
+	        // Approval 엔티티 생성 및 문서번호 저장
+	        Approval approval = Approval.builder()
+	        		.employee(employee)
+	                .apprTitle(approvalDto.getAppr_title())
+	                .apprContent(approvalDto.getAppr_content())
+	                .apprWriterName(approvalDto.getAppr_writer_name())
+	                .apprHoliStart(approvalDto.getAppr_holi_start())
+	                .apprHoliEnd(approvalDto.getAppr_holi_end())
+	                .apprHoliUseCount(approvalDto.getAppr_holi_use_count())
+	                .apprState(approvalDto.getAppr_state() != null ? approvalDto.getAppr_state() : "S")
+	                .docuNo(documentNumber)  // 생성된 문서번호 저장
+	                .apprForm(apprForm)
+	                .build();
+	        
+	        System.out.println("Approval Object: " + approval);
+	        
+	        // 문서번호가 null이면 에러 로그 출력
+	        if (approval.getDocuNo() == null) {
+	            throw new RuntimeException("문서번호 없음");
+	        }
+	        
+	        return approvalRepository.save(approval);  // DB에 저장
+	    }
+	
 	// 기안일, 작성자명 가져오기
 	public ApprovalDto getDataInfo(ApprovalDto approvalDto) {
 		// 세션
@@ -124,9 +191,6 @@ public class ApprovalService {
 	    
 	    // 레포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
         List<Approval> apprList = approvalRepository.findByEmployeeAccountOrderByDraftDayDesc(currentUserId, pageable).getContent();
-        
-        // 로그 추가
-        System.out.println("Retrieved approvals: " + apprList.size());
         
         // Approval 엔티티를 ApprovalDto로 변환
         return apprList.stream()
@@ -283,85 +347,29 @@ public class ApprovalService {
 	}
 	
 	// 결재문서함 데이터 리스트
-	public List<Approval> getPendingApprovals(int size) {
-        return approvalRepository.findByApprState("S");  // 'S'는 결재 대기 상태
+	public List<ApprovalDto> getPendingApprovalDtos(int size) {
+	    // 현재 로그인한 사용자의 ID 가져오기
+	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+	    
+	    // 페이지 크기를 동적으로 받아서 처리 (예: 5개 또는 10개)
+	    Pageable pageable = PageRequest.of(0, size); 
+	    
+	    // 레포지토리에서 현재 사용자의 결재 상태가 'S'인 데이터만 내림차순으로 조회
+	    Page<Approval> approvals = approvalRepository.findPendingApprovalsForApprover(currentUserId, "S", pageable);
+	    
+	    // Approval 엔티티 리스트를 ApprovalDto 리스트로 변환
+	    List<ApprovalDto> approvalDtos = approvals.getContent().stream()
+	        .map(approval -> new ApprovalDto().toDto(approval))
+	        .collect(Collectors.toList());
+	    
+	    return approvalDtos;
     }
 	
-	// 문서번호 생성하여 가져오기
-	public String generateDocumentNumber(String teamName) {
-		String currentYear = String.valueOf(Year.now().getValue());
-		
-		// 가장 최근에 생성된 문서번호 가져오기
-        //Optional<Approval> lastApproval = approvalRepository.findFirstByOrderByDocuNoDesc();
-        
-		// 팀명과 연도를 기준으로 가장 최근에 생성된 문서번호 가져오기
-	    List<Approval> approvals = approvalRepository.findTop1ByTeamNameAndYearOrderByDocuNoDesc(teamName, currentYear);
-        
-       
-        
-        // 마지막 문서번호에서 카운트를 추출
-        int nextDocuNo = 1;  // 초기값
-        if (!approvals.isEmpty()) {
-            String lastDocuNo = approvals.get(0).getDocuNo();
-            String[] parts = lastDocuNo.split("-");
-            
-            if (parts.length == 3 && parts[0].equalsIgnoreCase(teamName)&& parts[1].equals(currentYear)) {
-                nextDocuNo = Integer.parseInt(parts[2]) + 1;  // 카운트를 1 증가
-                System.out.println("Invalid document number format: " + nextDocuNo);
-            }
-        }
-
-        //return String.format("%s-%s-%05d", teamName, currentYear, nextDocuNo);
-        // 최종 문서번호 생성
-        String generatedDocNo = String.format("%s-%s-%05d", teamName, currentYear, nextDocuNo);
-        System.out.println("Generated Document Number: " + generatedDocNo);
-        return generatedDocNo;
-		
-	}
-
-	@Transactional
-	public Approval saveApproval(ApprovalDto approvalDto) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String username = authentication.getName();
-		String groupName = employeeService.getUserTeamName(username);
-		
-		Employee employee = employeeRepository.findByempAccount(username);
-		
-		// 기안 작성자 이름 설정
-	    approvalDto.setAppr_writer_name(employee.getEmpName());
-	    
-		
-        // 문서번호 생성
-        String documentNumber = generateDocumentNumber(groupName);
-        System.out.println("Generated Document Number: " + documentNumber);
-        
-        // ApprForm 조회
-        ApprForm apprForm = apprFormRepository.findByapprFormNo(approvalDto.getAppr_form_no());
-
-
-        // Approval 엔티티 생성 및 문서번호 저장
-        Approval approval = Approval.builder()
-        		.employee(employee)
-                .apprTitle(approvalDto.getAppr_title())
-                .apprContent(approvalDto.getAppr_content())
-                .apprWriterName(approvalDto.getAppr_writer_name())
-                .apprHoliStart(approvalDto.getAppr_holi_start())
-                .apprHoliEnd(approvalDto.getAppr_holi_end())
-                .apprHoliUseCount(approvalDto.getAppr_holi_use_count())
-                .apprState(approvalDto.getAppr_state() != null ? approvalDto.getAppr_state() : "S")
-                .docuNo(documentNumber)  // 생성된 문서번호 저장
-                .apprForm(apprForm)
-                .build();
-        
-        System.out.println("Approval Object: " + approval);
-        
-        // 문서번호가 null이면 에러 로그 출력
-        if (approval.getDocuNo() == null) {
-            throw new RuntimeException("문서번호 없음");
-        }
-        
-        return approvalRepository.save(approval);  // DB에 저장
-    }
+	// 결재문서함 상세조회
+	
+	
+	
+	
 }
 	
 	

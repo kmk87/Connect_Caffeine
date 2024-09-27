@@ -135,7 +135,7 @@ public class ApprovalApiController {
         String base64Image = data.get("image").split(",")[1]; 
         byte[] decodedBytes = Base64.getDecoder().decode(base64Image);
 
-        // 이미지 파일 경로 설정
+        
         // 이미지 파일 경로 설정
         String directoryPath = "C:/approval/upload/";
         String filePath = directoryPath + "signature.png";

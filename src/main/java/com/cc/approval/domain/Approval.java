@@ -2,12 +2,14 @@ package com.cc.approval.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.cc.employee.domain.Employee;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -99,4 +102,9 @@ public class Approval {
 	
 	@Column(name="docu_no")
 	private String docuNo;
+	
+	// 다대일 관계의 반대쪽을 명시합니다. Approval이 여러 ApprovalLine을 가질 수 있음.
+    @OneToMany(mappedBy = "approval", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApprovalLine> approvalLines;
+    
 }

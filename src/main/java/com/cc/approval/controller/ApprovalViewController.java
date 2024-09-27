@@ -115,7 +115,7 @@ public class ApprovalViewController {
 
 	
 	
-	// 기안서 상세 조회
+	// 전자결재홈에서 기안서 상세 조회
 	@GetMapping("/approval/{appr_no}")
 	public String selectapprovalOne(Model model,
 			@PathVariable("appr_no") Long appr_no) {
@@ -183,11 +183,27 @@ public class ApprovalViewController {
 	// 결재문서함
 	@GetMapping("/apprStorage")
 	public String showApprStorage(Model model) {
-		List<Approval> pendingApprovals = approvalService.getPendingApprovals(10);
+		List<ApprovalDto> pendingApprovals = approvalService.getPendingApprovalDtos(10);
         model.addAttribute("approvals", pendingApprovals);
 				        
 		return "approval/apprStorage"; 
 	}
+	
+	
+	// 결재문서함 상세 조회
+//		@GetMapping("/apprStorage/{appr_no}")
+//		public String selectapprStorageOne(Model model,
+//				@PathVariable("appr_no") Long appr_no) {
+//			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		    User user = (User) authentication.getPrincipal();
+//		    String username = user.getUsername();
+//		    String groupName = employeeService.getUserTeamName(username);
+//		    model.addAttribute("groupNames", groupName);
+//		    ApprovalDto approvalDto = approvalService.getApprovalByApprNo(appr_no);
+//			model.addAttribute("dto",approvalDto);
+//			return "approval/apprStorageDetail";
+//		}
+	
 	
 	// 참조문서함
 	@GetMapping("/referenceStorage")
