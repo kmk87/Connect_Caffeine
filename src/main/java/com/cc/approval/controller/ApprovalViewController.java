@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -97,12 +98,11 @@ public class ApprovalViewController {
 	    // 로그인한 사용자의 정확한 팀명 가져오기
 	    String groupName = employeeService.getUserTeamName(username);
 	    // 문서 번호 생성
-		//String documentNumber = apprFormService.generateDocumentNumber(groupName);
-        //System.out.println("기안서 번호: "+formNo);
-        String documentNumber = approvalService.generateDocumentNumber();
+
+        String documentNumber = approvalService.generateDocumentNumber(groupName);
         
-        // DTO에 문서번호 설정
-        //approvalDto.setAppr_docu_no(documentNumber);
+        // DTO에 문서번호 설정 (저장은 하지 않음)
+        dto.setDocu_no(documentNumber);
 		
         model.addAttribute("apprFormNo", formNo);
 		model.addAttribute("groupNames", groupName);
@@ -112,6 +112,7 @@ public class ApprovalViewController {
 		return "approval/createDraft";
 	}
 	
+
 	
 	
 	// 기안서 상세 조회

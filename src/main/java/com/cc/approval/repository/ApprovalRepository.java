@@ -35,7 +35,11 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
 	// 가장 최근에 생성된 문서번호 가져오기
     Optional<Approval> findFirstByOrderByDocuNoDesc();
-
+    
+    // 팀명과 연도를 기준으로 가장 최근의 문서번호 하나만 가져오기
+    @Query("SELECT a FROM Approval a WHERE a.docuNo LIKE CONCAT(:teamName, '-%', :year, '-%') ORDER BY a.docuNo DESC")
+    List<Approval> findTop1ByTeamNameAndYearOrderByDocuNoDesc(@Param("teamName") String teamName, @Param("year") String year);
+    
     // 기안서 삭제 -> 비활성화
     List<Approval> findByIsDeleted(String isDeleted);
 	

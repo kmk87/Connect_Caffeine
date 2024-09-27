@@ -440,9 +440,9 @@
 			const csrfToken = document.getElementById("csrf_token").value;
 			const apprTitle = document.getElementById("appr_title").value;
 			const apprContent = document.getElementById("appr_content").value;
-			const apprHoliStart = document.getElementById("start-date").value;
-		    const apprHoliEnd = document.getElementById("end-date").value;
-		    const apprHoliUseCount = document.getElementById("appr_holi_use_count").value;
+			const apprHoliStart = document.getElementById("start-date") ? document.getElementById("start-date").value : null;
+		    const apprHoliEnd = document.getElementById("end-date") ? document.getElementById("end-date").value : null;
+		    const apprHoliUseCount = document.getElementById("appr_holi_use_count") ? document.getElementById("appr_holi_use_count").value : null;
 			
 			const obj = {
 					appr_form_no: apprFormNo,

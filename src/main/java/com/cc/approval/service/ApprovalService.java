@@ -22,17 +22,21 @@ import com.cc.approval.repository.ApprovalRepository;
 import com.cc.approval.repository.TemporaryStorageRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
+import com.cc.employee.service.EmployeeService;
 
 import jakarta.transaction.Transactional;
 
 @Service
-@Transactional
 public class ApprovalService {
 	
 	private final ApprovalRepository approvalRepository;
 	private final ApprFormRepository apprFormRepository;
 	private final EmployeeRepository employeeRepository;
 	private final TemporaryStorageRepository temporaryStorageRepository;
+	
+	@Autowired
+	private EmployeeService employeeService;
+	
 	
 	@Autowired
 	public ApprovalService(ApprovalRepository approvalRepository,ApprFormRepository apprFormRepository,
@@ -44,6 +48,7 @@ public class ApprovalService {
 		this.temporaryStorageRepository = temporaryStorageRepository;
 	}
 	
+	
 	public Approval getDraftInfoOne(ApprovalDto dto) {
 		
 		// 세션
@@ -52,6 +57,8 @@ public class ApprovalService {
 	    
 	    Employee employee = employeeRepository.findByempAccount(loggedInUserAccount);
 		
+	    String groupName = employeeService.getUserTeamName(loggedInUserAccount);
+	    
 	    dto.setAppr_writer_code(employee.getEmpCode());
 	    dto.setAppr_writer_name(employee.getEmpName());
 	    
@@ -66,7 +73,7 @@ public class ApprovalService {
 		
 		ApprForm apprFo = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
 		
-		String documentNumber = generateDocumentNumber();
+		String documentNumber = generateDocumentNumber(groupName);
 		
 		Approval approval = Approval.builder()
 				.apprNo(dto.getAppr_no())
@@ -84,7 +91,7 @@ public class ApprovalService {
 				.build();
 		
 		
-		return approvalRepository.save(approval);
+		return approval;
 		
 		
 	}
@@ -281,35 +288,51 @@ public class ApprovalService {
     }
 	
 	// 문서번호 생성하여 가져오기
-	public String generateDocumentNumber() {
+	public String generateDocumentNumber(String teamName) {
 		String currentYear = String.valueOf(Year.now().getValue());
 		
 		// 가장 최근에 생성된 문서번호 가져오기
-        Optional<Approval> lastApproval = approvalRepository.findFirstByOrderByDocuNoDesc();
+        //Optional<Approval> lastApproval = approvalRepository.findFirstByOrderByDocuNoDesc();
+        
+		// 팀명과 연도를 기준으로 가장 최근에 생성된 문서번호 가져오기
+	    List<Approval> approvals = approvalRepository.findTop1ByTeamNameAndYearOrderByDocuNoDesc(teamName, currentYear);
+        
+       
         
         // 마지막 문서번호에서 카운트를 추출
         int nextDocuNo = 1;  // 초기값
-        if (lastApproval.isPresent()) {
-            String lastDocuNo = lastApproval.get().getDocuNo();
+        if (!approvals.isEmpty()) {
+            String lastDocuNo = approvals.get(0).getDocuNo();
             String[] parts = lastDocuNo.split("-");
-            if (parts.length == 2) {
-                nextDocuNo = Integer.parseInt(parts[1]) + 1;  // 카운트를 1 증가
+            
+            if (parts.length == 3 && parts[0].equalsIgnoreCase(teamName)&& parts[1].equals(currentYear)) {
+                nextDocuNo = Integer.parseInt(parts[2]) + 1;  // 카운트를 1 증가
+                System.out.println("Invalid document number format: " + nextDocuNo);
             }
         }
 
-        return String.format("%s-%05d", currentYear, nextDocuNo);
+        //return String.format("%s-%s-%05d", teamName, currentYear, nextDocuNo);
+        // 최종 문서번호 생성
+        String generatedDocNo = String.format("%s-%s-%05d", teamName, currentYear, nextDocuNo);
+        System.out.println("Generated Document Number: " + generatedDocNo);
+        return generatedDocNo;
 		
 	}
-	
+
 	@Transactional
 	public Approval saveApproval(ApprovalDto approvalDto) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
+		String groupName = employeeService.getUserTeamName(username);
+		
 		Employee employee = employeeRepository.findByempAccount(username);
-		approvalDto.setAppr_writer_name(employee.getEmpName());
+		
+		// 기안 작성자 이름 설정
+	    approvalDto.setAppr_writer_name(employee.getEmpName());
+	    
 		
         // 문서번호 생성
-        String documentNumber = generateDocumentNumber();
+        String documentNumber = generateDocumentNumber(groupName);
         System.out.println("Generated Document Number: " + documentNumber);
         
         // ApprForm 조회

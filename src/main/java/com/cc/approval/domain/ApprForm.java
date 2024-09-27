@@ -31,8 +31,5 @@ public class ApprForm {
 	@Column(name="appr_form_type")
 	private String apprFormType;
 	
-	@Column(name="appr_docu_no")
-	private String apprDocuNo;
-	
 	
 }
