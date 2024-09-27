@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jsTree Example</title>
+	
+    <!-- Include jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Include jsTree CSS and JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+    
+    <style>
+        #treeContainer {
+            width: 100%;
+            height: 500px;  /* 트리가 보이도록 충분한 높이 설정 */
+            border: 1px solid #ccc;  /* 경계선 추가로 영역 확인 */
+        }
+    </style>
+</head>
+<body>
+		<main id="main" class="main">
+    <!-- 조직도 넣는 div -->
+    <div id="treeContainer"><h2>안녕</h2></div>
+</main>
+
+<script th:inline="javascript">
+    
+ 	// 1. teamResult와 empResult 데이터를 Thymeleaf에서 자바스크립트로 전달
+    let teamData = /*[[${teamObj}]]*/ '[]';  // teamResult 데이터를 Thymeleaf에서 받아옴
+    let empData = /*[[${empObj}]]*/ '[]';   
+    
+    
+   	// 2. JSON 형태로 변환
+	let parsedTeamData = JSON.parse(teamData);
+	let parsedEmpData = JSON.parse(empData); 
+	
+	console.log(parsedTeamData); 
+	console.log(parsedEmpData); 
+    
+	let combinedData = [...parsedTeamData, ...parsedEmpData]; // 두 개의 데이터를 하나의 객체로 합치기 (배열로 합침)
+    
+
+  
+    
+    // 3. jsTree 생성
+    $("#treeContainer").jstree({
+      core: {
+        data: combinedData,
+      },
+    });
+
+ 
+   // 4. 클릭 시 이벤트 추가
+   $("#treeContainer").on("select_node.jstree", function (e, data) {
+     alert("Selected node: " + data.node.text + "Selected id: " + data.node.id);
+   });
+ 
+    
+      </script>
+</body>
+</html>
