@@ -22,6 +22,7 @@ import lombok.ToString;
 public class EmployeeDto {
 		
 		private Long emp_code;
+		private Long group_no;
 		// dto에 추가된 필드
 		private String group_name;
 		private String emp_job_code;
@@ -89,8 +90,8 @@ public class EmployeeDto {
 					.empResign(emp_resign)
 
 					.empResigndate(emp_resigndate_iso)
-					.empImgFileName(emp_img_file_name)
-					.empImgFilePath(emp_img_file_path)
+//					.empImgFileName(emp_img_file_name)
+//					.empImgFilePath(emp_img_file_path)
 
 					.empMemo(emp_memo)
 					.empHoliday(emp_holiday)
@@ -131,8 +132,8 @@ public class EmployeeDto {
 					.emp_hiredate(empHiredateStr)
 					.emp_resign(employee.getEmpResign())
 					.emp_resigndate(empResigndateStr)
-					.emp_img_file_name(employee.getEmpImgFileName())
-					.emp_img_file_path(employee.getEmpImgFilePath())
+//					.emp_img_file_name(employee.getEmpImgFileName())
+//					.emp_img_file_path(employee.getEmpImgFilePath())
 					.emp_memo(employee.getEmpMemo())
 					.emp_holiday(employee.getEmpHoliday())
 					.group_name(employee.getEmpGroup().getGroupName())

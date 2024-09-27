@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.service.EmpGroupService;
-import com.cc.organization.domain.TreeMenuDto;
 
 @Controller
 public class GroupApiController {
