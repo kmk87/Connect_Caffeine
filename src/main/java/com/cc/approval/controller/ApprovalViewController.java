@@ -97,12 +97,12 @@ public class ApprovalViewController {
 	    // 로그인한 사용자의 정확한 팀명 가져오기
 	    String groupName = employeeService.getUserTeamName(username);
 	    // 문서 번호 생성
-		String documentNumber = apprFormService.generateDocumentNumber(groupName);
-        System.out.println("기안서 번호: "+formNo);
-        
+		//String documentNumber = apprFormService.generateDocumentNumber(groupName);
+        //System.out.println("기안서 번호: "+formNo);
+        String documentNumber = approvalService.generateDocumentNumber();
         
         // DTO에 문서번호 설정
-        approvalDto.setAppr_docu_no(documentNumber);
+        //approvalDto.setAppr_docu_no(documentNumber);
 		
         model.addAttribute("apprFormNo", formNo);
 		model.addAttribute("groupNames", groupName);
@@ -181,8 +181,9 @@ public class ApprovalViewController {
 	
 	// 결재문서함
 	@GetMapping("/apprStorage")
-	public String showApprStorage() {
-				
+	public String showApprStorage(Model model) {
+		List<Approval> pendingApprovals = approvalService.getPendingApprovals(10);
+        model.addAttribute("approvals", pendingApprovals);
 				        
 		return "approval/apprStorage"; 
 	}

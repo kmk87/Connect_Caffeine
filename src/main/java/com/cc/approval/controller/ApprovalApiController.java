@@ -60,7 +60,7 @@ public class ApprovalApiController {
 		
 		Map<String,String> resultMap = new HashMap<String,String>();
 		
-	
+		Approval savedApproval = approvalService.saveApproval(dto);
 		
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg","결재요청 중 오류가 발생했습니다.");

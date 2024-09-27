@@ -1,5 +1,6 @@
 package com.cc.approval.service;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,6 +66,7 @@ public class ApprovalService {
 		
 		ApprForm apprFo = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
 		
+		String documentNumber = generateDocumentNumber();
 		
 		Approval approval = Approval.builder()
 				.apprNo(dto.getAppr_no())
@@ -76,6 +78,7 @@ public class ApprovalService {
 				.apprHoliUseCount(dto.getAppr_holi_use_count())
 				.apprForm(apprFo)
 				.employee(emp)
+				.docuNo(documentNumber)
 				.apprState(dto.getAppr_state() != null ? dto.getAppr_state() : "S")
 				.isDeleted(dto.getIs_deleted() != null ? dto.getIs_deleted() : "N")
 				.build();
@@ -272,7 +275,74 @@ public class ApprovalService {
 		return result;
 	}
 	
+	// 결재문서함 데이터 리스트
+	public List<Approval> getPendingApprovals(int size) {
+        return approvalRepository.findByApprState("S");  // 'S'는 결재 대기 상태
+    }
 	
+	// 문서번호 생성하여 가져오기
+	public String generateDocumentNumber() {
+		String currentYear = String.valueOf(Year.now().getValue());
+		
+		// 가장 최근에 생성된 문서번호 가져오기
+        Optional<Approval> lastApproval = approvalRepository.findFirstByOrderByDocuNoDesc();
+        
+        // 마지막 문서번호에서 카운트를 추출
+        int nextDocuNo = 1;  // 초기값
+        if (lastApproval.isPresent()) {
+            String lastDocuNo = lastApproval.get().getDocuNo();
+            String[] parts = lastDocuNo.split("-");
+            if (parts.length == 2) {
+                nextDocuNo = Integer.parseInt(parts[1]) + 1;  // 카운트를 1 증가
+            }
+        }
+
+        return String.format("%s-%05d", currentYear, nextDocuNo);
+		
+	}
 	
-	
+	@Transactional
+	public Approval saveApproval(ApprovalDto approvalDto) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		Employee employee = employeeRepository.findByempAccount(username);
+		approvalDto.setAppr_writer_name(employee.getEmpName());
+		
+        // 문서번호 생성
+        String documentNumber = generateDocumentNumber();
+        System.out.println("Generated Document Number: " + documentNumber);
+        
+        // ApprForm 조회
+        ApprForm apprForm = apprFormRepository.findByapprFormNo(approvalDto.getAppr_form_no());
+
+
+        // Approval 엔티티 생성 및 문서번호 저장
+        Approval approval = Approval.builder()
+        		.employee(employee)
+                .apprTitle(approvalDto.getAppr_title())
+                .apprContent(approvalDto.getAppr_content())
+                .apprWriterName(approvalDto.getAppr_writer_name())
+                .apprHoliStart(approvalDto.getAppr_holi_start())
+                .apprHoliEnd(approvalDto.getAppr_holi_end())
+                .apprHoliUseCount(approvalDto.getAppr_holi_use_count())
+                .apprState(approvalDto.getAppr_state() != null ? approvalDto.getAppr_state() : "S")
+                .docuNo(documentNumber)  // 생성된 문서번호 저장
+                .apprForm(apprForm)
+                .build();
+        
+        System.out.println("Approval Object: " + approval);
+        
+        // 문서번호가 null이면 에러 로그 출력
+        if (approval.getDocuNo() == null) {
+            throw new RuntimeException("문서번호 없음");
+        }
+        
+        return approvalRepository.save(approval);  // DB에 저장
+    }
 }
+	
+	
+	
+	
+	
+	

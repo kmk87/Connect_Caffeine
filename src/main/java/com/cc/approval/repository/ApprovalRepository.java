@@ -20,7 +20,7 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
 	Approval findByEmployee_EmpCode(Long empCode);
 	
-	Approval findByApprState(String appr_state);
+	List<Approval> findByApprState(String appr_state);
 	
 	Approval findByApprTitle(String appr_title);
 	
@@ -29,8 +29,12 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	Approval findByDraftDay(LocalDateTime draft_day);
 	
 	
+	
 	@Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :memId ORDER BY a.draftDay DESC")
 	Page<Approval> findByEmployeeAccountOrderByDraftDayDesc(@Param("memId") String memId, Pageable pageable);
+	
+	// 가장 최근에 생성된 문서번호 가져오기
+    Optional<Approval> findFirstByOrderByDocuNoDesc();
 
     // 기안서 삭제 -> 비활성화
     List<Approval> findByIsDeleted(String isDeleted);

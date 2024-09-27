@@ -42,7 +42,7 @@ public class Approval {
 	private ApprForm apprForm;
 	
 	
-	@Column(name="appr_state" , columnDefinition = "varchar(1) default 's'")
+	@Column(name="appr_state")
 	private String apprState;
 	
 	@Column(name="appr_title")
@@ -90,10 +90,13 @@ public class Approval {
 	@Column(name="appr_writer_name")
 	private String apprWriterName;
 	
-	@Column(name="is_deleted", columnDefinition = "varchar(1) default 'N'")
+	@Column(name="is_deleted")
 	private String isDeleted;
 	
 	public void setDeleted() {
 	    this.isDeleted = "Y";
 	}
+	
+	@Column(name="docu_no")
+	private String docuNo;
 }

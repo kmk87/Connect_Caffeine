@@ -37,6 +37,7 @@ public class ApprovalDto {
     private String is_deleted;
     private LocalDate appr_holi_start; 
     private LocalDate appr_holi_end;
+    private String docu_no;
 
     // 날짜를 문자열로 변환하는 메소드 추가
     public String getFormattedDraftDay() {
@@ -106,6 +107,7 @@ public class ApprovalDto {
 	            .apprHoliEnd(appr_holi_end)     
 	            .apprHoliUseCount(appr_holi_use_count)
 				.isDeleted(is_deleted)
+				.docuNo(docu_no)
 				.employee(employee) 
                 .apprForm(apprForm)
 				.build();
@@ -115,12 +117,13 @@ public class ApprovalDto {
 	public ApprovalDto toDto(Approval approval) {
 	    ApprovalDto dto = ApprovalDto.builder()
 	            .appr_no(approval.getApprNo())
-	            .appr_state(approval.getApprState())
+	            .appr_state(approval.getApprState() != null ? approval.getApprState() : "S")
 	            .appr_title(approval.getApprTitle())
 	            .appr_content(approval.getApprContent())
 	            .draft_day(approval.getDraftDay())
 	            .appr_date(approval.getApprDate())
 	            .is_deleted(approval.getIsDeleted())
+	            .docu_no(approval.getDocuNo())
 	            .appr_writer_code(approval.getEmployee() != null ? approval.getEmployee().getEmpCode() : null)  // Employee의 empCode 설정
 	            .appr_writer_name(approval.getEmployee() != null ? approval.getEmployee().getEmpName() : null)  // Employee의 empName 설정
 	            .appr_docu_no(approval.getApprForm() != null ? approval.getApprForm().getApprDocuNo() : null)   // ApprForm의 apprDocuNo 설정

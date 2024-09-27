@@ -78,6 +78,7 @@
 				<hr>
 				<form id="draftAdd">
 					<input type="hidden" id="appr_form_no" name="appr_form_no"th:value="${apprFormNo}"> 
+					<input type="hidden" id="docu_no" name="docu_no" th:value="${documentNumber}">
 					<input type="hidden"id="csrf_token" th:value="${_csrf.token}"> 
 					<input type="hidden" id="empNum" th:value="${memId ?: ''}">
 					<button type="button" class="btn btn-outline-success" id="tempSaveBtn">임시 저장</button>
@@ -296,7 +297,7 @@
 		/* }); */
 		
 		/* const emp = document.getElementById('empNum').value; */
-
+		const documentNumber = document.getElementById("docu_no").value
 		
 		// 기안서 등록
 		// 상신 버튼의 유효성 검사 및 제출 처리
@@ -363,8 +364,10 @@
 					payload.forEach(function(value,key){
 						obj[key] = value;
 					});
+					
 				
 					obj.appr_writer_code = empNum; // empNum 추가
+					obj.docu_no = documentNumber;
 					
 					console.log("Payload before sending:", obj);
 				
