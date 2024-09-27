@@ -92,7 +92,7 @@
 	    </div>
 			<div class="information">
 			  <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
-   			  <button class="tab-button" onclick="showMeetingTab()">회의실</button>
+   			  <button class="tab-button" th:data-building-no="${dto.building_no}" onclick="showMeetingTab(this)">회의실</button>
 			<hr>
 			</div>
 	    <div class="register_board_form" >
@@ -111,7 +111,15 @@
 	        <br><button onclick="execDaumPostcode()">주소 검색</button>
 	    </div>
 	<script>
-	//처음 빌딩 정보 버튼을 누르고 회의실 정보를 보려고 들어가는 메서드
+	// 회의실 정보를 보려고 들어가는 기능
+	function showMeetingTab(button){
+		const buildingNo = button.getAttribute('data-building-no');
+		const parsedBuildingNo = paseInt(buildingNo);
+		if(isNaN(paredBuidlingNo)){
+			return;
+		}
+		window.location.href=`/building_meetingroom/@{pasedBuildingNo}`;
+	}
 	
 	//빌딩 버튼을 눌렀을때 다시 들어가는 기능 회의실에서 빌딩 누르면 다시 보이게(새로고침?).
 	function showBuildingTab(button) {
