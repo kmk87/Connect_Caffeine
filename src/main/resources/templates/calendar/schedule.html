@@ -1,220 +1,261 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{include/layout}">
-  <head>
-    <meta charset='utf-8' />
-  	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-
-  <title>Connect Caffeine</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-  <!-- Favicons -->
-  <link th:href = "@{/css/calendar/calendar.css}" rel="stylesheet" type="text/css">
-  <link href="/bootstrap/img/쿼카.png" rel="icon">
-  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  <!-- Vendor CSS Files -->
-  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
-  <!-- Template Main CSS File -->
-  <link href="/bootstrap/css/style.css" rel="stylesheet">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<meta charset='utf-8' />
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src="/js/websocket.js"></script>
+<title>Connect Caffeine</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
+<!-- Favicons -->
+<link th:href="@{/css/calendar/calendar.css}" rel="stylesheet"
+	type="text/css">
+<link href="/bootstrap/img/쿼카.png" rel="icon">
+<link href="/bootstrap/img/쿼카.png" rel="쿼카">
+<!-- Google Fonts -->
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link
+	href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+	rel="stylesheet">
+<!-- Vendor CSS Files -->
+<link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/boxicons/css/boxicons.min.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+<link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+<link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+<link href="/bootstrap/vendor/simple-datatables/style.css"
+	rel="stylesheet">
+<!-- Template Main CSS File -->
+<link href="/bootstrap/css/style.css" rel="stylesheet">
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-  </head>
-  
-  <body>
- 
-  <th:block layout:fragment="content">
-	   <main id="main" class="main">
-		   <div class="sub-sidebar" id="sub-sidebar">
-		    	<div class="pagetitle">
-			      <h1>일정관리</h1>
-			      <nav>
-			        <ol class="breadcrumb">
-			          <li class="breadcrumb-item"><a href="index.html">메인화면</a></li>
-			          <li class="breadcrumb-item active">일정관리</li>
-			        </ol>
-			      </nav>
-			    </div><!-- End Page Title -->
-			      <!-- Vertically centered Modal -->
-	              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered" style="margin-left:50px">
-	               일정 등록
-	              </button>
-	              <div class="modal fade" id="verticalycentered" tabindex="-1">
-	                <div class="modal-dialog modal-dialog-centered modal-lg">
-	                  <div class="modal-content">
-	                    <div class="modal-header">
-	                      <h5 class="modal-title">일정 등록</h5>
-	                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-	                    </div>
-	                    <div class="modal-body"><br>
-	                     <!-- Floating Labels Form -->
-			              <form id="scheduleForm" class="row g-3">
-			              	<input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-			              	<input type="hidden" id="calendar_writer_no" name="calendar_writer_no" th:value="${#authentication.principal.dto.emp_code}">
-			              	<div class="row mb-3">
-			                  <label class="col-sm-2 col-form-label">일정 종류</label>
-			                  <div class="col-sm-10">
-			                    <select class="form-select" aria-label="Default select example" id="schedule_type" name="schedule_type">
-			                      <option selected>선택하기</option>
-			                      <option value="1">내일정</option>
-			                      <option value="2">전사일정</option>
-			                      <option value="3">부서일정</option>
-			                      <option value="4">팀일정</option>
-			                    </select>
-			                  </div>
-			                </div>
-			                <div class="row mb-3">
-			                  <label class="col-sm-2 col-form-label">제목</label>
-			                  <div class="col-sm-10">
-			                    <input type="text" class="form-control" id="schedule_title" name="schedule_title">
-			                  </div>
-			                </div>
-			
-				            <div class="row mb-3">
-			                  <label  class="col-sm-2 col-form-label">내용</label>
-			                  <div class="col-sm-10">
-			                    <textarea class="form-control" id="schedule_content" name="schedule_content" style="height: 100px"></textarea>
-			                  </div>
-			                </div>
-			        		<div class="row mb-3">
-			                  <label class="col-sm-2 col-form-label">장소</label>
-			                  <div class="col-sm-10">
-			                    <input type="text" class="form-control" id="location" name="location">
-			                  </div>
-			                </div>
-			                <div class="row mb-3">
-		                      <label class="col-sm-2 col-form-label">시작 시간</label>
-		                      <div class="col-sm-10">
-		                        <input type="datetime-local"  class="form-control" id="start_time" name="start_time">
-		                      </div>
-		                    </div>
-		                    <div class="row mb-3">
-		                      <label class="col-sm-2 col-form-label">종료 시간</label>
-		                      <div class="col-sm-10">
-		                        <input type="datetime-local" class="form-control" id="end_time" name="end_time">
-		                      </div>
-		                    </div>
+</head>
 
-			              </form><!-- End floating Labels Form -->      
-	                    </div>
-	                    <div class="modal-footer">
-	                      <button type="button" class="btn btn-outline-primary" id="submitEvent">등록</button>
-	                    </div>
-	                  </div>
-	                </div>
-	              </div><!-- End Vertically centered Modal--><br><br>
-	              
-	             <div class="modal fade" id="eventDetailModal" tabindex="-1">
-					  <div class="modal-dialog modal-dialog-centered modal-lg">
-					    <div class="modal-content">
-					      <div class="modal-header">
-					        <h5 class="modal-title" id="modal-title">일정 상세</h5>
-					        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					      </div>
-					      <div class="modal-body">
-					      	 <input type="hidden" id="csrf_token2" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-			              	 <input type="hidden" id="calendar_writer_no" name="calendar_writer_no" th:value="${#authentication.principal.dto.emp_code}">
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">일정 종류</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_schedule_type"></span>
-					          </div>
-					        </div>
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">제목</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_schedule_title"></span>
-					          </div>
-					        </div>
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">내용</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <p id="detail_schedule_content"></p>
-					          </div>
-					        </div>
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">장소</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_location"></span>
-					          </div>
-					        </div>
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">시작 시간</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_start_time"></span>
-					          </div>
-					        </div>
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">종료 시간</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_end_time"></span>
-					          </div>
-					        </div>
-					      </div>
-					      <div class="modal-footer">
-					      	<button type="button" class="btn btn-outline-success" id="editButton">수정</button>
-					      	<button type="button" class="btn btn-outline-primary" id="saveButton" style="display:none;">등록</button>
-					      	<button type="button" class="btn btn-outline-danger" id="deleteButton">삭제</button>
-					        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
-					      </div>
-					    
-					    </div>
-					  </div>
-			 	</div>
-	             
+<body>
+
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<div class="sub-sidebar" id="sub-sidebar">
+				<div class="pagetitle">
+					<h1>일정관리</h1>
+					<nav>
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="index.html">메인화면</a></li>
+							<li class="breadcrumb-item active">일정관리</li>
+						</ol>
+					</nav>
+				</div>
+				<!-- End Page Title -->
+				<!-- Vertically centered Modal -->
+				<button type="button" class="btn btn-outline-primary"
+					data-bs-toggle="modal" data-bs-target="#verticalycentered"
+					style="margin-left: 50px">일정 등록</button>
+				<div class="modal fade" id="verticalycentered" tabindex="-1">
+					<div class="modal-dialog modal-dialog-centered modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">일정 등록</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<br>
+								<!-- Floating Labels Form -->
+								<form id="scheduleForm" class="row g-3">
+									<input type="hidden" id="csrf_token"
+										th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+									<input type="hidden" id="calendar_writer_no"
+										name="calendar_writer_no"
+										th:value="${#authentication.principal.dto.emp_code}">
+									<!-- 숨겨진 부서번호 -->
+									<input type="hidden" id="dept_no" name="dept_no"
+										th:value="${deptNo}">
+
+									<!-- 숨겨진 팀번호 -->
+									<input type="hidden" id="team_no" name="team_no"
+										th:value="${teamNo}">
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">일정 종류</label>
+										<div class="col-sm-10">
+											<select class="form-select"
+												aria-label="Default select example" id="schedule_type"
+												name="schedule_type">
+												<option selected>선택하기</option>
+												<option value="1">내일정</option>
+												<option value="2">전사일정</option>
+												<option value="3">부서일정</option>
+												<option value="4">팀일정</option>
+											</select>
+										</div>
+									</div>
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">제목</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="schedule_title"
+												name="schedule_title">
+										</div>
+									</div>
+
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">내용</label>
+										<div class="col-sm-10">
+											<textarea class="form-control" id="schedule_content"
+												name="schedule_content" style="height: 100px"></textarea>
+										</div>
+									</div>
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">장소</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="location"
+												name="location">
+										</div>
+									</div>
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">시작 시간</label>
+										<div class="col-sm-10">
+											<input type="datetime-local" class="form-control"
+												id="start_time" name="start_time">
+										</div>
+									</div>
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">종료 시간</label>
+										<div class="col-sm-10">
+											<input type="datetime-local" class="form-control"
+												id="end_time" name="end_time">
+										</div>
+									</div>
+
+								</form>
+								<!-- End floating Labels Form -->
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-primary"
+									id="submitEvent">등록</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Vertically centered Modal-->
+				<br> <br>
+
+				<div class="modal fade" id="eventDetailModal" tabindex="-1">
+					<div class="modal-dialog modal-dialog-centered modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modal-title">일정 상세</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" id="csrf_token2"
+									th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+								<input type="hidden" id="calendar_writer_no"
+									name="calendar_writer_no"
+									th:value="${#authentication.principal.dto.emp_code}"> <input
+									type="hidden" id="team_no" name="group_no"
+									th:value="${#authentication.principal.dto.group_no}">
+								<div class="row mb-3">
+									<label class="col-sm-2 col-form-label">일정 종류</label>
+									<div class="col-sm-10 padding-7-y">
+										<span id="detail_schedule_type"></span>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<label class="col-sm-2 col-form-label">제목</label>
+									<div class="col-sm-10 padding-7-y">
+										<span id="detail_schedule_title"></span>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<label class="col-sm-2 col-form-label">내용</label>
+									<div class="col-sm-10 padding-7-y">
+										<p id="detail_schedule_content"></p>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<label class="col-sm-2 col-form-label">장소</label>
+									<div class="col-sm-10 padding-7-y">
+										<span id="detail_location"></span>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<label class="col-sm-2 col-form-label">시작 시간</label>
+									<div class="col-sm-10 padding-7-y">
+										<span id="detail_start_time"></span>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<label class="col-sm-2 col-form-label">종료 시간</label>
+									<div class="col-sm-10 padding-7-y">
+										<span id="detail_end_time"></span>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-success"
+									id="editButton">수정</button>
+								<button type="button" class="btn btn-outline-primary"
+									id="saveButton" style="display: none;">등록</button>
+								<button type="button" class="btn btn-outline-danger"
+									id="deleteButton">삭제</button>
+								<button type="button" class="btn btn-outline-secondary"
+									data-bs-dismiss="modal">닫기</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
 				<div class="schedule-filters">
 					<div>
-					   <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="1"> 내 일정
-					   </label>
-				       <span class="color-circle" th:style="'background-color: ' + ${userColors[1]}"></span>
-				    </div>
-				    <div>
-					    <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="2"> 전사 일정
-					    </label>
-				        <span class="color-circle" th:style="'background-color: ' + ${userColors[2]}"></span>
-				    </div>
-				    <div>
-					    <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="3"> 부서 일정
-					    </label>
-				        <span class="color-circle" th:style="'background-color: ' + ${userColors[3]}"></span>
-				    </div>
-				    <div>
-					    <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="4"> 팀 일정
-					    </label>
-				        <span class="color-circle" th:style="'background-color: ' + ${userColors[4]}"></span>
+						<label class="filter-item"> <input type="checkbox"
+							class="event-filter" value="1"> 내 일정
+						</label> <span class="color-circle"
+							th:style="'background-color: ' + ${userColors[1]}"></span>
+					</div>
+					<div>
+						<label class="filter-item"> <input type="checkbox"
+							class="event-filter" value="2"> 전사 일정
+						</label> <span class="color-circle"
+							th:style="'background-color: ' + ${userColors[2]}"></span>
+					</div>
+					<div>
+						<label class="filter-item"> <input type="checkbox"
+							class="event-filter" value="3"> 부서 일정
+						</label> <span class="color-circle"
+							th:style="'background-color: ' + ${userColors[3]}"></span>
+					</div>
+					<div>
+						<label class="filter-item"> <input type="checkbox"
+							class="event-filter" value="4"> 팀 일정
+						</label> <span class="color-circle"
+							th:style="'background-color: ' + ${userColors[4]}"></span>
 					</div>
 				</div>
 				<!-- 모달 형식의 팔레트 -->
 				<div class="color-palette-modal" style="display: none;">
-				    <div class="color-palette">
-				        <div th:each="color : ${colors}" class="color-option"
-				             th:style="'background-color:' + ${color}"
-				             th:data-color="${color}">
-				        </div>
-				    </div>
+					<div class="color-palette">
+						<div th:each="color : ${colors}" class="color-option"
+							th:style="'background-color:' + ${color}"
+							th:data-color="${color}"></div>
+					</div>
 				</div>
 			</div>
-	    	<div id='calendar' >
-	    	</div>
+			<div id='calendar'></div>
 
-	    </main>
-	  
-	 <script  th:inline="javascript">
+		</main>
+
+		<script th:inline="javascript">
 	 document.addEventListener('DOMContentLoaded', function() {
 		  var userColors = /*[[${userColors}]]*/ {};
 		    console.log("User Colors: ", userColors);  // userColors 확인
@@ -462,6 +503,8 @@
 		        var startDate = document.getElementById('start_time').value;
 		        var endDate = document.getElementById('end_time').value;
 		        var empCode = document.getElementById('calendar_writer_no').value;
+		        var deptNo = document.getElementById('dept_no').value;
+		        var teamNo = document.getElementById('team_no').value;
 
 		        var scheduleData = {
 		            schedule_type: eventType,
@@ -470,7 +513,9 @@
 		            location: eventLocation,
 		            start_time: new Date(startDate),
 		            end_time: new Date(endDate),
-		            calendar_writer_no: empCode
+		            calendar_writer_no: empCode,
+		            dept_no : deptNo,
+		            team_no : teamNo
 		        };
 
 		        const csrfToken = document.getElementById('csrf_token').value;
@@ -514,6 +559,7 @@
 		        .catch(error => {
 		            console.error('Error:', error);
 		        });
+		        
 		    });
 		    
 		    
@@ -623,7 +669,7 @@
 		        }
 		    });
 		    
-		    
+		 
 		});
 		
 	 
@@ -636,19 +682,19 @@
 	 
 
 		</script>
-	
-  </th:block>
 
-	   <!-- Vendor JS Files -->
-	  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
-	  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
-	  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
-	  <script src="/bootstrap/vendor/quill/quill.js"></script>
-	  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
-	  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
-	  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
-	  <!-- Template Main JS File -->
-	  <script src="/bootstrap/js/main.js"></script>
-  </body>
+	</th:block>
+
+	<!-- Vendor JS Files -->
+	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+	<script src="/bootstrap/vendor/quill/quill.js"></script>
+	<script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+	<!-- Template Main JS File -->
+	<script src="/bootstrap/js/main.js"></script>
+</body>
 </html>

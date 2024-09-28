@@ -13,53 +13,54 @@
     <aside id="sidebar" class="sidebar">
       <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/}" onclick="setActiveMenu(this)">
+          <a class="nav-link" th:href="@{/}" >
             <i class="bi bi-grid"></i>
             <span>메인화면</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="ri-briefcase-line"></i><span>근태 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="ri-time-line"></i><span>예약 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/calendar}" onclick="setActiveMenu(this)">
-            <i class="ri-calendar-2-line"></i><span>일정 관리</span>
-          </a>
-        </li>
+        <a class="nav-link collapsed" th:href="@{/calendar}">
+          <i class="ri-calendar-2-line"></i>
+          <span>일정 관리</span>
+        </a>
+      </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="bx bxs-folder-open"></i><span>문서 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="bi bi-shop"></i><span>점포 관리</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="bx bxs-category"></i><span>게시판</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="ri-file-edit-line"></i><span>전자 결재</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" onclick="setActiveMenu(this)">
+          <a class="nav-link collapsed" href="#">
             <i class="bx bx-chat"></i><span>채팅</span>
           </a>
         </li>
@@ -69,38 +70,5 @@
     </aside><!-- End Sidebar-->
 </th:block>
 
-<script>
-
-//모든 메뉴 항목을 선택
-const menuItems = document.querySelectorAll('.sidebar-nav .nav-link');
-
-// 메뉴 항목 클릭 시 active 상태를 변경
-function setActiveMenu(event, clickedItem) {
-    event.preventDefault(); // href="#"로 인해 상단 이동 방지
-    menuItems.forEach(item => {
-        item.classList.remove('active'); // 모든 항목에서 active 제거
-    });
-    clickedItem.classList.add('active'); // 클릭된 항목에 active 추가
-}
-
-// 각 메뉴 항목에 클릭 이벤트 리스너 등록
-menuItems.forEach(item => {
-    item.addEventListener('click', function(event) {
-        setActiveMenu(event, item);
-    });
-});
-
-// 현재 경로에 맞는 메뉴 항목을 강조
-window.addEventListener('DOMContentLoaded', () => {
-    const currentPath = window.location.pathname;
-
-    menuItems.forEach(item => {
-        const link = item.getAttribute('href');
-        if (link === currentPath || link === "#") {
-            item.classList.add('active');
-        }
-    });
-});
-</script>
 </body>
 </html>

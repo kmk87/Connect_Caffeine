@@ -113,4 +113,8 @@ public class EmpGroupService {
 			return teamNo;
 		}
 	
+		// 부모 그룹 번호로 부서 멤버를 가져오는 메서드
+	    public List<EmpGroup> getEmployeesByDeptNo(Long groupParentNo) {
+	        return empGroupRepository.findByGroupParentNo(groupParentNo);
+	    }
 }

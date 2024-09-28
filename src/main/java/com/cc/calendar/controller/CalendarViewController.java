@@ -58,7 +58,10 @@ public class CalendarViewController {
 		  System.out.println("teamNo : "+teamNo);
 		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
 		  System.out.println("deptNo : "+deptNo);
-		 
+		// Thymeleaf로 전달
+	        model.addAttribute("deptNo", deptNo);  // 부서번호
+	        model.addAttribute("teamNo", teamNo);  // 팀번호
+
 		  
 		  // 일정 데이터 가져오기
 	        List<CalendarDto> resultList = calendarService.selectCalendarList(empCode, deptNo, teamNo);

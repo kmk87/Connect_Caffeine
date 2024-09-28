@@ -1,8 +1,9 @@
 package com.cc.employee.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import com.cc.calendar.domain.CalendarDto;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
@@ -35,12 +36,27 @@ public class EmployeeService {
 	        return employeeRepository.findByempCode(empCode);   
 	    }
 	    
-	 // 그룹 번호 가져오는 메소드
+	// 그룹 번호 가져오는 메소드
 	 		public Long getGroupNoByEmpCode(Long emp_code) {
 	 			Employee emp = employeeRepository.findById(emp_code).orElseThrow();
 	 			Long groupNo = emp.getEmpGroup().getGroupNo();
 	 			return groupNo;
 	 		}
+	 		
+ 	// 팀 번호로 직원 목록을 조회하는 메서드
+ 	    public List<Employee> getEmployeesByTeamNo(Long groupNo) {
+ 	        return employeeRepository.findByEmpGroup_GroupNo(groupNo);
+ 	    }
+ 	    
+ 	// 부서 번호로 직원 목록을 조회하는 메서드 (group_parent_no 기준)
+ 	    public List<Employee> getEmployeesByDeptNo(Long deptNo) {
+ 	        return employeeRepository.findByEmpGroup_GroupParentNo(deptNo);  // group_parent_no 기준으로 직원 조회
+ 	    }
+ 	    
+ 	    //모든 직원 조회 
+ 	    public List<Employee> getAllEmployees(){
+ 	    	return employeeRepository.findAll();
+ 	    }
 
 	
 	
