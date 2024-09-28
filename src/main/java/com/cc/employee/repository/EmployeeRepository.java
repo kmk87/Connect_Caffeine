@@ -1,5 +1,7 @@
 package com.cc.employee.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,5 +38,11 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 			       "LPAD(CAST(COUNT(e) + 1 AS string), 3, '0')) " +
 			       "FROM Employee e WHERE YEAR(e.empHiredate) = YEAR(CURRENT_DATE)")
 		String getInputAccount();
+		
+		
+		// 트리-팀원
+		@Query("SELECT new com.cc.employee.domain.EmployeeDto(e.empGroup.groupNo, e.empCode, e.empName, e.empJobName, eg.groupParentNo, eg.groupName) " +
+			       "FROM Employee e JOIN e.empGroup eg")
+		List<EmployeeDto> findAllempList();
 
 }

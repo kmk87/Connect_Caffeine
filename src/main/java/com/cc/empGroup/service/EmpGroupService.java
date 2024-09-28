@@ -12,8 +12,6 @@ import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
 
-import com.cc.organization.domain.TreeMenuDto;
-
 @Service
 public class EmpGroupService {
 	
