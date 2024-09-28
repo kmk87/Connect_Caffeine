@@ -5,39 +5,12 @@
 <head>
 <meta charset='utf-8' />
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<script
-	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script src="/js/websocket.js"></script>
 <title>Connect Caffeine</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
-<!-- Favicons -->
-<link th:href="@{/css/calendar/calendar.css}" rel="stylesheet"
-	type="text/css">
-<link href="/bootstrap/img/쿼카.png" rel="icon">
-<link href="/bootstrap/img/쿼카.png" rel="쿼카">
-<!-- Google Fonts -->
-<link href="https://fonts.gstatic.com" rel="preconnect">
-<link
-	href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-	rel="stylesheet">
-<!-- Vendor CSS Files -->
-<link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css"
-	rel="stylesheet">
-<link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css"
-	rel="stylesheet">
-<link href="/bootstrap/vendor/boxicons/css/boxicons.min.css"
-	rel="stylesheet">
-<link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
-<link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
-<link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-<link href="/bootstrap/vendor/simple-datatables/style.css"
-	rel="stylesheet">
-<!-- Template Main CSS File -->
-<link href="/bootstrap/css/style.css" rel="stylesheet">
-<!-- Bootstrap JS -->
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<link th:href="@{/css/calendar/calendar.css}" rel="stylesheet"type="text/css">
 
 </head>
 
@@ -252,9 +225,7 @@
 				</div>
 			</div>
 			<div id='calendar'></div>
-
 		</main>
-
 		<script th:inline="javascript">
 	 document.addEventListener('DOMContentLoaded', function() {
 		  var userColors = /*[[${userColors}]]*/ {};
@@ -419,10 +390,10 @@
 		                    event.setStart(updatedEvent.start_time);
 		                    event.setEnd(updatedEvent.end_time);
 		                    
-		                    calendar.render(); // 캘린더 다시 렌더링
+		              
 		                   
 		                });
-		               
+		                location.href = "/calendar";
 		            } else {
 		                Swal.fire({
 		                    icon: 'error',
@@ -544,6 +515,7 @@
 		                        location: data.location
 		                    });
 		                    location.href = "/calendar";
+		                    
 		                });
 		            } else {
 		                Swal.fire({
@@ -659,8 +631,6 @@
 		        calendar.render();  // 캘린더 다시 렌더링 (이벤트 색상 반영)
 		    }
 
-
-
 		    // 팔레트 외부 클릭 시 모달 닫기
 		    window.addEventListener('click', function(event) {
 		        const paletteModal = document.querySelector('.color-palette-modal');
@@ -671,30 +641,9 @@
 		    
 		 
 		});
-		
-	 
-
-	 
-
-	 
-
-	 
-	 
-
 		</script>
 
 	</th:block>
 
-	<!-- Vendor JS Files -->
-	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
-	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
-	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
-	<script src="/bootstrap/vendor/quill/quill.js"></script>
-	<script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
-	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
-	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
-	<!-- Template Main JS File -->
-	<script src="/bootstrap/js/main.js"></script>
 </body>
 </html>

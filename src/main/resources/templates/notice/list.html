@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <style>
+        /* 모든 행의 배경색을 변경 */
+        table.dataTable tbody tr {
+            background-color: #fff; /* 원하는 배경색으로 변경 */
+        }
+    </style>
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
+  <!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+  
+</head>
+<body>
+ <th:block layout:fragment="content">
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>공지사항</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">목록</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    <div class="col-xxl-4 col-md-6">
+         <div class="card info-card sales-card" style="margin-top: 25px; width: 90vw; height: 90vh;">
+             <div class="card-body">
+      <table id="notice_list" class="display">
+      	<colgroup>
+      		<col width="10%">
+			<col width="40%">
+			<col width="30%">
+			<col width="20%">
+      	</colgroup>
+      	<thead>
+      		<tr>
+      			<th>번호</th>
+      			<th>제목</th>
+      			<th>작성일</th>
+      			<th>작성자명</th>
+      		</tr>
+      	</thead>
+      	<tbody>
+      		<th:block th:if="${#lists.isEmpty(resultList)}">
+      			<tr>
+      				<td colspan="4">해당하는 공지사항이 없습니다.</td> 
+      			</tr>
+      		</th:block>
+      		<th:block th:if="${!#lists.isEmpty(resultList)}">
+      			<tr th:if="${notice.notice_status.equals('Y')}"
+      			th:each="notice : ${resultList}"
+      			th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
+      					<td th:text="${notice.notice_no}"></td>
+      					<td th:text="${notice.notice_title}"></td>
+      					<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+      					<td th:text="${notice.notice_writer_name}"></td>
+      			</tr>
+      		</th:block>
+      	</tbody>
+      	
+      </table>
+      <th:block>
+	  	<button type="button" class="btn btn-primary rounded-pill"
+	  	style="float:right;" th:onclick="|location.href='@{/noticeCreate}'|">등록</button>
+      </th:block>
+      </div>
+                </div>
+              </div>
+      
+    <script>
+  
+  $(document).ready(function() {
+	  	
+	    $('#notice_list').DataTable({
+	        "lengthChange": false,  // Show entries 숨김
+	        "searching": true,      // 검색 활성화
+	        "responsive": true,
+	        "language": {
+	            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json'
+	        },
+	    	"pagingType": "full_numbers"
+	    });
+	    
+	});
+</script>
+  </main><!-- End #main -->
+</th:block>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+</body>
+</html>

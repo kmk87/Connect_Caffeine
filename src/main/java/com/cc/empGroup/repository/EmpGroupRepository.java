@@ -1,4 +1,5 @@
 package com.cc.empGroup.repository;
+
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,3 +21,4 @@ public interface EmpGroupRepository extends JpaRepository<EmpGroup,Long>{
 	// 부서 번호로 직원 목록을 조회하는 메서드
     List<EmpGroup> findByGroupParentNo(Long groupNo);
 }
+
