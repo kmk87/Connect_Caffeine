@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+<head>
+<meta charset="UTF-8">
+<title>notification</title>
+<!-- Favicons -->
+<link th:href = "@{/css/notification/notification.css}" rel="stylesheet" type="text/css">
+<link href="/bootstrap/img/쿼카.png" rel="icon">
+<link href="/bootstrap/img/쿼카.png" rel="쿼카">
+<!-- Google Fonts -->
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+<!-- Vendor CSS Files -->
+<link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+<link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+<link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+<link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+<link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+<link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+<!-- Template Main CSS File -->
+<link href="/bootstrap/css/style.css" rel="stylesheet">
+  <!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+<th:block layout:fragment="content">
+  	<main id="main" class="main">
+	   <div class="sub-sidebar" id="sub-sidebar">
+	    	<div class="pagetitle">
+			    <h1>알림</h1>
+			</div>
+			<div>전체 알림</div>
+			<div>안읽은 알림</div>
+       </div>
+	   <div class="notification-title">
+        <span>전체 알림</span>
+       </div>
+	   <hr>
+	    <div class="notification-buttons-select">
+		    <div class="notification-buttons">
+		        <button type="button" class="btn btn-outline-primary">읽음</button>
+		        <button type="button" class="btn btn-outline-danger" >삭제</button>
+		    </div>
+		    <div class="notification-select">
+		        <select class="form-select" aria-label="Default select example" id="" name="">
+		            <option value="1">전체</option>
+		            <option value="2">일정</option>
+		            <option value="3">게시판</option>
+		            <option value="4">전자결재</option>
+		        </select>
+		    </div>
+		</div>
+	    <hr>
+	   
+
+
+
+	</main>
+	<script>
+        $(document).ready(function() {   
+       $('#notification_list').DataTable({
+           "lengthChange": false,  // Show entries 숨김
+           "searching": false,      // 검색 활성화
+           "responsive": true,
+           "language": {
+               url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json'
+           },
+          "pagingType": "full_numbers"
+       });
+       
+   });
+</script>
+</th:block>
+<!-- Vendor JS Files -->
+<script src="bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+<script src="bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="bootstrap/vendor/chart.js/chart.umd.js"></script>
+<script src="bootstrap/vendor/echarts/echarts.min.js"></script>
+<script src="bootstrap/vendor/quill/quill.js"></script>
+<script src="bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+<script src="bootstrap/vendor/tinymce/tinymce.min.js"></script>
+<script src="bootstrap/vendor/php-email-form/validate.js"></script>
+<!-- Template Main JS File -->
+<script src="bootstrap/js/main.js"></script>
+</body>
+</html>

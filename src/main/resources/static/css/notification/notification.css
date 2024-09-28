@@ -1,0 +1,104 @@
+@charset "UTF-8";
+
+/* 전체 레이아웃 */
+.main {
+   
+    padding: 20px;
+    background-color: #f8f9fa; /* 알림 목록 배경 */
+    min-height: 100vh; /* 화면 전체 높이 유지 */
+}
+
+.sub-sidebar {
+ 
+  top: 60px;
+  left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+  bottom: 0;
+  width: 250px; /* 추가 사이드바의 너비 */
+  z-index: 10; 
+  padding: 20px;
+  box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+  background-color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  color: #012970;
+}
+
+/* 페이지 타이틀 스타일 */
+.pagetitle {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pagetitle .icons img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-left: 15px;
+}
+
+/* 알림 목록 스타일 */
+.notification-list {
+	position: fixed;
+    background-color: white;
+    padding: 10px;
+    left:550px;        
+    z-index: 1;   
+    top: 60px;
+    bottom: 0;
+    width: 1140px;
+  
+}
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification-buttons-select {
+    display: flex;
+    align-items: center; /* 버튼과 select 요소를 세로로 가운데 정렬 */
+    gap: 10px; /* 버튼과 select 사이 간격 */
+}
+
+.notification-select {
+    margin-left: auto; /* select 요소를 오른쪽 끝으로 이동 */
+    width: 120px; /* select 요소의 너비 조정 */
+}
+.notification-title span{
+
+  font-size: 20px;
+  margin-bottom: 0;
+  font-weight: 600;
+  color: #012970;
+
+}
+
+
+
+.notification-list-item {
+    display: flex;
+    justify-content: space-between; /* 체크박스, 텍스트, 버튼을 한 줄에 배치 */
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.notification-list-item:last-child {
+    border-bottom: none;
+}
+
+.notification-text {
+    flex-grow: 1; /* 텍스트가 나머지 공간을 차지하게 */
+    margin-left: 10px;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: #aaa;
+}
+
+
+
+
