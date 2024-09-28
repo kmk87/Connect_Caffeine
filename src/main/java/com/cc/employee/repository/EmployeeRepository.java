@@ -20,13 +20,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		Employee findByempAccount(String emp_account);
 
 		
-		Employee findByempName(String emp_name);
-
-		// empAccount(사용자 이름)로 emp_code를 찾는 메서드
-	    @Query("SELECT e.empCode FROM Employee e WHERE e.empAccount = :empAccount")
-	    Long findEmpCodeByEmpName(@Param("empAccount") String empAccount);
-
-		
 		@Query("SELECT e.empName FROM Employee e " +
 		           "JOIN Approval a ON a.employee.empCode = e.empCode " +
 		           "WHERE e.empAccount = :memId")
@@ -40,9 +33,13 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		String getInputAccount();
 		
 		
-		// 트리-팀원
-		@Query("SELECT new com.cc.employee.domain.EmployeeDto(e.empGroup.groupNo, e.empCode, e.empName, e.empJobName, eg.groupParentNo, eg.groupName) " +
-			       "FROM Employee e JOIN e.empGroup eg")
-		List<EmployeeDto> findAllempList();
-
+		// list 화면 조회
+//		@Query("SELECT e.empName, e.empHiredate, e.empResign, " +
+//			       "d.groupName AS departmentName, t.groupName AS teamName, j.jobName AS jobName " +
+//			       "FROM Employee e " +
+//			       "JOIN EmpGroup t ON e.groupNo = t.groupNo " +  // 사원과 팀 정보 조인
+//			       "JOIN EmpGroup d ON t.groupParentNo = d.groupNo " +  // 팀과 부서 정보 조인
+//			       "JOIN Job j ON e.jobCode = j.jobCode " +  // 사원과 직급 정보 조인
+//			       "WHERE t.groupParentNo IS NOT NULL")
+//			List<Object[]> findEmployeeDetailsWithDeptTeamJob();
 }
