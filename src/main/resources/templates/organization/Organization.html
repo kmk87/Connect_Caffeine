@@ -36,9 +36,6 @@
    	// 2. JSON 형태로 변환
 	let parsedTeamData = JSON.parse(teamData);
 	let parsedEmpData = JSON.parse(empData); 
-	
-	console.log(parsedTeamData); 
-	console.log(parsedEmpData); 
     
 	let combinedData = [...parsedTeamData, ...parsedEmpData]; // 두 개의 데이터를 하나의 객체로 합치기 (배열로 합침)
     
