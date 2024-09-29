@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cc.approval.domain.ApprovalDto;
@@ -248,22 +249,10 @@ public class ApprovalViewController {
 		    
 			return "approval/apprStorageDetail";
 		}
+		
+		
 	
-		// 결재 상태 변경
-		public void approveDocument(Long apprNo, int apprOrder) {
-		    // 결재 상태 업데이트 로직
-		    ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
-		    approvalLine.setApprState("A"); // 승인 상태로 변경 (필드명 확인 필요)
-		    approvalLineRepository.save(approvalLine); // 엔티티 저장
-		    
-		    // 1차 결재자가 승인한 후 2차 결재자의 상태 변경 처리
-		    if (apprOrder == 1) {
-		        ApprovalLine secondLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
-		        secondLine.setApprState("S"); // 2차 결재자의 상태를 대기로 변경
-		        approvalLineRepository.save(secondLine); // 엔티티 저장
-		    }
-		}
-
+		
 		
 		
 		

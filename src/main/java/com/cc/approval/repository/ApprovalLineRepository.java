@@ -28,9 +28,14 @@ public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long
 
 	// 결재 상태가 'S'이고 현재 사용자가 결재자로 등록된 문서를 조회하는 쿼리
 	@Query("SELECT al.approval FROM ApprovalLine al " +
-	    	    "JOIN al.approval a " +
-	    	    "WHERE al.employee.empCode = :empCode " +
-	    	    "AND a.apprState = 'S'")
+		       "JOIN al.approval a " +
+		       "WHERE al.employee.empCode = :empCode " +
+		       "AND al.apprOrder = 2 " + // 2차 결재자인지 확인
+		       "AND EXISTS (SELECT 1 FROM ApprovalLine al1 " +
+		       "            WHERE al1.approval.apprNo = al.approval.apprNo " +
+		       "            AND al1.apprOrder = 1 " +
+		       "            AND al1.apprState = 'C')" + // 1차 결재자가 결재 완료했는지 확인
+		       "AND al.apprState = 'S'")
 	    Page<Approval> findPendingApprovalsForCurrentUser(@Param("empCode") Long empCode, Pageable pageable);
 	
 	// 결재문서함에 상세조회 시 formNo 값 가져오기
@@ -38,8 +43,12 @@ public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long
 	Optional<Long> findApprovalLineWithFormNo(@Param("apprNo") Long apprNo);
 
 	
-	//결재자 순서대로 가져오기
+	// 결재자 순서대로 가져오기
 	ApprovalLine findByApprovalApprNoAndApprOrder(Long apprNo, int apprOrder);
+
+	// 1차 결재 후에 2차 결재자에게 보여주기
+	@Query("SELECT al FROM ApprovalLine al WHERE al.approval.apprNo = :apprNo AND al.apprOrder = 1")
+	ApprovalLine findFirstApprover(@Param("apprNo") Long apprNo);
 
 
 	

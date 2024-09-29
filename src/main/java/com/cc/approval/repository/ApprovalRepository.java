@@ -44,6 +44,13 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     // 기안서 삭제 -> 비활성화
     List<Approval> findByIsDeleted(String isDeleted);
     
+    // 1차 결재 후 2차 결재자에게 리스트 보이기
+    @Query("SELECT a FROM Approval a JOIN a.approvalLines al WHERE al.employee.empCode = :empCode AND al.apprOrder = 2 AND al.apprState = 'S'")
+    List<Approval> findDocumentsForSecondApprover(@Param("empCode") Long empCode);
+
+
+
+    
     
 	
 	

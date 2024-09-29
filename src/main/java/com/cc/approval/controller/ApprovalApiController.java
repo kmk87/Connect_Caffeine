@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -173,5 +174,15 @@ public class ApprovalApiController {
         return ResponseEntity.ok("서명이 저장되었습니다.");
     }
 	
-	
+	// 결재 승인
+	@ResponseBody
+	@PostMapping("/approve")
+	public String approve(@RequestParam("apprNo") Long apprNo, @RequestParam("apprOrder") int apprOrder) {
+	    // 결재 상태를 업데이트하는 비즈니스 로직 호출
+	    approvalService.approveDocument(apprNo, apprOrder);
+	    
+	    // 성공 메시지 반환
+	    return "결재 완료";
+	}
+
 }

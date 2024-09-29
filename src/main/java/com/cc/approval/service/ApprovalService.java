@@ -426,6 +426,33 @@ public class ApprovalService {
                
     }
 
+    // 결재 상태 변경
+ 		public void approveDocument(Long apprNo, int apprOrder) {
+ 	        // 현재 결재자의 상태를 "결재완료(C)"로 변경
+ 	        ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
+ 	        approvalLine.setApprState("C"); // "결재완료" 상태로 변경
+ 	        approvalLineRepository.save(approvalLine);
+
+ 	        // 1차 결재자가 승인한 후 2차 결재자의 상태를 변경
+ 	        if (apprOrder == 1) {
+ 	            ApprovalLine secondLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
+ 	            secondLine.setApprState("S"); // 2차 결재자의 상태를 "대기(S)"로 변경
+ 	            approvalLineRepository.save(secondLine);
+ 	        }
+ 	    }
+
+ 	// 1차 결재 후에 2차 결재자에게 결재문서 확인
+ 		public List<Approval> getSecondApprovalDocuments(Long empCode) {
+ 		    return approvalRepository.findDocumentsForSecondApprover(empCode)
+ 		        .stream()
+ 		        .filter(doc -> {
+ 		            ApprovalLine firstApprovalLine = approvalLineRepository.findFirstApprover(doc.getApprNo());
+ 		            return firstApprovalLine != null && "C".equals(firstApprovalLine.getApprState());
+ 		        })
+ 		        .collect(Collectors.toList());
+ 		}
+
+
 
 
 
