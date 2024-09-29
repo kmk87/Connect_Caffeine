@@ -50,9 +50,6 @@ public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long
 	// 결재자 순서대로 가져오기
 	ApprovalLine findByApprovalApprNoAndApprOrder(Long apprNo, int apprOrder);
 
-	// 1차 결재 후에 2차 결재자에게 보여주기
-//	@Query("SELECT al FROM ApprovalLine al WHERE al.approval.apprNo = :apprNo AND al.apprOrder = 1")
-//	ApprovalLine findFirstApprover(@Param("apprNo") Long apprNo);
 
 	// 1차 결재자 문서 조회 쿼리
 	@Query("SELECT al.approval FROM ApprovalLine al " +
