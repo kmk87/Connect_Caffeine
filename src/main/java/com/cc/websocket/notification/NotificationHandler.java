@@ -34,7 +34,7 @@ public class NotificationHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // empCode는 문자열로 저장 (Long 타입 대신 String)
-        String empCode = session.getPrincipal().getName();  // user01
+        String empCode = session.getPrincipal().getName();  
         
         sessionMap.put(empCode, session);  // empCode를 문자열로 저장
         System.out.println("WebSocket session added for empCode: " + empCode);
@@ -62,9 +62,7 @@ public class NotificationHandler extends TextWebSocketHandler {
         }
     }
 
-    /**
-     * WebSocket으로 알림 전송만 처리하는 메서드
-     */
+    /*WebSocket으로 알림 전송만 처리하는 메서드 */
     public void sendNotification(NotificationDto notificationDto) throws Exception {
         // receiver_no는 사원 코드, 이를 통해 직원의 아이디를 조회
         Employee receiver = employeeService.findByEmpCode(notificationDto.getReceiver_no());  // 사원 코드로 직원 정보 조회
@@ -86,9 +84,7 @@ public class NotificationHandler extends TextWebSocketHandler {
 
 
 
-    /**
-     * 알림을 저장하고 WebSocket으로 전송하는 메서드
-     */
+    /* 알림을 저장하고 WebSocket으로 전송하는 메서드*/
     public void saveAndSendNotification(NotificationDto notificationDto) throws Exception {
         // Employee 객체 가져오기
         Employee receiver = employeeService.findByEmpCode(notificationDto.getReceiver_no());

@@ -1,3 +1,21 @@
+toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": true,
+    "progressBar": true,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": true,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",  // 알림이 표시되는 시간 (5초)
+    "extendedTimeOut": "1000",  // 마우스가 알림 위에 있을 때 추가로 표시되는 시간 (1초)
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
+
 const notificationSocket = new WebSocket('ws://localhost:8100/ws/notifications');
 
 notificationSocket.onopen = function() {
@@ -8,20 +26,45 @@ notificationSocket.onmessage = function(event) {
     const data = JSON.parse(event.data);  // 수신된 JSON 데이터를 파싱
     console.log('수신한 알림 데이터:', data);
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
     switch (data.notificationType) {
         case "SCHEDULE":
-            addNotificationToList("일정 알림", data.notificationContent);
+            Toast.fire({
+                icon: 'success',
+                title: '일정 알림',
+                text: data.notificationContent
+            });
             break;
         case "APPROVAL":
-            addNotificationToList("결재 알림", data.notificationContent);
+            Toast.fire({
+                icon: 'info',
+                title: '결재 알림',
+                text: data.notificationContent
+            });
             break;
         case "NOTICE":
-            addNotificationToList("공지사항 알림", data.notificationContent);
+            Toast.fire({
+                icon: 'warning',
+                title: '공지사항 알림',
+                text: data.notificationContent
+            });
             break;
         default:
             console.log("알 수 없는 알림 유형:", data.notificationType);
     }
 };
+
 
 // 알림을 <li> 요소로 추가하는 함수
 function addNotificationToList(title, content) {
@@ -71,7 +114,7 @@ function showNoticeNotification(message) {
 }
 
 
-
+/*============ 여기서부터 채팅 웹소켓 함수 적으시면되요 ======================*/
 
 
 
@@ -88,6 +131,8 @@ chatSocket.onmessage = function(event) {
     console.log('채팅 메시지:', event.data);
 };
 
-
+chatSocket.onclose = function() {
+    console.log('WebSocket 연결 종료');
+};
 
 
