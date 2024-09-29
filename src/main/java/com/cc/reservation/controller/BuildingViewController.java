@@ -56,6 +56,20 @@ public class BuildingViewController {
 		return "/reservation/building_information";
 	}
 	
-//	@GetMapping("/building_meetingroom/{}")
 	
+	@GetMapping("/building_meetingroom/{buildingNo}")
+	public String MeetingRoomInfomation(@PathVariable("buildingNo") Long buildingNo, Model model) {
+		List<BuildingDto> building = buildingService.selectBuildingList();
+		List<MeetingRoomDto> meeting = meetingRoomService.selectMeetingRoomList();
+		BuildingDto buildingDto = buildingService.selectBuildingOne(buildingNo);
+		List<MeetingRoomDto> meetingDto = meetingRoomService.selectMeetingRoomOne(buildingNo);
+		System.out.println(meetingDto);
+		model.addAttribute("buildings", building);
+		model.addAttribute("meetings",meeting);
+		model.addAttribute("dto", buildingDto);
+		model.addAttribute("meetingRooms", meetingDto);
+
+
+		return "/reservation/building_meetingroom";
+	}
 }

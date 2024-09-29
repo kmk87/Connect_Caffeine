@@ -27,12 +27,127 @@
   <link href="/bootstrap/css/nav_sider.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  	<style>
+.information {
+    margin-left: 230px;
+    width: 100%; /* width를 조정하여 내부 콘텐츠가 제대로 표시되도록 함 */
+    padding: 10px;
+    position: relative; /* 자식 요소의 absolute 포지션을 기준으로 함 */
+}
+
+.register_board_form {
+    position: absolute; /* absolute로 위치 조정 */
+    top: 200px; /* information 영역 아래로 떨어뜨림 */
+    left: 500px; /* 왼쪽 정렬 */
+    width: 400px; /* 원하는 너비로 설정 */
+    padding: 10px;
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+	      /* 건물 및 회의실 탭 버튼 */
+	      .tab-button {
+          display: inline-block;
+          padding: 10px 20px;
+          margin: 0 10px 20px 0; /* 좌우 및 아래 여백 설정 */
+          border: none;
+          background-color: #6c757d;
+          color: white;
+          cursor: pointer;
+          border-radius: 5px;
+      }
+	      .tab-button.active {
+          background-color: #007bff; /* 활성화된 버튼 색상 */
+      }
+	      /* 버튼 스타일 */
+      .btn {
+          padding: 10px 20px;
+          margin: 5px;
+      }
+	     /* 검은색 구분선 */
+      hr {
+          border: 0;
+          height: 1px;
+          background: black;
+          margin: 20px 0;
+      }
+      
+      /* 새로 추가된 meeting-room-section 스타일 */
+#meeting-room-section {
+    text-align: right; /* 버튼을 오른쪽으로 정렬 */
+    padding-top: 10px; /* 상단 여백 추가 */
+    margin-top: 10px;
+}
+
+/* 모달 창 스타일 */
+.modal {
+    display: none; /* 초기에는 숨김 */
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* 배경 어둡게 */
+}
+
+/* 모달 콘텐츠 스타일 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 화면 중앙에 배치 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%; /* 원하는 크기로 조정 */
+    border-radius: 10px; /* 모서리 둥글게 */
+}
+
+/* 닫기 버튼 스타일 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 폼 스타일 */
+#meetingRoomAddForm label {
+    display: block;
+    margin-top: 10px;
+}
+
+#meetingRoomAddFrm input {
+    width: calc(100% - 20px); /* input 너비를 폼에 맞추기 */
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+#meetingRoomAddFrm button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#meetingRoomAddFrm button:hover {
+    background-color: #0056b3;
+}
+
+	</style>
 </head>
 <body>
  <th:block layout:fragment="content">
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>건물 등록</h1>
+      <h1>회의실 정보</h1>
       <aside id="apprSidebar" class="apprSidebar">
      <div class="reservation-box">
         <div class="reservation-header">
@@ -53,11 +168,155 @@
 			</div>
         <a th:href="@{/Building}"><button class="building-register-btn">+ 건물 등록</button></a>
     </div>
-    <div>
-    	
-    </div>
     </aside>
+	    </div>
+			<div class="information">
+			  <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
+   			  <button class="tab-button" th:data-building-no="${dto.building_no}" onclick="showMeetingTab(this)">회의실</button>
+			<hr>
+			  <button class="tab-button active" id="meeting-room-section" th:data-building-no="${dto.building_no}" onclick="createMeetingRoom()" >회의실 생성</button>
+			</div>
+			
+<!-- 모달 창 HTML 구조 -->
+<div id="meetingRoomModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>회의실 생성</h2>
+<!-- 회의실 생성 폼 -->
+<form id="meetingRoomAddFrm">
+    <input type="hidden" id="buildingNo" name="buildingNo" value="1"> <!-- 빌딩 번호 -->
+    <input type="hidden" name="_csrf" value="${_csrf.token}"> <!-- CSRF 토큰 -->
+
+    <label for="meetingName">회의실 이름:</label>
+    <input type="text" id="meetingName" name="meetingName" required>
+
+    <label for="meetingLocation">위치:</label>
+    <input type="text" id="meetingLocation" name="meetingLocation" required>
+
+    <label for="maxPeople">최대 수용 인원:</label>
+    <input type="number" id="maxPeople" name="maxPeople" required>
+
+    <button type="submit">회의실 생성</button>
+</form>
+
     </div>
+</div>
+
+			
+			
+			
+			
+			
+			
+			
+			
+			<script>
+			document.addEventListener('DOMContentLoaded', function() {
+			    // 모달 관련 요소 가져오기
+			    var modal = document.getElementById("meetingRoomModal");
+			    var btn = document.getElementById("meeting-room-section");
+			    var span = document.getElementsByClassName("close")[0];
+			    var buildingNoInput = document.getElementById("buildingNo"); // buildingNo input 필드
+
+			    // 모달 열기 (버튼 클릭 시 buildingNo 설정)
+			    btn.onclick = function() {
+			        var buildingNo = btn.getAttribute("data-building-no"); // 버튼에 저장된 buildingNo 가져오기
+			        buildingNoInput.value = buildingNo; // hidden input에 buildingNo 설정
+			        modal.style.display = "block";
+			    }
+
+			    // 닫기 버튼 클릭 시 모달 닫기
+			    span.onclick = function() {
+			        modal.style.display = "none";
+			    }
+
+			    // 모달 외부 클릭 시 모달 닫기
+			    window.onclick = function(event) {
+			        if (event.target == modal) {
+			            modal.style.display = "none";
+			        }
+			    }
+			});
+
+			const form = document.getElementById("meetingRoomAddFrm");
+			form.addEventListener('submit', (e) => {
+			    e.preventDefault(); // 폼의 기본 제출 방식을 막습니다.
+			    let vali_check = false;
+			    let vali_text = "";
+
+			    // 입력 값 유효성 검사
+			    if (form.meetingName.value.trim() == "") {
+			        vali_text += "회의실 이름을 입력하세요.";
+			        form.meetingName.focus();
+			    } else if (form.meetingLocation.value.trim() == '') {
+			        vali_text += "위치를 입력하세요";
+			        form.meetingLocation.focus();
+			    } else if (form.maxPeople.value == '' || form.maxPeople.value <= 0) {
+			        vali_text += "최대 수용 인원을 올바르게 입력하세요";
+			        form.maxPeople.focus();
+			    } else {
+			        vali_check = true;
+			    }
+
+			    if (!vali_check) {
+			        alert(vali_text); // 유효성 검사 실패 시 경고 메시지
+			    } else {
+			        // 폼 데이터 수집
+			        const payload = {
+			            buildingNo: form.buildingNo.value,
+			            meetingName: form.meetingName.value,
+			            meetingLocation: form.meetingLocation.value,
+			            maxPeople: form.maxPeople.value
+			        };
+
+			        // CSRF 토큰을 가져옴
+			        const csrfToken = form.querySelector('input[name="_csrf"]').value;
+
+			        // 서버로 POST 요청
+			        fetch('/meeting_room', {
+			            method: 'POST',
+			            headers: {
+			                'Content-Type': 'application/json', // JSON 형식으로 전송
+			                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 헤더에 추가
+			            },
+			            body: JSON.stringify(payload) // JSON 문자열로 변환하여 전송
+			        })
+			        .then(response => response.json()) // 서버에서 JSON 응답 받기
+			        .then(data => {
+			            if (data.res_code === '200') { // 성공 시
+			                Swal.fire({
+			                    icon: 'success',
+			                    title: '등록되었습니다',
+			                    text: data.res_msg,
+			                    confirmButtonText: "닫기"
+			                }).then((result) => {
+			                    location.href = "/meeting_rooms"; // 성공 후 이동할 경로
+			                });
+			            } else { // 실패 시
+			                Swal.fire({
+			                    icon: 'error',
+			                    title: '등록되지 않았습니다.',
+			                    text: data.res_msg,
+			                    confirmButtonText: "닫기"
+			                });
+			            }
+			        })
+			        .catch(error => {
+			            Swal.fire({
+			                icon: 'error',
+			                title: '오류 발생',
+			                text: '서버와의 통신 중 문제가 발생했습니다. 다시 시도해 주세요.',
+			                confirmButtonText: "닫기"
+			            });
+			            console.error('Error:', error);
+			        });
+			    }
+			});
+
+
+
+
+			</script>
     </main>
     </th:block>
     </body>

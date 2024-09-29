@@ -102,12 +102,7 @@ form.addEventListener('submit', (e) => {
         const payload = new FormData(form);
         
         const csrfToken = form.querySelector('input[name="_csrf"]').value;
-
-        
-        // FormData의 모든 값을 출력하여 확인
-        for (var pair of payload.entries()) {
-            console.log(pair[0]+ ', ' + pair[1]);
-        }        
+ 
 
         fetch('/buildingCreate', {
             method: 'POST',
