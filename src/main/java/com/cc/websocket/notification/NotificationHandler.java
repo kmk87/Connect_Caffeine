@@ -101,7 +101,7 @@ public class NotificationHandler extends TextWebSocketHandler {
             .notificationType(notificationDto.getNotificationType())
             .sentTime(LocalDateTime.now())  // 발송 시간 설정
             .isRead('N')
-            .relatedLink("/calendar/schedule")
+            .relatedLink(notificationDto.getRelatedLink())
             .build();
 
         // 알림 데이터 저장 (여기서 값 확인)
@@ -114,19 +114,4 @@ public class NotificationHandler extends TextWebSocketHandler {
         sendNotification(notificationDto);
     }
 
-
-    /**
-     * 일정 관련 알림 처리 (실제로 다르게 처리할 필요가 없다면 이 함수는 하나로 통일 가능)
-     */
-//    private void handleScheduleNotification(NotificationDto notificationDto) {
-//        System.out.println("일정 알림: " + notificationDto.getNotificationContent());
-//    }
-//
-//    private void handleApprovalNotification(NotificationDto notificationDto) {
-//        System.out.println("결재 알림: " + notificationDto.getNotificationContent());
-//    }
-//
-//    private void handleNoticeNotification(NotificationDto notificationDto) {
-//        System.out.println("공지 알림: " + notificationDto.getNotificationContent());
-//    }
 }

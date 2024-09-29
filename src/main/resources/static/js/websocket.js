@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', function () {
 toastr.options = {
     "closeButton": true,
     "debug": false,
@@ -16,6 +17,8 @@ toastr.options = {
     "hideMethod": "fadeOut"
 };
 
+
+	
 const notificationSocket = new WebSocket('ws://localhost:8100/ws/notifications');
 
 notificationSocket.onopen = function() {
@@ -45,6 +48,7 @@ notificationSocket.onmessage = function(event) {
                 title: '일정 알림',
                 text: data.notificationContent
             });
+             addNotificationToList("일정 알림", data.notificationContent);
             break;
         case "APPROVAL":
             Toast.fire({
@@ -55,10 +59,11 @@ notificationSocket.onmessage = function(event) {
             break;
         case "NOTICE":
             Toast.fire({
-                icon: 'warning',
+                icon: 'success',
                 title: '공지사항 알림',
                 text: data.notificationContent
             });
+            addNotificationToList("공지사항 알림", data.notificationContent);
             break;
         default:
             console.log("알 수 없는 알림 유형:", data.notificationType);
@@ -66,24 +71,28 @@ notificationSocket.onmessage = function(event) {
 };
 
 
-// 알림을 <li> 요소로 추가하는 함수
-function addNotificationToList(title, content) {
-    const notificationList = document.getElementById('notification-list');  // 알림 목록 <ul> 요소를 가져오기
-    const newNotification = document.createElement('li');  // 새로운 <li> 요소 생성
-    newNotification.classList.add('notification-item');  // 클래스 추가
+ // 알림을 목록에 추가하는 함수
+    function addNotificationToList(title, content) {
+        const notificationList = document.getElementById('notification-list');
+        if (!notificationList) {
+            console.error('알림 목록을 찾을 수 없습니다.');
+            return;
+        }
 
-    // 알림 아이콘과 내용을 설정
-    newNotification.innerHTML = `
-        <i class="bi bi-exclamation-circle text-warning"></i>
-        <div>
-            <h4>${title}</h4>
-            <p>${content}</p>
-            <p>${new Date().toLocaleTimeString()}</p> <!-- 알림 받은 시간 -->
-        </div>
-    `;
+        const newNotification = document.createElement('li');
+        newNotification.classList.add('notification-item');
 
-    notificationList.appendChild(newNotification);  // 알림 목록에 새 알림 추가
-}
+        newNotification.innerHTML = `
+            <i class="bi bi-exclamation-circle text-warning"></i>
+            <div>
+                <h4>${title}</h4>
+                <p>${content}</p>
+                <p>${new Date().toLocaleTimeString()}</p>
+            </div>
+        `;
+
+        notificationList.appendChild(newNotification);
+    }
 
 notificationSocket.onclose = function() {
     console.log('WebSocket 연결 종료');
@@ -98,20 +107,6 @@ notificationSocket.onerror = function(error) {
        notificationSocket = new WebSocket('ws://localhost:8100/ws/notifications');
     }, 5000);
 };
-
-
-
-function showScheduleNotification(message) {
-    alert(`일정 알림: ${message}`);
-}
-
-function showApprovalNotification(message) {
-    alert(`결재 알림: ${message}`);
-}
-
-function showNoticeNotification(message) {
-    alert(`공지사항 알림: ${message}`);
-}
 
 
 /*============ 여기서부터 채팅 웹소켓 함수 적으시면되요 ======================*/
@@ -136,3 +131,4 @@ chatSocket.onclose = function() {
 };
 
 
+});

@@ -5,27 +5,29 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.notice.domain.NoticeDto;
 import com.cc.notice.service.NoticeService;
+import com.cc.notification.service.NotificationService;
 
 @Controller
 public class NoticeApiController {
 
 	private final NoticeService noticeService;
+	private final NotificationService notificationService;
 
 	@Autowired
-	public NoticeApiController(NoticeService noticeService) {
+	public NoticeApiController(NoticeService noticeService,NotificationService notificationService) {
 		this.noticeService = noticeService;
+		this.notificationService = notificationService;
 	}
 
 	@ResponseBody
 	@PostMapping("/noticeCreate")
-	public Map<String, String> createNotice(NoticeDto dto) {
+	public Map<String, String> createNotice(NoticeDto dto) throws Exception {
 		System.out.println(dto);
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
@@ -34,6 +36,8 @@ public class NoticeApiController {
 		if(noticeService.createNotice(dto) != null) {
 			resultMap.put("res_code", "200");
 			resultMap.put("res_msg", "공지사항이 성공적으로 등록되었습니다.");
+			String message = "[공지사항] " + dto.getNotice_title() + "이(가) 등록되었습니다.";
+			notificationService.sendNoticeNotification(message);
 		}
 		
 		return resultMap;

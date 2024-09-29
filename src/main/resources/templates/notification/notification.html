@@ -1,60 +1,107 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
 <head>
 <meta charset="UTF-8">
 <title>notification</title>
-  <!-- DataTables CSS -->
-<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+<link th:href="@{/css/notification/notification.css}" rel="stylesheet"
+	type="text/css">
+<!-- DataTables CSS -->
+<!-- DataTables CSS 파일을 포함하지 않음 -->
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet" disabled="disabled">
+
 <!-- DataTables JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script
+	src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-<th:block layout:fragment="content">
-  	<main id="main" class="main">
-	   <div class="sub-sidebar" id="sub-sidebar">
-	    	<div class="pagetitle">
-			    <h1>알림</h1>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+
+			<!-- 사이드바 (이미 있으므로 생략 가능) -->
+			<div class="sub-sidebar" id="sub-sidebar">
+				<div class="pagetitle">
+					<h1>알림</h1>
+				</div>
+				<div>전체 알림</div>
+				<div>안읽은 알림</div>
 			</div>
-			<div>전체 알림</div>
-			<div>안읽은 알림</div>
-       </div>
-	   <div class="notification-title">
-        <span>전체 알림</span>
-       </div>
-	   <hr>
-	    <div class="notification-buttons-select">
-		    <div class="notification-buttons">
-		        <button type="button" class="btn btn-outline-primary">읽음</button>
-		        <button type="button" class="btn btn-outline-danger" >삭제</button>
-		    </div>
-		    <div class="notification-select">
-		        <select class="form-select" aria-label="Default select example" id="" name="">
-		            <option value="1">전체</option>
-		            <option value="2">일정</option>
-		            <option value="3">게시판</option>
-		            <option value="4">전자결재</option>
-		        </select>
-		    </div>
-		</div>
-	    <hr>
-	</main>
-	<script>
-        $(document).ready(function() {   
-       $('#notification_list').DataTable({
-           "lengthChange": false,  // Show entries 숨김
-           "searching": false,      // 검색 활성화
-           "responsive": true,
-           "language": {
-               url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json'
-           },
-          "pagingType": "full_numbers"
-       });
-       
-   });
-</script>
-</th:block>
+
+			<!-- 알림 제목 -->
+			<div class="notification-list">
+				<div class="notification-title">
+					<span>전체 알림</span>
+				</div>
+				<hr>
+
+				<!-- 알림 리스트 부분 (테이블 형태로 구현 가능) -->
+				<div class="notification-buttons-select">
+					<div class="notification-buttons">
+						<!-- 읽음 버튼 -->
+						<button type="button" class="btn btn-outline-primary">읽음</button>
+						<!-- 삭제 버튼 -->
+						<button type="button" class="btn btn-outline-danger">삭제</button>
+					</div>
+
+					<!-- 필터 선택 -->
+					<div class="notification-select">
+						<select class="form-select" aria-label="Default select example">
+							<option value="1">전체</option>
+							<option value="2">일정</option>
+							<option value="3">게시판</option>
+							<option value="4">전자결재</option>
+						</select>
+					</div>
+				</div>
+				<hr>
+				<!-- 알림 목록을 테이블로 표시 -->
+				<table id="notification_list" class="display" >
+					<thead>
+						<tr>
+							<th>선택</th>
+							<th>내용</th>
+							<th>시간</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:each="notification : ${notifications}">
+							<tr>
+								<td  class="checkbox-column"><input type="checkbox"></td>
+								<td th:text="${notification.notificationContent}"></td>
+								<td class="notify-time"
+									th:text="${#temporals.format(notification.sent_time, 'HH:mm')}"></td>
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
+				<!-- 페이지네이션 -->
+				<div class="pagination-container">
+					<div id="notification_pagination"></div>
+				</div>
+			</div>
+		</main>
+		<script>
+			$(document).ready(function() {
+				$('#notification_list').DataTable({
+					"paging": true,
+					"lengthChange": false,
+					"searching": false,
+					"pageLength": 15,
+					"ordering": false,
+					"info": false,
+					"autoWidth": false,
+					"language": {
+						"paginate": {
+							"previous": "<", // 이전을 <로 표시
+							"next": ">"      // 다음을 >로 표시
+						},
+					},
+					"pagingType": "simple_numbers"
+				});
+			});
+		</script>
+	</th:block>
 </body>
 </html>
