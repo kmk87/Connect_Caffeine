@@ -1,10 +1,7 @@
 package com.cc.approval.domain;
 
-import java.util.List;
-
 import com.cc.employee.domain.Employee;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,19 +9,20 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="approval_line")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Builder
 public class ApprovalLine {
 	
@@ -38,9 +36,9 @@ public class ApprovalLine {
     private Approval approval;
 	
 	@ManyToOne
-	@JoinColumn(name="appr_writer_no")
+	@JoinColumn(name="emp_code")
 	private Employee employee;
-	
+
 	@Column(name="appr_order")
 	private Integer apprOrder;
 	
@@ -50,11 +48,5 @@ public class ApprovalLine {
 	@Column(name="appr_state")
 	private String apprState;
 	
-	
-	
-	
-	
-	
-	
-	
+
 }

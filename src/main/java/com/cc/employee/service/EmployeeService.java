@@ -48,18 +48,22 @@ public class EmployeeService {
         return "DEFAULT"; // 기본값 설정
     }
     
-    
-    // emp_account로 empCode 가져오기
-// 	public Long getEmpCodeByEmpAccount(String empAccount) {
-//         return employeeRepository.findEmpCodeByEmpAccount(empAccount);
-//     }
-//    
-    
+
     // 전자서명 설정
     @Transactional
     public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {
         int updatedRows = employeeRepository.updateEmployeeSignatureByAccount(empAccount, filePath);
         return updatedRows > 0;
+    }
+    
+    // 결재올린 사람의 팀명 가져오기
+    public String getTeamNameByEmpCode(Long empCode) {
+        // 특정 emp_code를 가진 Employee를 조회한 후 팀명 반환
+        Employee employee = employeeRepository.findByempCode(empCode);
+        if (employee != null && employee.getEmpGroup() != null && employee.getEmpGroup().getGroupParentNo() != null) {
+            return employee.getEmpGroup().getGroupName();
+        }
+        return null; // 팀명이 없을 경우 null 반환
     }
 	
 }

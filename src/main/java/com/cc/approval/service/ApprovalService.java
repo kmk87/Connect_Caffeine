@@ -2,6 +2,7 @@ package com.cc.approval.service;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +16,22 @@ import org.springframework.stereotype.Service;
 import com.cc.approval.domain.ApprForm;
 import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalDto;
+import com.cc.approval.domain.ApprovalLine;
+import com.cc.approval.domain.ApprovalLineDto;
 import com.cc.approval.domain.TemporaryStorage;
 import com.cc.approval.domain.TemporaryStorageDto;
 import com.cc.approval.repository.ApprFormRepository;
+import com.cc.approval.repository.ApprovalLineRepository;
 import com.cc.approval.repository.ApprovalRepository;
 import com.cc.approval.repository.TemporaryStorageRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.employee.service.EmployeeService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+
+
 
 @Service
 public class ApprovalService {
@@ -33,6 +40,7 @@ public class ApprovalService {
 	private final ApprFormRepository apprFormRepository;
 	private final EmployeeRepository employeeRepository;
 	private final TemporaryStorageRepository temporaryStorageRepository;
+	private final ApprovalLineRepository approvalLineRepository;
 	
 	@Autowired
 	private EmployeeService employeeService;
@@ -40,12 +48,14 @@ public class ApprovalService {
 	
 	@Autowired
 	public ApprovalService(ApprovalRepository approvalRepository,ApprFormRepository apprFormRepository,
-			EmployeeRepository employeeRepository,TemporaryStorageRepository temporaryStorageRepository) {
+			EmployeeRepository employeeRepository,TemporaryStorageRepository temporaryStorageRepository,
+			ApprovalLineRepository approvalLineRepository) {
 		
 		this.approvalRepository = approvalRepository;
 		this.apprFormRepository = apprFormRepository;
 		this.employeeRepository = employeeRepository;
 		this.temporaryStorageRepository = temporaryStorageRepository;
+		this.approvalLineRepository = approvalLineRepository;
 	}
 	
 	
@@ -238,19 +248,6 @@ public class ApprovalService {
 	    
 	    dto.setEmp_code(employee.getEmpCode());  // DTO에 empCode 설정
 	    
-//	    dto.setAppr_holi_start(form.getAppr_holi_start()); // form에서 가져온 값을 dto에 설정
-//	    dto.setAppr_holi_end(form.getAppr_holi_end());
-//	    dto.setAppr_holi_use_count(form.getAppr_holi_use_count());
-	    
-//	    TemporaryStorage temporaryStorage = TemporaryStorage.builder()
-//	    		.temNo(dto.getTem_no())
-//	    		.apprTitle(dto.getAppr_title())
-//	    		.apprContent(dto.getAppr_content())
-//	    		.apprHoliStart(dto.getAppr_holi_start())
-//	    		.apprHoliEnd(dto.getAppr_holi_end())
-//	    		.apprHoliUseCount(dto.getAppr_holi_use_count())
-//	    		.build();
-	    
 	    // 임시 저장 로직 호출 (tem_no 사용)
 	    return updateAppr(dto) != null;
 	    
@@ -347,28 +344,91 @@ public class ApprovalService {
 	}
 	
 	// 결재문서함 데이터 리스트
-	public List<ApprovalDto> getPendingApprovalDtos(int size) {
-	    // 현재 로그인한 사용자의 ID 가져오기
+	public List<ApprovalDto> getPendingApprovalDtosForCurrentUser(int size) {
+	    // 현재 로그인한 사용자의 emp_code 가져오기
 	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
-	    
-	    // 페이지 크기를 동적으로 받아서 처리 (예: 5개 또는 10개)
-	    Pageable pageable = PageRequest.of(0, size); 
-	    
-	    // 레포지토리에서 현재 사용자의 결재 상태가 'S'인 데이터만 내림차순으로 조회
-	    Page<Approval> approvals = approvalRepository.findPendingApprovalsForApprover(currentUserId, "S", pageable);
-	    
-	    // Approval 엔티티 리스트를 ApprovalDto 리스트로 변환
-	    List<ApprovalDto> approvalDtos = approvals.getContent().stream()
+	    Employee currentUser = employeeRepository.findByempAccount(currentUserId);
+	     
+
+	    // 페이지 요청 생성 (page와 size를 받아서 처리)
+	    Pageable pageable = PageRequest.of(0,size);
+
+	    // 결재 상태가 'S'이고 현재 사용자가 결재자로 등록된 문서 조회
+	    Page<Approval> pendingApprovals = approvalLineRepository.findPendingApprovalsForCurrentUser(currentUser.getEmpCode(), pageable);
+
+	    // Approval 엔티티를 ApprovalDto로 변환하여 반환
+	    return pendingApprovals.getContent().stream()
 	        .map(approval -> new ApprovalDto().toDto(approval))
 	        .collect(Collectors.toList());
-	    
-	    return approvalDtos;
-    }
+	}
+
 	
 	// 결재문서함 상세조회
+	public List<ApprovalLineDto> getApprovalLinesByApprNo(Long apprNo) {
+	    List<ApprovalLine> approvalLines = approvalLineRepository.findByApproval_ApprNo(apprNo);
+	    
+	    if (approvalLines.isEmpty()) {
+	        throw new EntityNotFoundException("결재선을 찾을 수 없습니다. apprNo: " + apprNo);
+	    }
+	    
+	    // ApprovalLine을 ApprovalLineDto로 변환하여 리스트로 반환
+	    return approvalLines.stream()
+	                        .map(approvalLine -> new ApprovalLineDto().toDto(approvalLine))
+	                        .collect(Collectors.toList());
+	}
 	
+	public ApprovalDto selectapprStorageOne(Long apprNo) {
+	    // appr_no를 통해 결재 문서 정보 조회
+	    Approval approval = approvalRepository.findById(apprNo)
+	        .orElseThrow(() -> new EntityNotFoundException("결재 문서를 찾을 수 없습니다. ID: " + apprNo));
+	    
+	    // Approval을 ApprovalDto로 변환
+	    return new ApprovalDto().toDto(approval);
+	}
+
+	public ApprovalLineDto getApprovalLineWithEmployee(Long apprLineId) {
+	    Object[] result = approvalLineRepository.findApprovalLineWithEmployeeByApprLineId(apprLineId)
+	        .orElseThrow(() -> new EntityNotFoundException("결재선 정보를 찾을 수 없습니다."));
+
+	    ApprovalLine approvalLine = (ApprovalLine) result[0];
+	    Employee employee = (Employee) result[1];
+
+	    ApprovalLineDto dto = new ApprovalLineDto();
+	    dto.setAppr_line_id(approvalLine.getApprLineId());
+	    dto.setAppr_no(approvalLine.getApproval().getApprNo());
+	    dto.setAppr_writer_name(approvalLine.getEmployee().getEmpName()); // 결재자 이름 설정
+	    return dto;
+	}
 	
+	// 결재문서함 formNo 값 가져오기
+	public Optional<Long> getApprFormNoByApprNo(Long apprNo) {
+	    List<Object[]> results = approvalRepository.findApprovalLineWithFormNo(apprNo);
+
+	    // 결과가 비어 있지 않고 첫 번째 결과가 null이 아닐 때 처리
+	    if (results != null && !results.isEmpty()) {
+	        Object[] result = results.get(0); // 첫 번째 결과 가져오기
+	        
+	        // 결과가 null이 아니고 두 번째 항목이 null이 아닌지 체크 후 캐스팅
+	        if (result != null && result.length > 1 && result[1] != null) {
+	            Long formNo = (Long) result[1];   // formNo는 두 번째 항목에 위치
+	            return Optional.of(formNo);
+	        }
+	    }
+
+	    // 결과가 없거나 formNo가 없으면 Optional.empty() 반환
+	    return Optional.empty();
+	}
 	
+	// apprNo를 통해 Approval 엔티티 조회
+    public Approval findByApprNo(Long apprNo) {
+        // ApprovalRepository의 findByApprNo 메서드 호출
+        return approvalRepository.findByApprNo(apprNo);
+               
+    }
+
+
+
+
 	
 }
 	

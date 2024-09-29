@@ -1,6 +1,7 @@
 package com.cc.approval.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import com.cc.approval.domain.ApprForm;
 import com.cc.approval.domain.ApprFormDto;
 import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalDto;
+import com.cc.approval.domain.ApprovalLineDto;
 import com.cc.approval.domain.TemporaryStorageDto;
 import com.cc.approval.service.ApprFormService;
 import com.cc.approval.service.ApprovalService;
@@ -183,26 +185,42 @@ public class ApprovalViewController {
 	// 결재문서함
 	@GetMapping("/apprStorage")
 	public String showApprStorage(Model model) {
-		List<ApprovalDto> pendingApprovals = approvalService.getPendingApprovalDtos(10);
+		List<ApprovalDto> pendingApprovals = approvalService.getPendingApprovalDtosForCurrentUser(10);
         model.addAttribute("approvals", pendingApprovals);
 				        
 		return "approval/apprStorage"; 
 	}
 	
 	
-	// 결재문서함 상세 조회
-//		@GetMapping("/apprStorage/{appr_no}")
-//		public String selectapprStorageOne(Model model,
-//				@PathVariable("appr_no") Long appr_no) {
-//			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//		    User user = (User) authentication.getPrincipal();
-//		    String username = user.getUsername();
-//		    String groupName = employeeService.getUserTeamName(username);
-//		    model.addAttribute("groupNames", groupName);
-//		    ApprovalDto approvalDto = approvalService.getApprovalByApprNo(appr_no);
-//			model.addAttribute("dto",approvalDto);
-//			return "approval/apprStorageDetail";
-//		}
+		// 결재문서함 상세 조회
+		@GetMapping("/apprStorage/{appr_no}")
+		public String getApprovalLineByApprNo(Model model,
+				@PathVariable("appr_no") Long apprNo) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		    User user = (User) authentication.getPrincipal();
+		    String username = user.getUsername();
+		   
+		    
+
+		    ApprovalDto approvalDto = approvalService.selectapprovalOne(apprNo);
+		    System.out.println("approval : "+approvalDto);
+		    model.addAttribute("approval", approvalDto);
+		    
+		    // 결재문서를 작성한 사람의 emp_code를 통해 작성자 정보 가져오기
+		    Long apprWriterNo = approvalDto.getAppr_writer_code(); // 작성자의 emp_code
+
+		    // 작성자의 팀명 가져오기
+		    String writerTeamName = employeeService.getTeamNameByEmpCode(apprWriterNo); // 작성자의 팀명을 가져옴
+		    model.addAttribute("groupNames", writerTeamName);
+		    
+		    
+		    // 결재선 정보 가져오기
+		    List<ApprovalLineDto> approvalLines = approvalService.getApprovalLinesByApprNo(apprNo);
+		    model.addAttribute("approvalLines", approvalLines);
+		    System.out.println("approvalLines: "+approvalLines);
+		    
+			return "approval/apprStorageDetail";
+		}
 	
 	
 	// 참조문서함

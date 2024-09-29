@@ -11,12 +11,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.cc.approval.domain.Approval;
+import com.cc.approval.domain.ApprovalLine;
 
 public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
 	Approval findByApprNo(Long appr_no);
-	
-	//Approval findByApprForm_ApprFormNo(Long apprFormNo);
 	
 	Approval findByEmployee_EmpCode(Long empCode);
 	
@@ -27,6 +26,7 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	Approval findByApprContent(String appr_content);
 	
 	Approval findByDraftDay(LocalDateTime draft_day);
+
 	
 	
 	// 전자결재 홈에서 기안문서 리스트
@@ -37,17 +37,14 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     @Query("SELECT a FROM Approval a WHERE a.docuNo LIKE CONCAT(:teamName, '-%', :year, '-%') ORDER BY a.docuNo DESC")
     List<Approval> findTop1ByTeamNameAndYearOrderByDocuNoDesc(@Param("teamName") String teamName, @Param("year") String year);
     
-    // 결재 상태가 'S'이고 현재 사용자가 결재자로 등록된 문서를 조회하는 쿼리
-    @Query("SELECT a FROM Approval a " +
-    	       "JOIN ApprovalLine al ON a.apprNo = al.approval.apprNo " +
-    	       "JOIN Employee e ON al.employee.empCode = e.empCode " +
-    	       "WHERE a.apprState = :apprState " +
-    	       "AND e.empAccount = :empAccount")
-    	Page<Approval> findPendingApprovalsForApprover(@Param("empAccount") String empAccount, @Param("apprState") String apprState, Pageable pageable);
-
+    // 결재문서함에서 formNo 값 가져오기
+    @Query("SELECT al, a.apprForm.apprFormNo FROM ApprovalLine al JOIN al.approval a WHERE a.apprNo = :apprNo")
+    List<Object[]> findApprovalLineWithFormNo(@Param("apprNo") Long apprNo);
 
     // 기안서 삭제 -> 비활성화
     List<Approval> findByIsDeleted(String isDeleted);
+    
+    
 	
 	
 }

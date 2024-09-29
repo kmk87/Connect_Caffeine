@@ -123,6 +123,9 @@ public class ApprovalDto {
 	            .appr_date(approval.getApprDate())
 	            .is_deleted(approval.getIsDeleted())
 	            .docu_no(approval.getDocuNo())
+	            .appr_holi_start(approval.getApprHoliStart())
+	            .appr_holi_end(approval.getApprHoliEnd())
+	            .appr_holi_use_count(approval.getApprHoliUseCount())
 	            .appr_writer_code(approval.getEmployee() != null ? approval.getEmployee().getEmpCode() : null)  // Employee의 empCode 설정
 	            .appr_writer_name(approval.getEmployee() != null ? approval.getEmployee().getEmpName() : null)  // Employee의 empName 설정
 	            .appr_form_no(approval.getApprForm() != null ? approval.getApprForm().getApprFormNo() : null)   // ApprForm의 apprFormNo 설정

@@ -3,6 +3,11 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{include/layout}">
 <head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<!-- DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <meta charset="UTF-8">
 <link th:href="@{/css/approval/tempStorage.css}" rel="stylesheet"
 	type="text/css">
@@ -80,7 +85,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="appr, iterStat : ${approvals}">
+									<tr th:each="appr, iterStat : ${approvals}" th:onclick="|location.href='@{/apprStorage/{no}(no=${appr.appr_no})}'|">
 										<td th:text="${iterStat.index + 1}"></td>
 										<td th:text="${appr.formName}"></td>
 										<td th:text="${appr.appr_title}"></td>

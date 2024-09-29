@@ -2,6 +2,7 @@ package com.cc.approval.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -106,5 +107,18 @@ public class Approval {
 	// 다대일 관계의 반대쪽을 명시합니다. Approval이 여러 ApprovalLine을 가질 수 있음.
     @OneToMany(mappedBy = "approval", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApprovalLine> approvalLines;
+    
+    // Approval 클래스에 날짜를 포맷팅하는 메서드 추가
+    public String getFormattedDraftDay() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // draftDay가 null이면 현재 날짜로 설정
+        if (draftDay == null) {
+            return LocalDate.now().format(formatter);
+        }
+
+        // draftDay를 문자열로 변환
+        return draftDay.format(formatter);
+    }
     
 }
