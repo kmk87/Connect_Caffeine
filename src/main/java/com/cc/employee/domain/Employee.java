@@ -1,6 +1,8 @@
 package com.cc.employee.domain;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.cc.attendance.domain.Attendance;
 import com.cc.empGroup.domain.EmpGroup;
 
 import jakarta.persistence.Column;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -90,5 +93,8 @@ public class Employee {
 
    @Column(name="emp_img_file_path") 
    private String empImgFilePath;
+   
+   @OneToMany(mappedBy="employees")
+   private List<Attendance> attendances;
 
 }

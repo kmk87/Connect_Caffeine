@@ -41,7 +41,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		
 		
 		// 트리-팀원
-		@Query("SELECT new com.cc.employee.domain.EmployeeDto(e.empGroup.groupNo, e.empCode, e.empName, e.empJobName, eg.groupParentNo, eg.groupName) " +
+		@Query("SELECT new com.cc.employee.domain.EmployeeDto(e.empGroup.groupNo, e.empCode, e.empName, e.empJobCode, e.empJobName, eg.groupParentNo, eg.groupName) " +
 			       "FROM Employee e JOIN e.empGroup eg")
 		List<EmployeeDto> findAllempList();
 

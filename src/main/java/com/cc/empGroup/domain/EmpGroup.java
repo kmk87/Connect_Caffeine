@@ -1,7 +1,5 @@
 package com.cc.empGroup.domain;
 
-import java.time.LocalDateTime;
-
 import java.util.List;
 
 import com.cc.employee.domain.Employee;
@@ -59,6 +57,6 @@ public class EmpGroup {
 	@Column(name="group_explain")
 	private String groupExplain;
 	
-  @OneToMany(mappedBy="empGroup")
-  private List<Employee> employees;
+	@OneToMany(mappedBy="empGroup")
+	private List<Employee> employees;
 }

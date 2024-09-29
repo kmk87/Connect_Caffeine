@@ -36,6 +36,7 @@ public class OrgApiController {
 		teamNode1.put("parent", "#");
 		teamNode1.put("text", "전사");
 		teamNode1.put("primaryKey", "없음.");
+		teamNode1.put("type", "전사");
 
 		
 		teamResult.add(0, teamNode1);

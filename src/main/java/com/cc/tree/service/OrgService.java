@@ -1,6 +1,7 @@
 package com.cc.tree.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ public class OrgService {
 			teamNode.put("parent", "1");
 			teamNode.put("text", team.getGroup_name());
 			teamNode.put("primaryKey", team.getGroup_no());
+			teamNode.put("type", "team");
 			
 			
 			teamList.add(teamNode);
@@ -59,6 +61,13 @@ public class OrgService {
     	List<Map <String, Object>> empList = new ArrayList<Map<String, Object>>();
     	List<EmployeeDto> employees = employeeRepository.findAllempList();
     	
+    	// 직급 코드 기준으로 오름차순으로 정렬
+    	employees.sort(Comparator.comparing(emp -> {
+            
+            String jobCode = emp.getEmp_job_code().substring(1); // 'j' 제거
+            return Integer.parseInt(jobCode); // 숫자로 변환
+    	}));
+    	
     	
     	// 사원의 id는 (그룹 개수+1)에서 시작
     	List<EmpGroup> group = empGroupRepository.findAll();
@@ -73,6 +82,8 @@ public class OrgService {
     		empNode.put("parent", emp.getGroup_no());
     		empNode.put("text", emp.getEmp_name() + " (" + emp.getEmp_job_name() + ")");
     		empNode.put("primaryKey", emp.getEmp_code());
+    		empNode.put("jobCode", emp.getEmp_job_code());
+    		empNode.put("type", "employee");
     		
     		empList.add(empNode);
     		

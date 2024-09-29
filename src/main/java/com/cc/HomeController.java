@@ -54,6 +54,7 @@ public class HomeController {
 		teamNode1.put("parent", "#");
 		teamNode1.put("text", "전사");
 		teamNode1.put("primaryKey", "없음.");
+		teamNode1.put("type", "master");
 
 		/*
 		 * // 두번째 앞에 추가할 새로운 객체 생성 Map<String, Object> teamNode2 = new HashMap<>(); //

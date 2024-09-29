@@ -11,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.cc.attendance.domain.Attendance;
+import com.cc.attendance.domain.AttendanceDto;
+import com.cc.attendance.service.AttendanceService;
 import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.service.EmpGroupService;
 import com.cc.employee.domain.Employee;
@@ -24,14 +27,17 @@ public class EmployeeViewController {
 	private final EmployeeService employeeService;
 	private final EmpGroupService empGroupService;
 	private final JobService jobService;
+	private final AttendanceService attendanceService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeViewController.class);
 	
 	@Autowired
-	public EmployeeViewController(EmployeeService employeeService, EmpGroupService empGroupService, JobService jobService) {
+	public EmployeeViewController(EmployeeService employeeService, EmpGroupService empGroupService, 
+			JobService jobService, AttendanceService attendanceService) {
 		this.employeeService = employeeService;
 		this.empGroupService = empGroupService;
 		this.jobService = jobService;
+		this.attendanceService = attendanceService;
 	}
 	
 	@GetMapping("/login")
@@ -66,29 +72,38 @@ public class EmployeeViewController {
 		return "employee/list";
 	}
 	
-	// 2-1. 조회
-//	@GetMapping("/employeeList")
-//	public String getEmployeeList(Model model) {
-//	    List<EmployeeDto> empDtoList = employeeService.getSortedEmpDtoList();  // 정렬된 리스트 가져오기
-//	    model.addAttribute("empDtoList", empDtoList);
-//	    return "employeeList";  // 뷰 이름 리턴
-//	}
-	
 	
 	
 	// 2-2. 상세 정보(detail)
 	@GetMapping("employee/{emp_code}")
 	public String selectEmployeeOne(@PathVariable("emp_code") Long emp_code, Model model) {
 		
+		// (1) 기본 정보
 		EmployeeDto dto = employeeService.selectEmployeeOne(emp_code);
 		
 		String formattedRegNo = employeeService.formatEmpRegNo(emp_code);
 		
 		String empDeptName = employeeService.getDeptNameByEmpCode(emp_code);
 		
+		// (2) 근태 현황
+		List<AttendanceDto> attnDtoList = attendanceService.getAttendancesByEmpCode(emp_code);
+		
+		// 근무 시간 계산
+        for (AttendanceDto temp : attnDtoList) {
+            Long working = temp.getWorktime();
+
+            Long workingHour = (working/60) - 1;
+            Long workingMinute = working%60;
+            
+            String calcworkTime = workingHour + "시간 " + workingMinute + "분";
+            
+            temp.setCalc_worktime(calcworkTime);
+        }
+		
 		model.addAttribute("dto", dto);
 		model.addAttribute("formattedRegNo",formattedRegNo);
 		model.addAttribute("empDeptName", empDeptName);
+		model.addAttribute("attnDtoList", attnDtoList);
 		
 		return "employee/detail";
 	}

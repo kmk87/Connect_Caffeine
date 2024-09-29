@@ -176,6 +176,9 @@ table td, table th {
 											<td
 												th:text="${dto.emp_resigndate}"></td>
 										</tr>
+										<tbody>
+											
+										</tbody>
 									</table>
 								</div>
 							</div>
@@ -190,7 +193,32 @@ table td, table th {
 						</div>
 					</div>
 					<div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-					<h2>근태현황 테이블 넣기</h2>
+					<table class="table datatable">
+						<colgroup>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>연도</th>
+								<th>월</th>
+								<th>일</th>
+								<th>출근 시간</th>
+								<th>퇴근 시간</th>
+								<th>근무 시간</th>
+								<th>근무 상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="dto:${attnDtoList}">
+								<td th:text="${#temporals.format(dto.attn_start, 'yyyy')}"></td>
+								<td th:text="${#temporals.format(dto.attn_start, 'MM')}"></td>
+								<td th:text="${#temporals.format(dto.attn_start, 'dd')}"></td>
+								<td th:text="${#temporals.format(dto.attn_start, 'HH:mm')}"></td>
+								<td th:text="${#temporals.format(dto.attn_end, 'HH:mm')}"></td>
+								<td th:text="${dto.calc_worktime}"></td>
+								<td th:text="${dto.attn_status}"></td>
+							</tr>
+						</tbody>
+					</table>
 					</div>
 				</div>
 				</div>

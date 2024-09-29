@@ -4,14 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-
-import com.cc.calendar.domain.CalendarDto;
 import com.cc.empGroup.domain.EmpGroup;
 import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;

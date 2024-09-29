@@ -57,11 +57,12 @@ public class EmployeeDto {
 		
 		
 		// 트리 구조 쿼리문에 필요한 생성자
-		 public EmployeeDto(Long group_no, Long emp_code, String emp_name, 
+		 public EmployeeDto(Long group_no, Long emp_code, String emp_name, String emp_job_code,
                  String emp_job_name, Long group_parent_no, String group_name) {
 			  this.group_no = group_no;
 			  this.emp_code = emp_code;
 			  this.emp_name = emp_name;
+			  this.emp_job_code = emp_job_code;
 			  this.emp_job_name = emp_job_name;
 			  this.group_parent_no = group_parent_no;
 			  this.group_name = group_name;
