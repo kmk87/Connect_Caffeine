@@ -2,11 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-
-<!-- Include jsTree CSS and JS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" /> <!-- // 여기 -->
-
-<!-- 조직도 끝 -->
   <meta charset="UTF-8">
   <title>Navigation</title>
   <meta content="" name="description">
@@ -27,7 +22,37 @@
   <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
-  <!-- 조직도 시작 -->
+  <!-- 조직도 관련 -->
+	  <!-- Include jQuery -->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	  <!-- Include jsTree CSS and JS -->
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+	  <style>
+/* 모달의 크기 줄이기 */
+.modal fade show {
+    max-width: 400px;  /* 모달의 최대 너비를 400px로 설정 */
+    width: 80%;        /* 화면 너비의 80%로 설정 */
+    height: auto;      /* 자동 높이 조정 */
+}
+
+/* 첫 번째 모달 위치 조정 (조직도 모달) */
+#disablebackdrop .modal-dialog {
+    position: absolute;
+    top: 150px;  /* 내비게이션 버튼 근처로 이동 */
+    left: 50px;  /* 내비게이션 버튼 근처로 이동 */
+    transform: none;
+}
+
+/* 두 번째 모달 위치 조정 (정보 모달) */
+#disablebackdrop2 .modal-dialog {
+    position: absolute;
+    top: 200px;  /* 첫 번째 모달과 조금 겹치지 않게 아래로 배치 */
+    left: 150px; /* 첫 번째 모달과 겹치지 않도록 옆에 배치 */
+    transform: none;
+}
+	  </style>
+
 
 </head>
   <body>
@@ -86,28 +111,103 @@
             <i class="bx bx-chat"></i><span>채팅</span>
           </a>
         </li>
-        <!-- Other nav items omitted for brevity -->
-        <li>
-        	<a class="nav-link collapsed" th:href="@{/toTree}">조직도</a>
+        <li class="nav-item">
+          <a class="nav-link collapsed" th:href="@{/toTree}">
+            <i class="bx bx-chat"></i><span>조직도 코드보기</span>
+          </a>
         </li>
+        <!-- Other nav items omitted for brevity -->
       </ul>
-    </aside><!-- End Sidebar-->
-    <!-- 모달 -->
-<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width: 50%; margin-top: 50px;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="orgChartModalLabel">조직도</h5>
+      <!-- 조직도 모달창1 -->
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
+                조직도
+      </button>
+      <div class="modal fade" id="disablebackdrop" tabindex="-1" data-bs-backdrop="false">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">조직도</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              	<div id="treeContainer"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+              </div>
             </div>
-            <div class="modal-body">
-            	<!-- 조직도가 표시될 곳 -->
-                <div id="treeContainer"></div> 
+          </div>
+      </div>
+      <!-- 조직도 모달창1 끝-->
+      <!-- 조직도 모달창2 -->
+      <div class="modal fade" id="disablebackdrop2" tabindex="-1" data-bs-backdrop="false">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              	<div id="treeContainer"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
+          </div>
+      </div>
+       <!-- 조직도 모달창2 끝-->
+    </aside><!-- End Sidebar-->
+<!-- 조직도 js -->
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('disablebackdrop');
 
+    // 첫 번째 모달이 열릴 때 실행되는 코드
+    modal.addEventListener('show.bs.modal', function (event) {
+        
+        // 1. teamResult와 empResult 데이터를 Thymeleaf에서 자바스크립트로 전달
+        let teamData = /*[[${teamObj}]]*/ '[]';  // teamResult 데이터를 Thymeleaf에서 받아옴
+        let empData = /*[[${empObj}]]*/ '[]';   
+        
+        
+        // 2. JSON 형태로 변환
+        let parsedTeamData = JSON.parse(teamData);
+        let parsedEmpData = JSON.parse(empData); 
+        
+        let combinedData = [...parsedTeamData, ...parsedEmpData]; // 두 개의 데이터 병합
+        
+        console.log(combinedData);
+        
+        
+        // 3. jsTree 생성
+        $("#treeContainer").jstree({
+            core: {
+                data: combinedData
+            }
+        }).on('loaded.jstree', function(e, data) {
+            $('#treeContainer').jstree('open_node', $('#treeContainer li:first')); // 최상위 노드를 자동으로 열기
+        });
+        
+        
+        // 4. 트리 노드 클릭 시 두 번째 모달 창 띄우기
+        $("#treeContainer").on("select_node.jstree", function (e, data) {
+            // 선택한 노드의 텍스트와 ID를 두 번째 모달에 표시
+            $("#treeContainer").html("<p>Selected node: " + data.node.text + "<br>pk 값: " + data.node.original.primaryKey + "</p>");
+
+	        });
+	    });
+
+		    // 첫 번째 모달이 닫힐 때 트리 상태 초기화
+		    modal.addEventListener('hidden.bs.modal', function () {
+		        $("#treeContainer").jstree("destroy").empty(); 
+		    });
+		    
+
+});
+
+</script>
+<!-- 조직도 관련 js 끝 -->
 </th:block>
   <!-- Vendor JS Files -->
    <!-- Include jQuery -->

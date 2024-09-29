@@ -54,19 +54,19 @@
 }
 
 .basic-info-left {
-	flex: 0 0 40%;
-	padding: 10px;
-	box-sizing: border-box;
-	position: relative;
+    flex: 0 0 40%;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative; 
 }
 
 #emp_profile_img {
-	position: absolute;
-	top: 0;
-	left: 60%;
-	transform: translateX(-50%);
-	width: 200px;
-	height: 200px;
+    object-fit: cover;
+    width: 200px;
+    height: 200px;
+    display: inline-block; 
+    margin-top: 20px;
 }
 
 .basic-info-right {
@@ -78,6 +78,10 @@
 .tight-line {
 	line-height: 1.2;
 	margin: 0;
+}
+
+table td, table th {
+    vertical-align: middle; 
 }
 </style>
 </head>

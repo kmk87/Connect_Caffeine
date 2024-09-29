@@ -41,13 +41,14 @@ public class OrgService {
 			Map<String, Object> teamNode = new HashMap<>();
 
 			teamNode.put("id", team.getGroup_no());
-			teamNode.put("parent", "#");
+			teamNode.put("parent", "1");
 			teamNode.put("text", team.getGroup_name());
+			teamNode.put("primaryKey", team.getGroup_no());
+			
 			
 			teamList.add(teamNode);
 
 		}
-		
 		return teamList;
 	}
 
@@ -71,12 +72,12 @@ public class OrgService {
     		empNode.put("id", num);
     		empNode.put("parent", emp.getGroup_no());
     		empNode.put("text", emp.getEmp_name() + " (" + emp.getEmp_job_name() + ")");
+    		empNode.put("primaryKey", emp.getEmp_code());
     		
     		empList.add(empNode);
     		
     		num++;
     	}
-
     	return empList;
 
     }

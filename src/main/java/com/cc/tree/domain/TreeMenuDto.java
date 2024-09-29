@@ -16,7 +16,8 @@ import lombok.ToString;
 public class TreeMenuDto {
 
 	 private String id;
-	    private String parent;
-	    private String text;
-	    private boolean opened;
+	 private String parent;
+	 private String text;
+	 private String primaryKey;
+	 private boolean opened;
 }

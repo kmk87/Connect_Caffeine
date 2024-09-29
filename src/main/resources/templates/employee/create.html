@@ -39,33 +39,26 @@
 }
 
 .basic-info-left {
-	display: flex;
     flex: 0 0 40%;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 300px;
     padding: 10px;
     box-sizing: border-box;
-    position: relative;
+    text-align: center;
+    position: relative; 
 }
 
-#emp_img_file_name {
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 60%;
-	transform: translateX(-50%);
-	width: 200px;
-	height: 200px;
-	object-fit: cover;
+#emp_profile_img {
+    object-fit: cover;
+    width: 200px;
+    height: 200px;
+    display: inline-block; 
+    margin-top: 20px;
 }
 
-#emp_img_file_name:hover{
+
+#emp_img_file:hover{
 	cursor: pointer;
+	display: inline-block; 
 }
-
-
 
 .upload-text {
 	position: absolute;
@@ -91,6 +84,10 @@
 
 .form-select {
 	width: 200px;
+}
+
+table td, table th {
+    vertical-align: middle; 
 }
 </style>
 </head>
