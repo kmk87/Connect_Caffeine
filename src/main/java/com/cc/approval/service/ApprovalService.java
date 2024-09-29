@@ -1,6 +1,7 @@
 package com.cc.approval.service;
 
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -346,15 +347,35 @@ public class ApprovalService {
 	// 결재문서함 데이터 리스트
 	public List<ApprovalDto> getPendingApprovalDtosForCurrentUser(int size) {
 	    // 현재 로그인한 사용자의 emp_code 가져오기
-	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+//	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+//	    Employee currentUser = employeeRepository.findByempAccount(currentUserId);
+//	     
+//
+//	    // 페이지 요청 생성 (page와 size를 받아서 처리)
+//	    Pageable pageable = PageRequest.of(0,size);
+//
+//	    // 결재 상태가 'S'이고 현재 사용자가 결재자로 등록된 문서 조회
+//	    Page<Approval> pendingApprovals = approvalLineRepository.findPendingApprovalsForCurrentUser(currentUser.getEmpCode(), pageable);
+//
+//	    // Approval 엔티티를 ApprovalDto로 변환하여 반환
+//	    return pendingApprovals.getContent().stream()
+//	        .map(approval -> new ApprovalDto().toDto(approval))
+//	        .collect(Collectors.toList());
+		String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 	    Employee currentUser = employeeRepository.findByempAccount(currentUserId);
 	     
-
 	    // 페이지 요청 생성 (page와 size를 받아서 처리)
-	    Pageable pageable = PageRequest.of(0,size);
+	    Pageable pageable = PageRequest.of(0, size);
 
 	    // 결재 상태가 'S'이고 현재 사용자가 결재자로 등록된 문서 조회
 	    Page<Approval> pendingApprovals = approvalLineRepository.findPendingApprovalsForCurrentUser(currentUser.getEmpCode(), pageable);
+	    
+	    // 추가 로그 출력
+	    System.out.println("결재 대기 문서 개수: " + pendingApprovals.getTotalElements());
+
+	    pendingApprovals.forEach(approval -> {
+	        System.out.println("결재 문서 번호: " + approval.getApprNo());
+	    });
 
 	    // Approval 엔티티를 ApprovalDto로 변환하여 반환
 	    return pendingApprovals.getContent().stream()
@@ -425,34 +446,45 @@ public class ApprovalService {
         return approvalRepository.findByApprNo(apprNo);
                
     }
+    
+    // 1차 결재 후에 2차 결재자에게 결재문서 확인
+  		public Page<Approval> findPendingApprovals(Long empCode, int apprOrder, Pageable pageable) {
+  			System.out.println("empCode: " + empCode + ", apprOrder: " + apprOrder); 
+  	        if (apprOrder == 1) {
+  	            // 1차 결재자가 대기 중인 문서 조회
+  	            return approvalLineRepository.findPendingApprovalsForFirstApprover(empCode, pageable);
+  	        } else if (apprOrder == 2) {
+  	            // 2차 결재자가 대기 중인 문서 조회
+  	            return approvalLineRepository.findPendingApprovalsForSecondApprover(empCode, pageable);
+  	        } else {
+  	            throw new IllegalArgumentException("Invalid approval order");
+  	        }
+  	    }
+  		
+  		
 
     // 결재 상태 변경
  		public void approveDocument(Long apprNo, int apprOrder) {
- 	        // 현재 결재자의 상태를 "결재완료(C)"로 변경
- 	        ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
- 	        approvalLine.setApprState("C"); // "결재완료" 상태로 변경
- 	        approvalLineRepository.save(approvalLine);
+ 		// 로그 추가
+ 		    System.out.println("결재 번호: " + apprNo + ", 결재 순서: " + apprOrder);
 
- 	        // 1차 결재자가 승인한 후 2차 결재자의 상태를 변경
- 	        if (apprOrder == 1) {
- 	            ApprovalLine secondLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
- 	            secondLine.setApprState("S"); // 2차 결재자의 상태를 "대기(S)"로 변경
- 	            approvalLineRepository.save(secondLine);
- 	        }
+ 		    ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
+ 		    if (approvalLine != null) {
+ 		        System.out.println("현재 결재 상태: " + approvalLine.getApprState());
+ 		        approvalLine.setApprState("C");
+ 		        approvalLineRepository.save(approvalLine);
+ 		    }
+
+ 		    if (apprOrder == 1) {
+ 		        ApprovalLine secondLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
+ 		        if (secondLine != null) {
+ 		            secondLine.setApprState("S");
+ 		            approvalLineRepository.save(secondLine);
+ 		        }
+ 		    }
  	    }
 
- 	// 1차 결재 후에 2차 결재자에게 결재문서 확인
- 		public List<Approval> getSecondApprovalDocuments(Long empCode) {
- 		    return approvalRepository.findDocumentsForSecondApprover(empCode)
- 		        .stream()
- 		        .filter(doc -> {
- 		            ApprovalLine firstApprovalLine = approvalLineRepository.findFirstApprover(doc.getApprNo());
- 		            return firstApprovalLine != null && "C".equals(firstApprovalLine.getApprState());
- 		        })
- 		        .collect(Collectors.toList());
- 		}
-
-
+ 	
 
 
 

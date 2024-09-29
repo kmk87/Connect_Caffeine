@@ -1,8 +1,10 @@
 package com.cc.approval.controller;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -218,40 +220,69 @@ public class ApprovalViewController {
 		    // 결재선 정보 가져오기
 		    List<ApprovalLineDto> approvalLines = approvalService.getApprovalLinesByApprNo(apprNo);
 		    
-		    // 1차, 2차 결재자 처리
-		    ApprovalLineDto firstApprover = approvalLines.stream()
-		    	    .filter(line -> line.getAppr_order() == 1)  // 1차 결재자 필터
-		    	    .findFirst()
-		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
-
-		    	// 2차 결재자 가져오기
-		    	ApprovalLineDto secondApprover = approvalLines.stream()
-		    	    .filter(line -> line.getAppr_order() == 2)  // 2차 결재자 필터
-		    	    .findFirst()
-		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
-
-		    	// 첫 번째 결재자가 로그인한 사용자와 일치하는지 확인
-		    	boolean showFirstApproveButton = (firstApprover != null &&
-		    	        empCode.equals(firstApprover.getAppr_writer_code()) &&  // empCode와 비교
-		    	        firstApprover.getAppr_state().equals("S"));  // 상태가 'S'인지 확인
-
-		    	boolean showSecondApproveButton = (secondApprover != null &&
-		    	        empCode.equals(secondApprover.getAppr_writer_code()) &&  // empCode와 비교
-		    	        secondApprover.getAppr_state().equals("S"));
-
-		    	// 모델에 승인 버튼 표시 여부를 추가
-		    	model.addAttribute("showFirstApproveButton", showFirstApproveButton);
-		    	model.addAttribute("showSecondApproveButton", showSecondApproveButton);
-		    	// 모델에 결재자 이름 추가
-		    	model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
-		    	model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
-		    	model.addAttribute("approvalLines", approvalLines);
+			// 1차, 2차 결재자 처리 로직 추가
+	        processApprovalButtons(model, approvalLines, empCode);
 		    
+//		    // 1차, 2차 결재자 처리
+//		    ApprovalLineDto firstApprover = approvalLines.stream()
+//		    	    .filter(line -> line.getAppr_order() == 1)  // 1차 결재자 필터
+//		    	    .findFirst()
+//		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
+//
+//		    	// 2차 결재자 가져오기
+//		    	ApprovalLineDto secondApprover = approvalLines.stream()
+//		    	    .filter(line -> line.getAppr_order() == 2)  // 2차 결재자 필터
+//		    	    .findFirst()
+//		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
+//
+//		    	// 첫 번째 결재자가 로그인한 사용자와 일치하는지 확인
+//		    	boolean showFirstApproveButton = (firstApprover != null &&
+//		    	        empCode.equals(firstApprover.getAppr_writer_code()) &&  // empCode와 비교
+//		    	        firstApprover.getAppr_state().equals("S"));  // 상태가 'S'인지 확인
+//
+//		    	boolean showSecondApproveButton = (secondApprover != null &&
+//		    	        empCode.equals(secondApprover.getAppr_writer_code()) &&  // empCode와 비교
+//		    	        secondApprover.getAppr_state().equals("S"));
+//
+//		    	// 모델에 승인 버튼 표시 여부를 추가
+//		    	model.addAttribute("showFirstApproveButton", showFirstApproveButton);
+//		    	model.addAttribute("showSecondApproveButton", showSecondApproveButton);
+//		    	// 모델에 결재자 이름 추가
+//		    	model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
+//		    	model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
+//		    	model.addAttribute("approvalLines", approvalLines);
+//		    
 			return "approval/apprStorageDetail";
 		}
 		
 		
-	
+		private void processApprovalButtons(Model model, List<ApprovalLineDto> approvalLines, Long empCode) {
+	        ApprovalLineDto firstApprover = approvalLines.stream()
+	                .filter(line -> line.getAppr_order() == 1)
+	                .findFirst()
+	                .orElse(null);
+
+	        ApprovalLineDto secondApprover = approvalLines.stream()
+	                .filter(line -> line.getAppr_order() == 2)
+	                .findFirst()
+	                .orElse(null);
+
+	        // 승인 버튼 노출 여부 설정
+	        boolean showFirstApproveButton = (firstApprover != null &&
+	                empCode.equals(firstApprover.getAppr_writer_code()) &&
+	                firstApprover.getAppr_state().equals("S"));
+
+	        boolean showSecondApproveButton = (secondApprover != null &&
+	                empCode.equals(secondApprover.getAppr_writer_code()) &&
+	                secondApprover.getAppr_state().equals("S"));
+
+	        model.addAttribute("showFirstApproveButton", showFirstApproveButton);
+	        model.addAttribute("showSecondApproveButton", showSecondApproveButton);
+	        model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
+	        model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
+	        model.addAttribute("approvalLines", approvalLines);
+	    }
+
 		
 		
 		
