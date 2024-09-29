@@ -217,6 +217,7 @@ public class ApprovalViewController {
 		    // 결재선 정보 가져오기
 		    List<ApprovalLineDto> approvalLines = approvalService.getApprovalLinesByApprNo(apprNo);
 		    model.addAttribute("approvalLines", approvalLines);
+
 		    System.out.println("approvalLines: "+approvalLines);
 		    
 			return "approval/apprStorageDetail";

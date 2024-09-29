@@ -139,8 +139,8 @@
 										<td>서명</td>
 									</tr>
 									<tr>
-										<td>결재자1</td>
-										<td>결재자2</td>
+    									<td th:text="${approvalLines[0].appr_writer_name}"></td>
+    									<td th:text="${approvalLines[1].appr_writer_name}"></td>
 									</tr>
 								</thead>
 							</table>
@@ -250,7 +250,7 @@
     	// 취소 버튼 이벤트
 	 	document.getElementById("cancelBtn").addEventListener("click", function() {
 	 	    if (confirm("작성을 취소하시겠습니까?")) {
-	 	        location.href = "/draftStorage";  // 취소 시 홈으로 이동
+	 	        location.href = "/apprStorage";  // 취소 시 홈으로 이동
 	 	    }
 	 	});
     	

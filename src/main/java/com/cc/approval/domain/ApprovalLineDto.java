@@ -48,12 +48,11 @@ public class ApprovalLineDto {
 				.appr_order(approvalLine.getApprOrder())
 				.appr_role(approvalLine.getApprRole())
 				.appr_state(approvalLine.getApprState())
-				.appr_writer_name(approvalLine.getEmployee().getEmpName())
+				.appr_writer_name(approvalLine.getEmployee() != null ? approvalLine.getEmployee().getEmpName() : null)
 				.build();
 		
 		return dto;
 	}
 	
-	
-	
+
 }
