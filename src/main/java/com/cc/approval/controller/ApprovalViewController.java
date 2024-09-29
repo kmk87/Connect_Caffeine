@@ -1,7 +1,6 @@
 package com.cc.approval.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -10,24 +9,21 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.cc.approval.domain.ApprForm;
-import com.cc.approval.domain.ApprFormDto;
-import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalDto;
+import com.cc.approval.domain.ApprovalLine;
 import com.cc.approval.domain.ApprovalLineDto;
 import com.cc.approval.domain.TemporaryStorageDto;
+import com.cc.approval.repository.ApprovalLineRepository;
 import com.cc.approval.service.ApprFormService;
 import com.cc.approval.service.ApprovalService;
-import com.cc.empGroup.domain.EmpGroup;
-import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.service.EmpGroupService;
+import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
+import com.cc.security.vo.SecurityUser;
 
 @Controller
 public class ApprovalViewController {
@@ -36,14 +32,17 @@ public class ApprovalViewController {
 	private final ApprFormService apprFormService;
 	private final EmployeeService employeeService;
 	private final EmpGroupService empGroupService;
+	private final ApprovalLineRepository  approvalLineRepository ;
+	
 	
 	@Autowired
 	public ApprovalViewController(ApprovalService approvalService,ApprFormService apprFormService,
-			EmployeeService employeeService,EmpGroupService empGroupService) {
+			EmployeeService employeeService,EmpGroupService empGroupService,ApprovalLineRepository approvalLineRepository ) {
 		this.approvalService = approvalService;
 		this.apprFormService = apprFormService;
 		this.employeeService = employeeService;
 		this.empGroupService = empGroupService;
+		this.approvalLineRepository = approvalLineRepository;
 	}
 
 	// 전자결재 홈
@@ -196,11 +195,12 @@ public class ApprovalViewController {
 		@GetMapping("/apprStorage/{appr_no}")
 		public String getApprovalLineByApprNo(Model model,
 				@PathVariable("appr_no") Long apprNo) {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		    User user = (User) authentication.getPrincipal();
-		    String username = user.getUsername();
-		   
-		    
+			// 현재 로그인한 사용자 정보 가져오기
+			SecurityUser loginUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+			// 로그인한 사용자의 empCode 가져오기
+			Long empCode = loginUser.getDto().getEmp_code();
+	     
 
 		    ApprovalDto approvalDto = approvalService.selectapprovalOne(apprNo);
 		    System.out.println("approval : "+approvalDto);
@@ -216,13 +216,68 @@ public class ApprovalViewController {
 		    
 		    // 결재선 정보 가져오기
 		    List<ApprovalLineDto> approvalLines = approvalService.getApprovalLinesByApprNo(apprNo);
-		    model.addAttribute("approvalLines", approvalLines);
+		    
+		    // 1차, 2차 결재자 처리
+		    ApprovalLineDto firstApprover = approvalLines.stream()
+		    	    .filter(line -> line.getAppr_order() == 1)  // 1차 결재자 필터
+		    	    .findFirst()
+		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
 
-		    System.out.println("approvalLines: "+approvalLines);
+		    	// 2차 결재자 가져오기
+		    	ApprovalLineDto secondApprover = approvalLines.stream()
+		    	    .filter(line -> line.getAppr_order() == 2)  // 2차 결재자 필터
+		    	    .findFirst()
+		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
+
+		    	// 첫 번째 결재자가 로그인한 사용자와 일치하는지 확인
+		    	boolean showFirstApproveButton = (firstApprover != null &&
+		    	        empCode.equals(firstApprover.getAppr_writer_code()) &&  // empCode와 비교
+		    	        firstApprover.getAppr_state().equals("S"));  // 상태가 'S'인지 확인
+
+		    	boolean showSecondApproveButton = (secondApprover != null &&
+		    	        empCode.equals(secondApprover.getAppr_writer_code()) &&  // empCode와 비교
+		    	        secondApprover.getAppr_state().equals("S"));
+
+		    	// 모델에 승인 버튼 표시 여부를 추가
+		    	model.addAttribute("showFirstApproveButton", showFirstApproveButton);
+		    	model.addAttribute("showSecondApproveButton", showSecondApproveButton);
+		    	// 모델에 결재자 이름 추가
+		    	model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
+		    	model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
+		    	model.addAttribute("approvalLines", approvalLines);
 		    
 			return "approval/apprStorageDetail";
 		}
 	
+		// 결재 상태 변경
+		public void approveDocument(Long apprNo, int apprOrder) {
+		    // 결재 상태 업데이트 로직
+		    ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
+		    approvalLine.setApprState("A"); // 승인 상태로 변경 (필드명 확인 필요)
+		    approvalLineRepository.save(approvalLine); // 엔티티 저장
+		    
+		    // 1차 결재자가 승인한 후 2차 결재자의 상태 변경 처리
+		    if (apprOrder == 1) {
+		        ApprovalLine secondLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
+		        secondLine.setApprState("S"); // 2차 결재자의 상태를 대기로 변경
+		        approvalLineRepository.save(secondLine); // 엔티티 저장
+		    }
+		}
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//////////////////////////////////////////////
 	
 	// 참조문서함
 	@GetMapping("/referenceStorage")

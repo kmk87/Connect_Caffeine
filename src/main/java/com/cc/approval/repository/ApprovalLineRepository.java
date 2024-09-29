@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalLine;
+import com.cc.approval.domain.ApprovalLineDto;
 
 public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long>{
 	
@@ -36,7 +37,9 @@ public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long
 	@Query("SELECT a.apprForm.apprFormNo FROM ApprovalLine al JOIN al.approval a WHERE a.apprNo = :apprNo")
 	Optional<Long> findApprovalLineWithFormNo(@Param("apprNo") Long apprNo);
 
-
+	
+	//결재자 순서대로 가져오기
+	ApprovalLine findByApprovalApprNoAndApprOrder(Long apprNo, int apprOrder);
 
 
 	

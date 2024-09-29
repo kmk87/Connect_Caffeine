@@ -24,7 +24,10 @@ public class ApprovalLineDto {
 	private String appr_state;
 	private String appr_writer_name;
 	
-	
+	// ApprWriterName의 getter 메서드
+    public String getApprWriterName() {
+        return appr_writer_name;
+    }
 	
 	public ApprovalLine toEntity(Employee employee, Approval approval) {
 		

@@ -87,7 +87,16 @@
             <form id="draftAdd">
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${approval.appr_writer_code != null ? approval.appr_writer_code : ''}">
-                <button type="button" class="btn btn-outline-success" id="approvalBtn">승인</button>
+                <button type="button" class="btn btn-outline-success" 
+        th:if="${showFirstApproveButton}" 
+        id="approvalBtn">
+    1차 승인
+</button>
+                <button type="button" class="btn btn-outline-success" 
+        th:if="${showSecondApproveButton}" 
+        id="secondApprovalBtn">
+    2차 승인
+</button>
                 <button type="button" class="btn btn-outline-warning" id="companionBtn">반려</button>
                 <button type="button" class="btn btn-outline-danger" id="cancelBtn">취소</button>
                 
@@ -139,8 +148,8 @@
 										<td>서명</td>
 									</tr>
 									<tr>
-    									<td th:text="${approvalLines[0].appr_writer_name}"></td>
-    									<td th:text="${approvalLines[1].appr_writer_name}"></td>
+    									<td th:text="${firstApproverName}"></td>  <!-- 1차 결재자 -->
+    									<td th:text="${secondApproverName}"></td> <!-- 2차 결재자 -->
 									</tr>
 								</thead>
 							</table>
