@@ -114,7 +114,7 @@ public class EmployeeViewController {
 			
 			EmployeeDto dto = employeeService.selectEmployeeOne(emp_code);
 			
-			Long groupNo = employeeService.getGroupNoByEmpCode(emp_code);
+			Long groupNo = ((EmployeeService) employeeService).getGroupNoByEmpCode(emp_code);
 			System.out.println(groupNo);
 			
 			String formattedRegNo = employeeService.formatEmpRegNo(emp_code);

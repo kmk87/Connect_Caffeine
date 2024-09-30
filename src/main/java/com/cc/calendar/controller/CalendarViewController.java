@@ -54,7 +54,7 @@ public class CalendarViewController {
 		  System.out.println("empAccount : "+empAccount);
 		  Long empCode = employeeService.findEmpCodeByEmpName(empAccount);  
 		  System.out.println("empCode : "+empCode);
-		  Long teamNo = employeeService.getGroupNoByEmpCode(empCode);
+		  Long teamNo = ((EmployeeService) employeeService).getGroupNoByEmpCode(empCode);
 		  System.out.println("teamNo : "+teamNo);
 		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
 		  System.out.println("deptNo : "+deptNo);

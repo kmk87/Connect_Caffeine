@@ -11,6 +11,7 @@
   <meta content="" name="description">
   <meta content="" name="keywords">
   <!-- Favicons -->
+  <link th:href = "@{/css/calendar/calendar.css}" rel="stylesheet" type="text/css">
   <link href="/bootstrap/img/쿼카.png" rel="icon">
   <link href="/bootstrap/img/쿼카.png" rel="쿼카">
   <!-- Google Fonts -->
@@ -25,17 +26,19 @@
   <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
   <!-- Template Main CSS File -->
-  <link th:href ="@{/css/reservation.css}" rel="stylesheet" type="text/css">
   <link href="/bootstrap/css/style.css" rel="stylesheet">
 <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
   </head>
+  
   <body>
+ 
   <th:block layout:fragment="content">
 	   <main id="main" class="main">
 		   <div class="sub-sidebar" id="sub-sidebar">
 		    	<div class="pagetitle">
-			      <h1>회의실 예약</h1>
+			      <h1>일정관리</h1>
 			      <nav>
 			        <ol class="breadcrumb">
 			          <li class="breadcrumb-item"><a href="index.html">메인화면</a></li>
@@ -59,6 +62,18 @@
 			              <form id="scheduleForm" class="row g-3">
 			              	<input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 			              	<input type="hidden" id="calendar_writer_no" name="calendar_writer_no" th:value="${#authentication.principal.dto.emp_code}">
+			              	<div class="row mb-3">
+			                  <label class="col-sm-2 col-form-label">일정 종류</label>
+			                  <div class="col-sm-10">
+			                    <select class="form-select" aria-label="Default select example" id="schedule_type" name="schedule_type">
+			                      <option selected>선택하기</option>
+			                      <option value="1">내일정</option>
+			                      <option value="2">전사일정</option>
+			                      <option value="3">부서일정</option>
+			                      <option value="4">팀일정</option>
+			                    </select>
+			                  </div>
+			                </div>
 			                <div class="row mb-3">
 			                  <label class="col-sm-2 col-form-label">제목</label>
 			                  <div class="col-sm-10">
@@ -104,18 +119,36 @@
 					  <div class="modal-dialog modal-dialog-centered modal-lg">
 					    <div class="modal-content">
 					      <div class="modal-header">
-					        <h5 class="modal-title" id="modal-title">회의실 등록</h5>
+					        <h5 class="modal-title" id="modal-title">일정 상세</h5>
 					        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					      </div>
 					      <div class="modal-body">
 					      	 <input type="hidden" id="csrf_token2" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 			              	 <input type="hidden" id="calendar_writer_no" name="calendar_writer_no" th:value="${#authentication.principal.dto.emp_code}">
+					        <div class="row mb-3">
+					          <label class="col-sm-2 col-form-label">일정 종류</label>
+					          <div class="col-sm-10 padding-7-y">
+					            <span id="detail_schedule_type"></span>
+					          </div>
+					        </div>
+					        <div class="row mb-3">
+					          <label class="col-sm-2 col-form-label">제목</label>
+					          <div class="col-sm-10 padding-7-y">
+					            <span id="detail_schedule_title"></span>
+					          </div>
 					        </div>
 					        <div class="row mb-3">
 					          <label class="col-sm-2 col-form-label">내용</label>
 					          <div class="col-sm-10 padding-7-y">
 					            <p id="detail_schedule_content"></p>
 					          </div>
+					        </div>
+					        <div class="row mb-3">
+					          <label class="col-sm-2 col-form-label">장소</label>
+					          <div class="col-sm-10 padding-7-y">
+					            <span id="detail_location"></span>
+					          </div>
+					        </div>
 					        <div class="row mb-3">
 					          <label class="col-sm-2 col-form-label">시작 시간</label>
 					          <div class="col-sm-10 padding-7-y">
@@ -139,11 +172,68 @@
 					    </div>
 					  </div>
 			 	</div>
+	             
+				<div class="schedule-filters">
+					<div>
+					   <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="1"> 내 일정
+					   </label>
+				       <span class="color-circle" th:style="'background-color: ' + ${userColors[1]}"></span>
+				    </div>
+				    <div>
+					    <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="2"> 전사 일정
+					    </label>
+				        <span class="color-circle" th:style="'background-color: ' + ${userColors[2]}"></span>
+				    </div>
+				    <div>
+					    <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="3"> 부서 일정
+					    </label>
+				        <span class="color-circle" th:style="'background-color: ' + ${userColors[3]}"></span>
+				    </div>
+				    <div>
+					    <label class="filter-item">
+					        <input type="checkbox" class="event-filter" value="4"> 팀 일정
+					    </label>
+				        <span class="color-circle" th:style="'background-color: ' + ${userColors[4]}"></span>
+					</div>
+				</div>
+				<!-- 모달 형식의 팔레트 -->
+				<div class="color-palette-modal" style="display: none;">
+				    <div class="color-palette">
+				        <div th:each="color : ${colors}" class="color-option"
+				             th:style="'background-color:' + ${color}"
+				             th:data-color="${color}">
+				        </div>
+				    </div>
+				</div>
 			</div>
+	    	<div id='calendar' >
+	    	</div>
+
 	    </main>
 	  
 	 <script  th:inline="javascript">
 	 document.addEventListener('DOMContentLoaded', function() {
+
+		    
+		    var calendarEl = document.getElementById('calendar');
+		    var events = /*[[${resultList}]]*/ [];
+
+		    events = events.map(function(event) {
+		        var scheduleType = parseInt(event.schedule_type);  // 명시적으로 숫자로 변환
+		        
+		        return {
+		            id: event.schedule_no,
+		            title: event.schedule_title,
+		            start: new Date(event.start_time),
+		            end: new Date(event.end_time),
+		            description: event.schedule_content,
+		            location: event.location,
+		            schedule_type: scheduleType,
+		        };
+		    });
 
 		    var calendar = new FullCalendar.Calendar(calendarEl, {
 		        headerToolbar: {
@@ -161,6 +251,13 @@
 		                .then(response => response.json())
 		                .then(data => {
 		                    let scheduleTypeText = '';
+		                    switch (data.schedule_type) {
+		                        case 1: scheduleTypeText = '내일정'; break;
+		                        case 2: scheduleTypeText = '전사일정'; break;
+		                        case 3: scheduleTypeText = '부서일정'; break;
+		                        case 4: scheduleTypeText = '팀일정'; break;
+		                        default: scheduleTypeText = '알 수 없음';
+		                    }
 
 		                    document.getElementById('detail_schedule_type').innerText = scheduleTypeText;
 		                    document.getElementById('detail_schedule_title').innerText = data.schedule_title;
@@ -199,7 +296,8 @@
 
 		    function filterEvents() {
 		        var selectedTypes = Array.from(checkboxes)
-		            .filter(function(checkbox) { return checkbox.checked; })
+		            .filter(function(checkbox) {
+		            	return checkbox.checked; })
 		            .map(function(checkbox) { return checkbox.value; });
 
 		        calendar.getEvents().forEach(function(event) {
@@ -415,7 +513,34 @@
 		    });
 		    
 		    
+		    
 
+
+
+
+
+
+
+
+		    // 팔레트 외부 클릭 시 모달 닫기
+		    window.addEventListener('click', function(event) {
+		        const paletteModal = document.querySelector('.color-palette-modal');
+		        if (!event.target.closest('.color-palette') && !event.target.closest('.color-circle')) {
+		            paletteModal.style.display = 'none';
+		        }
+		    });
+		    
+		    
+		});
+		
+	 
+
+	 
+
+	 
+
+	 
+	 
 
 		</script>
 	
