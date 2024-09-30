@@ -3,166 +3,181 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
      layout:decorate="~{include/layout}">
- <th:block layout:fragment="content">
-<link href="/bootstrap/chat/chat.css" rel="stylesheet">
-  <main id="main" class="main">
-    <div class="pagetitle">
-      <h1>채팅</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">목록</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
+  
+  <th:block layout:fragment="content">
+    <link href="/bootstrap/chat/chat.css" rel="stylesheet">
     
-      
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>채팅</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">목록</li>
+          </ol>
+        </nav>
+      </div>
+
       <section class="section">
-          <div class="row">
-              <div class="col-md-6">
-                  <div class="card">
-                      <div class="card-header">
-                          <div class="media d-flex align-items-center">
-                              <div class="avatar me-3">
-                                  
-                                  <span class="avatar-status bg-success"></span>
-                              </div>
-                              <div class="name flex-grow-1">
-                                  <h6 class="mb-0" th:text="${roomResult.room_name}"></h6>
-                                  
-                              </div>
-                              <button class="btn btn-sm">
-                                  <i data-feather="x"></i>
-                              </button>
-                          </div>
-                      </div>
-                      <div class="card-body pt-4 bg-grey" th:each="chatMessage : ${msgResult}">
-                           <div class="chat-content" id="chat-container">
-                              <div class="chat">
-                                  <div class="chat-body">
-                                      <div class="chat-message" 
-                                      th:if="${chatMessage.emp_code == #authentication.principal.dto.emp_code}"
-                                      th:text="${chatMessage.message_content}"></div>
-                                  </div>
-                              </div>
-                          		
-                              <div class="chat chat-left" th:if="${chatMessage.emp_code != #authentication.principal.dto.emp_code}">
-                                  	  <span th:text="${chatMessage.emp_name}"></span>
-                                  <div class="chat-body">
-                                      <div class="chat-message"
-                                      th:text="${chatMessage.message_content}"></div>
-                                  </div>
-                              </div>
-                          </div>
-                              	  <input type="hidden" id="room_no" name="room_no" th:value="${chatMessage.room_no}">
-                      </div>
-                      <div class="card-footer">
-                          <div class="message-form d-flex flex-direction-column align-items-center">
-                              <a href="http://" class="black"><i data-feather="smile"></i></a>
-                              <div class="d-flex flex-grow-1 ml-4">
-                              	  <input type="hidden" id="emp_code" name="emp_code" th:value="${#authentication.principal.dto.emp_code}">
-                                  <input type="text" id="txt_msg" class="form-control" placeholder="메세지를 입력하세요.">
-                                  <input type="button" class="btn btn-primary rounded-pill" id="send_btn" value="보내기">
-                              </div>
-                          </div>
-                      </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              
+              <!-- 채팅방 제목 및 닫기 버튼 -->
+              <div class="card-header">
+                <div class="media d-flex align-items-center">
+                  <div class="name flex-grow-1">
+                    <h6 class="mb-0" th:text="${roomResult.room_name}"></h6>
                   </div>
+                </div>
               </div>
+			<input type="hidden" id="room_no" name="room_no" th:value="${roomResult.room_no}">
+            <input type="hidden" id="emp_code" name="emp_code" th:value="${#authentication.principal.dto.emp_code}">
+				
+              <!-- 채팅 메시지 영역 -->
+              <div class="card-body pt-4 bg-grey" th:each="chatMessage : ${msgResult}">
+                <div class="chat-content" id="chat-container">
+                  <!-- 과거 채팅 기록 (서버 렌더링) -->
+                  
+                    <!-- 본인 메시지 -->
+                    <div class="chat" th:if="${chatMessage.emp_code == #authentication.principal.dto.emp_code}">
+                      <div class="chat-body">
+                        <div class="chat-message" th:text="${chatMessage.message_content}"></div>
+                      </div>
+                    </div>
+                    
+                    <!-- 상대방 메시지 -->
+                    <div class="chat chat-left" th:if="${chatMessage.emp_code != #authentication.principal.dto.emp_code}">
+                      <div class="chat-body">
+                        <!-- 상대방 이름 -->
+                        <div class="chat-username" th:text="${chatMessage.emp_name}"></div>
+                        <!-- 상대방 메시지 -->
+                        <div class="chat-message" th:text="${chatMessage.message_content}"></div>
+                      </div>
+                    </div>
+                  
+                 </div>
+              </div>
+				<!-- 채팅방 정보 -->
+                  
+              <!-- 메시지 입력 및 전송 버튼 -->
+              <div class="card-footer">
+                <div class="message-form d-flex flex-direction-column align-items-center">
+                  <div class="d-flex flex-grow-1 ml-4">
+                    <input type="text" id="txt_msg" class="form-control" placeholder="메세지를 입력하세요.">
+                    <input type="button" class="btn btn-primary rounded-pill" id="send_btn" value="보내기">
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
       </section>
+
+      <!-- JavaScript 부분 -->
       <script>
-    let websocket;
+        let websocket;
+        let lastSenderId = '';  // 이전 발신자 ID 저장
 
-    // WebSocket을 열고 연결이 완료되면 메시지를 전송하는 함수
-    function connectAndSendMessage(msg) {
-        // WebSocket 객체를 새로 생성하고 연결 시도
-        websocket = new WebSocket("ws://localhost:8100/chatting");
+        // 페이지가 로드될 때 WebSocket 연결 설정
+        window.onload = function() {
+          websocket = new WebSocket("ws://localhost:8100/ws/chat");
 
-        // WebSocket 연결이 열렸을 때 실행될 이벤트
-        websocket.onopen = () => {
+          websocket.onopen = function() {
             console.log("WebSocket 연결 성공");
-            const obj = setMsgObj('msg', msg);
-            websocket.send(JSON.stringify(obj));
-            document.getElementById('txt_msg').value = "";
-        };
+          };
 
-        // WebSocket 메시지를 수신했을 때 실행될 이벤트
-        websocket.onmessage = function(response) {
-    const resp = JSON.parse(response.data);
-    if (resp.res_code === '200') {
-        const roomNo = document.getElementById("room_no").value;
-        if (roomNo == resp.room_no) {
-            printMsg(resp.message_content);  // 메시지를 화면에 출력
-        }
-    } else {
-        alert(resp.res_msg);
-    }
-};
+          websocket.onmessage = function(response) {
+        	 const resp = JSON.parse(response.data);
+        	 const roomNo = document.getElementById("room_no").value;
+        	 const empCode = document.getElementById("emp_code").value;
 
-        // WebSocket 연결이 닫혔을 때 실행될 이벤트
-        websocket.onclose = () => {
-            console.log("WebSocket connection closed");
-        };
+        	 
+        	 if (roomNo == resp.room_no) {
+        	     const isSelf = resp.emp_code == empCode;
+        	     console.log(isSelf);
+        	     console.log(resp);
+        	     printMsg(resp.message_content, isSelf, resp.emp_name, resp.emp_code);
+        	 }
+       	  };
 
-        // WebSocket 연결에서 오류가 발생했을 때 실행될 이벤트
-        websocket.onerror = (error) => {
+          websocket.onclose = function() {
+            console.log("WebSocket 연결 종료");
+          };
+
+          websocket.onerror = function(error) {
             console.error("WebSocket 오류 발생:", error);
             alert("WebSocket 오류가 발생했습니다.");
+          };
         };
-    }
 
-    	// 메시지를 화면에 출력하는 함수
-    function printMsg(msg) {
-    const chatContainer = document.getElementById("chat-container");
-
-    // 새로운 메시지 div 생성
-    const div = document.createElement("div");
-    div.className = "chat-message";  // 스타일을 위해 class 추가
-    div.textContent = msg;  // 메시지 내용을 div에 추가
-
-    // 메시지를 화면에 추가
-    chatContainer.appendChild(div);
-
-    // 새로운 메시지로 자동 스크롤
-    	chatContainer.scrollTop = chatContainer.scrollHeight;
-	}
-
-
-    // 메시지 전송 버튼 클릭 이벤트
-    document.getElementById('send_btn').addEventListener('click', function () {
-        const msg = document.getElementById('txt_msg').value;
-        if (msg.trim() === "") {
+        // 메시지 전송
+        document.getElementById('send_btn').addEventListener('click', function() {
+          const msg = document.getElementById('txt_msg').value;
+          if (msg.trim() === "") {
             alert("메시지를 입력하세요.");
             return;
-        }
+          }
 
-        // WebSocket이 열려 있는 경우 바로 메시지를 전송
-        if (websocket && websocket.readyState === WebSocket.OPEN) {
+          if (websocket && websocket.readyState === WebSocket.OPEN) {
             const obj = setMsgObj('msg', msg);
             websocket.send(JSON.stringify(obj));
             document.getElementById('txt_msg').value = "";
-        } else {
-            // WebSocket이 닫혀 있는 경우 새로 연결하고 메시지를 전송
-            connectAndSendMessage(msg);
-        }
-    });
+          }
+        });
 
-    // 메시지 객체를 생성하는 함수
-    let setMsgObj = function (chatType, chatMsg) {
-        const empCode = document.getElementById("emp_code").value;
-        const roomNo = document.getElementById("room_no").value;
-        const obj = {
+        // 메시지 객체 생성 함수
+        function setMsgObj(chatType, chatMsg) {
+          const empCode = document.getElementById("emp_code").value;
+          const roomNo = document.getElementById("room_no").value;
+          return {
             chat_type: chatType,
             message_content: chatMsg,
             emp_code: empCode,
             room_no: roomNo
-        };
-        return obj;
-    }
-</script>
+          };
+        }
 
-  </main>
+        // 메시지 출력 함수
+        function printMsg(msg, isSelf, empName, senderId) {
+            const chatContainer = document.getElementById("chat-container");
 
-</th:block>
+            // 발신자가 이전과 다르면 이름을 표시
+            const shouldShowName = (senderId !== lastSenderId);
+            lastSenderId = senderId;  // 현재 발신자를 업데이트
+            
+            const chatDiv = document.createElement("div");
+            chatDiv.className = isSelf ? "chat" : "chat chat-left";  // 본인은 "chat", 상대방은 "chat chat-left"
 
+            const chatBodyDiv = document.createElement("div");
+            chatBodyDiv.className = "chat-body";
+
+            // 상대방의 메시지라면, 이전 메시지와 다른 발신자일 때만 이름 표시
+            if (!isSelf && shouldShowName) {
+                const nameSpan = document.createElement("div");
+                nameSpan.textContent = empName;
+                nameSpan.className = "chat-username";
+                chatBodyDiv.appendChild(nameSpan);  // chat-body 안에 이름 추가
+            }
+
+            const msgDiv = document.createElement("div");
+            msgDiv.className = "chat-message";
+            msgDiv.textContent = msg;
+			
+            
+            
+            
+            // 메시지 본문 추가
+            chatBodyDiv.appendChild(msgDiv); 
+            chatDiv.appendChild(chatBodyDiv); // 채팅 div에 본문 추가
+            chatContainer.appendChild(chatDiv); // 전체 메시지를 채팅 컨테이너에 추가
+
+            // 새로운 메시지로 자동 스크롤
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+      </script>
+    </main>
+  </th:block>
+  
 </html>

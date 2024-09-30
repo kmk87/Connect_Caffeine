@@ -5,27 +5,28 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
-import com.cc.websocket.chatting.ChatWebSocketHandler;
+import com.cc.websocket.chatting.ChattingHandler;
+import com.cc.websocket.notification.NotificationHandler;
+
+
 
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer{
-	
-	private final ChatWebSocketHandler chatWebSocketHandler;
-	
-	@Autowired
-	public WebSocketConfig(ChatWebSocketHandler chatWebSocketHandler) {
-		this.chatWebSocketHandler = chatWebSocketHandler;
-	}
-	
-	@Override
-	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-	    registry
-	        .addHandler(chatWebSocketHandler, "/chatting")
-	        .setAllowedOrigins("*")
-	        .addInterceptors(new HttpSessionHandshakeInterceptor());
-	}
-	
+public class WebSocketConfig implements WebSocketConfigurer {
+
+    private final NotificationHandler notificationHandler;
+    private final ChattingHandler chattingHandler;
+
+    @Autowired
+    public WebSocketConfig(NotificationHandler notificationHandler,ChattingHandler chattingHandler) {
+        this.notificationHandler = notificationHandler;
+        this.chattingHandler = chattingHandler;
+    }
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(notificationHandler, "/ws/notifications").setAllowedOrigins("*");
+        registry.addHandler(chattingHandler, "/ws/chat").setAllowedOrigins("*");
+    }
 }

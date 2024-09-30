@@ -79,9 +79,9 @@ public class ChattingService {
 	public List<ChatMessageDto> selectMsgList(Long room_no){
 		List<ChatMessage> msgList = chatMessageRepository.findByRoomNoOrderByMessageDateAsc(room_no);
 		List<ChatMessageDto> msgdtoList = new ArrayList<ChatMessageDto>();
-		
 		for(ChatMessage cm : msgList) {
 			ChatMessageDto dto = new ChatMessageDto().toDto(cm);
+			
 			Employee employee = employeeRepository.findByempCode(cm.getEmpCode());
 			dto.setEmp_name(employee.getEmpName());
 			
