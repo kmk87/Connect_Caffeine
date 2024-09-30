@@ -59,7 +59,6 @@ public class BuildingApiController {
 	@PostMapping("/building_delete/{buildingNo}")
 	public ResponseEntity<Map<String, String>> deleteBuilding(@PathVariable("buildingNo") Long buildingNo){
 		Map<String, String> resultMap = new HashMap<String, String>();
-		System.out.println("확인");
 		 try {
 	            boolean isDeleted = buildingService.deleteBuilding(buildingNo);
 	            if (isDeleted) {

@@ -141,9 +141,8 @@ function showMeetingTab(button){
 	}
 	
 	
-	//HTML에서 CSRF 토큰 값을 가져옴
 	const csrfToken = document.querySelector('input[name="_csrf"]').value;
-	
+	//빌딩수정 폼	
 	const form = document.getElementById("buildingUpdateFrm");
 	form.addEventListener('submit', (e) => {
 	    e.preventDefault();

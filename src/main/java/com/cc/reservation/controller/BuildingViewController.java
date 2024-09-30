@@ -63,7 +63,7 @@ public class BuildingViewController {
 		List<MeetingRoomDto> meeting = meetingRoomService.selectMeetingRoomList();
 		BuildingDto buildingDto = buildingService.selectBuildingOne(buildingNo);
 		List<MeetingRoomDto> meetingDto = meetingRoomService.selectMeetingRoomOne(buildingNo);
-		System.out.println(meetingDto);
+		
 		model.addAttribute("buildings", building);
 		model.addAttribute("meetings",meeting);
 		model.addAttribute("dto", buildingDto);
