@@ -1,6 +1,10 @@
 package com.cc.empGroup.service;
 
 
+import org.springframework.stereotype.Service;
+
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +15,9 @@ import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
+import com.cc.organization.domain.TreeMenuDto;
 
 
-//import com.cc.organization.domain.TreeMenuDto;
 
 @Service
 public class EmpGroupService {
@@ -26,9 +30,12 @@ public class EmpGroupService {
 		this.empGroupRepository = empGroupRepository;
 	}
 	
-	// 1. 등록
+
+	// 등록
 	public EmpGroup createGroup(EmpGroupDto dto) {
 		
+		System.out.println("서비스의 dto"+dto);
+
 		EmpGroup gr = EmpGroup.builder()
 				.groupNo(dto.getGroup_no())
 				.groupParentNo(dto.getGroup_parent_no())
@@ -44,7 +51,8 @@ public class EmpGroupService {
 		return empGroupRepository.save(gr);
 	}
 	
-	// 2-1. 전체 조회
+	// 전체 조회
+
 	public List<EmpGroupDto> selectGroupList(){
 		// 변수 선언
 		List<EmpGroup> groupList = null;
@@ -60,7 +68,9 @@ public class EmpGroupService {
 		return groupDtoList;
 	}
 	
-	// 2-2. 상세 정보(detail)
+
+	// 상세 정보(detail)
+
 	public EmpGroupDto selectGroupOne(Long group_no){
 		
 		EmpGroup eg = empGroupRepository.findBygroupNo(group_no);
@@ -69,6 +79,7 @@ public class EmpGroupService {
 		return egDto;
 	}
 	
+
 	// dto 찾기
 	public EmpGroupDto selectEmpGroupOne(Long group_no) {
 		EmpGroup eg = empGroupRepository.findBygroupNo(group_no);
@@ -119,8 +130,7 @@ public class EmpGroupService {
 			return result;
 	}
 
-	
-	
+
 	// 상위 부서명 가져오는 메소드
 	public String getParentDeptNameByGroupNo(Long group_no) {
 		
@@ -141,14 +151,23 @@ public class EmpGroupService {
 		
 		return deptOriName;
 	}
-	
-	
+
 	// 부서 인원 가져오는 메소드
 	public Long getDeptHeadcountByGroupNo(Long group_no) {
 		
 		Long deptHeadcount = empGroupRepository.deptHeadcountByGroupNo(group_no);
 		
 		return deptHeadcount;
+	}
+
+
+	// 책임자 정보 가져오는 메소드
+	public Employee getLeaderInfoByGroupNo(Long group_no) {
+		
+		EmpGroup eg = empGroupRepository.findBygroupNo(group_no);
+		Employee leader = employeeRepository.findByempCode(eg.getGroupLeaderCode());
+
+		return leader;
 	}
 	
 	// 부서 번호 가져오는 메소드
@@ -158,14 +177,6 @@ public class EmpGroupService {
 				return teamNo;
 			}
 	
-	// 책임자 정보 가져오는 메소드
-	public Employee getLeaderInfoByGroupNo(Long group_no) {
-		
-		EmpGroup eg = empGroupRepository.findBygroupNo(group_no);
-		Employee leader = employeeRepository.findByempCode(eg.getGroupLeaderCode());
-
-		return leader;
-	}
 	
 	// 부모 그룹 번호로 부서 멤버를 가져오는 메서드
     public List<EmpGroup> getEmployeesByDeptNo(Long groupParentNo) {

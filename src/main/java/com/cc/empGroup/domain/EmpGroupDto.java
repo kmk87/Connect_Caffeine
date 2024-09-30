@@ -29,9 +29,16 @@ public class EmpGroupDto {
 	private String group_status;
 	private String group_level;
 	private String group_explain;
-	
+
 	private List<GrantedAuthority> authorities;
-	
+
+
+	// 트리 구조 쿼리문에 필요한 생성자
+	 public EmpGroupDto(Long groupNo, String groupName) {
+	        this.group_no = groupNo;
+	        this.group_name = groupName;
+	 }
+
 	public EmpGroup toEntity() {
 		return EmpGroup.builder()
 				.groupNo(group_no)
@@ -61,4 +68,3 @@ public class EmpGroupDto {
 	}
 	
 }
-	

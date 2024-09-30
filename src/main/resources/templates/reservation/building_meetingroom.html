@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.1googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
+  <link href="/bootstrap/css/nav_sider.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+<body>
+ <th:block layout:fragment="content">
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>건물 등록</h1>
+      <aside id="apprSidebar" class="apprSidebar">
+     <div class="reservation-box">
+        <div class="reservation-header">
+            <h3>예약 목록</h3>
+            </div> 
+          <div th:each="building : ${buildings}">
+          	<h2 th:text="${building.building_name}">Building Name</h2>
+          	   <div class="building-name">
+  			   	<button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|">
+      		   <i class="bi bi-gear"></i>
+  			   </button> 
+			</div>
+          	<ul>
+				<li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}">
+            		<a href="#"><span th:text="${meeting.meeting_name}"></span></a>
+        		</li>
+            </ul>
+			</div>
+        <a th:href="@{/Building}"><button class="building-register-btn">+ 건물 등록</button></a>
+    </div>
+    <div>
+    	
+    </div>
+    </aside>
+    </div>
+    </main>
+    </th:block>
+    </body>
+    </html>
