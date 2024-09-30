@@ -59,18 +59,6 @@
 			              <form id="scheduleForm" class="row g-3">
 			              	<input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 			              	<input type="hidden" id="calendar_writer_no" name="calendar_writer_no" th:value="${#authentication.principal.dto.emp_code}">
-			              	<div class="row mb-3">
-			                  <label class="col-sm-2 col-form-label">일정 종류</label>
-			                  <div class="col-sm-10">
-			                    <select class="form-select" aria-label="Default select example" id="schedule_type" name="schedule_type">
-			                      <option selected>선택하기</option>
-			                      <option value="1">내일정</option>
-			                      <option value="2">전사일정</option>
-			                      <option value="3">부서일정</option>
-			                      <option value="4">팀일정</option>
-			                    </select>
-			                  </div>
-			                </div>
 			                <div class="row mb-3">
 			                  <label class="col-sm-2 col-form-label">제목</label>
 			                  <div class="col-sm-10">
@@ -116,36 +104,18 @@
 					  <div class="modal-dialog modal-dialog-centered modal-lg">
 					    <div class="modal-content">
 					      <div class="modal-header">
-					        <h5 class="modal-title" id="modal-title">일정 상세</h5>
+					        <h5 class="modal-title" id="modal-title">회의실 등록</h5>
 					        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					      </div>
 					      <div class="modal-body">
 					      	 <input type="hidden" id="csrf_token2" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 			              	 <input type="hidden" id="calendar_writer_no" name="calendar_writer_no" th:value="${#authentication.principal.dto.emp_code}">
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">일정 종류</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_schedule_type"></span>
-					          </div>
-					        </div>
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">제목</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_schedule_title"></span>
-					          </div>
 					        </div>
 					        <div class="row mb-3">
 					          <label class="col-sm-2 col-form-label">내용</label>
 					          <div class="col-sm-10 padding-7-y">
 					            <p id="detail_schedule_content"></p>
 					          </div>
-					        </div>
-					        <div class="row mb-3">
-					          <label class="col-sm-2 col-form-label">장소</label>
-					          <div class="col-sm-10 padding-7-y">
-					            <span id="detail_location"></span>
-					          </div>
-					        </div>
 					        <div class="row mb-3">
 					          <label class="col-sm-2 col-form-label">시작 시간</label>
 					          <div class="col-sm-10 padding-7-y">
@@ -169,73 +139,11 @@
 					    </div>
 					  </div>
 			 	</div>
-	             
-				<div class="schedule-filters">
-					<div>
-					   <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="1"> 내 일정
-					   </label>
-				       <span class="color-circle" th:style="'background-color: ' + ${userColors[1]}"></span>
-				    </div>
-				    <div>
-					    <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="2"> 전사 일정
-					    </label>
-				        <span class="color-circle" th:style="'background-color: ' + ${userColors[2]}"></span>
-				    </div>
-				    <div>
-					    <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="3"> 부서 일정
-					    </label>
-				        <span class="color-circle" th:style="'background-color: ' + ${userColors[3]}"></span>
-				    </div>
-				    <div>
-					    <label class="filter-item">
-					        <input type="checkbox" class="event-filter" value="4"> 팀 일정
-					    </label>
-				        <span class="color-circle" th:style="'background-color: ' + ${userColors[4]}"></span>
-					</div>
-				</div>
-				<!-- 모달 형식의 팔레트 -->
-				<div class="color-palette-modal" style="display: none;">
-				    <div class="color-palette">
-				        <div th:each="color : ${colors}" class="color-option"
-				             th:style="'background-color:' + ${color}"
-				             th:data-color="${color}">
-				        </div>
-				    </div>
-				</div>
 			</div>
-	    	<div id='calendar' >
-	    	</div>
-
 	    </main>
 	  
 	 <script  th:inline="javascript">
 	 document.addEventListener('DOMContentLoaded', function() {
-		  var userColors = /*[[${userColors}]]*/ {};
-		    console.log("User Colors: ", userColors);  // userColors 확인
-		    
-		    var calendarEl = document.getElementById('calendar');
-		    var events = /*[[${resultList}]]*/ [];
-
-		    events = events.map(function(event) {
-		        var scheduleType = parseInt(event.schedule_type);  // 명시적으로 숫자로 변환
-		        var colorCode = userColors[scheduleType];  // 일정 유형에 따른 색상 코드 가져오기
-		        console.log("Schedule Type: ", scheduleType, " Color Code: ", colorCode);  // 색상 코드 확인
-		        
-		        return {
-		            id: event.schedule_no,
-		            title: event.schedule_title,
-		            start: new Date(event.start_time),
-		            end: new Date(event.end_time),
-		            description: event.schedule_content,
-		            location: event.location,
-		            schedule_type: scheduleType,
-		            backgroundColor: colorCode,  // 색상 적용
-		            borderColor: colorCode       // 테두리 색상 적용
-		        };
-		    });
 
 		    var calendar = new FullCalendar.Calendar(calendarEl, {
 		        headerToolbar: {
@@ -253,13 +161,6 @@
 		                .then(response => response.json())
 		                .then(data => {
 		                    let scheduleTypeText = '';
-		                    switch (data.schedule_type) {
-		                        case 1: scheduleTypeText = '내일정'; break;
-		                        case 2: scheduleTypeText = '전사일정'; break;
-		                        case 3: scheduleTypeText = '부서일정'; break;
-		                        case 4: scheduleTypeText = '팀일정'; break;
-		                        default: scheduleTypeText = '알 수 없음';
-		                    }
 
 		                    document.getElementById('detail_schedule_type').innerText = scheduleTypeText;
 		                    document.getElementById('detail_schedule_title').innerText = data.schedule_title;
@@ -514,115 +415,7 @@
 		    });
 		    
 		    
-		    var userColors = /*[[${userColors}]]*/ {};
-		    console.log(userColors);
-		    
-		    document.querySelectorAll('.color-circle').forEach(function(circle, index) {
-	            var scheduleType = index + 1;
-	            if (userColors[scheduleType]) {
-	                circle.style.backgroundColor = userColors[scheduleType];
-	            } else {
-	                circle.style.backgroundColor = '#FFFFFF'; // 기본 색상
-	            }
-	        });
-		    
-		 // color-circle 클릭 이벤트 처리
-		    document.querySelectorAll('.color-circle').forEach(function(circle, index) {
-		        circle.addEventListener('click', function(event) {
-		            // 각 color-circle에 해당하는 event-filter의 value 값 (scheduleType) 가져오기
-		            const scheduleType = document.querySelectorAll('.event-filter')[index].value;
 
-		            // 팔레트 모달 열기
-		            const paletteModal = document.querySelector('.color-palette-modal');
-		            paletteModal.style.display = 'block';
-		            paletteModal.style.top = event.pageY + 'px'; // 클릭한 위치 근처에 표시
-		            paletteModal.style.left = event.pageX + 'px';
-
-		            // 선택한 scheduleType을 팔레트 모달에 저장
-		            paletteModal.dataset.selectedScheduleType = scheduleType;
-		        });
-		    });
-
-		    document.querySelectorAll('.color-option').forEach(option => {
-		        option.addEventListener('click', function() {
-		            const selectedColor = option.dataset.color; // 선택한 색상 (color_code)
-		            const paletteModal = document.querySelector('.color-palette-modal');
-		            const selectedScheduleType = paletteModal.dataset.selectedScheduleType; // 선택된 일정 타입
-
-		            // 로그인한 사용자 emp_code 가져오기
-		            const empCode = document.getElementById('calendar_writer_no').value;
-
-		            // 선택한 색상을 적용
-		            updateUserColor(empCode, selectedScheduleType, selectedColor); // 서버로 저장하는 함수 호출
-		            
-		            // 선택한 색상을 color-circle에 반영
-		            document.querySelectorAll('.color-circle')[selectedScheduleType - 1].style.backgroundColor = selectedColor;
-		        });
-		    });
-
-
-
-		    function updateUserColor(empCode, scheduleType, colorCode) {
-		        const csrfToken = document.getElementById('csrf_token').value;
-
-		        const dataToSend = {
-		            emp_code: empCode, 
-		            schedule_type: scheduleType, 
-		            color_code: colorCode 
-		        };
-
-		        console.log("전송할 데이터:", dataToSend);
-
-		        fetch('/updateColor', {
-		            method: 'POST',
-		            headers: {
-		                'Content-Type': 'application/json',
-		                'X-CSRF-TOKEN': csrfToken
-		            },
-		            body: JSON.stringify(dataToSend)
-		        })
-		        .then(response => response.json())
-		        .then(data => {
-		            if (data.res_code === '200') {
-		                console.log('색상 업데이트 성공!');
-
-		                // 캘린더의 해당 일정 유형의 색상 업데이트
-		                updateCalendarEventColors(scheduleType, colorCode);
-
-		            } else {
-		                console.error('색상 업데이트 실패:', data.res_msg);
-		            }
-		        })
-		        .catch(error => console.error('Error updating color:', error));
-		    }
-
-		    // 이벤트 색상 업데이트 함수 추가
-		    function updateCalendarEventColors(scheduleType, colorCode) {
-		        const events = calendar.getEvents();  // 현재 캘린더의 모든 이벤트를 가져옴
-		        
-		        events.forEach(event => {
-		            if (event.extendedProps.schedule_type == scheduleType) {
-		                event.setProp('backgroundColor', colorCode);  // 배경색 업데이트
-		                event.setProp('borderColor', colorCode);      // 테두리색 업데이트
-		            }
-		        });
-
-		        calendar.render();  // 캘린더 다시 렌더링 (이벤트 색상 반영)
-		    }
-
-
-
-		    // 팔레트 외부 클릭 시 모달 닫기
-		    window.addEventListener('click', function(event) {
-		        const paletteModal = document.querySelector('.color-palette-modal');
-		        if (!event.target.closest('.color-palette') && !event.target.closest('.color-circle')) {
-		            paletteModal.style.display = 'none';
-		        }
-		    });
-		    
-		    
-		});
-		
 
 		</script>
 	
