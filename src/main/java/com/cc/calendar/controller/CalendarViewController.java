@@ -51,13 +51,13 @@ public class CalendarViewController {
 		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		  User user =(User)authentication.getPrincipal();
 		  String empAccount = user.getUsername();
-		  System.out.println("empAccount : "+empAccount);
+//		  System.out.println("empAccount : "+empAccount);
 		  Long empCode = employeeService.findEmpCodeByEmpName(empAccount);  
-		  System.out.println("empCode : "+empCode);
+//		  System.out.println("empCode : "+empCode);
 		  Long teamNo = employeeService.getGroupNoByEmpCode(empCode);
-		  System.out.println("teamNo : "+teamNo);
+//		  System.out.println("teamNo : "+teamNo);
 		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
-		  System.out.println("deptNo : "+deptNo);
+//		  System.out.println("deptNo : "+deptNo);
 		// Thymeleaf로 전달
 	        model.addAttribute("deptNo", deptNo);  // 부서번호
 	        model.addAttribute("teamNo", teamNo);  // 팀번호
@@ -67,7 +67,7 @@ public class CalendarViewController {
 	        List<CalendarDto> resultList = calendarService.selectCalendarList(empCode, deptNo, teamNo);
 	        model.addAttribute("resultList", resultList);
 	        // 데이터가 제대로 전달되고 있는지 확인
-	        System.out.println("일정 리스트: " + resultList);
+//	        System.out.println("일정 리스트: " + resultList);
 	        
 	        
 	        // 색상 데이터 가져오기(팔레트)
@@ -81,13 +81,13 @@ public class CalendarViewController {
 	        Map<Long, String> userColors = new HashMap<>();
 	        for (long scheduleType = 1; scheduleType <= 4; scheduleType++) {
 	            String colorCode = userScheduleColorService.getColorForSpecificScheduleType(empCode, scheduleType);
-	            System.out.println("Color for scheduleType " + scheduleType + ": " + colorCode);
+//	            System.out.println("Color for scheduleType " + scheduleType + ": " + colorCode);
 	            userColors.put(scheduleType, colorCode);
 	        }
 	        
 	        // 모델에 userColors 전달
 	        model.addAttribute("userColors", userColors);
-	        System.out.println("userColors : "+userColors);
+//	        System.out.println("userColors : "+userColors);
 	        
 	        return "/calendar/schedule"; // 일정 페이지로 이동
 	    }

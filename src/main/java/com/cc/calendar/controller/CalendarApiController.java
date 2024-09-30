@@ -74,7 +74,7 @@ public class CalendarApiController {
 	        resultMap.put("res_msg", "서버에서 일정 등록 중 오류가 발생했습니다.");
 	        e.printStackTrace();  // 로그로 오류 기록
 	    }
-	    System.out.println("deptNo : "+dto.getDept_no());
+//	    System.out.println("deptNo : "+dto.getDept_no());
 	    return resultMap;
 	}
 

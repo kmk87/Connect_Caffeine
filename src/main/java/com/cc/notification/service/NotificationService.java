@@ -44,7 +44,7 @@ public class NotificationService {
             notificationDto.setNotificationContent(message);
             notificationDto.setNotificationType("SCHEDULE");
             notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calnedar/schedule");
+            notificationDto.setRelatedLink("/calnedar");
             
             notificationHandler.saveAndSendNotification(notificationDto);
         }
