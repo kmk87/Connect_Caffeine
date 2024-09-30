@@ -12,7 +12,29 @@
 <link th:href="@{/css/approval/create.css}" rel="stylesheet"
 	type="text/css">
 <title>기안서 작성</title>
-<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- jQuery 추가 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jsTree와 Bootstrap을 사용할 경우 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet">
+</stript>
+<style>
+        .jstree-icon.ri-building-fill { /* 회사 아이콘 */
+    color: #3e4a6e;
+    font-size: 24px;
+}
+
+.jstree-icon.ri-team-fill { /* 부서 아이콘 */
+    color: #3577f1;
+    font-size: 20px;
+}
+
+.jstree-icon.ri-user-2-fill { /* 직원 아이콘 */
+    color: #9a9ba0;
+    font-size: 16px;
+}
+    </style>
 </head>
 <body>
 	<th:block layout:fragment="content">
@@ -118,23 +140,25 @@
 								<thead>
 									<tr>
 										<td rowspan="4"><b>결재선</b></td>
-										<td><button onclick="apprAdd()"
-												class="btn btn-outline-primary">1차 결재선 지정</button></td>
-										<td><button onclick="apprAdd()"
-												class="btn btn-outline-primary">2차 결재선 지정</button></td>
-									</tr>
-									<tr>
-										<td>대표이사</td>
-										<td>차장</td>
-									</tr>
-									<tr>
-										<td>서명</td>
-										<td>서명</td>
-									</tr>
-									<tr>
-										<td>결재자1</td>
-										<td>결재자2</td>
-									</tr>
+										<td>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(1)">1차 결재선 지정</button>
+        </td>
+        <td>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(2)">2차 결재선 지정</button>
+        </td>
+    </tr>
+    <tr>
+        <td id="approver1">대표이사</td> <!-- 1차 결재자 이름이 들어갈 부분 -->
+        <td id="approver2">차장</td> <!-- 2차 결재자 이름이 들어갈 부분 -->
+    </tr>
+    <tr>
+        <td id="sign1">서명</td> <!-- 1차 서명 -->
+        <td id="sign2">서명</td> <!-- 2차 서명 -->
+    </tr>
+    <tr>
+        <td id="approverName1">결재자1</td> <!-- 결재자 이름 -->
+        <td id="approverName2">결재자2</td> <!-- 결재자 이름 -->
+    </tr>
 								</thead>
 							</table>
 						</div>
@@ -148,10 +172,10 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<td><button onclick="referAdd()"
-												class="btn btn-outline-primary">1차 참조선 지정</button></td>
-										<td><button onclick="referAdd()"
-												class="btn btn-outline-primary">2차 참조선 지정</button></td>
+										<td><button type="button" onclick="referAdd()"
+												class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
+										<td><button type="button" onclick="referAdd()"
+												class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td>
 									</tr>
 									<tr>
 										<td>대표이사</td>
@@ -182,24 +206,9 @@
 								aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
-							<!-- 여기에 조직도 내용을 넣습니다 -->
-							<div class="org-chart">
-								<ul>
-									<li>부서 1
-										<ul>
-											<li>직원 1</li>
-											<li>직원 2</li>
-										</ul>
-									</li>
-									<li>부서 2
-										<ul>
-											<li>직원 3</li>
-											<li>직원 4</li>
-										</ul>
-									</li>
-								</ul>
-							</div>
-						</div>
+                		<!-- 여기에 조직도 내용을 넣습니다 -->
+                			<div id="treeContainer"></div> <!-- 조직도 트리를 표시할 영역 -->
+            			</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary"
 								data-bs-dismiss="modal">닫기</button>
@@ -287,6 +296,46 @@
 
 		<!-- JavaScript for Form Submission -->
 		<script>
+
+		// 결재선 지정 모달창
+document.getElementById("saveDesignation").addEventListener("click", function () {
+    let selectedApprover = document.querySelector("input[name='approver']:checked"); // 선택한 결재자
+
+    if (!selectedApprover) {
+        // 결재자를 선택하지 않았을 경우
+        alert("결재자를 선택하세요.");
+        return;
+    }
+
+    fetch('/apprDesignation', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json;charset=utf-8"
+        },
+        body: JSON.stringify({ approver: selectedApprover.value })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.res_code === '200') {
+            Swal.fire({
+                icon: 'success',
+                title: '성공',
+                text: '결재선이 저장되었습니다.',
+                confirmButtonText: '닫기'
+            }).then((result) => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('apprDesignationModal'));
+                modal.hide();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: '실패',
+                text: '결재선 저장에 실패했습니다.',
+                confirmButtonText: '닫기'
+            });
+        }
+    });
+});
 		
    
     
@@ -413,25 +462,7 @@
 		}); 
 	});
 		
-		// 결재선 지정 모달창
-		document.getElementById("saveDesignation").addEventListener("click",function(){
-			let selectdeApprover = "직원1";
-			
-			fetch('apprDesignation',{
-				method: 'POST',
-				headers: {
-					"content-Type": "application/json;charset=utf-8"
-				},
-				body: JSON.stringify({ approver:selectedApprover})
-			})
-			.then(response => response.json())
-			.then(data => {
-				alert('결재선이 저장되었습니다.');
-				const modal = bootstrap.Modal.getInstance(document.getElementById('apprDesignationModal'));
-				modal.hide();
-			});
-		});
-		
+	
 		
 		// 임시 저장 버튼 이벤트 리스너
 		document.getElementById("tempSaveBtn").addEventListener("click",function(){
@@ -494,8 +525,74 @@
 		    }
 		});
 
+		// 결재선 관련 로직
+		let currentApproverOrder = 0;
+
+		// 1차 또는 2차 결재선 버튼을 클릭할 때 순서를 지정하는 함수
+		function setApproverOrder(order) {
+		    currentApproverOrder = order;  // 1차인지 2차인지 설정
+		}
+		
+		function formatDataForJsTree(nodes) {
+		    return nodes.map(node => {
+		        return {
+		            id: node.id,  // 노드의 ID
+		            text: node.text,  // 노드의 텍스트 (이름)
+		            parent: node.parent === '1' ? '#' : node.parent,  // 부모 노드의 ID가 1이면 루트로 설정
+		            type: node.type,  // 노드 타입 (team 또는 employee)
+		            icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill'  // 팀이면 팀 아이콘, 직원이면 직원 아이콘
+		        };
+		    });
+		}
+
+
+		
+		// 모달이 열릴 때 조직도를 가져오는 코드
+		document.getElementById('apprDesignationModal').addEventListener('show.bs.modal', function () {
+		    fetch('/getOrgChart')  // 조직도 데이터를 가져오는 API
+		        .then(response => response.json())
+		        .then(data => {
+		            console.log("Fetched Org Data:", data);
+
+		            // 조직도 데이터를 jsTree에 맞게 변환
+		            const formattedData = formatDataForJsTree(data);
+
+		            // jsTree 초기화 및 데이터 적용
+		            $('#treeContainer').jstree({
+		                'core': {
+		                    "animation": 0,
+		                    "check_callback": true,
+		                    'data': formattedData  // jsTree에 데이터를 전달
+		                },
+		                "plugins": ["types"],  // 아이콘 사용을 위한 플러그인 설정
+		                "types": {
+		                    "team": {
+		                        "icon": "ri-team-fill"  // 팀 아이콘
+		                    },
+		                    "employee": {
+		                        "icon": "ri-user-2-fill"  // 직원 아이콘
+		                    }
+		                }
+		            });
+		        })
+		        .catch(err => {
+		            console.error("Error fetching org chart data:", err);
+		        });
+		});
 	
-	
+		// jsTree에서 노드를 클릭했을 때 결재선에 반영하는 코드
+		$('#treeContainer').on('select_node.jstree', function (e, data) {
+		    const selectedName = data.node.text;  // 선택된 노드의 이름
+
+		    // 현재 선택된 결재선 순서에 따라 반영
+		    if (currentApproverOrder === 1) {
+		        document.getElementById('approver1').innerText = selectedName;
+		    } else if (currentApproverOrder === 2) {
+		        document.getElementById('approver2').innerText = selectedName;
+		    }
+		});
+
+
 	
 	
     </script>

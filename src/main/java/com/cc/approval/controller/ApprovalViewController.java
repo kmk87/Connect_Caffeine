@@ -2,6 +2,7 @@ package com.cc.approval.controller;
 
 import java.awt.print.Pageable;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.approval.domain.ApprovalDto;
 import com.cc.approval.domain.ApprovalLine;
@@ -27,6 +29,7 @@ import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 import com.cc.security.vo.SecurityUser;
+import com.cc.tree.service.OrgService;
 
 @Controller
 public class ApprovalViewController {
@@ -36,16 +39,19 @@ public class ApprovalViewController {
 	private final EmployeeService employeeService;
 	private final EmpGroupService empGroupService;
 	private final ApprovalLineRepository  approvalLineRepository ;
+	private final OrgService orgService;
 	
 	
 	@Autowired
 	public ApprovalViewController(ApprovalService approvalService,ApprFormService apprFormService,
-			EmployeeService employeeService,EmpGroupService empGroupService,ApprovalLineRepository approvalLineRepository ) {
+			EmployeeService employeeService,EmpGroupService empGroupService,ApprovalLineRepository approvalLineRepository,
+			OrgService orgService) {
 		this.approvalService = approvalService;
 		this.apprFormService = apprFormService;
 		this.employeeService = employeeService;
 		this.empGroupService = empGroupService;
 		this.approvalLineRepository = approvalLineRepository;
+		this.orgService = orgService;
 	}
 
 	// 전자결재 홈
@@ -222,36 +228,6 @@ public class ApprovalViewController {
 		    
 			// 1차, 2차 결재자 처리 로직 추가
 	        processApprovalButtons(model, approvalLines, empCode);
-		    
-//		    // 1차, 2차 결재자 처리
-//		    ApprovalLineDto firstApprover = approvalLines.stream()
-//		    	    .filter(line -> line.getAppr_order() == 1)  // 1차 결재자 필터
-//		    	    .findFirst()
-//		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
-//
-//		    	// 2차 결재자 가져오기
-//		    	ApprovalLineDto secondApprover = approvalLines.stream()
-//		    	    .filter(line -> line.getAppr_order() == 2)  // 2차 결재자 필터
-//		    	    .findFirst()
-//		    	    .orElse(null);  // 전체 ApprovalLineDto 객체를 반환
-//
-//		    	// 첫 번째 결재자가 로그인한 사용자와 일치하는지 확인
-//		    	boolean showFirstApproveButton = (firstApprover != null &&
-//		    	        empCode.equals(firstApprover.getAppr_writer_code()) &&  // empCode와 비교
-//		    	        firstApprover.getAppr_state().equals("S"));  // 상태가 'S'인지 확인
-//
-//		    	boolean showSecondApproveButton = (secondApprover != null &&
-//		    	        empCode.equals(secondApprover.getAppr_writer_code()) &&  // empCode와 비교
-//		    	        secondApprover.getAppr_state().equals("S"));
-//
-//		    	// 모델에 승인 버튼 표시 여부를 추가
-//		    	model.addAttribute("showFirstApproveButton", showFirstApproveButton);
-//		    	model.addAttribute("showSecondApproveButton", showSecondApproveButton);
-//		    	// 모델에 결재자 이름 추가
-//		    	model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
-//		    	model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
-//		    	model.addAttribute("approvalLines", approvalLines);
-//		    
 			return "approval/apprStorageDetail";
 		}
 		
@@ -284,9 +260,12 @@ public class ApprovalViewController {
 	    }
 
 		
-		
-		
-		
+		// 조직도
+		@ResponseBody
+		@GetMapping("/getOrgChart")
+		public List<Map<String, Object>> getOrgChart() {
+	        return orgService.getOrgTree();  // 팀과 사원 데이터를 합쳐서 반환
+	    }
 		
 		
 		

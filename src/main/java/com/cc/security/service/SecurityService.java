@@ -28,7 +28,7 @@ public class SecurityService implements UserDetailsService{
 			EmployeeDto dto = new EmployeeDto().toDto(employee);
 			
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-			authorities.add(new SimpleGrantedAuthority(employee.getJobCode()));
+			authorities.add(new SimpleGrantedAuthority(employee.getEmpJobCode()));
 			dto.setAuthorities(authorities);
 			
 			System.out.println("로그인 정보");

@@ -74,18 +74,6 @@ public class Approval {
 	
 	@Column(name="appr_holi_use_count")
 	private Integer apprHoliUseCount;
-	
-	@Column(name="appr_first_no")
-	private int apprFirstNo;
-	
-	@Column(name="appr_last_no")
-	private Integer apprLastNo;
-	
-	@Column(name="referencer_first_no")
-	private Integer referencerFirstNo;
-	
-	@Column(name="referencer_last_no")
-	private Integer referencerLastNo;
 
 	@ManyToOne
 	@JoinColumn(name="appr_writer_code")
