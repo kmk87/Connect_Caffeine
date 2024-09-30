@@ -68,17 +68,17 @@
 						</tr>
 					</thead>
 					<tbody>
-						<th:block th:if="${#lists.isEmpty(notifications)}">
+						<th:block th:if="${#lists.isEmpty(unreadNotifications)}">
 			      			<tr>
 			      				<td colspan="3">알림이 존재하지 않습니다.</td> 
 			      			</tr>
 			      		</th:block>
-						<th:block th:if="${!#lists.isEmpty(notifications)}">
-							<tr th:each="notification : ${notifications}">
+						<th:block th:if="${!#lists.isEmpty(unreadNotifications)}">
+							<tr th:each="unreadNotification : ${unreadNotifications}">
 								<td class="checkbox-column"><input type="checkbox"></td>
-								<td><a th:href="${notification.relatedLink}"
-        								th:utext="${notification.notificationContent}"></a></td>
-								<td class="notify-time" th:text="${notification.relativeTime}"></td> <!-- 상대 시간 출력 -->
+								<td><a th:href="${unreadNotification.relatedLink}"
+        								th:utext="${unreadNotification.notificationContent}"></a></td>
+								<td class="notify-time" th:text="${unreadNotification.relativeTime}"></td> <!-- 상대 시간 출력 -->
 							</tr>
 						</th:block>
 					</tbody>

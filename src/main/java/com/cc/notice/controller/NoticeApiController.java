@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cc.notice.domain.Notice;
 import com.cc.notice.domain.NoticeDto;
 import com.cc.notice.service.NoticeService;
 import com.cc.notification.service.NotificationService;
@@ -33,14 +34,24 @@ public class NoticeApiController {
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "공지사항 등록중 오류가 발생했습니다.");
 
-		if(noticeService.createNotice(dto) != null) {
-			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "공지사항이 성공적으로 등록되었습니다.");
-			String message = "[공지사항] " + dto.getNotice_title() + "이(가) 등록되었습니다.";
-			notificationService.sendNoticeNotification(message);
-		}
-		
-		return resultMap;
+		 // 저장된 Notice 객체를 반환받음
+	    Notice savedNotice = noticeService.createNotice(dto);
+	    
+	    if (savedNotice != null) {
+	        resultMap.put("res_code", "200");
+	        resultMap.put("res_msg", "공지사항이 성공적으로 등록되었습니다.");
+	        
+	        // 저장된 공지사항 ID를 가져옴
+	        Long noticeId = savedNotice.getNoticeNo();
+	        System.out.println("noticeId : " + noticeId);
+	        
+	        String message = "[공지사항] " + savedNotice.getNoticeTitle() + "이(가) 등록되었습니다.";
+	        
+	        // 알림 발송 시 링크에 공지사항 ID 포함
+	        notificationService.sendNoticeNotification(message, noticeId);
+	    }
+	    
+	    return resultMap;
 	}
 	
 	@ResponseBody

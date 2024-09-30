@@ -26,6 +26,7 @@ public class NotificationDto {
 	private String notificationType;
 	private char isRead;
 	private String relatedLink;
+	private String relativeTime;
 	
 	public Notification toEntity(Employee employee) {
 		return Notification.builder()

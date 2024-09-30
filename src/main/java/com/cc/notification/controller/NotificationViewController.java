@@ -45,28 +45,33 @@ public class NotificationViewController {
 	        return "notification/notification";
 	    }
 
-	    // 알림 가져오기
+	    // 전체 알림 가져오기
 	    List<NotificationDto> notifications = notificationService.getNotificationsForUser(empCode);
 	    model.addAttribute("notifications", notifications);
 	    System.out.println("notifications : " + notifications);
+	    
 	    return "notification/notification";
 	}
+	
+	// 안읽은 알림 가져오기
+	 @GetMapping("/unreadNotification")
+	    public String showUnreadNotifications(Model model) {
+		 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		    User user = (User) authentication.getPrincipal();
+		    String empAccount = user.getUsername();
+		    System.out.println("empAccount : " + empAccount);
+
+		    // empCode 찾기
+		    Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
+
+	        // 수신자가 현재 로그인한 사용자이고, 읽지 않은 알림 가져오기
+	        List<NotificationDto> unreadNotifications = notificationService.getUnreadNotifications(empCode);
+	        model.addAttribute("unreadNotifications", unreadNotifications);
+	        return "notification/unReadNotification"; 
+	    }
 
 	
-//	@GetMapping("/header")
-//	public String getHeaderNotifications(Model model) {
-//	    // 로그인된 사용자 정보 가져오기
-//	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//	    User user = (User) authentication.getPrincipal();
-//	    String empAccount = user.getUsername();
-//	    Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
-//	    
-//	    // 사용자의 알림 목록 가져오기
-//	    List<NotificationDto> notifications = notificationService.getNotificationsForUser(empCode);
-//	    model.addAttribute("notifications", notifications);
-//
-//	    return "include/header"; // 알림이 있는 헤더 템플릿
-//	}
+
 
 
 }

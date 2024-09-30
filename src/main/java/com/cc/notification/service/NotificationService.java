@@ -2,8 +2,11 @@ package com.cc.notification.service;
 
 
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,10 +46,6 @@ public class NotificationService {
             notificationDto.setIsRead('N');
             notificationDto.setRelatedLink("/calnedar/schedule");
             
-//            System.out.println("NotificationDto Receiver: " + notificationDto.getReceiver_no());
-//            System.out.println("NotificationDto Message: " + notificationDto.getNotificationContent());
-//            System.out.println("NotificationDto Type: " + notificationDto.getNotificationType());
-
             notificationHandler.saveAndSendNotification(notificationDto);
         }
     }
@@ -60,11 +59,8 @@ public class NotificationService {
             notificationDto.setNotificationContent(message);
             notificationDto.setNotificationType("SCHEDULE");
             notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calnedar/schedule");
-            
-//            System.out.println("NotificationDto Receiver: " + notificationDto.getReceiver_no());
-//            System.out.println("NotificationDto Message: " + notificationDto.getNotificationContent());
-//            System.out.println("NotificationDto Type: " + notificationDto.getNotificationType());
+            notificationDto.setRelatedLink("/calnedar");
+
             notificationHandler.saveAndSendNotification(notificationDto);
         }
     }
@@ -78,19 +74,55 @@ public class NotificationService {
             notificationDto.setNotificationContent(message);
             notificationDto.setNotificationType("SCHEDULE");
             notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calnedar/schedule");
-            
-//            System.out.println("NotificationDto Receiver: " + notificationDto.getReceiver_no());
-//            System.out.println("NotificationDto Message: " + notificationDto.getNotificationContent());
-//            System.out.println("NotificationDto Type: " + notificationDto.getNotificationType());
+            notificationDto.setRelatedLink("/calnedar");
             
             notificationHandler.saveAndSendNotification(notificationDto);
         }
     }
     
+    // 공지사항 알림 발송
+    public void sendNoticeNotification(String message, Long noticeId) throws Exception {
+    	List<Employee> allEmployees = employeeService.getAllEmployees();
+    	for (Employee employee : allEmployees) {
+    		NotificationDto notificationDto = new NotificationDto();
+    		notificationDto.setReceiver_no(employee.getEmpCode());
+    		notificationDto.setNotificationContent(message);
+    		notificationDto.setNotificationType("NOTICE");
+    		notificationDto.setIsRead('N');
+    		notificationDto.setRelatedLink("noticeDetail/"+noticeId);
+    		
+    		notificationHandler.saveAndSendNotification(notificationDto);
+    	}
+    }
+    
+    // 상대 시간을 계산하는 메서드
+    public String calculateRelativeTime(LocalDateTime sentTime) {
+        LocalDateTime now = LocalDateTime.now();
+        long minutes = ChronoUnit.MINUTES.between(sentTime, now);
+        
+        if (minutes < 1) {
+            return "방금 전";
+        } else if (minutes < 60) {
+            return minutes + "분 전";
+        }
+        
+        long hours = ChronoUnit.HOURS.between(sentTime, now);
+        if (hours < 24) {
+            return hours + "시간 전";
+        }
+        
+        long days = ChronoUnit.DAYS.between(sentTime, now);
+        if (days < 7) {
+            return days + "일 전";
+        }
+        
+        return "오래 전";
+    }
+    
+    //전체 알림 조회 
     public List<NotificationDto> getNotificationsForUser(Long empCode) {
         // 1. 사용자의 알림 목록을 데이터베이스에서 조회
-        List<Notification> notifications = notificationRepository.findByEmployeeEmpCode(empCode);
+        List<Notification> notifications = notificationRepository.findByEmployeeEmpCodeOrderBySentTimeDesc(empCode);
         System.out.println(empCode);
         // 2. NotificationDto 리스트 생성
         List<NotificationDto> notificationDtoList = new ArrayList<NotificationDto>();
@@ -98,7 +130,12 @@ public class NotificationService {
         // 3. 각 Notification 객체를 NotificationDto로 변환하고 리스트에 추가
         for (Notification notification : notifications) {
         	NotificationDto dto = new NotificationDto().toDto(notification);
-            // 4. 리스트에 변환된 DTO 추가
+            
+        	// 상대 시간 계산 후 DTO에 추가
+            String relativeTime = calculateRelativeTime(notification.getSentTime());
+            dto.setRelativeTime(relativeTime);
+            
+        	// 4. 리스트에 변환된 DTO 추가
             notificationDtoList.add(dto);
         }
        System.out.println("notificationDtoList : "+notificationDtoList);
@@ -106,20 +143,27 @@ public class NotificationService {
         return notificationDtoList;
     }
     
-    public void sendNoticeNotification(String message) throws Exception {
-        List<Employee> allEmployees = employeeService.getAllEmployees();
-        for (Employee employee : allEmployees) {
-            NotificationDto notificationDto = new NotificationDto();
-            notificationDto.setReceiver_no(employee.getEmpCode());
-            notificationDto.setNotificationContent(message);
-            notificationDto.setNotificationType("NOTICE");
-            notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("notice/list");
-            
+    //안읽은 알림 조회
+    public List<NotificationDto> getUnreadNotifications(Long empCode) {
+        List<Notification> unreadNotifications = notificationRepository.findByEmployeeEmpCodeAndIsRead(empCode, 'N');
+        List<NotificationDto> notificationDtoList = new ArrayList<NotificationDto>();
 
-            notificationHandler.saveAndSendNotification(notificationDto);
+        // 3. 각 Notification 객체를 NotificationDto로 변환하고 리스트에 추가
+        for (Notification notification : unreadNotifications) {
+        	NotificationDto dto = new NotificationDto().toDto(notification);
+            
+        	// 상대 시간 계산 후 DTO에 추가
+            String relativeTime = calculateRelativeTime(notification.getSentTime());
+            dto.setRelativeTime(relativeTime);
+            
+        	// 4. 리스트에 변환된 DTO 추가
+            notificationDtoList.add(dto);
         }
+      
+        // 5. DTO 리스트 반환
+        return notificationDtoList;
     }
+    
 
     
 }
