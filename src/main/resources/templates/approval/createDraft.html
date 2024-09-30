@@ -12,13 +12,12 @@
 <link th:href="@{/css/approval/create.css}" rel="stylesheet"
 	type="text/css">
 <title>기안서 작성</title>
+<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- jQuery 추가 -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- jsTree와 Bootstrap을 사용할 경우 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet">
-</stript>
 <style>
         .jstree-icon.ri-building-fill { /* 회사 아이콘 */
     color: #3e4a6e;
@@ -138,31 +137,28 @@
 									<col style="background-color: #d3d3d3;">
 								</colgroup>
 								<thead>
-									<tr>
-										<td rowspan="4"><b>결재선</b></td>
-										<td>
-            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(1)">1차 결재선 지정</button>
-        </td>
-        <td>
-            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(2)">2차 결재선 지정</button>
-        </td>
-    </tr>
-    <tr>
-        <td id="approver1">대표이사</td> <!-- 1차 결재자 이름이 들어갈 부분 -->
-        <td id="approver2">차장</td> <!-- 2차 결재자 이름이 들어갈 부분 -->
-    </tr>
-    <tr>
-        <td id="sign1">서명</td> <!-- 1차 서명 -->
-        <td id="sign2">서명</td> <!-- 2차 서명 -->
-    </tr>
-    <tr>
-        <td id="approverName1">결재자1</td> <!-- 결재자 이름 -->
-        <td id="approverName2">결재자2</td> <!-- 결재자 이름 -->
-    </tr>
+    								<tr>
+        								<td rowspan="4"><b>결재선</b></td>
+        								<td>
+            								<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(1)">1차 결재선 지정</button>
+        								</td>
+        								<td>
+            								<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(2)">2차 결재선 지정</button>
+        								</td>
+    								</tr>
+    								<tr>
+        								<td id="sign1">서명</td> <!-- 1차 서명 -->
+        								<td id="sign2">서명</td> <!-- 2차 서명 -->
+    								</tr>
+    								<tr>
+        								<td id="approver1">결재선</td> <!-- 1차 결재자 이름이 들어갈 부분 -->
+        								<td id="approver2">결재선</td> <!-- 2차 결재자 이름이 들어갈 부분 -->
+    								</tr>
 								</thead>
 							</table>
 						</div>
-
+						
+					<!-- </div> -->
 						<!-- 참조선 테이블 -->
 						<div class="right-content">
 							<table class="reference-line-table">
@@ -176,10 +172,6 @@
 												class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
 										<td><button type="button" onclick="referAdd()"
 												class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td>
-									</tr>
-									<tr>
-										<td>대표이사</td>
-										<td>차장</td>
 									</tr>
 									<tr>
 										<td>결재자1</td>
@@ -297,48 +289,6 @@
 		<!-- JavaScript for Form Submission -->
 		<script>
 
-		// 결재선 지정 모달창
-document.getElementById("saveDesignation").addEventListener("click", function () {
-    let selectedApprover = document.querySelector("input[name='approver']:checked"); // 선택한 결재자
-
-    if (!selectedApprover) {
-        // 결재자를 선택하지 않았을 경우
-        alert("결재자를 선택하세요.");
-        return;
-    }
-
-    fetch('/apprDesignation', {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({ approver: selectedApprover.value })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.res_code === '200') {
-            Swal.fire({
-                icon: 'success',
-                title: '성공',
-                text: '결재선이 저장되었습니다.',
-                confirmButtonText: '닫기'
-            }).then((result) => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('apprDesignationModal'));
-                modal.hide();
-            });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: '실패',
-                text: '결재선 저장에 실패했습니다.',
-                confirmButtonText: '닫기'
-            });
-        }
-    });
-});
-		
-   
-    
 		// 로그인한 사용자 정보 가져오기
 		document.addEventListener('DOMContentLoaded',function(){
 		const empNum = document.getElementById('empNum').value;
@@ -579,19 +529,49 @@ document.getElementById("saveDesignation").addEventListener("click", function ()
 		            console.error("Error fetching org chart data:", err);
 		        });
 		});
+		
+		document.getElementById('saveDesignation').addEventListener('click', function() {
+		    // 저장할 때 1차 또는 2차 결재자가 선택되었는지 확인
+		    if (currentApproverOrder === 1) {
+		        const approver1 = document.getElementById('approver1').innerText;
+		        if (!approver1 || approver1 === '결재선') {
+		            alert('1차 결재자를 선택하세요.');
+		            return;
+		        }
+		    } else if (currentApproverOrder === 2) {
+		        const approver2 = document.getElementById('approver2').innerText;
+		        if (!approver2 || approver2 === '결재선') {
+		            alert('2차 결재자를 선택하세요.');
+		            return;
+		        }
+		    }
+
+		    // 선택된 결재자 및 순서 초기화
+		    currentApproverOrder = 0;
+
+		    // 모달 닫기
+		    const modalElement = document.getElementById('apprDesignationModal');
+		    const modal = bootstrap.Modal.getInstance(modalElement);
+		    modal.hide();
+		});
+
+
 	
 		// jsTree에서 노드를 클릭했을 때 결재선에 반영하는 코드
 		$('#treeContainer').on('select_node.jstree', function (e, data) {
-		    const selectedName = data.node.text;  // 선택된 노드의 이름
+    		const selectedName = data.node.text;  // 선택된 노드의 이름
+    		console.log('Selected Approver:', selectedName); // 선택된 결재자 이름 확인용 로그
 
-		    // 현재 선택된 결재선 순서에 따라 반영
-		    if (currentApproverOrder === 1) {
-		        document.getElementById('approver1').innerText = selectedName;
-		    } else if (currentApproverOrder === 2) {
-		        document.getElementById('approver2').innerText = selectedName;
-		    }
+    		// 현재 선택된 결재선 순서에 따라 반영
+    		if (currentApproverOrder === 1) {
+        		document.getElementById('approver1').innerText = selectedName;
+    		} else if (currentApproverOrder === 2) {
+        		document.getElementById('approver2').innerText = selectedName;
+    		}
 		});
 
+	
+		
 
 	
 	
