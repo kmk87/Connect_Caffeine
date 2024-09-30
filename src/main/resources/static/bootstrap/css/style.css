@@ -43,7 +43,7 @@ h6 {
 --------------------------------------------------------------*/
 #main {
   margin-top: 60px;
-  padding: 20px 30px;
+  /* padding: 20px 30px; */
   transition: all 0.3s;
   display: flex;          /* Flexbox 활성화 */
   justify-content: flex-start;  /* 왼쪽 정렬 */
@@ -58,6 +58,7 @@ h6 {
 /*--------------------------------------------------------------
 # Page Title
 --------------------------------------------------------------*/
+
 
 .apprSidebar {
   position: fixed;
@@ -385,7 +386,7 @@ h6 {
 }
 
 .logo img {
-  
+
   margin-right: 6px;
 }
 

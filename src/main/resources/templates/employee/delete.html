@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Connect Caffeine</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
+<!-- Favicons -->
+<link href="/bootstrap/img/쿼카.png" rel="icon">
+<link href="/bootstrap/img/쿼카.png" rel="쿼카">
+<!-- Google Fonts -->
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link
+	href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+	rel="stylesheet">
+<!-- Vendor CSS Files -->
+<link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/boxicons/css/boxicons.min.css"
+	rel="stylesheet">
+<link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+<link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+<link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+<link href="/bootstrap/vendor/simple-datatables/style.css"
+	rel="stylesheet">
+<!-- Template Main CSS File -->
+<link href="/bootstrap/css/style.css" rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+.sub-sidebar {
+	width: 250px;
+	background-color: #fff;
+	padding: 20px;
+	font-size: 15px;
+	font-weight: 600;
+	color: #012970;
+}
+
+.subside_title {
+	font-size: 25px;
+}
+
+.card-body-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.basic-info {
+	display: flex;
+	width: 100%;
+}
+
+.basic-info-left {
+	flex: 0 0 40%;
+	padding: 10px;
+	box-sizing: border-box;
+	position: relative;
+}
+
+#emp_profile_img {
+	position: absolute;
+	top: 0;
+	left: 60%;
+	transform: translateX(-50%);
+	width: 200px;
+	height: 200px;
+}
+
+.basic-info-right {
+	flex: 0 0 60%;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.tight-line {
+	line-height: 1.2;
+	margin: 0;
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<!-- <div class="pagetitle">
+      <h1>인사 관리</h1>
+    </div>End Page Title -->
+			<div class="sub-sidebar" id="sub-sidebar">
+				<span class="subside_title">인사 관리</span><br> <br>
+				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
+				<h5>팀 정보</h5>
+			</div>
+			<section class="section dashboard" style="width: calc(100% - 250px);">
+				<div class="col-xxl-4 col-md-6" style="width: 100%;">
+					<div class="card info-card sales-card"
+						style="margin-top: 25px; margin-left: 25px;">
+						<div class="card-body">
+							<div class="card-body-header">
+								<h2 class="card-title"><b>퇴사 처리</b></h2>
+							</div>
+							<hr>
+							<form id="empDeleteFrm" method="POST" th:object="${dto}" action="/employee" enctype="multipart/form-data">
+								<input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}" /> <input type=hidden
+									name="emp_code" th:field="*{emp_code}"
+									th:value="${dto.emp_code}">
+								<div class="basic-info">
+									<div class="basic-info-left">
+										<img src="/bootstrap/img/이제훈_프로필.png" alt="Profile"
+											id="emp_profile_img" class="rounded-circle">
+									</div>
+									<div class="basic-info-right">
+										<table class="table table-bordered">
+											<colgroup>
+												<col style="width: 40%;">
+												<col style="width: 60%;">
+											</colgroup>
+											<tr>
+												<th>이름</th>
+												<td><span th:text="${dto.emp_name}"></span> 
+													<input type="hidden" name="emp_name" id="emp_name"
+													th:value="${dto.emp_name}">
+												</td>
+											</tr>
+											<tr>
+												<th>사원 번호</th>
+												<td><span th:text="${dto.emp_account}"></span> 
+													<input type="hidden" name="emp_account" id="emp_account"
+													th:value="${dto.emp_account}"> <input type="hidden"
+													name="emp_pw" id="emp_pw" th:value="${dto.emp_pw}">
+												</td>
+											</tr>
+											<tr>
+												<th>생년월일</th>
+												<td><span th:text="${formattedRegNo}"></span> 
+													<input type="hidden" name="emp_reg_no" id="emp_reg_no"
+													th:value="${dto.emp_reg_no}">
+												</td>
+											</tr>
+											<tr>
+												<th>주소</th>
+												<td>
+													<p
+														th:text="'(우편번호: ' + (${#strings.length(dto.emp_postcode) == 4} ? '0'+ ${dto.emp_postcode} : ${dto.emp_postcode}) + ')'"
+														class="tight-line"></p> <input type="hidden"
+													name="emp_postcode" id="emp_postcode"
+													th:value="${dto.emp_postcode}">
+													<p th:text="${dto.emp_addr + ' ' + dto.emp_addr_detail}"
+														class="tight-line"></p> <input type="hidden"
+													name="emp_addr" id="emp_addr" th:value="${dto.emp_addr}">
+													<input type="hidden" name="emp_addr_detail"
+													id="emp_addr_detail" th:value="${dto.emp_addr_detail}">
+												</td>
+											</tr>
+											<tr>
+												<th>부서</th>
+												<td><span th:text="${empDeptName}"></span>
+													<input type="hidden" name="emp_dept" id="emp_dept" th:value="${empDeptName}">
+												</td>
+											</tr>
+											<tr>
+												<th>팀</th>
+												<td><span th:text="${dto.group_name}"></span>
+													<input type="hidden" name="group_no" id="group_no" th:value="${groupNo}">
+												</td>
+											</tr>
+											<tr>
+												<th>직급</th>
+												<td><span th:text="${dto.emp_job_name}"></span>
+													<input type="hidden" name="job_code" id="job_code" th:value="${dto.emp_job_code}">
+												</td>
+											</tr>
+											<tr>
+												<th>휴대전화</th>
+												<td><span th:text="${dto.emp_phone}"></span>
+													<input type="hidden" name="emp_phone" id="emp_phone" th:value="${dto.emp_phone}">
+												</td>
+											</tr>
+											<tr>
+												<th>내선번호</th>
+												<td><span th:text="${dto.emp_desk_phone}"></span>
+													<input type="hidden" name="emp_desk_phone" id="emp_desk_phone" th:value="${dto.emp_desk_phone}">
+												</td>
+											</tr>
+											<tr>
+												<th>이메일</th>
+												<td><span th:text="${dto.emp_email}"></span>
+													<input type="hidden" name="emp_email" id="emp_email" th:value="${dto.emp_email}">
+												</td>
+											</tr>
+											<tr>
+												<th>입사일</th>
+												<td><span
+													th:text="${#temporals.format(dto.emp_hiredate, 'yyyy-MM-dd')}"></span>
+													<input type="hidden" name="emp_hiredate" id="emp_hiredate"
+													th:value="${dto.emp_hiredate}"></td>
+											</tr>
+											<tr>
+												<th>퇴사일</th>
+												<td><input type="date" class="form-control"
+													id="emp_resigndate" name="emp_resigndate"></td>
+											</tr>
+										</table>
+									</div>
+								</div>
+								<div class="d-flex align-items-center" style="display: flex; justify-content: flex-end;">
+									<button type="submit" class="btn btn-primary rounded-pill">완료</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+		<script
+			src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		<script>
+		const form = document.getElementById("empDeleteFrm");
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			
+		    // 입력 값 가져오기
+		    const empCode = document.getElementById("emp_code").value;
+		    const empName = document.getElementById("emp_name").value;
+		    const empAccount = document.getElementById("emp_account").value;
+		    const empPw = document.getElementById("emp_pw").value;
+		    const empRegNo = document.getElementById("emp_reg_no").value;
+		    const empPostcode = document.getElementById("emp_postcode").value;
+		    const empAddr = document.getElementById("emp_addr").value;
+		    const empAddrDetail = document.getElementById("emp_addr_detail").value;
+		    const empDept = document.getElementById("emp_dept").value;
+		    const empTeam = document.getElementById("group_no").value;
+		    const jobCode = document.getElementById("job_code").value;
+		    const empPhone = document.getElementById("emp_phone").value;
+		    const empDeskPhone = document.getElementById("emp_desk_phone").value;
+		    const empEmail = document.getElementById("emp_email").value;
+		    const empHiredate = document.getElementById("emp_hiredate").value;
+		 	const empResigndate = document.getElementById("emp_resigndate").value;
+		    
+		 	console.log('group_no' +empTeam);
+		 	
+		    // 유효성 검사
+		    let vali_check = false;
+		    let vali_text = "";
+		    
+		    if(empResigndate === ""){
+		    	vali_text += '퇴사일자를 지정하세요.\n';
+		    	form.emp_resigndate.focus();
+		    } else{
+		    	vali_check = true;
+		    }
+		    
+		 	// 유효성 검사 실패하면 실행 중단
+		    if (!vali_check) {
+		        alert(vali_text)
+		        return; 
+		    }
+		    
+		 	// // 문자열 데이터를 날짜 데이터로 전환
+		 	let empResigndateISO = null;
+		    
+		    if (empResigndate) {
+		    	empResigndateISO = new Date(empResigndate).toISOString();
+		    }
+		 	
+		    
+		    // 객체에 담아 보내기 
+		    const obj = {
+	    		 emp_code: empCode,
+	    		 emp_name: empName,
+	             emp_account: empAccount,
+	             emp_pw: empPw,
+	             emp_reg_no: empRegNo,
+	             emp_postcode: empPostcode,
+	             emp_addr: empAddr,
+	             emp_addr_detail: empAddrDetail,
+	             group_no: empTeam,
+	             emp_job_code: jobCode,
+	             emp_phone: empPhone,
+	             emp_desk_phone: empDeskPhone,
+	             emp_email: empEmail,
+	             emp_hiredate: empHiredate,
+	             emp_resign: 'y',
+		         emp_resigndate: empResigndateISO
+	     	 };
+		        
+		    
+			const csrfToken = document.getElementById("_csrf").value;
+			
+		      fetch('/employeeDelete/'+empCode, {
+		          method: 'POST',
+		          headers: {
+		              'Content-Type': 'application/json;charset=utf-8',
+		              "Accept": "application/json",
+		              'X-CSRF-TOKEN': csrfToken
+		              
+		          },
+		          body: JSON.stringify(obj)
+		      })
+		      .then(response => response.json())
+		      .then(data => {
+		          if (data.res_code === '200') {
+		              Swal.fire({
+		                  icon: 'success',
+		                  title: '성공',
+		                  text: data.res_msg,
+		                  confirmButtonText: "닫기"
+		              }).then((result) => {
+		                  location.href = "/employeeList";
+		              });
+		          } else {
+		              Swal.fire({
+		                  icon: 'error',
+		                  title: '실패',
+		                  text: data.res_msg,
+		                  confirmButtonText: "닫기"
+		              });
+		          }
+		      });
+			});
+		</script>
+	</th:block>
+	<!-- ======= Footer ======= -->
+	<footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+    </div>
+	<div class="credits">
+      All the links in the footer should remain intact.
+      You can delete the links only if you purchased the pro version.
+      Licensing information: https://bootstrapmade.com/license/
+      Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div> -->
+	</footer>
+	<!-- End Footer -->
+	<a href="#"
+		class="back-to-top d-flex align-items-center justify-content-center"><i
+		class="bi bi-arrow-up-short"></i></a>
+	<!-- Vendor JS Files -->
+	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+	<script src="/bootstrap/vendor/quill/quill.js"></script>
+	<script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+	<!-- Template Main JS File -->
+	<script src="/bootstrap/js/main.js"></script>
+</body>
+</html>

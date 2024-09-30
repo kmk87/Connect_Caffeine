@@ -30,7 +30,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Employee {
-	
+
 	
 		@Id
 	   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -105,6 +105,3 @@ public class Employee {
 	   private String empSignatureImagePath;
 	
 	
-}
-
-

@@ -66,6 +66,7 @@ public class EmployeeDto {
 				  this.group_parent_no = group_parent_no;
 				  this.group_name = group_name;
 			}
+
 		
 
 		// DTO -> Entity
@@ -156,4 +157,3 @@ public class EmployeeDto {
 					.build();
 		}
 }
-
