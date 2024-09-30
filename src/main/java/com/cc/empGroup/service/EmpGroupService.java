@@ -16,7 +16,7 @@ import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
 
-import com.cc.organization.domain.TreeMenuDto;
+import com.cc.tree.domain.TreeMenuDto;
 
 
 @Service
@@ -178,3 +178,4 @@ public class EmpGroupService {
 			return teamNo;
 		}
 	
+}

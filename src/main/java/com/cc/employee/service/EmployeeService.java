@@ -35,7 +35,7 @@ public class EmployeeService {
 		this.employeeRepository = employeeRepository;
 		this.empGroupRepository = empGroupRepository;
 		this.jobRepository = jobRepository;
-
+	}
 	
 	// 0. 메인
 	public EmployeeDto getEmployeeOne(String emp_account) {
@@ -175,7 +175,7 @@ public class EmployeeService {
 		Employee result = employeeRepository.save(emp);
 		
 		return result;
-	   
+	}  
 
 		// 팀명 가져오기
 		public List<String> getDataInfoName() {
@@ -271,12 +271,7 @@ public class EmployeeService {
 				return deptName;
 			}
 			
-			// 그룹 번호 가져오는 메소드
-			public Long getGroupNoByEmpCode(Long emp_code) {
-				Employee emp = employeeRepository.findById(emp_code).orElseThrow();
-				Long groupNo = emp.getEmpGroup().getGroupNo();
-				return groupNo;
-			}
+			
 		
     
 

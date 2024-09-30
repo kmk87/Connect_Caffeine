@@ -50,12 +50,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		List<EmployeeDto> findAllempList();
 		
 		
-		// 전자결재 관련
-		@Query("SELECT e.empName FROM Employee e " +
-		           "JOIN Approval a ON a.employee.empCode = e.empCode " +
-		           "WHERE e.empAccount = :memId")
-		    String findEmpNameByMemId(@Param("memId") String memId);
-		
 
 		@Modifying
 		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")

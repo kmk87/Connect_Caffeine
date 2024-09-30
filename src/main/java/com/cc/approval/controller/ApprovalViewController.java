@@ -1,6 +1,7 @@
 package com.cc.approval.controller;
 
 import java.awt.print.Pageable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -267,6 +269,23 @@ public class ApprovalViewController {
 	        return orgService.getOrgTree();  // 팀과 사원 데이터를 합쳐서 반환
 	    }
 		
+		
+		//결재선 저장
+		@ResponseBody
+		@PostMapping("/saveApprovalLine")
+		public Map<String, Object> saveApprovalLine(@RequestBody Map<String, String> approverData) {
+			String approvalNo = approverData.get("approvalNo");
+	        String empCode = approverData.get("empCode");  // 기안자의 empCode
+
+	        String approver1 = approverData.get("approver1"); // 1차 결재자
+	        String approver2 = approverData.get("approver2"); // 2차 결재자
+
+	        boolean success = approvalLineService.saveApprovalLine(approvalNo, empCode, approver1, approver2);
+
+	        Map<String, Object> response = new HashMap<String, Object>();
+	        response.put("success", success);
+	        return response;
+	    }
 		
 		
 		

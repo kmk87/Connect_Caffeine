@@ -14,10 +14,18 @@
 <title>기안서 작성</title>
 <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- jQuery 추가 -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <!-- jsTree와 Bootstrap을 사용할 경우 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet">
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet"> -->
+
+<!-- Include jQuery -->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	  <!-- Include jsTree CSS and JS -->
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+
+
 <style>
         .jstree-icon.ri-building-fill { /* 회사 아이콘 */
     color: #3e4a6e;
@@ -199,7 +207,7 @@
 						</div>
 						<div class="modal-body">
                 		<!-- 여기에 조직도 내용을 넣습니다 -->
-                			<div id="treeContainer"></div> <!-- 조직도 트리를 표시할 영역 -->
+                			<div id="treeContainer_appr" style="height: 400px; overflow: auto;"></div> <!-- 조직도 트리를 표시할 영역 -->
             			</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary"
@@ -287,7 +295,8 @@
 		</main>
 
 		<!-- JavaScript for Form Submission -->
-		<script>
+		<script th:inline="javascript">
+		
 
 		// 로그인한 사용자 정보 가져오기
 		document.addEventListener('DOMContentLoaded',function(){
@@ -484,15 +493,18 @@
 		}
 		
 		function formatDataForJsTree(nodes) {
-		    return nodes.map(node => {
+		    const formattedNodes = nodes.map(node => {
 		        return {
-		            id: node.id,  // 노드의 ID
-		            text: node.text,  // 노드의 텍스트 (이름)
-		            parent: node.parent === '1' ? '#' : node.parent,  // 부모 노드의 ID가 1이면 루트로 설정
-		            type: node.type,  // 노드 타입 (team 또는 employee)
-		            icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill'  // 팀이면 팀 아이콘, 직원이면 직원 아이콘
+		            id: node.id,
+		            text: node.text,
+		            parent: node.parent === '1' ? '#' : node.parent,  // '1'을 루트로 설정
+		            type: node.type,
+		            icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill'
 		        };
 		    });
+		    
+		    console.log("Formatted Data for jsTree:", formattedNodes);  // 변환된 데이터 확인
+		    return formattedNodes;
 		}
 
 
@@ -506,9 +518,10 @@
 
 		            // 조직도 데이터를 jsTree에 맞게 변환
 		            const formattedData = formatDataForJsTree(data);
+		            console.log("formattedData: "+formattedData);
 
 		            // jsTree 초기화 및 데이터 적용
-		            $('#treeContainer').jstree({
+		            $('#treeContainer_appr').jstree({
 		                'core': {
 		                    "animation": 0,
 		                    "check_callback": true,
@@ -555,10 +568,12 @@
 		    modal.hide();
 		});
 
-
+		
+		
+		
 	
 		// jsTree에서 노드를 클릭했을 때 결재선에 반영하는 코드
-		$('#treeContainer').on('select_node.jstree', function (e, data) {
+		$('#treeContainer_appr').on('select_node.jstree', function (e, data) {
     		const selectedName = data.node.text;  // 선택된 노드의 이름
     		console.log('Selected Approver:', selectedName); // 선택된 결재자 이름 확인용 로그
 
@@ -571,11 +586,45 @@
 		});
 
 	
-		
+		// 결재선 저장 버튼 클릭 이벤트 리스너
+	    document.getElementById('saveDesignation').addEventListener('click', function() {
+	        const selectedApprover1 = document.getElementById('approver1').innerText;
+	        const selectedApprover2 = document.getElementById('approver2').innerText;
+	        const csrfToken = document.getElementById("csrf_token").value;
+
+	        // 결재선 데이터를 전송할 객체
+	        const approverData = {
+	            approver1: selectedApprover1,
+	            approver2: selectedApprover2,
+	            approvalNo: document.getElementById('docu_no').value,
+	            empCode: document.getElementById('empNum').value // 기안자의 empCode
+	        };
+
+	        // 데이터 전송
+	        fetch('/saveApprovalLine', {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json',
+	                'X-CSRF-TOKEN': csrfToken
+	            },
+	            body: JSON.stringify(approverData)
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.success) {
+	                alert('결재선이 저장되었습니다.');
+	                location.reload(); // 페이지를 새로고침하거나 다른 작업을 수행
+	            } else {
+	                alert('결재선 저장에 실패했습니다.');
+	            }
+	        })
+	        .catch(error => console.error('Error:', error));
+	    });
 
 	
 	
     </script>
+    
 	</th:block>
 </body>
 </html>

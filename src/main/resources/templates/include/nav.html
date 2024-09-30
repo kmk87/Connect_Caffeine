@@ -6,15 +6,31 @@
   <title>Navigation</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-
+  <!-- Favicons -->
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="apple-touch-icon">
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
   <!-- 조직도 관련 -->
-	<!-- Include jQuery -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<!-- Include jsTree CSS and JS -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+	  <!-- Include jQuery -->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	  <!-- Include jsTree CSS and JS -->
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
   
 <style>
+
 #left-info {
     display: flex;
     flex-direction: column; /* 세로로 배치 (행) */
@@ -29,9 +45,11 @@
     background-color: #f0f0f0; /* 배경색 (선택 사항) */
     padding: 10px; /* 내부 여백 (선택 사항) */
 }
+
+
 </style>
 <!-- 조직도 끝 -->
-  
+
 </head>
   <body>
 <th:block th:fragment="navLayout">
@@ -55,7 +73,7 @@
           </a>
         </li>
           <li class="nav-item">
-          <a class="nav-link collapsed"  th:href="@{/Building}">
+          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
             <i class="ri-time-line"></i><span>예약 관리</span>
           </a>
         </li>
@@ -89,27 +107,58 @@
             <i class="bx bx-chat"></i><span>채팅</span>
           </a>
         </li>
-        <!-- Other nav items omitted for brevity -->
-        <li>
-        	<a class="nav-link collapsed" th:href="@{/toOrganization}">조직도</a>
+        <li class="nav-item">
+          <a class="nav-link collapsed" th:href="@{/toTree}">
+            <i class="bx bx-chat"></i><span>조직도 샘플</span>
+          </a>
         </li>
+        <!-- Other nav items omitted for brevity -->
       </ul>
+      <!-- 조직도 모달창1 -->
+      <button type="button" id="treeButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
+                조직도
+      </button>
+      <div class="modal fade" id="disablebackdrop" tabindex="-1" data-bs-backdrop="false">
+          <div class="modal-dialog">
+            <div class="modal-content" >
+              <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              	<div id="treeContainer"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+              </div>
+            </div>
+          </div>
+      </div>
+      <!-- 조직도 모달창1 끝-->
+      <!-- 조직도 모달창2 -->
+      <div class="modal fade" id="disablebackdrop2" tabindex="-1" data-bs-backdrop="false">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              	<div id="left-info">
+              		<div id="left1">첫 번째 칸</div>
+              		<div id="left2">두 번째 칸</div>
+              		<div id="left3">채팅 버튼</div>
+              	</div>
+              	<div id="right-info">
+              	</div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+              </div>
+            </div>
+          </div>
+      </div>
+       <!-- 조직도 모달창2 끝-->
     </aside><!-- End Sidebar-->
-</th:block>
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-  <!-- Vendor JS Files -->
-  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
-  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
-  <script src="/bootstrap/vendor/quill/quill.js"></script>
-  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
-  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
-  <!-- Template Main JS File -->
-  <script src="/bootstrap/js/main.js"></script>
-
-
 <!-- 조직도 js -->
 <script th:inline="javascript">
 document.addEventListener('DOMContentLoaded', function () {
@@ -132,6 +181,8 @@ document.addEventListener('DOMContentLoaded', function () {
         
         console.log(combinedData);
         
+       
+
         
         // 3. jsTree 생성
 		$("#treeContainer").jstree({
@@ -187,10 +238,22 @@ document.addEventListener('DOMContentLoaded', function () {
 	    modal.addEventListener('hidden.bs.modal', function () {
 	        $("#treeContainer").jstree("destroy").empty(); 
 	    });
-
 });
 
 </script>
-</body>
+<!-- 조직도 관련 js 끝 -->
+</th:block>
+  <!-- Vendor JS Files -->
+   <!-- Include jQuery -->
+  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+  <script src="/bootstrap/vendor/quill/quill.js"></script>
+  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+  <!-- Template Main JS File -->
+  <script src="/bootstrap/js/main.js"></script>
+  </body>
 </html>
-
