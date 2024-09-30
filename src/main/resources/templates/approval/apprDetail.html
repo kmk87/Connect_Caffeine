@@ -18,6 +18,9 @@
         <!-- 사이드바 -->
         <i class="bi bi-list toggle-sidebar-btn"></i>
         <aside id="apprSidebar" class="apprSidebar">
+        	<div class="pagetitle">
+      			<h1>전자결재</h1>
+    		</div>
             <ul class="sidebar-nav" id="sidebar-nav">
       		<li class="nav-item">
         		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
@@ -25,12 +28,12 @@
         		</a>
         			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           				<li>
-            				<a href="components-alerts.html">
+            				<a th:href="@{/standByDraft}">
               					<i class="bi bi-circle"></i><span>결재 대기 문서</span>
             				</a>
           				</li>
           				<li>
-            				<a href="components-accordion.html">
+            				<a th:href="@{/receiveDraft}">
               					<i class="bi bi-circle"></i><span>결재 수신 문서</span>
             				</a>
           				</li>
@@ -42,27 +45,27 @@
         		</a>
         			<ul id="components-nav_two" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           				<li>
-            				<a href="components-alerts.html">
+            				<a th:href="@{/draftStorage}">
               					<i class="bi bi-circle"></i><span>기안 문서함</span>
             				</a>
           				</li>
           				<li>
-            				<a href="components-accordion.html">
+            				<a th:href="@{/apprStorage}">
               					<i class="bi bi-circle"></i><span>결재 문서함</span>
             				</a>
           				</li>
           				<li>
-            				<a href="components-accordion.html">
+            				<a th:href="@{/referenceStorage}">
               					<i class="bi bi-circle"></i><span>참조 문서함</span>
             				</a>
           				</li>
           				<li>
-            				<a href="components-accordion.html">
+            				<a th:href="@{/apprTempStorage}">
               					<i class="bi bi-circle"></i><span>임시 저장함</span>
             				</a>
           				</li>
         			</ul>
-        		<a class="nav-link collapsed" data-bs-target="#components-nav"  href="#">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav"  th:href="@{/signSetting}">
           			<i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
         		</a>
       		</li>
@@ -84,53 +87,88 @@
             <form id="draftAdd">
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${dto.appr_writer_code != null ? dto.appr_writer_code : ''}">
-                <button class="btn-primary">결재선 지정</button>
-                <button class="btn-secondary" onclick="disableApproval()">삭제</button>
-                <input type="submit" class="btn-secondary" id="approval" name="approval" value="상신">
-                <button class="btn-secondary">취소</button>
+                <button type="button" class="btn btn-outline-danger" id="cancelBtn">취소</button>
                 
-			<div class="form-section">
-				
-				<table class="form-group" style="border: 1px solid;">
-					<tr>
-						<td id="apprDocuNo">문서번호</td>
-						<td th:text="${dto.appr_docu_no}"></td>
-					</tr>
-					<tr>
-						<td>팀명</td>
-						<td th:each="groupName : ${groupNames}" th:text="${groupName}"></td>
-						<!-- <td th:text="${dto.group_name}"></td> -->
-					</tr>
-					<tr>
-						<td>기안일</td>
-						<td th:text="${#temporals.format(dto.draft_day, 'yyyy-MM-dd')}"></td>
-					</tr>
-					<tr>
-						<td>기안자</td>
-						<td th:text="${dto.appr_writer_name}"></td>
-					</tr>
-				</table>
-				
-				
-			<div class="form-section">
-        		<div class="form-section">
-                            <table>
-                                <tr>
-                                    <td>결재</td>
-                                    <!-- <td th:text="${dto.appr_state}"></td> 결재 상태 표시  -->
-                                </tr>
-                                <tr>
-                                    <td>서명</td>
-                                    <td>서명 이미지나 데이터 추가 가능</td>
-                                </tr>
-                                <tr>
-                                    <td>참조</td>
-                                    <td>참조 정보 추가 가능</td>
-                                </tr>
-                            </table>
-                        </div>
-       			 	</div>
-    			</div>
+			<div class="form-content">
+						<div class="left-content-box">
+							<div class="form-section">
+								<table>
+									<tr>
+										<td>문서번호</td>
+										<td th:text="${documentNumber}"></td>
+									</tr>
+									<tr>
+										<td>팀명</td>
+										<td th:text="${groupNames}"></td>
+									</tr>
+									<tr>
+										<td>기안일</td>
+										<td th:text="${dto.getFormattedDraftDay()}"></td>
+									</tr>
+									<tr>
+										<td>기안자</td>
+										<td th:text="${dto.appr_writer_name}"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<!-- 결재선 테이블 -->
+						<div class="left-content">
+							<table class="approval-line-table">
+								<colgroup>
+									<col style="background-color: #d3d3d3;">
+								</colgroup>
+								<thead>
+									<tr>
+										<td rowspan="4"><b>결재선</b></td>
+										<td><button onclick="apprAdd()"
+												class="btn btn-outline-primary">1차 결재선 지정</button></td>
+										<td><button onclick="apprAdd()"
+												class="btn btn-outline-primary">2차 결재선 지정</button></td>
+									</tr>
+									<tr>
+										<td>대표이사</td>
+										<td>차장</td>
+									</tr>
+									<tr>
+										<td>서명</td>
+										<td>서명</td>
+									</tr>
+									<tr>
+										<td>결재자1</td>
+										<td>결재자2</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+
+						<!-- 참조선 테이블 -->
+						<div class="right-content">
+							<table class="reference-line-table">
+								<colgroup>
+									<col style="background-color: #d3d3d3;">
+								</colgroup>
+								<thead>
+									<tr>
+										<td rowspan="3"><b>참조선</b></td>
+										<td><button onclick="referAdd()"
+												class="btn btn-outline-primary">1차 참조선 지정</button></td>
+										<td><button onclick="referAdd()"
+												class="btn btn-outline-primary">2차 참조선 지정</button></td>
+									</tr>
+									<tr>
+										<td>대표이사</td>
+										<td>차장</td>
+									</tr>
+									<tr>
+										<td>결재자1</td>
+										<td>결재자2</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
 
 				
 				
@@ -165,7 +203,7 @@
                                 <button type="button" class="btn-delete">파일 제거</button>
                             </div>
                         </div>
-
+						<div class="formDiv">
                         <!-- 사유서 폼 -->
                         <div th:if="${dto.appr_form_no == 2}">
                             <div class="form-group">
@@ -199,10 +237,10 @@
                                 <button type="button" class="btn-delete">파일 제거</button>
                             </div>
                         </div>
+                        </div>
                 	</form>
         		</div>
         </main>
-    </th:block>
     <script>
     	function disableApproval(){
     		const approvalId = document.getElementById('empNum').value;
@@ -226,7 +264,15 @@
     		});
     	
     		}
+    		
+    	// 취소 버튼 이벤트
+	 	document.getElementById("cancelBtn").addEventListener("click", function() {
+	 	    if (confirm("작성을 취소하시겠습니까?")) {
+	 	        location.href = "/draftStorage";  // 취소 시 홈으로 이동
+	 	    }
+	 	});
     	
     </script>
+    </th:block>
 </body>
 </html>

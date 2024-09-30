@@ -2,33 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-
-<!-- Include jsTree CSS and JS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" /> <!-- // 여기 -->
-
-<!-- 조직도 끝 -->
   <meta charset="UTF-8">
   <title>Navigation</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-  <!-- Favicons -->
-  <link href="/bootstrap/img/쿼카.png" rel="icon">
-  <link href="/bootstrap/img/쿼카.png" rel="apple-touch-icon">
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  <!-- Vendor CSS Files -->
-  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
-  <!-- Template Main CSS File -->
-  <link href="/bootstrap/css/style.css" rel="stylesheet">
-  <!-- 조직도 시작 -->
 
+  <!-- 조직도 관련 -->
+	<!-- Include jQuery -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<!-- Include jsTree CSS and JS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  
+<style>
+#left-info {
+    display: flex;
+    flex-direction: column; /* 세로로 배치 (행) */
+    gap: 10px; /* 각 행 사이의 간격 설정 */
+}
+
+#left1, #left2, #left3 {
+    display: flex; 
+    justify-content: space-between; /* 각 행 내에서의 요소 정렬 (필요 시) */
+    align-items: center;
+    height: 100px; /* 각 행의 높이 설정 */
+    background-color: #f0f0f0; /* 배경색 (선택 사항) */
+    padding: 10px; /* 내부 여백 (선택 사항) */
+}
+</style>
+<!-- 조직도 끝 -->
+  
 </head>
   <body>
 <th:block th:fragment="navLayout">
@@ -92,25 +95,9 @@
         </li>
       </ul>
     </aside><!-- End Sidebar-->
-    <!-- 모달 -->
-<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width: 50%; margin-top: 50px;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="orgChartModalLabel">조직도</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-            	<!-- 조직도가 표시될 곳 -->
-                <div id="treeContainer"></div> 
-            </div>
-        </div>
-    </div>
-</div>
-
 </th:block>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
   <!-- Vendor JS Files -->
-   <!-- Include jQuery -->
   <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
@@ -121,5 +108,89 @@
   <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
   <!-- Template Main JS File -->
   <script src="/bootstrap/js/main.js"></script>
-  </body>
+
+
+<!-- 조직도 js -->
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('disablebackdrop');
+
+    
+    // 첫 번째 모달이 열릴 때 실행되는 코드
+    modal.addEventListener('show.bs.modal', function (event) {
+        
+        // 1. teamResult와 empResult 데이터를 Thymeleaf에서 자바스크립트로 전달
+        let teamData = /*[[${teamObj}]]*/ '[]';  // teamResult 데이터를 Thymeleaf에서 받아옴
+        let empData = /*[[${empObj}]]*/ '[]';   
+        
+        
+        // 2. JSON 형태로 변환
+        let parsedTeamData = JSON.parse(teamData);
+        let parsedEmpData = JSON.parse(empData); 
+        
+        let combinedData = [...parsedTeamData, ...parsedEmpData]; // 두 개의 데이터 병합
+        
+        console.log(combinedData);
+        
+        
+        // 3. jsTree 생성
+		$("#treeContainer").jstree({
+		    core: {
+		        data: combinedData, 
+		        themes: {
+		            icons: true
+		        }
+		    }
+		}).on('loaded.jstree', function(e, data) {
+
+			// 최상위 노드 자동으로 열기
+		    $('#treeContainer').jstree('open_node', $('#treeContainer li:first')); 
+		
+		    // 노드 타입에 따라 아이콘 설정
+		    $.each(data.instance._model.data, function(index, node) {
+		        
+		        if (!node.original) {
+		            console.log("Node without original data found at index:", index);
+		            return;
+		        }
+		        
+		    	var type = node.original.type; 
+		        var id = node.id; 
+		
+		        switch(type) {
+		            case "master":
+		                $('#treeContainer').jstree(true).set_icon(id, "bi bi-cup-fill"); 
+		                break;
+		            case "team":
+		                $('#treeContainer').jstree(true).set_icon(id, "bi bi-cup-fill");
+		                break;
+		            case "employee":
+		                $('#treeContainer').jstree(true).set_icon(id, "bi bi-person-fill"); 
+		                break;
+		         /*    default:
+		                console.log("Unknown type: " + type);  // 예상치 못한 타입은 로그로 출력 */
+		        }
+		    });
+		});
+    
+        
+        
+        // 4. 트리 노드 클릭 시 두 번째 모달 창 띄우기
+        $("#treeContainer").on("select_node.jstree", function (e, data) {
+            // 선택한 노드의 텍스트와 ID를 두 번째 모달에 표시-> 정보, 버튼 입력 가능
+            $("#treeContainer").html("<p>Selected node: " + data.node.text + "<br>pk 값: " + data.node.original.primaryKey + "</p>");
+			         
+	        });
+	    });
+
+	    // 첫 번째 모달이 닫힐 때 트리 상태 초기화
+	    modal.addEventListener('hidden.bs.modal', function () {
+	        $("#treeContainer").jstree("destroy").empty(); 
+	    });
+
+});
+
+</script>
+</body>
 </html>
+
