@@ -1,5 +1,6 @@
 package com.cc.employee.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,15 +12,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.cc.attendance.domain.Attendance;
 import com.cc.attendance.domain.AttendanceDto;
 import com.cc.attendance.service.AttendanceService;
 import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.service.EmpGroupService;
-import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 import com.cc.job.service.JobService;
+import com.cc.tree.service.OrgService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class EmployeeViewController {
@@ -28,16 +30,18 @@ public class EmployeeViewController {
 	private final EmpGroupService empGroupService;
 	private final JobService jobService;
 	private final AttendanceService attendanceService;
+	private final OrgService orgService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeViewController.class);
 	
 	@Autowired
 	public EmployeeViewController(EmployeeService employeeService, EmpGroupService empGroupService, 
-			JobService jobService, AttendanceService attendanceService) {
+			JobService jobService, AttendanceService attendanceService, OrgService orgService) {
 		this.employeeService = employeeService;
 		this.empGroupService = empGroupService;
 		this.jobService = jobService;
 		this.attendanceService = attendanceService;
+		this.orgService = orgService;
 	}
 	
 	@GetMapping("/login")
@@ -68,6 +72,45 @@ public class EmployeeViewController {
 		List<EmployeeDto> empDtoList = employeeService.selectEmployeeList();
 		
 		model.addAttribute("empDtoList", empDtoList);
+		
+		// 2. 조직도
+		// (1) 팀 정보
+		List<Map<String, Object>> teamResult = orgService.getOrgTeamTree();
+
+		// 앞에 전사, 사장, 부사장 정보 추가
+		Map<String, Object> teamNode1 = new HashMap<>(); // 전사
+
+		teamNode1.put("id", 1);
+		teamNode1.put("parent", "#");
+		teamNode1.put("text", "전사");
+		teamNode1.put("primaryKey", "없음.");
+		teamNode1.put("type", "master");
+		
+		teamResult.add(0, teamNode1);
+		
+		String teamObj = null;
+
+		try {
+			teamObj = new ObjectMapper().writeValueAsString(teamResult);
+
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		// (2) 사원 정보
+		List<Map<String, Object>> empResult = orgService.getOrgEmpTree();
+
+		String empObj = null;
+
+		try {
+			empObj = new ObjectMapper().writeValueAsString(empResult);
+
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		model.addAttribute("teamObj", teamObj);
+		model.addAttribute("empObj", empObj);
 
 		return "employee/list";
 	}
@@ -104,6 +147,45 @@ public class EmployeeViewController {
 		model.addAttribute("formattedRegNo",formattedRegNo);
 		model.addAttribute("empDeptName", empDeptName);
 		model.addAttribute("attnDtoList", attnDtoList);
+		
+		
+		// (3) 조직도
+		List<Map<String, Object>> teamResult = orgService.getOrgTeamTree();
+
+		// 앞에 전사, 사장, 부사장 정보 추가
+		Map<String, Object> teamNode1 = new HashMap<>(); // 전사
+
+		teamNode1.put("id", 1);
+		teamNode1.put("parent", "#");
+		teamNode1.put("text", "전사");
+		teamNode1.put("primaryKey", "없음.");
+		teamNode1.put("type", "master");
+		
+		teamResult.add(0, teamNode1);
+		
+		String teamObj = null;
+
+		try {
+			teamObj = new ObjectMapper().writeValueAsString(teamResult);
+
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		// 3. 사원 정보
+		List<Map<String, Object>> empResult = orgService.getOrgEmpTree();
+
+		String empObj = null;
+
+		try {
+			empObj = new ObjectMapper().writeValueAsString(empResult);
+
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		model.addAttribute("teamObj", teamObj);
+		model.addAttribute("empObj", empObj);
 		
 		return "employee/detail";
 	}

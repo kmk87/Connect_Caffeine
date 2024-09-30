@@ -32,6 +32,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		           "WHERE e.empAccount = :memId")
 		    String findEmpNameByMemId(@Param("memId") String memId);
 		
+		// 사원 리스트
+		@Query("SELECT e FROM Employee e ORDER BY e.empHiredate DESC")
+		List<Employee> findAllOrderByHiredateDesc();
+		
 		// 사원 번호 추출
 		@Query("SELECT CONCAT('b', " +
 			       "LPAD(CAST(SUBSTRING(CAST(YEAR(CURRENT_DATE) AS string), 3, 2) AS string), 2, '0'), " +

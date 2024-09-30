@@ -90,10 +90,7 @@ table td, table th {
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
 			<div class="sub-sidebar" id="sub-sidebar">
-				<span class="subside_title">인사 관리</span><br>
-				<br>
-				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
-				<h5>팀 정보</h5>
+				<div id="treeContainer" style="width: 300px;"></div>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
 				<div class="col-xxl-4 col-md-6" style="width: 100%;">

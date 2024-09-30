@@ -94,7 +94,7 @@ public class EmployeeService {
 	// 2-1. 목록(list)
 	public List<EmployeeDto> selectEmployeeList() {
 		
-		List<Employee> employeeList = employeeRepository.findAll();
+		List<Employee> employeeList = employeeRepository.findAllOrderByHiredateDesc();
 		
 		List<EmployeeDto> employeeDtoList = new ArrayList<EmployeeDto>();
 		
