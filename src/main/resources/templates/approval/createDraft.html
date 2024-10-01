@@ -191,16 +191,16 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<td><button type="button" onclick="referAdd()"
+										<td><button type="button" onclick="setReferOrder(1)"
 												class="btn btn-outline-primary" data-bs-toggle="modal"
 												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
-										<td><button type="button" onclick="referAdd()"
+										<td><button type="button" onclick="setReferOrder(2)"
 												class="btn btn-outline-primary" data-bs-toggle="modal"
 												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td>
 									</tr>
 									<tr>
-										<td>참조선1</td>
-										<td>참조선2</td>
+										<td id="referer1" data-emp-code="">참조선</td>
+										<td id="referer2" data-emp-code="">참조선</td>
 									</tr>
 								</thead>
 							</table>
@@ -317,13 +317,24 @@
 		<script>
     // 결재선 관련 로직
     let currentApproverOrder = 0;
+    let currentReferOrder = 0;
     let approvalLineList = []; // 결재선 리스트
 
-    // 1차 또는 2차 결재선 버튼을 클릭할 때 순서를 지정하는 함수
+ 	// 결재선 지정 버튼 클릭 시 호출되는 함수
     function setApproverOrder(order) {
-        currentApproverOrder = order;  // 1차인지 2차인지 설정
+        currentApproverOrder = order;  // 1차 또는 2차 결재선 설정
+        currentReferOrder = 0;         // 참조선 순서는 초기화
         console.log("Current approver order set to: " + order);
     }
+
+    // 참조선 지정 버튼 클릭 시 호출되는 함수
+    function setReferOrder(order) {
+        currentReferOrder = order;     // 1차 또는 2차 참조선 설정
+        currentApproverOrder = 0;      // 결재선 순서는 초기화
+        console.log("Current refer order set to: " + order);
+    }
+    
+ 
 document.addEventListener('DOMContentLoaded', function() {
 
     function formatDataForJsTree(nodes) {
@@ -379,30 +390,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
  	
  
- // 결재자 선택 시 처리 로직
+ 	// 결재자 및 참조자 선택 시 처리 로직
     $('#treeContainer_appr').on('select_node.jstree', function(e, data) {
         const selectedName = data.node.text;
         const selectedEmpCode = data.node.original.li_attr['data-emp-code'];
 
-        console.log("선택된 결재자 이름: " + selectedName);
-        console.log("선택된 결재자의 empCode: " + selectedEmpCode);
+        console.log("선택된 사용자 이름: " + selectedName);
+        console.log("선택된 사용자의 empCode: " + selectedEmpCode);
 
-     // 결재선 지정 로직
+        // 결재선 지정 로직
         if (currentApproverOrder === 1) {
             const approver1 = document.getElementById('approver1');
             approver1.innerText = selectedName;
             approver1.setAttribute('data-emp-code', selectedEmpCode);
             console.log("approver1에 저장된 empCode: " + approver1.getAttribute('data-emp-code'));
+            saveApprovalLine(1, selectedEmpCode, 'approver'); // 1차 결재선 저장
         } else if (currentApproverOrder === 2) {
             const approver2 = document.getElementById('approver2');
             approver2.innerText = selectedName;
             approver2.setAttribute('data-emp-code', selectedEmpCode);
             console.log("approver2에 저장된 empCode: " + approver2.getAttribute('data-emp-code'));
+            saveApprovalLine(2, selectedEmpCode, 'approver'); // 2차 결재선 저장
         }
-    
-        // 결재선 리스트에 추가
-        saveApprovalLine(currentApproverOrder, selectedEmpCode, 'approver');
+
+        // 참조선 지정 로직
+        if (currentReferOrder === 1) {
+            const referer1 = document.getElementById('referer1');
+            referer1.innerText = selectedName;
+            referer1.setAttribute('data-emp-code', selectedEmpCode);
+            console.log("referer1에 저장된 empCode: " + referer1.getAttribute('data-emp-code'));
+            saveApprovalLine(null, selectedEmpCode, 'referer'); // 1차 참조선 저장
+        } else if (currentReferOrder === 2) {
+            const referer2 = document.getElementById('referer2');
+            referer2.innerText = selectedName;
+            referer2.setAttribute('data-emp-code', selectedEmpCode);
+            console.log("referer2에 저장된 empCode: " + referer2.getAttribute('data-emp-code'));
+            saveApprovalLine(null, selectedEmpCode, 'referer'); // 2차 참조선 저장
+        }
     });
+ 
  
  // 결재선 리스트에 저장하는 함수
     function saveApprovalLine(order, empCode, type) {
@@ -429,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Current approvalLineList:", approvalLineList);
     }
  
-
+ 
     // 저장 버튼 클릭 시 결재자 정보 저장
     document.getElementById("saveDesignation").addEventListener("click", function() {
         const selectedApproverElement = currentApproverOrder === 1 ? document.getElementById('approver1') : document.getElementById('approver2');

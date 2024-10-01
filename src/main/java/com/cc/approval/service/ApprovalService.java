@@ -337,20 +337,6 @@ public class ApprovalService {
 	// 결재문서함 데이터 리스트
 		public List<ApprovalDto> getPendingApprovalDtosForCurrentUser(int size) {
 		    // 현재 로그인한 사용자의 emp_code 가져오기
-//		    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
-//		    Employee currentUser = employeeRepository.findByempAccount(currentUserId);
-//		     
-	//
-//		    // 페이지 요청 생성 (page와 size를 받아서 처리)
-//		    Pageable pageable = PageRequest.of(0,size);
-	//
-//		    // 결재 상태가 'S'이고 현재 사용자가 결재자로 등록된 문서 조회
-//		    Page<Approval> pendingApprovals = approvalLineRepository.findPendingApprovalsForCurrentUser(currentUser.getEmpCode(), pageable);
-	//
-//		    // Approval 엔티티를 ApprovalDto로 변환하여 반환
-//		    return pendingApprovals.getContent().stream()
-//		        .map(approval -> new ApprovalDto().toDto(approval))
-//		        .collect(Collectors.toList());
 			String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 		    Employee currentUser = employeeRepository.findByempAccount(currentUserId);
 		     
