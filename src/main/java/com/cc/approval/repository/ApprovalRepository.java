@@ -15,7 +15,7 @@ import com.cc.approval.domain.ApprovalLine;
 
 public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
-	Approval findByApprNo(Long appr_no);
+Approval findByApprNo(Long appr_no);
 	
 	Approval findByEmployee_EmpCode(Long empCode);
 	
@@ -48,6 +48,9 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     @Query("SELECT a FROM Approval a JOIN a.approvalLines al WHERE al.employee.empCode = :empCode AND al.apprOrder = 2 AND al.apprState = 'S'")
     List<Approval> findDocumentsForSecondApprover(@Param("empCode") Long empCode);
 
+
+
+    
 
 
     

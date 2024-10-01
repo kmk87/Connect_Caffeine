@@ -6,11 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.springframework.stereotype.Service;
-
-
-import com.cc.calendar.domain.CalendarDto;
 
 import com.cc.empGroup.domain.EmpGroup;
 import com.cc.empGroup.repository.EmpGroupRepository;
@@ -19,6 +15,8 @@ import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.job.domain.Job;
 import com.cc.job.repository.JobRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -135,6 +133,8 @@ public class EmployeeService {
 	    public Employee findByEmpCode(Long empCode) {
 	        return employeeRepository.findByempCode(empCode);   
 	    }
+	
+
 	    
 	 // 그룹 번호 가져오는 메소드
 	 		public Long getGroupNoByEmpCode(Long emp_code) {
@@ -294,5 +294,8 @@ public class EmployeeService {
         }
         return null; // 팀명이 없을 경우 null 반환
     }
+    
+   
+   
     
 }

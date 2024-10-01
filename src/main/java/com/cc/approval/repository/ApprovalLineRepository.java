@@ -1,7 +1,6 @@
 package com.cc.approval.repository;
 
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +12,11 @@ import org.springframework.data.repository.query.Param;
 
 import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalLine;
-import com.cc.approval.domain.ApprovalLineDto;
+
 
 public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long>{
+	
+	
 	
 	List<ApprovalLine> findByApproval(Approval approval);
 	

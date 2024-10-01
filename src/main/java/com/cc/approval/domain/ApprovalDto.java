@@ -3,6 +3,7 @@ package com.cc.approval.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import com.cc.employee.domain.Employee;
 
@@ -37,6 +38,11 @@ public class ApprovalDto {
     private LocalDate appr_holi_start; 
     private LocalDate appr_holi_end;
     private String docu_no;
+    private String emp_account;
+    
+    // 결재선 리스트 추가
+    private List<ApprovalLineDto> approvalLineList;
+    
 
     // 날짜를 문자열로 변환하는 메소드 추가
     public String getFormattedDraftDay() {
