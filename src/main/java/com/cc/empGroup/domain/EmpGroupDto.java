@@ -1,3 +1,4 @@
+
 package com.cc.empGroup.domain;
 
 import java.time.LocalDateTime;
@@ -68,3 +69,4 @@ public class EmpGroupDto {
 	}
 	
 }
+

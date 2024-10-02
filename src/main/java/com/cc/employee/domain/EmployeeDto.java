@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -20,6 +22,7 @@ import lombok.ToString;
 @ToString
 @Builder
 public class EmployeeDto {
+
       
       private Long emp_code;
       private Long group_no;
@@ -156,3 +159,4 @@ public class EmployeeDto {
                .build();
       }
 }
+

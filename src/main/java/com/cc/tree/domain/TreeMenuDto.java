@@ -1,3 +1,4 @@
+
 package com.cc.tree.domain;
 
 import lombok.AllArgsConstructor;
@@ -23,3 +24,4 @@ public class TreeMenuDto {
 	 private String type;		// 아이콘 변경 시 활용
 	 private boolean opened;
 }
+

@@ -1,5 +1,6 @@
 package com.cc.employee.repository;
 
+
 import java.util.List;
 
 
@@ -19,8 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		
 		
 		Employee findByempAccount(String emp_account);
-
-		
+  
 		Employee findByempName(String emp_name);
 
 		// empAccount(사용자 이름)로 emp_code를 찾는 메서드

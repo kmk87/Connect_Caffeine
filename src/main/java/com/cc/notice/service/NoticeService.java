@@ -1,3 +1,4 @@
+
 package com.cc.notice.service;
 
 import java.util.ArrayList;
@@ -23,9 +24,7 @@ public class NoticeService {
 	
 	
 	public List<NoticeDto> selectNoticeList(){
-		List<Notice> noticeList = null;
-		
-		noticeList = noticeRepository.findAll();
+		List<Notice> noticeList = noticeRepository.findAll();
 		
 		List<NoticeDto> noticeDtoList = new ArrayList<NoticeDto>();
 		for(Notice n : noticeList) {
@@ -85,3 +84,4 @@ public class NoticeService {
 		return result;
 	}
 }
+
