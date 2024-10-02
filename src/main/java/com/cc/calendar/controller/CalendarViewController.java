@@ -22,6 +22,8 @@ import com.cc.empGroup.service.EmpGroupService;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.employee.service.EmployeeService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @Controller
 public class CalendarViewController {
@@ -46,7 +48,7 @@ public class CalendarViewController {
 	}
 	
 	  @GetMapping("/calendar")
-	    public String calendarView(Model model) {
+	    public String calendarView(HttpServletRequest request, Model model) {
 
 		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		  User user =(User)authentication.getPrincipal();
@@ -58,6 +60,8 @@ public class CalendarViewController {
 //		  System.out.println("teamNo : "+teamNo);
 		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
 //		  System.out.println("deptNo : "+deptNo);
+		  String currentUri = request.getRequestURI();
+	      model.addAttribute("currentUri", currentUri);
 		// Thymeleaf로 전달
 	        model.addAttribute("deptNo", deptNo);  // 부서번호
 	        model.addAttribute("teamNo", teamNo);  // 팀번호

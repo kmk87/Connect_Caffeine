@@ -1,10 +1,6 @@
 package com.cc.empGroup.service;
 
 
-import org.springframework.stereotype.Service;
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +11,6 @@ import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
-import com.cc.organization.domain.TreeMenuDto;
-
-
 
 @Service
 public class EmpGroupService {
@@ -41,6 +34,7 @@ public class EmpGroupService {
 				.groupParentNo(dto.getGroup_parent_no())
 				.groupName(dto.getGroup_name())
 				.groupLeaderCode(dto.getGroup_leader_code())
+//				.groupRegDate(dto.getGroup_reg_date())
 				.groupHeadcount(dto.getGroup_headcount())
 				.groupLocation(dto.getGroup_location())
 				.groupStatus(dto.getGroup_status())
@@ -170,18 +164,12 @@ public class EmpGroupService {
 		return leader;
 	}
 	
+
 	// 부서 번호 가져오는 메소드
-			public Long getGroupNoByEmpCode(Long group_no) {
-				EmpGroup empGroup = empGroupRepository.findById(group_no).orElseThrow();
-				Long teamNo = empGroup.getGroupParentNo();
-				return teamNo;
-			}
-	
-	
-	// 부모 그룹 번호로 부서 멤버를 가져오는 메서드
-    public List<EmpGroup> getEmployeesByDeptNo(Long groupParentNo) {
-        return empGroupRepository.findByGroupParentNo(groupParentNo);
-    }
+		public Long getGroupNoByEmpCode(Long group_no) {
+			EmpGroup empGroup = empGroupRepository.findById(group_no).orElseThrow();
+			Long teamNo = empGroup.getGroupParentNo();
+			return teamNo;
+		}
 	
 }
-

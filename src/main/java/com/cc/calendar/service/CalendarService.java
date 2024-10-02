@@ -118,6 +118,7 @@ public class CalendarService {
 	    return calendarRepository.save(calendar);
 	}
 	
+	// 일정 삭제
 	public int deleteSchedule(Long schedule_no) {
 		int result = 0;
 		try {

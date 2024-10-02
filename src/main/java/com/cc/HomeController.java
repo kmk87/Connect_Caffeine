@@ -19,6 +19,8 @@ import com.cc.tree.service.OrgService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class HomeController {
 
@@ -33,12 +35,13 @@ public class HomeController {
 	}
 
 	@GetMapping({ "", "/" })
-	public String home(Model model) {
+	public String home(HttpServletRequest request, Model model) {
 		// 1. 로그인
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
 		String username = user.getUsername();
-
+		String currentUri = request.getRequestURI();
+        model.addAttribute("currentUri", currentUri);
 		EmployeeDto dto = employeeService.getEmployeeOne(username);
 
 		model.addAttribute("dto", dto);

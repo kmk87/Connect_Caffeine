@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,7 @@ public class NotificationService {
             notificationDto.setNotificationContent(message);
             notificationDto.setNotificationType("SCHEDULE");
             notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calnedar");
+            notificationDto.setRelatedLink("/calendar");
             
             notificationHandler.saveAndSendNotification(notificationDto);
         }
@@ -59,7 +60,7 @@ public class NotificationService {
             notificationDto.setNotificationContent(message);
             notificationDto.setNotificationType("SCHEDULE");
             notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calnedar");
+            notificationDto.setRelatedLink("/calendar");
 
             notificationHandler.saveAndSendNotification(notificationDto);
         }
@@ -74,7 +75,7 @@ public class NotificationService {
             notificationDto.setNotificationContent(message);
             notificationDto.setNotificationType("SCHEDULE");
             notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calnedar");
+            notificationDto.setRelatedLink("//calendar");
             
             notificationHandler.saveAndSendNotification(notificationDto);
         }
@@ -164,6 +165,50 @@ public class NotificationService {
         return notificationDtoList;
     }
     
+   // 알림 삭제
+    public int deleteNotificationsByIds(List<Long> notificationIds) {
+		int result = 0;
+		try {
+			notificationRepository.deleteAllById(notificationIds);
+			result = 1;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+    
+    //알림 읽음 처리
+    public boolean markAsRead(List<Long> notificationIds) {
+        try {
+            notificationRepository.markAsRead(notificationIds);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // 읽음 처리(종모양) 
+    @Transactional
+    public void updateNotificationReadStatus(Long notificationId) {
+        notificationRepository.updateNotificationReadStatus(notificationId);
+    }
+    
+ // 일정 시간이 지난 알림 자동 삭제 
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+    public void deleteOldNotifications() {
+        LocalDateTime thresholdDate = LocalDateTime.now().minusDays(10); 
+        List<Notification> oldNotifications = notificationRepository.findBySentTimeBefore(thresholdDate);
+        
+        if (!oldNotifications.isEmpty()) {
+            List<Long> oldNotificationIds = oldNotifications.stream()
+                    .map(Notification::getNotificationNo)
+                    .collect(Collectors.toList());
+            notificationRepository.deleteAllById(oldNotificationIds);
+            System.out.println(oldNotificationIds.size() + "개의 오래된 알림이 삭제되었습니다.");
+        }
+    }
+
 
     
 }

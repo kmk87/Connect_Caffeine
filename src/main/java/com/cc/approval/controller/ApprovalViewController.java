@@ -26,6 +26,8 @@ import com.cc.employee.service.EmployeeService;
 import com.cc.security.vo.SecurityUser;
 import com.cc.tree.service.OrgService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class ApprovalViewController {
 	
@@ -51,13 +53,15 @@ public class ApprovalViewController {
 
 	// 전자결재 홈
 	 @GetMapping("/approvalHome")
-	 public String showApprovalHome(Model model) {
+	 public String showApprovalHome(HttpServletRequest request, Model model) { 
 	        // 데이터베이스에서 결재 진행 문서 리스트를 조회
 	        List<ApprovalDto> top5Approvals = approvalService.getAllApprovals(5); 
 	        
 	        // 상위 5개 항목만 가져오기-내림차순
 	        //List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 5 ? apprDtoList.subList(0, 5) : apprDtoList;
-	        
+	        String currentUri = request.getRequestURI();
+		     model.addAttribute("currentUri", currentUri);
+		     
 	        model.addAttribute("apprDtoList", top5Approvals); 
 
 	        

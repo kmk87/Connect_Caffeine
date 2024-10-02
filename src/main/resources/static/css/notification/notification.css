@@ -15,6 +15,29 @@
 	background-color: #fff;
 }
 
+/* 기본 링크 스타일 */
+.sidebar-link {
+    color: #012970; /* 기본 텍스트 색상 */
+    text-decoration: none;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+/* 현재 페이지가 활성화된 경우 (active 상태) */
+.sidebar-link.active {
+    background-color: #f6f9ff; /* 활성화된 페이지의 배경색 */
+    color: #4154f1; /* 활성화된 페이지의 텍스트 색상 */
+    width: 230px;
+}
+
+/* hover 시 스타일 */
+.sidebar-link:hover {
+    background-color: #f6f9ff; /* hover 시 배경색 */
+    color: #4154f1; /* hover 시 텍스트 색상 */
+    width: 230px;
+}
+
+
 .notification-list {
 	position: fixed;
 	background-color: #fff;
@@ -28,7 +51,8 @@
 	font-size: 24px;
 	font-weight: bold;
 	padding-left: 30px;
-	padding-top: 20px;
+	padding-top: 30px;
+	padding-bottom: 20px;
 }
 
 /* 테이블 스타일 */
@@ -56,7 +80,7 @@ table thead {
 /* 첫 번째 td의 배경색을 흰색으로 설정 */
 .notification-list td:first-child {
 	padding-left: 30px !important;
-	width:7%;
+	width:5%;
 	
 }
 
@@ -133,7 +157,8 @@ table thead {
 .notification-buttons-select {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 10px;
+	margin-bottom: 8px;
+	margin-top:8px;
 	padding-left: 30px;
 }
 
@@ -141,9 +166,11 @@ table thead {
 	padding-right: 50px;
 }
 
-.notification-buttons button {
-	margin-right: 10px;
+.read-notification {
+    background-color: #f0f0f0; /* 읽은 알림의 배경색 */
+    color: #999999; /* 읽은 알림의 텍스트 색상 */
 }
+
 
 /* a 태그 기본 색상 변경 */
     a {

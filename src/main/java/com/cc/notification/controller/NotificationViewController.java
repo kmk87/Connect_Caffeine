@@ -4,12 +4,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cc.employee.service.EmployeeService;
 import com.cc.notification.domain.NotificationDto;
@@ -67,10 +70,15 @@ public class NotificationViewController {
 	        // 수신자가 현재 로그인한 사용자이고, 읽지 않은 알림 가져오기
 	        List<NotificationDto> unreadNotifications = notificationService.getUnreadNotifications(empCode);
 	        model.addAttribute("unreadNotifications", unreadNotifications);
+	        System.out.println("unreadNotifications : " + unreadNotifications);
 	        return "notification/unReadNotification"; 
 	    }
 
-	
+	 @PostMapping("/updateReadStatus")
+	    public ResponseEntity<String> updateReadStatus(@RequestParam("notificationId") Long notificationId) {
+	        notificationService.updateNotificationReadStatus(notificationId);
+	        return ResponseEntity.ok("알림이 읽음 처리되었습니다.");
+	    }
 
 
 
