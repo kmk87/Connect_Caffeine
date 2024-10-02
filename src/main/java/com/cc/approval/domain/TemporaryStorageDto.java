@@ -1,5 +1,7 @@
 package com.cc.approval.domain;
 
+import java.time.LocalDate;
+
 import com.cc.employee.domain.Employee;
 
 import lombok.AllArgsConstructor;
@@ -18,22 +20,46 @@ import lombok.ToString;
 public class TemporaryStorageDto {
 	
 	private Long tem_no;
-	private Long appr_no;
 	private Long emp_code;
 	private String appr_title;
 	private String appr_content;
 	private Long appr_form_no;
-
+	private String formName;
+	private Integer appr_holi_use_count;
+	private LocalDate appr_holi_start;
+	private LocalDate appr_holi_end;
+	
+	// 결재 양식 이름 설정 메소드
+    public void setFormName() {
+        if (this.appr_form_no != null) {
+            switch (this.appr_form_no .intValue()) {
+                case 1:
+                    this.formName = "휴가신청서";
+                    break;
+                case 2:
+                    this.formName = "사유서";
+                    break;
+                case 3:
+                    this.formName = "품의서";
+                    break;
+                default:
+                    this.formName = "알 수 없음"; 
+                    break;
+            }
+        } else {
+            this.formName = "알 수 없음";
+        }
+    }
 	
 	
-	
-	
-	public TemporaryStorage toEntity(Approval approval,Employee employee,ApprForm apprform) {
+	public TemporaryStorage toEntity(Employee employee,ApprForm apprform) {
 		return TemporaryStorage.builder()
 				.temNo(tem_no)
 				.apprTitle(appr_title)
-				.apprContent(appr_content)
-				.approval(approval)
+	            .apprContent(appr_content)
+	            .apprHoliUseCount(appr_holi_use_count)
+	            .apprHoliStart(appr_holi_start) 
+	            .apprHoliEnd(appr_holi_end)
 				.employee(employee)
 				.apprForm(apprform)
 				.build();
@@ -41,14 +67,23 @@ public class TemporaryStorageDto {
 	
 	
 	public TemporaryStorageDto toDto(TemporaryStorage temporaryStorage) {
-		return TemporaryStorageDto.builder()
-				.tem_no(temporaryStorage.getTemNo())
-				.appr_no(temporaryStorage.getApproval().getApprNo())
-                .emp_code(temporaryStorage.getEmployee().getEmpCode())
-                .appr_title(temporaryStorage.getApprTitle())
-                .appr_content(temporaryStorage.getApprContent())
-				.build();
+		TemporaryStorageDto dto = TemporaryStorageDto.builder()
+		        .tem_no(temporaryStorage.getTemNo())
+		        .emp_code(temporaryStorage.getEmployee().getEmpCode())
+		        .appr_title(temporaryStorage.getApprTitle())
+		        .appr_content(temporaryStorage.getApprContent())
+		        .appr_holi_use_count(temporaryStorage.getApprHoliUseCount())
+		        .appr_form_no(temporaryStorage.getApprForm().getApprFormNo()) // appr_form_no 값 설정
+		        .build();
+		    
+		    // formName 설정 메소드 호출
+		    dto.setFormName();
+		    
+		    return dto;
 	}
+	
+	
+	
 	
 	
 }

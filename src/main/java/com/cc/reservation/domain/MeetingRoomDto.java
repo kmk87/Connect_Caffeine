@@ -40,4 +40,5 @@ public class MeetingRoomDto {
 				.building_no(meetingRoom.getBuilding().getBuildingNo())
 				.build();
 	}
+
 }

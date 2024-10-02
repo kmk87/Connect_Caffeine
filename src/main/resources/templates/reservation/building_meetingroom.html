@@ -24,7 +24,7 @@
   <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
-  <link href="/bootstrap/css/nav_sider.css" rel="stylesheet">
+  <link href="/css/reservation/nav_sider.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   	<style>
@@ -317,10 +317,10 @@
         
         
 <!-- 회의실 생성 폼 -->
-<form id="meetingRoomAddFrm" method="post">
+<form id="meetingRoomAddFrm">
 
     <input type="hidden" id="buildingNo" name="buildingNo" value="1"> <!-- 빌딩 번호 -->
-    <input type="hidden" name="_csrf" value="${_csrf.token}"> <!-- CSRF 토큰 -->
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"> <!-- CSRF 토큰 -->
 
     <label for="meetingName">회의실 이름:</label>
     <input type="text" id="meetingName" name="meetingName" required>
@@ -357,7 +357,7 @@
       </div>
 			<script>
 			
-			// 회의실 정보를 보려고 들어가는 기능
+			// 회의실 정보
 			function showMeetingTab(button){
 			    const buildingNo = button.getAttribute('data-building-no');
 			    const parsedBuildingNo = parseInt(buildingNo); // 'paseInt'를 'parseInt'로 수정
@@ -367,7 +367,6 @@
 			    window.location.href = `/building_meetingroom/${parsedBuildingNo}`;
 			}
 				
-				//빌딩 버튼을 눌렀을때 다시 들어가는 기능 회의실에서 빌딩 누르면 다시 보이게(새로고침?).
 				function showBuildingTab(button) {
 				    const buildingNo = button.getAttribute('data-building-no');
 				    const parsedBuildingNo = parseInt(buildingNo);
@@ -409,9 +408,8 @@
 			});
 
 			const form = document.getElementById("meetingRoomAddFrm");
-			form.addEventListener('submit', (e) => {
+			form.addEventListener('submit', function(e) {
 			    e.preventDefault(); // 폼의 기본 제출 방식을 막습니다.
-			    console.log("Form submission prevented"); // 이 메시지가 출력되는지 확인
 			    let vali_check = false;
 			    let vali_text = "";
 
@@ -439,17 +437,18 @@
 			            meetingLocation: form.meetingLocation.value,
 			            maxPeople: form.maxPeople.value
 			        };
-
+			        console.log(payload)
 			        // CSRF 토큰을 가져옴
-			        const csrfToken = form.querySelector('input[name="_csrf"]').value;
-
+					const csrfToken = form.querySelector('input[name="_csrf"]').value; // CSRF 토큰 가져오기
+					console.log(csrfToken)
+					console.log(1)
 			        // 서버로 POST 요청
 			        fetch('/meeting_room', {
 			            method: 'POST',
 			            body: payload,
 			            headers: {
 			                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 추가
-			            },
+			            }
 			        })
 			        .then(response => response.json()) // 서버에서 JSON 응답 받기
 			        .then(data => {
@@ -486,7 +485,7 @@
 			
 			 // 회의실 수정 모달 열기
 		    function editMeetingRoom(meetingNo) {
-		      fetch(`/api/meeting_room/${meetingNo}`)
+		      fetch(`/meeting_room/${meetingNo}`)
 		        .then(response => response.json())
 		        .then(data => {
 		          document.getElementById("editMeetingRoomId").value = data.meetingNo;
@@ -524,7 +523,7 @@
 			        maxPeople: document.getElementById("editMaxPeople").value
 			      };
 	
-			      fetch(`/api/meeting_room/${meetingNo}`, {
+			      fetch(`/meeting_roomUpdate/${meetingNo}`, {
 			        method: 'POST',
 			        headers: {
 			          'Content-Type': 'application/json'
@@ -558,8 +557,8 @@
 		      }).then((result) => {
 		        if (result.isConfirmed) {
 		          // 삭제를 확인한 경우 DELETE 요청 전송
-		          fetch(`/api/meeting_room/${meetingNo}`, {
-		            method: 'DELETE'
+		          fetch(`deleteMeetingRoom/${meetingNo}`, {
+		            method: 'POST'
 		          })
 		          .then(response => response.json())
 		          .then(data => {

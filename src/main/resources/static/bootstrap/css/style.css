@@ -43,10 +43,8 @@ h6 {
 --------------------------------------------------------------*/
 #main {
   margin-top: 60px;
-  /* padding: 20px 30px; */
+  padding: 20px 30px;
   transition: all 0.3s;
-  display: flex;          /* Flexbox 활성화 */
-  justify-content: flex-start;  /* 왼쪽 정렬 */
 }
 
 @media (max-width: 1199px) {
@@ -58,25 +56,6 @@ h6 {
 /*--------------------------------------------------------------
 # Page Title
 --------------------------------------------------------------*/
-
-
-.apprSidebar {
-  position: fixed;
-  top: 60px;
-  left: 0;
-  bottom: 0;
-  width: 300px;
-  z-index: 996;
-  transition: all 0.3s;
-  padding: 20px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #aab7cf transparent;
-  box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
-  background-color: #fff;
-}
-
-
 .pagetitle {
   margin-bottom: 10px;
 }
@@ -386,7 +365,7 @@ h6 {
 }
 
 .logo img {
-
+  max-height: 26px;
   margin-right: 6px;
 }
 
@@ -623,7 +602,7 @@ h6 {
   top: 60px;
   left: 0;
   bottom: 0;
-  width: 250px;
+  width: 300px;
   z-index: 996;
   transition: all 0.3s;
   padding: 20px;
@@ -632,9 +611,7 @@ h6 {
   scrollbar-color: #aab7cf transparent;
   box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
-  position: fixed
 }
-
 
 @media (max-width: 1199px) {
   .sidebar {
@@ -763,12 +740,6 @@ h6 {
   padding: 10px 0 10px 40px;
   transition: 0.3s;
 }
-
-.sidebar-nav .nav-link.collapsed.active {
-  color: #4154f1;
-  background-color: #f6f9ff;
-}
-
 
 .sidebar-nav .nav-content a i {
   font-size: 6px;

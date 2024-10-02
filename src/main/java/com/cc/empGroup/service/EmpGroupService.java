@@ -1,6 +1,10 @@
 package com.cc.empGroup.service;
 
 
+import org.springframework.stereotype.Service;
+
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +15,7 @@ import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
+
 
 
 @Service
@@ -35,7 +40,6 @@ public class EmpGroupService {
 				.groupParentNo(dto.getGroup_parent_no())
 				.groupName(dto.getGroup_name())
 				.groupLeaderCode(dto.getGroup_leader_code())
-//				.groupRegDate(dto.getGroup_reg_date())
 				.groupHeadcount(dto.getGroup_headcount())
 				.groupLocation(dto.getGroup_location())
 				.groupStatus(dto.getGroup_status())
@@ -174,4 +178,3 @@ public class EmpGroupService {
 		}
 	
 }
-

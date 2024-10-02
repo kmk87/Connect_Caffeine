@@ -24,9 +24,17 @@
   <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
-  <link href="/bootstrap/css/nav_sider.css" rel="stylesheet">
+  <link href="/css/reservation/nav_sider.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <style>
+  .buildingAndReservation{
+  margin-left:250px;
+  }
+  .register_board_form{
+  margin-left:250px;
+  }
+  </style>
 </head>
 <body>
  <th:block layout:fragment="content">
@@ -55,13 +63,9 @@
     </div>
     </aside>
 </div>
-	<div>
-		<button class="tab-button active" onclick="showBuildingTab()">건물</button>
-		<button class="tab-button" onclick="showMeetingTab()">회의실</button>
-	</div>
-	<hr>
+
 <div class="register_board_form" >
-<form id="buildingAddFrm" method="post">
+<form id="buildingAddFrm" >
     <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
     <p>건물명: <input type="text" name="building_name" id="building_name" placeholder="이름"></p>
     <p>주소: <input type="text" name="building_postcode" id="building_postcode" placeholder="우편번호"></p>

@@ -21,6 +21,30 @@ public class MeetingRoomService {
 		this.buildingRepository = buildingRepository;
 	}
 	
+	public boolean deleteMeetingRoom (Long meeting_no) {
+		try {
+			meetingRoomRepository.deleteById(meeting_no);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
+	
+	
+	
+	
+	public MeetingRoomDto updateMeetingRoom(Long meeting_no) {
+		MeetingRoom meetingroom = meetingRoomRepository.findBymeetingNo(meeting_no);
+		MeetingRoomDto dto = MeetingRoomDto.builder()
+				.meeting_no(meetingroom.getMeetingNo())
+				.meeting_name(meetingroom.getMeetingName())
+				.meeting_location(meetingroom.getMeetingLocation())
+				.building_no(meetingroom.getBuilding().getBuildingNo())
+				.build();
+		return dto;
+	}
+	
+	
 	//회의실을 생성하는 메서드
 	public MeetingRoom createMeetingRoom(MeetingRoomDto dto){
 		

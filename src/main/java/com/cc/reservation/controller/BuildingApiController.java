@@ -45,11 +45,11 @@ public class BuildingApiController {
 	public Map<String, String> updateBuilding(BuildingDto dto){
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "건물등록중 오류가 발생했습니다.");
+		resultMap.put("res_msg", "건물수정중 오류가 발생했습니다.");
 		
 		if(buildingService.updateBuilding(dto) != null) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "건물이 성공적으로 등록되었습니다.");
+			resultMap.put("res_msg", "건물이 성공적으로 수정되었습니다.");
 		}
 		
 		return resultMap;

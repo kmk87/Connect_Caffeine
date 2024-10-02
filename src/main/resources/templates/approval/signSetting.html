@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<script th:inline="javascript">
+    /* Thymeleaf 변수를 JavaScript 변수로 전달 */
+    const apprFormNo = /*[[${apprFormNo}]]*/ 0; 
+    const csrfToken = /*[[${_csrf.token}]]*/ '';
+    const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+</script>
+<meta charset="UTF-8">
+<link th:href="@{/css/approval/signSetting.css}" rel="stylesheet"
+	type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<title>기안서 작성</title>
+<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<!-- 사이드바 -->
+			<i class="bi bi-list toggle-sidebar-btn"></i>
+			<aside id="apprSidebar" class="apprSidebar">
+				<div class="pagetitle">
+					<h1>전자결재</h1>
+				</div>
+				<ul class="sidebar-nav" id="sidebar-nav">
+					<li class="nav-item"><a class="nav-link collapsed"
+						data-bs-target="#components-nav_one" data-bs-toggle="collapse"
+						href="#"> <i class="bi bi-journals"></i><span>결재</span><i
+							class="bi bi-chevron-down ms-auto"></i>
+					</a>
+						<ul id="components-nav_one" class="nav-content collapse "
+							data-bs-parent="#sidebar-nav">
+							<li><a th:href="@{/standByDraft}"> <i
+									class="bi bi-circle"></i><span>결재 대기 문서</span>
+							</a></li>
+							<li><a th:href="@{/receiveDraft}"> <i
+									class="bi bi-circle"></i><span>결재 수신 문서</span>
+							</a></li>
+						</ul></li>
+					<li class="nav-item"><a class="nav-link collapsed"
+						data-bs-target="#components-nav_two" data-bs-toggle="collapse"
+						href="#"> <i class="bi bi-folder2-open"></i><span>개인
+								문서함</span><i class="bi bi-chevron-down ms-auto"></i>
+					</a>
+						<ul id="components-nav_two" class="nav-content collapse "
+							data-bs-parent="#sidebar-nav">
+							<li><a th:href="@{/draftStorage}"> <i
+									class="bi bi-circle"></i><span>기안 문서함</span>
+							</a></li>
+							<li><a th:href="@{/apprStorage}"> <i
+									class="bi bi-circle"></i><span>결재 문서함</span>
+							</a></li>
+							<li><a th:href="@{/referenceStorage}"> <i
+									class="bi bi-circle"></i><span>참조 문서함</span>
+							</a></li>
+							<li><a th:href="@{/apprTempStorage}"> <i
+									class="bi bi-circle"></i><span>임시 저장함</span>
+							</a></li>
+						</ul> <a class="nav-link collapsed" data-bs-target="#components-nav"
+						th:href="@{/signSetting}"> <i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+					</a></li>
+				</ul>
+			</aside>
+			<div class="form-header">
+				<h1>결재 환경 설정</h1>
+			</div>
+			
+			<div class="signature-container">
+				<canvas id="signature-pad" width="400" height="200" style="border: 1px solid #ccc;"></canvas>
+				<div class="button-container">
+					<button id="save-signature" class="save-btn">서명 저장</button>
+					<button id="clear-signature" class="cancel-btn">서명 지우기</button>
+				</div>
+			</div>
+	</main>	
+	<script>
+	var canvas = document.getElementById('signature-pad');
+	var signaturePad = new SignaturePad(canvas);
+	
+	
+	// SignaturePad 라이브러리로 캔버스 초기화
+    var signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)', // 배경을 흰색으로 설정
+        penColor: 'rgb(0, 0, 0)'  // 펜 색상을 검정으로 설정
+    });
+
+    // 서명 지우기 버튼 기능
+    document.getElementById('clear-signature').addEventListener('click', function () {
+        signaturePad.clear();  // 캔버스 지우기
+    });
+	
+	// 서명 저장 버튼 기능
+	document.getElementById('save-signature').addEventListener('click', function () {
+	    if (signaturePad.isEmpty()) {
+	        alert("서명을 입력해주세요.");
+	    } else {
+	        var dataURL = signaturePad.toDataURL(); // 서명을 이미지로 변환
+	        // 이미지 URL을 서버로 전송하는 로직 구현
+	        uploadSignature(dataURL);
+	    }
+	});
+
+	function uploadSignature(dataURL) {
+	    // AJAX를 사용하여 서버에 서명 이미지 전송
+	    fetch('/uploadSignature', {
+	        method: 'POST',
+	        body: JSON.stringify({ image: dataURL }),
+	        headers: {
+	            'Content-Type': 'application/json',
+	            [csrfHeader]: csrfToken
+	        }
+	    })
+	    .then(response => response.json())
+	    .then(data => {
+	        alert("서명이 저장되었습니다.");
+	    }).catch(error => {
+	        console.error("Error:", error);
+	    });
+	}
+	</script>
+			
+</th:block>
+</body>
+</html>

@@ -40,9 +40,6 @@ public class EmpGroup {
 	
 	@Column(name="group_leader_code")
 	private Long groupLeaderCode;
-	
-	@Column(name="group_reg_date")
-	private LocalDateTime groupRegDate;
 
 	@Column(name="group_headcount")
 	private Long groupHeadcount;
@@ -62,3 +59,4 @@ public class EmpGroup {
   @OneToMany(mappedBy="empGroup")
   private List<Employee> employees;
 }
+

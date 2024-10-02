@@ -35,11 +35,11 @@
 }
 
 .card {
-    margin-top: -10px;
-    width: 1150px; /* 박스 너비를 화면에 맞게 확장 */
+    margin-top: 40px;
+    width: 1350px; /* 박스 너비를 화면에 맞게 확장 */
     /* max-width: 100%; 최대 너비 설정 */
-    margin-left: 2px; /* 카드의 왼쪽 여백 조정 */
-    height: 523px;
+    margin-left: -10px; /* 카드의 왼쪽 여백 조정 */
+    height: 710px;
     margin-right: -1100px;
 }
 

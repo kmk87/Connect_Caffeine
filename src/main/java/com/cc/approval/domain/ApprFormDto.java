@@ -16,14 +16,13 @@ import lombok.ToString;
 public class ApprFormDto {
 	private Long appr_form_no;
 	private String appr_form_type;
-	private String appr_docu_no;
+
 	
 	
 	public ApprForm toEntity() {
 		return ApprForm.builder()
 				.apprFormNo(appr_form_no)
 				.apprFormType(appr_form_type)
-				.apprDocuNo(appr_docu_no)
 				.build();
 	}
 	
@@ -32,7 +31,6 @@ public class ApprFormDto {
 		return ApprFormDto.builder()
 				.appr_form_no(apprForm.getApprFormNo())
 				.appr_form_type(apprForm.getApprFormType())
-				.appr_docu_no(apprForm.getApprDocuNo())
 				.build();
 	}
 	

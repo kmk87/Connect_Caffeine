@@ -1,5 +1,6 @@
 package com.cc.approval.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -23,9 +24,8 @@ public class ApprovalDto {
 	private String appr_state;
 	private String appr_title;
 	private String appr_content;
-	private LocalDateTime draft_day;
-	private LocalDateTime appr_date;
-	private String appr_docu_no; // 추가된 필드
+	private LocalDate draft_day;
+	private LocalDate appr_date;
     private String emp_code;
     private Long appr_form_no;
     private Long appr_writer_code;
@@ -33,12 +33,22 @@ public class ApprovalDto {
     private String formName;
     private String group_name;
     private Integer appr_holi_use_count;
-    //private Long apprFormNo;
+    private String is_deleted;
+    private LocalDate appr_holi_start; 
+    private LocalDate appr_holi_end;
+    private String docu_no;
 
-    // 날짜를 문자열로 변환하는 메서드 추가
+    // 날짜를 문자열로 변환하는 메소드 추가
     public String getFormattedDraftDay() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return draft_day != null ? draft_day.format(formatter) : LocalDateTime.now().format(formatter);
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // draft_day가 null이면 현재 날짜로 설정
+        if (draft_day == null) {
+            draft_day = LocalDate.now();
+        }
+
+        // draft_day를 문자열로 변환
+        return draft_day.format(formatter);
     }
     
     // 결재 양식 이름 설정 메소드
@@ -66,13 +76,13 @@ public class ApprovalDto {
     // 결재 상태를 문자열로 변환하는 메소드
     public String getApprStateDisplay() {
         switch (this.appr_state) {
-            case "s":
+            case "S":
                 return "결재대기";
-            case "r":
+            case "R":
                 return "반려";
-            case "c":
+            case "C":
                 return "결재완료";
-            case "a":
+            case "A":
                 return "1차승인";
             default:
                 return "알 수 없음"; 
@@ -80,8 +90,11 @@ public class ApprovalDto {
     }
     
     
+    
 	
 	public Approval toEntity(Employee employee, ApprForm apprForm) {
+		
+		
 		return Approval.builder()
 				.apprNo(appr_no)
 				.apprState(appr_state)
@@ -89,38 +102,32 @@ public class ApprovalDto {
 				.apprContent(appr_content)
 				.draftDay(draft_day)
 				.apprDate(appr_date)
+				.apprHoliStart(appr_holi_start) 
+	            .apprHoliEnd(appr_holi_end)     
+	            .apprHoliUseCount(appr_holi_use_count)
+				.isDeleted(is_deleted)
+				.docuNo(docu_no)
 				.employee(employee) 
                 .apprForm(apprForm)
 				.build();
 	}
 	
-//	public ApprovalDto toDto(Approval approval) {
-//		return ApprovalDto.builder()
-//				.appr_no(approval.getApprNo())
-//				.appr_state(approval.getApprState())
-//				.appr_title(approval.getApprTitle())
-//				.appr_content(approval.getApprContent())
-//				.draft_day(approval.getDraftDay())
-//				.appr_date(approval.getApprDate())
-//				.appr_writer_code(approval.getEmployee() != null ? approval.getEmployee().getEmpCode() : null)  // Employee의 empCode 설정
-//                .appr_writer_name(approval.getEmployee() != null ? approval.getEmployee().getEmpName() : null)  // Employee의 empName 설정
-//                .appr_docu_no(approval.getApprForm() != null ? approval.getApprForm().getApprDocuNo() : null)   // ApprForm의 apprDocuNo 설정
-//                .appr_form_no(approval.getApprForm().getApprFormNo())
-//                .build(); 
-//		
-//	}
 	
 	public ApprovalDto toDto(Approval approval) {
 	    ApprovalDto dto = ApprovalDto.builder()
 	            .appr_no(approval.getApprNo())
-	            .appr_state(approval.getApprState())
+	            .appr_state(approval.getApprState() != null ? approval.getApprState() : "S")
 	            .appr_title(approval.getApprTitle())
 	            .appr_content(approval.getApprContent())
 	            .draft_day(approval.getDraftDay())
 	            .appr_date(approval.getApprDate())
+	            .is_deleted(approval.getIsDeleted())
+	            .docu_no(approval.getDocuNo())
+	            .appr_holi_start(approval.getApprHoliStart())
+	            .appr_holi_end(approval.getApprHoliEnd())
+	            .appr_holi_use_count(approval.getApprHoliUseCount())
 	            .appr_writer_code(approval.getEmployee() != null ? approval.getEmployee().getEmpCode() : null)  // Employee의 empCode 설정
 	            .appr_writer_name(approval.getEmployee() != null ? approval.getEmployee().getEmpName() : null)  // Employee의 empName 설정
-	            .appr_docu_no(approval.getApprForm() != null ? approval.getApprForm().getApprDocuNo() : null)   // ApprForm의 apprDocuNo 설정
 	            .appr_form_no(approval.getApprForm() != null ? approval.getApprForm().getApprFormNo() : null)   // ApprForm의 apprFormNo 설정
 	            .build();
 
