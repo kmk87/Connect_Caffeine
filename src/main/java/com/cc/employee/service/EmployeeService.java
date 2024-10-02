@@ -75,8 +75,8 @@ public class EmployeeService {
 				.empPhone(dto.getEmp_phone())
 				.empDeskPhone(dto.getEmp_desk_phone())
 				.empHiredate(emp_hiredate_iso)
-//				.empImgFileName(dto.getEmp_img_file_name())
-//				.empImgFilePath(dto.getEmp_img_file_path())
+				.empImgFileName(dto.getEmp_img_file_name())
+				.empImgFilePath(dto.getEmp_img_file_path())
 				.empResign(dto.getEmp_resign())
 				.empHoliday(dto.getEmp_holiday())
 				.build();
@@ -136,7 +136,12 @@ public class EmployeeService {
 	
 
 	    
-
+	 // 그룹 번호 가져오는 메소드
+	 		public Long getGroupNoByEmpCode(Long emp_code) {
+	 			Employee emp = employeeRepository.findById(emp_code).orElseThrow();
+	 			Long groupNo = emp.getEmpGroup().getGroupNo();
+	 			return groupNo;
+	 		}
 
 	
 	
@@ -170,7 +175,8 @@ public class EmployeeService {
 		Employee result = employeeRepository.save(emp);
 		
 		return result;
-	}
+	}  
+
 		// 팀명 가져오기
 		public List<String> getDataInfoName() {
 	        // 모든 Employee 데이터를 가져온 후 필터링

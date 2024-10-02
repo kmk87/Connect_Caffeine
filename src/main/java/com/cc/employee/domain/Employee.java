@@ -110,11 +110,5 @@ public class Employee {
 	   private String empSignatureImagePath;
 
 	
-<<<<<<< HEAD
 	
 }
-=======
-
-}
-
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git

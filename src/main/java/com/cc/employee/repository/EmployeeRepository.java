@@ -53,11 +53,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		List<EmployeeDto> findAllempList();
 		
 		
-<<<<<<< HEAD
-
-=======
-		// 전자서명 
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 		@Modifying
 		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")
 		int updateEmployeeSignatureByAccount(@Param("empAccount") String empAccount, @Param("filePath") String filePath);

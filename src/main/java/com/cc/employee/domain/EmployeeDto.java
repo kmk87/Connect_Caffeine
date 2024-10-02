@@ -22,27 +22,6 @@ import lombok.ToString;
 @ToString
 @Builder
 public class EmployeeDto {
-<<<<<<< HEAD
-	private Long emp_code;
-	private Long group_no;
-	// dto에 추가된 필드
-	private String group_name;
-	private String emp_job_code;
-	private String emp_job_name;
-	private String emp_name;
-	private String emp_account;
-	private String emp_pw;
-	private Long emp_postcode;
-	private String emp_addr;
-	private String emp_addr_detail;
-	private String emp_reg_no;
-	private String emp_email;
-	private String emp_phone;
-	private String emp_desk_phone;
-	private String emp_hiredate;
-	private String emp_resign;
-=======
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 
       
       private Long emp_code;
@@ -128,15 +107,9 @@ public class EmployeeDto {
                .empHiredate(emp_hiredate_iso)
                .empResign(emp_resign)
 
-<<<<<<< HEAD
-					.empResigndate(emp_resigndate_iso)
-//					.empImgFileName(emp_img_file_name)
-//					.empImgFilePath(emp_img_file_path)
-=======
                .empResigndate(emp_resigndate_iso)
                .empImgFileName(emp_img_file_name)
                .empImgFilePath(emp_img_file_path)
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 
                .empMemo(emp_memo)
                .empHoliday(emp_holiday)
@@ -150,45 +123,6 @@ public class EmployeeDto {
          // DateTimeFormatter를 이용해 원하는 형식 지정
            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-<<<<<<< HEAD
-	        // LocalDateTime을 String으로 변환
-	        String empHiredateStr = null;
-	        if(employee.getEmpHiredate() != null)
-	        	empHiredateStr = employee.getEmpHiredate().format(formatter);
-	        
-	        String empResigndateStr = null;
-	        if(employee.getEmpResigndate() != null)
-	        	empResigndateStr = employee.getEmpResigndate().format(formatter);
-			
-			return EmployeeDto.builder()
-					.emp_code(employee.getEmpCode())
-					.group_name(employee.getEmpGroup().getGroupName())
-					.emp_job_code(employee.getEmpJobCode())
-					.emp_job_name(employee.getEmpJobName())
-					.emp_name(employee.getEmpName())
-					.emp_account(employee.getEmpAccount())
-					.emp_pw(employee.getEmpPw())
-					.emp_postcode(employee.getEmpPostcode())
-					.emp_addr(employee.getEmpAddr())
-					.emp_addr_detail(employee.getEmpAddrDetail())
-					.emp_reg_no(employee.getEmpRegNo())
-					.emp_email(employee.getEmpEmail())
-					.emp_phone(employee.getEmpPhone())
-					.emp_desk_phone(employee.getEmpDeskPhone())
-					.emp_hiredate(empHiredateStr)
-					.emp_resign(employee.getEmpResign())
-					.emp_resigndate(empResigndateStr)
-//					.emp_img_file_name(employee.getEmpImgFileName())
-//					.emp_img_file_path(employee.getEmpImgFilePath())
-					.emp_memo(employee.getEmpMemo())
-					.emp_holiday(employee.getEmpHoliday())
-					.group_name(employee.getEmpGroup().getGroupName())
-					.group_parent_no(employee.getEmpGroup().getGroupParentNo())
-					.emp_Signature_Image_Path(employee.getEmpSignatureImagePath())
-					.build();
-		}
-}
-=======
            // LocalDateTime을 String으로 변환
            String empHiredateStr = null;
            if(employee.getEmpHiredate() != null)
@@ -225,5 +159,3 @@ public class EmployeeDto {
                .build();
       }
 }
-
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git

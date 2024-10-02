@@ -12,12 +12,9 @@ import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
 
-<<<<<<< HEAD
-=======
 
 import com.cc.tree.domain.TreeMenuDto;
 
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 
 
 @Service
