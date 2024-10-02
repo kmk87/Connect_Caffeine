@@ -5,12 +5,15 @@
 <head>
     <meta charset="UTF-8">
     <link th:href="@{/css/approval/tempStorage.css}" rel="stylesheet" type="text/css">
-    <!-- DataTables CSS -->
-	<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
     <title>임시저장 문서함</title>
     <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+	<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+    
     <!-- DataTables JS -->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
@@ -123,6 +126,7 @@
 	               table.settings()[0].oLanguage.oPaginate.sPrevious = "<<";
 	               table.settings()[0].oLanguage.oPaginate.sNext = ">>";
 	           },
+	           "paging": true,
 	           "pagingType": "simple_numbers",
 	           "pageLength": 10,              // 한 페이지에 보여질 항목 수 설정
 	           "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)

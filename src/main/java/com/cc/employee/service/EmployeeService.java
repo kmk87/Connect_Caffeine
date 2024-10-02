@@ -6,11 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.springframework.stereotype.Service;
-
-
-import com.cc.calendar.domain.CalendarDto;
 
 import com.cc.empGroup.domain.EmpGroup;
 import com.cc.empGroup.repository.EmpGroupRepository;
@@ -19,6 +15,8 @@ import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.job.domain.Job;
 import com.cc.job.repository.JobRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -135,6 +133,8 @@ public class EmployeeService {
 	    public Employee findByEmpCode(Long empCode) {
 	        return employeeRepository.findByempCode(empCode);   
 	    }
+	
+
 	    
 
 
@@ -171,7 +171,6 @@ public class EmployeeService {
 		
 		return result;
 	}
-
 		// 팀명 가져오기
 		public List<String> getDataInfoName() {
 	        // 모든 Employee 데이터를 가져온 후 필터링
@@ -266,18 +265,24 @@ public class EmployeeService {
 				return deptName;
 			}
 			
-			// 그룹 번호 가져오는 메소드
-			public Long getGroupNoByEmpCode(Long emp_code) {
-				Employee emp = employeeRepository.findById(emp_code).orElseThrow();
-				Long groupNo = emp.getEmpGroup().getGroupNo();
-				return groupNo;
-			}
+			
 		
-    
+			//모든 직원 조회 
+	        public List<Employee> getAllEmployees(){
+	           return employeeRepository.findAll();
+	        }
 
+	        // 부서 번호로 직원 목록을 조회하는 메서드 (group_parent_no 기준)
+	        public List<Employee> getEmployeesByDeptNo(Long deptNo) {
+	            return employeeRepository.findByEmpGroup_GroupParentNo(deptNo);  // group_parent_no 기준으로 직원 조회
+	        }
     
+	        // 팀 번호로 직원 목록을 조회하는 메서드
+	        public List<Employee> getEmployeesByTeamNo(Long groupNo) {
+	            return employeeRepository.findByEmpGroup_GroupNo(groupNo);
+	        }
     
-    	///////////////////////////////
+	///////////////////////////////
     // 전자서명 설정
     @Transactional
     public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {
@@ -294,5 +299,7 @@ public class EmployeeService {
         }
         return null; // 팀명이 없을 경우 null 반환
     }
+    
+    
     
 }

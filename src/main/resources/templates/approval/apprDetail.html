@@ -87,6 +87,8 @@
             <form id="draftAdd">
                 <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
                 <input type="hidden" id="empNum" th:value="${dto.appr_writer_code != null ? dto.appr_writer_code : ''}">
+                <input type="hidden"
+						id="docu_no" name="docu_no" th:value="${documentNumber}">
                 <button type="button" class="btn btn-outline-danger" id="cancelBtn">취소</button>
                 
 			<div class="form-content">
@@ -122,22 +124,36 @@
 								<thead>
 									<tr>
 										<td rowspan="4"><b>결재선</b></td>
-										<td><button onclick="apprAdd()"
-												class="btn btn-outline-primary">1차 결재선 지정</button></td>
-										<td><button onclick="apprAdd()"
-												class="btn btn-outline-primary">2차 결재선 지정</button></td>
+										<!-- <td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(1)">1차 결재선 지정</button>
+										</td>
+										<td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(2)">2차 결재선 지정</button>
+										</td> -->
+									</tr> 
+									<tr>
+    										<!-- 1차 결재선이 존재하는지 확인 -->
+    										<td id="approver1" th:text="${#lists.size(approvers) > 0 ? approvers[0].employee.empName : ''}" data-emp-code="">결재선</td>
+    										<!-- 2차 결재선이 존재하는지 확인 -->
+    										<td id="approver2" th:text="${#lists.size(approvers) > 1 ? approvers[1].employee.empName : ''}" data-emp-code="">결재선</td>										
 									</tr>
 									<tr>
-										<td>대표이사</td>
-										<td>차장</td>
-									</tr>
-									<tr>
-										<td>서명</td>
-										<td>서명</td>
-									</tr>
-									<tr>
-										<td>결재자1</td>
-										<td>결재자2</td>
+										<td id="sign1">
+        									<!-- 1차 서명 이미지가 있을 때만 표시 -->
+        									<img th:if="${dto.signImagePath1 != null}" th:src="@{${dto.signImagePath1}}" alt="1차 서명" width="200">
+        									<span th:if="${dto.signImagePath1 == null}">서명 없음</span>
+    									</td>
+    									<td id="sign2">
+        									<!-- 2차 서명 이미지가 있을 때만 표시 -->
+        									<img th:if="${dto.signImagePath2 != null}" th:src="@{${dto.signImagePath2}}" alt="2차 서명" width="100">
+        									<span th:if="${dto.signImagePath2 == null}">서명 없음</span>
+    									</td>
 									</tr>
 								</thead>
 							</table>
@@ -152,18 +168,18 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<td><button onclick="referAdd()"
-												class="btn btn-outline-primary">1차 참조선 지정</button></td>
-										<td><button onclick="referAdd()"
-												class="btn btn-outline-primary">2차 참조선 지정</button></td>
+										<!-- <td><button type="button" onclick="setReferOrder(1)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
+										<td><button type="button" onclick="setReferOrder(2)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td> -->
 									</tr>
 									<tr>
-										<td>대표이사</td>
-										<td>차장</td>
-									</tr>
-									<tr>
-										<td>결재자1</td>
-										<td>결재자2</td>
+										<!-- 1차 참조선이 존재하는지 확인 -->
+    									<td id="referer1" th:text="${#lists.size(referers) > 0 ? referers[0].employee.empName : ''}" data-emp-code=""></td>
+    									<!-- 2차 참조선이 존재하는지 확인 -->
+    									<td id="referer2" th:text="${#lists.size(referers) > 1 ? referers[1].employee.empName : ''}" data-emp-code=""></td>
 									</tr>
 								</thead>
 							</table>

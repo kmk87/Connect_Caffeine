@@ -35,8 +35,8 @@ public class CalendarViewController {
 	
 	@Autowired
 	public CalendarViewController(CalendarService calendarService, EmployeeService employeeService, 
-		EmployeeRepository employeeRepository,ColorService colorService,UserScheduleColorService userScheduleColorService,
-		EmpGroupService empGroupService) {
+			EmployeeRepository employeeRepository,ColorService colorService,UserScheduleColorService userScheduleColorService,
+			EmpGroupService empGroupService) {
 		this.calendarService = calendarService;
 		this.employeeService = employeeService;
 		this.employeeRepository = employeeRepository;
@@ -54,14 +54,11 @@ public class CalendarViewController {
 		  System.out.println("empAccount : "+empAccount);
 		  Long empCode = employeeService.findEmpCodeByEmpName(empAccount);  
 		  System.out.println("empCode : "+empCode);
-		  Long teamNo = ((EmployeeService) employeeService).getGroupNoByEmpCode(empCode);
+		  Long teamNo = employeeService.getGroupNoByEmpCode(empCode);
 		  System.out.println("teamNo : "+teamNo);
 		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
 		  System.out.println("deptNo : "+deptNo);
 		 
-		  
-
-		  
 		  
 		  // 일정 데이터 가져오기
 	        List<CalendarDto> resultList = calendarService.selectCalendarList(empCode, deptNo, teamNo);

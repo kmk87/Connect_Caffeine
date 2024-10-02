@@ -16,6 +16,8 @@ import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 import com.cc.job.service.JobService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class EmployeeViewController {
 	
@@ -53,10 +55,12 @@ public class EmployeeViewController {
 	
 	// 2-1. 목록(list)
 	@GetMapping("employeeList")
-	public String selectEmployeeList(Model model) {
+	public String selectEmployeeList(HttpServletRequest request,Model model) {
 		
 		List<EmployeeDto> empDtoList = employeeService.selectEmployeeList();
-		
+		String currentUri = request.getRequestURI();
+		model.addAttribute("currentUri", currentUri);
+
 		model.addAttribute("empDtoList", empDtoList);
 		
 		return "employee/list";

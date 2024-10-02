@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{include/layout}">
+<head>
+<script th:inline="javascript">
+    /* Thymeleaf 변수를 JavaScript 변수로 전달 */
+    const apprFormNo = /*[[${apprFormNo}]]*/ 0;  // Thymeleaf에서 ${apprFormNo}가 렌더링될 것입니다.
+</script>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/approval/create.css}" rel="stylesheet" type="text/css">
+    <title>기안서 상세 조회</title>
+    <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <th:block layout:fragment="content">
+    <main id="main" class="main">
+        <!-- 사이드바 -->
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+        <aside id="apprSidebar" class="apprSidebar">
+        	<div class="pagetitle">
+      			<h1>전자결재</h1>
+    		</div>
+            <ul class="sidebar-nav" id="sidebar-nav">
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-journals"></i><span>결재</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a th:href="@{/standByDraft}">
+              					<i class="bi bi-circle"></i><span>결재 대기 문서</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/receiveDraft}">
+              					<i class="bi bi-circle"></i><span>결재 수신 문서</span>
+            				</a>
+          				</li>
+        			</ul>
+      		</li>
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_two" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-folder2-open"></i><span>개인 문서함</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_two" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a th:href="@{/draftStorage}">
+              					<i class="bi bi-circle"></i><span>기안 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/apprStorage}">
+              					<i class="bi bi-circle"></i><span>결재 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/referenceStorage}">
+              					<i class="bi bi-circle"></i><span>참조 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/apprTempStorage}">
+              					<i class="bi bi-circle"></i><span>임시 저장함</span>
+            				</a>
+          				</li>
+        			</ul>
+        		<a class="nav-link collapsed" data-bs-target="#components-nav"  th:href="@{/signSetting}">
+          			<i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+        		</a>
+      		</li>
+      	</ul>
+        </aside>
+        
+        <!-- 메인 콘텐츠 -->
+            <div class="form-header">
+                <h2 th:if="${dto.appr_form_no == 1}">휴가신청서</h2>
+                <h2 th:if="${dto.appr_form_no == 2}">사유서</h2>
+                <h2 th:if="${dto.appr_form_no == 3}">품의서</h2>
+            </div>
+        <div class="approval-form">
+        	<div class="pagetitle">
+      			<h1 th:if="${dto.appr_form_no == 1}">휴가신청서</h1>
+                <h1 th:if="${dto.appr_form_no == 2}">사유서</h1>
+                <h1 th:if="${dto.appr_form_no == 3}">품의서</h1>
+      		</div>
+            <form id="draftAdd">
+                <input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+                <input type="hidden" id="empNum" th:value="${dto.appr_writer_code != null ? dto.appr_writer_code : ''}">
+                <input type="hidden"
+						id="docu_no" name="docu_no" th:value="${documentNumber}">
+                <button type="button" class="btn btn-outline-danger" id="cancelBtn">취소</button>
+                
+			<div class="form-content">
+						<div class="left-content-box">
+							<div class="form-section">
+								<table>
+									<tr>
+										<td>문서번호</td>
+										<td th:text="${documentNumber}"></td>
+									</tr>
+									<tr>
+										<td>팀명</td>
+										<td th:text="${groupNames}"></td>
+									</tr>
+									<tr>
+										<td>기안일</td>
+										<td th:text="${dto.getFormattedDraftDay()}"></td>
+									</tr>
+									<tr>
+										<td>기안자</td>
+										<td th:text="${dto.appr_writer_name}"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<!-- 결재선 테이블 -->
+						<div class="left-content">
+							<table class="approval-line-table">
+								<colgroup>
+									<col style="background-color: #d3d3d3;">
+								</colgroup>
+								<thead>
+									<tr>
+										<td rowspan="4"><b>결재선</b></td>
+										<!-- <td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(1)">1차 결재선 지정</button>
+										</td>
+										<td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(2)">2차 결재선 지정</button>
+										</td> -->
+									</tr> 
+									<tr>
+    										<!-- 1차 결재선이 존재하는지 확인 -->
+    										<td id="approver1" th:text="${#lists.size(approvers) > 0 ? approvers[0].employee.empName : ''}" data-emp-code="">결재선</td>
+    										<!-- 2차 결재선이 존재하는지 확인 -->
+    										<td id="approver2" th:text="${#lists.size(approvers) > 1 ? approvers[1].employee.empName : ''}" data-emp-code="">결재선</td>										
+									</tr>
+									<tr>
+    									<!-- 1차 서명 -->
+    									<td id="sign1">
+        									<!-- 결재 상태가 "C"이고 서명 이미지가 있을 때만 서명 이미지를 출력 -->
+        									<img th:if="${dto.appr_state == 'C' and dto.signImagePath1 != null}" th:src="@{${dto.signImagePath1}}" alt="1차 서명" width="200">
+        									<!-- 서명이 없을 때 텍스트 출력 -->
+        									<span th:if="${dto.signImagePath1 == null or dto.appr_state != 'C'}">서명 없음</span>
+    									</td>
+
+    									<!-- 2차 서명 -->
+    										<td id="sign2">
+        									<!-- 결재 상태가 "C"이고 서명 이미지가 있을 때만 서명 이미지를 출력 -->
+        									<img th:if="${dto.appr_state == 'C' and dto.signImagePath2 != null}" th:src="@{${dto.signImagePath2}}" alt="2차 서명" width="200">
+        									<!-- 서명이 없을 때 텍스트 출력 -->
+        									<span th:if="${dto.signImagePath2 == null or dto.appr_state != 'C'}">서명 없음</span>
+    									</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+
+						<!-- 참조선 테이블 -->
+						<div class="right-content">
+							<table class="reference-line-table">
+								<colgroup>
+									<col style="background-color: #d3d3d3;">
+								</colgroup>
+								<thead>
+									<tr>
+										<td rowspan="3"><b>참조선</b></td>
+										<!-- <td><button type="button" onclick="setReferOrder(1)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
+										<td><button type="button" onclick="setReferOrder(2)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td> -->
+									</tr>
+									<tr>
+										<!-- 1차 참조선이 존재하는지 확인 -->
+    									<td id="referer1" th:text="${#lists.size(referers) > 0 ? referers[0].employee.empName : ''}" data-emp-code=""></td>
+    									<!-- 2차 참조선이 존재하는지 확인 -->
+    									<td id="referer2" th:text="${#lists.size(referers) > 1 ? referers[1].employee.empName : ''}" data-emp-code=""></td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+
+				
+				
+                <!-- 휴가신청서 폼 -->
+                <div th:if="${dto.appr_form_no == 1}">
+                    <div class="form-group">
+                        <label for="leave-type">휴가 종류</label>
+                        <select id="leave-type" name="leave-type">
+                            <option>연차</option>
+                            <option>경조</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                                <label for="start-date">기간 및 일수</label>
+                                <input type="date" id="start-date" name="start-date" >
+                                <span>~</span>
+                                <input type="date" id="end-date" name="end-date" >
+                                <span>사용일수:</span>
+                                <input type="text" id="appr_holi_use_count" name="appr_holi_use_count" th:value="${dto.appr_holi_use_count}" > <span> 일</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">제목</label>
+                                <input type="text" id="appr_title" name="appr_title" th:value="${dto.appr_title}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="content">내용</label>
+                                <textarea id="appr_content" name="appr_content" th:text="${dto.appr_content}" disabled></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="attachment">첨부 파일</label>
+                                <input type="file" id="attachment" disabled>
+                                <button type="button" class="btn-delete">파일 제거</button>
+                            </div>
+                        </div>
+						<div class="formDiv">
+                        <!-- 사유서 폼 -->
+                        <div th:if="${dto.appr_form_no == 2}">
+                            <div class="form-group">
+                                <label for="subject">제목</label>
+                                <input type="text" id="appr_title" name="appr_title" th:value="${dto.appr_title}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="content">내용</label>
+                                <textarea id="appr_content" name="appr_content" th:text="${dto.appr_content}" disabled></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="attachment">첨부 파일</label>
+                                <input type="file" id="attachment" disabled>
+                                <button type="button" class="btn-delete">파일 제거</button>
+                            </div>
+                        </div>
+
+                        <!-- 품의서 폼 -->
+                        <div th:if="${dto.appr_form_no == 3}">
+                            <div class="form-group">
+                                <label for="subject">제목</label>
+                                <input type="text" id="appr_title" name="appr_title" th:value="${dto.appr_title}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="content">내용</label>
+                                <textarea id="appr_content" name="appr_content" th:text="${dto.appr_content}" disabled></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="attachment">첨부 파일</label>
+                                <input type="file" id="attachment" disabled>
+                                <button type="button" class="btn-delete">파일 제거</button>
+                            </div>
+                        </div>
+                        </div>
+                	</form>
+        		</div>
+        </main>
+    <script>
+    	function disableApproval(){
+    		const approvalId = document.getElementById('empNum').value;
+    		const csrfToken = document.getElementById('csrf_token').value;
+    		
+    		fetch('/disable/${approvalId}',{
+    			method: 'POST',
+    			headers: {
+        			'Content-type': 'application/json',
+        			'x-CSRF-TOKEN': csrfToken
+    			},
+    			body: JSON.stringift({id: approvalId})
+    		})
+    		.then(response => {
+    			if(response.ok){
+    				alert('기안서가 삭제되었습니다.');
+    				window.location.href='/approval/approvalHome';
+    			} else{
+    				throw new Error('기안서 삭제에 실패하였습니다.');
+    			}
+    		});
+    	
+    		}
+    		
+    	// 취소 버튼 이벤트
+	 	document.getElementById("cancelBtn").addEventListener("click", function() {
+	 	    if (confirm("작성을 취소하시겠습니까?")) {
+	 	        location.href = "/draftStorage";  // 취소 시 홈으로 이동
+	 	    }
+	 	});
+    	
+    </script>
+    </th:block>
+</body>
+</html>

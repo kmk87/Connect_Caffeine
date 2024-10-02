@@ -1,7 +1,8 @@
 package com.cc.employee.repository;
 
-import java.util.List;
 
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -20,17 +21,18 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		
 		Employee findByempAccount(String emp_account);
 
-		
 		Employee findByempName(String emp_name);
 
 		// empAccount(사용자 이름)로 emp_code를 찾는 메서드
 	    @Query("SELECT e.empCode FROM Employee e WHERE e.empAccount = :empAccount")
 	    Long findEmpCodeByEmpName(@Param("empAccount") String empAccount);
+		
+	 // EmpGroup의 groupNo로 직원 목록을 조회하는 메서드
+	    List<Employee> findByEmpGroup_GroupNo(Long groupNo);
+	    
+	 // EmpGroup의 parent_no를 통해 직원 목록을 조회하는 메서드
+	    List<Employee> findByEmpGroup_GroupParentNo(Long groupParentNo);
 
-		@Query("SELECT e.empName FROM Employee e " +
-                 "JOIN Approval a ON a.employee.empCode = e.empCode " +
-                 "WHERE e.empAccount = :memId")
-      String findEmpNameByMemId(@Param("memId") String memId);
       
 		
      // 사원 리스트
@@ -51,14 +53,23 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		List<EmployeeDto> findAllempList();
 		
 		
+<<<<<<< HEAD
 
+=======
+		// 전자서명 
+>>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 		@Modifying
 		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")
 		int updateEmployeeSignatureByAccount(@Param("empAccount") String empAccount, @Param("filePath") String filePath);
 
+		// 결재자 사원 계정으로 사원코드 가져오기
+		@Query("SELECT e.empCode FROM Employee e WHERE e.empAccount = :empAccount")
+		Long findEmpCodeByEmpAccount(@Param("empAccount") String empAccount);
+		
+		@Query("SELECT e FROM Employee e WHERE e.empCode = :empCode")
+	    Optional<Employee> findByEmpCode(@Param("empCode") Long empCode);
 
+	    
 		
-		
-		
-		
+	
 }

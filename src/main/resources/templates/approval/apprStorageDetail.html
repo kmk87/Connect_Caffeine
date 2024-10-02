@@ -131,24 +131,33 @@
 								<thead>
 									<tr>
 										<td rowspan="4"><b>결재선</b></td>
-										<td><button onclick="apprAdd()"
-												class="btn btn-outline-primary">1차 결재선 지정</button></td>
-										<td><button onclick="apprAdd()"
-												class="btn btn-outline-primary">2차 결재선 지정</button></td>
+										<!-- <td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(1)">1차 결재선 지정</button>
+										</td>
+										<td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(2)">2차 결재선 지정</button>
+										</td> -->
+									</tr> 
+									<tr>
+    										<td id="approver1" th:text="${approvers != null and #lists.size(approvers) > 0 ? approvers[0].employee.empName : '결재자 없음'}"></td>
+
+<td id="approver2" th:text="${approvers != null and #lists.size(approvers) > 1 ? approvers[1].employee.empName : '결재자 없음'}"></td>		
 									</tr>
 									<tr>
-										<td>대표이사</td>
-										<td>차장</td>
-									</tr>
-									<tr>
-										<td>서명</td>
-										<td>서명</td>
-									</tr>
-									<tr>
-										<td th:text="${firstApproverName}"></td>
-										<!-- 1차 결재자 -->
-										<td th:text="${secondApproverName}"></td>
-										<!-- 2차 결재자 -->
+										<td id="sign1">
+        									
+        									<span>서명 없음</span>
+    									</td>
+    									<td id="sign2">
+        									
+        									<span>서명 없음</span>
+    									</td>
 									</tr>
 								</thead>
 							</table>
@@ -163,23 +172,23 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<td><button onclick="referAdd()"
-												class="btn btn-outline-primary">1차 참조선 지정</button></td>
-										<td><button onclick="referAdd()"
-												class="btn btn-outline-primary">2차 참조선 지정</button></td>
+										<!-- <td><button type="button" onclick="setReferOrder(1)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
+										<td><button type="button" onclick="setReferOrder(2)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td> -->
 									</tr>
 									<tr>
-										<td>대표이사</td>
-										<td>차장</td>
-									</tr>
-									<tr>
-										<td>결재자1</td>
-										<td>결재자2</td>
+										<td id="referer1" th:text="${referers != null and #lists.size(referers) > 0 ? referers[0].employee.empName : '참조자 없음'}"></td>
+
+<td id="referer2" th:text="${referers != null and #lists.size(referers) > 1 ? referers[1].employee.empName : '참조자 없음'}"></td>
 									</tr>
 								</thead>
 							</table>
 						</div>
 					</div>
+
 
 
 

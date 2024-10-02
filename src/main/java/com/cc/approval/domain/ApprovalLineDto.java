@@ -18,9 +18,10 @@ import lombok.ToString;
 public class ApprovalLineDto {
 	private Long appr_line_id;
 	private Long appr_no;
-	private Long appr_writer_code;
+//	private Long appr_writer_code;
+	private Long emp_code;
 	private Integer appr_order;
-	private String appr_role;
+	private int appr_role;
 	private String appr_state;
 	private String appr_writer_name;
 	
@@ -44,10 +45,14 @@ public class ApprovalLineDto {
 	
 	
 	public ApprovalLineDto toDto(ApprovalLine approvalLine) {
+		if (approvalLine == null || approvalLine.getApproval() == null) {
+	        throw new IllegalArgumentException("Invalid Approval: Approval or ApprovalLine is null.");
+	    }
+		
 		ApprovalLineDto dto = ApprovalLineDto.builder()
 				.appr_line_id(approvalLine.getApprLineId())
 				.appr_no(approvalLine.getApproval() != null ? approvalLine.getApproval().getApprNo() : null)
-				.appr_writer_code(approvalLine.getEmployee() != null ? approvalLine.getEmployee().getEmpCode() : null)
+				.emp_code(approvalLine.getEmployee() != null ? approvalLine.getEmployee().getEmpCode() : null)  // Employee에서 empCode 가져옴
 				.appr_order(approvalLine.getApprOrder())
 				.appr_role(approvalLine.getApprRole())
 				.appr_state(approvalLine.getApprState())

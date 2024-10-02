@@ -94,14 +94,18 @@
 	
 	// 서명 저장 버튼 기능
 	document.getElementById('save-signature').addEventListener('click', function () {
-	    if (signaturePad.isEmpty()) {
-	        alert("서명을 입력해주세요.");
-	    } else {
-	        var dataURL = signaturePad.toDataURL(); // 서명을 이미지로 변환
-	        // 이미지 URL을 서버로 전송하는 로직 구현
-	        uploadSignature(dataURL);
-	    }
-	});
+    if (signaturePad.isEmpty()) {
+        Swal.fire({
+            icon: 'warning',
+            title: '서명이 필요합니다',
+            text: '서명을 입력해주세요.'
+        });
+    } else {
+        var dataURL = signaturePad.toDataURL(); // 서명을 이미지로 변환
+        // 이미지 URL을 서버로 전송하는 로직 구현
+        uploadSignature(dataURL);
+    }
+});
 
 	function uploadSignature(dataURL) {
 	    // AJAX를 사용하여 서버에 서명 이미지 전송
@@ -113,10 +117,24 @@
 	            [csrfHeader]: csrfToken
 	        }
 	    })
-	    .then(response => response.json())
+	    .then(response => response.text()) // response.json() -> response.text()로 변경
 	    .then(data => {
-	        alert("서명이 저장되었습니다.");
-	    }).catch(error => {
+	        Swal.fire({
+	            icon: 'success',
+	            title: '성공',
+	            text: data // 서버에서 반환한 메시지 표시
+	        }).then(() => {
+	            // 알림창이 닫히면 /approvalHome으로 리다이렉트
+	            location.href = '/approvalHome'
+	        });
+	        
+	    })
+	    .catch(error => {
+	        Swal.fire({
+	            icon: 'error',
+	            title: '에러',
+	            text: '서명을 저장하는 도중 오류가 발생했습니다.'
+	        });
 	        console.error("Error:", error);
 	    });
 	}

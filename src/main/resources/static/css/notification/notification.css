@@ -1,0 +1,184 @@
+
+.sub-sidebar {
+	position: fixed;
+	top: 60px;
+	left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+	bottom: 0;
+	width: 250px; /* 추가 사이드바의 너비 */
+	z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+	transition: all 0.3s;
+	padding: 20px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #aab7cf transparent;
+	box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+	background-color: #fff;
+}
+
+/* 기본 링크 스타일 */
+.sidebar-link {
+    color: #012970; /* 기본 텍스트 색상 */
+    text-decoration: none;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+/* 현재 페이지가 활성화된 경우 (active 상태) */
+.sidebar-link.active {
+    background-color: #f6f9ff; /* 활성화된 페이지의 배경색 */
+    color: #4154f1; /* 활성화된 페이지의 텍스트 색상 */
+    width: 230px;
+}
+
+/* hover 시 스타일 */
+.sidebar-link:hover {
+    background-color: #f6f9ff; /* hover 시 배경색 */
+    color: #4154f1; /* hover 시 텍스트 색상 */
+    width: 230px;
+}
+
+
+.notification-list {
+	position: fixed;
+	background-color: #fff;
+	left: 540px;
+	width: 70%;
+	bottom: 0;
+	top: 60px;
+}
+
+.notification-title {
+	font-size: 24px;
+	font-weight: bold;
+	padding-left: 30px;
+	padding-top: 30px;
+	padding-bottom: 20px;
+}
+
+/* 테이블 스타일 */
+#notification_list {
+	width: 99%;
+	max-width: 1200px;
+	margin: 0 auto;
+	border-collapse: collapse;
+	overflow: hidden;
+}
+
+table thead {
+    display: none;
+}
+
+/* 테이블 헤더 스타일 */
+#notification_list thead th {
+	background-color: #fff;
+	color: f1f1f1;
+	text-align: center;
+	padding: 12px;
+	font-size: 16px;
+}
+
+/* 첫 번째 td의 배경색을 흰색으로 설정 */
+.notification-list td:first-child {
+	padding-left: 30px !important;
+	width:5%;
+	
+}
+
+/* 테이블 본문 스타일 */
+#notification_list tbody tr {
+	background-color: #fff;
+	border-bottom: 1px solid #ddd;
+}
+
+#notification_list tbody tr:hover {
+	background-color: #f1f1f1;
+}
+
+/* 테이블 셀 스타일 */
+#notification_list tbody td {
+	padding: 10px;
+	font-size: 14px;
+}
+
+.notify-time {
+    width: 10%; /* 원하는 크기로 너비를 지정 */
+}
+
+/* 페이지네이션 스타일 */
+.dataTables_wrapper .dataTables_paginate {
+	float: center !important;
+	text-align: center !important;
+	padding-top: .25em;
+}
+.dataTables_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 600px; /* 전체 높이를 고정 */
+}
+
+.dataTables_scrollBody {
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 */
+    height: 450px; /* 테이블의 높이 고정 */
+}
+
+.dataTables_paginate {
+    position:fixed;
+    margin-top: 650px;
+    margin-left: 450px;
+}
+.dataTables_paginate .paginate_button {
+	display: inline-block;
+	padding: 5px 10px;
+	margin: 0 2px;
+	color: #333;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.dataTables_paginate .paginate_button.current {
+	background-color: #C7CEEA !important;
+	color: #fff;
+	border-color: #007bff;
+}
+
+.dataTables_paginate .paginate_button:hover {
+	background-color: #f1f1f1;
+}
+
+.dataTables_filter input {
+	border-radius: 4px;
+	padding: 5px;
+	border: 1px solid #ddd;
+}
+
+.notification-buttons-select {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 8px;
+	margin-top:8px;
+	padding-left: 30px;
+}
+
+.notification-select {
+	padding-right: 50px;
+}
+
+.read-notification {
+    background-color: #f0f0f0; /* 읽은 알림의 배경색 */
+    color: #999999; /* 읽은 알림의 텍스트 색상 */
+}
+
+
+/* a 태그 기본 색상 변경 */
+    a {
+        color: inherit; /* 부모 요소의 색상을 상속받음 */
+        text-decoration: none; /* 링크의 밑줄을 없앰 */
+    }
+
+    /* a 태그가 hover(마우스 오버) 상태일 때 색상 유지 */
+    a:hover {
+        color: inherit; /* 부모 색상을 유지 */
+    }

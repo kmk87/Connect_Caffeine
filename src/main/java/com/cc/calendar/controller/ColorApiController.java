@@ -39,7 +39,7 @@ public class ColorApiController {
 	    resultMap.put("res_msg", "컬러 수정 중 오류가 발생했습니다.");
 
 	    // dto의 값이 제대로 들어왔는지 확인
-	    System.out.println("Received DTO: " + dto);
+//	    System.out.println("Received DTO: " + dto);
 
 	    if (userScheduleColorService.updateColorForScheduleType(dto) != null) {
 	        resultMap.put("res_code", "200");

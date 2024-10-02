@@ -13,6 +13,8 @@ import com.cc.notice.domain.NoticeDto;
 import com.cc.notice.service.NoticeCommentService;
 import com.cc.notice.service.NoticeService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class NoticeViewController {
 	
@@ -27,9 +29,10 @@ public class NoticeViewController {
 	}
 	
 	@GetMapping("/noticeList")
-	public String noticeList(Model model) {
+	public String noticeList(HttpServletRequest request,Model model) {
 		List<NoticeDto> resultList = noticeService.selectNoticeList();
-
+		String currentUri = request.getRequestURI();
+		model.addAttribute("currentUri", currentUri);
 		model.addAttribute("resultList", resultList);
 		return "notice/list";
 	}
