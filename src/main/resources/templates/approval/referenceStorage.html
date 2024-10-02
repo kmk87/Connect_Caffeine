@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{include/layout}">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/approval/tempStorage.css}" rel="stylesheet" type="text/css">
+    <title>참조문서함</title>
+    <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <th:block layout:fragment="content">
+    <main id="main" class="main">
+        <!-- 사이드바 -->
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+        <aside id="apprSidebar" class="apprSidebar">
+            <div class="pagetitle">
+      			<h1>전자결재</h1>
+    		</div>
+            <ul class="sidebar-nav" id="sidebar-nav">
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-journals"></i><span>결재</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a th:href="@{/standByDraft}">
+              					<i class="bi bi-circle"></i><span>결재 대기 문서</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/receiveDraft}">
+              					<i class="bi bi-circle"></i><span>결재 수신 문서</span>
+            				</a>
+          				</li>
+        			</ul>
+      		</li>
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_two" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-folder2-open"></i><span>개인 문서함</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_two" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a th:href="@{/draftStorage}">
+              					<i class="bi bi-circle"></i><span>기안 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/apprStorage}">
+              					<i class="bi bi-circle"></i><span>결재 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/referenceStorage}">
+              					<i class="bi bi-circle"></i><span>참조 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/apprTempStorage}">
+              					<i class="bi bi-circle"></i><span>임시 저장함</span>
+            				</a>
+          				</li>
+        			</ul>
+        		<a class="nav-link collapsed" data-bs-target="#components-nav"  th:href="@{/signSetting}">
+          			<i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+        		</a>
+      		</li>
+      	</ul>
+        </aside>
+     </main>
+        <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">참조문서함</h5>
+              
+
+              <!-- Table with stripped rows -->
+              <table class="table datatable">
+                <thead>
+                  <tr>
+                    <th>순번</th>
+                    <th>결재양식</th>
+                    <th>제목</th>
+                    <th data-type="date" data-format="YYYY/DD/MM">기안일</th>
+                    <th>결재상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Unity Pugh</td>
+                    <td>9958</td>
+                    <td>Curicó</td>
+                    <td>2005/02/11</td>
+                    <td>37%</td>
+                  </tr>
+                  <tr>
+                    <td>Theodore Duran</td>
+                    <td>8971</td>
+                    <td>Dhanbad</td>
+                    <td>1999/04/07</td>
+                    <td>97%</td>
+                  </tr>
+                  <tr>
+                    <td>Kylie Bishop</td>
+                    <td>3147</td>
+                    <td>Norman</td>
+                    <td>2005/09/08</td>
+                    <td>63%</td>
+                  </tr>
+                  <tr>
+                    <td>Willow Gilliam</td>
+                    <td>3497</td>
+                    <td>Amqui</td>
+                    <td>2009/29/11</td>
+                    <td>30%</td>
+                  </tr>
+                  <tr>
+                    <td>Blossom Dickerson</td>
+                    <td>5018</td>
+                    <td>Kempten</td>
+                    <td>2006/11/09</td>
+                    <td>17%</td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+        </th:block>
+</body>
+</html>

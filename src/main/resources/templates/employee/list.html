@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Connect Caffeine</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+.sub-sidebar {
+	width: 250px;
+	background-color: #fff;
+	padding: 20px;
+	font-size: 15px;
+	font-weight: 600;
+	color: #012970;
+}
+
+.subside_title {
+	font-size: 25px;
+}
+
+.card-body-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.basic-info {
+	display: flex;
+	width: 100%;
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<div class="sub-sidebar" id="sub-sidebar">
+				<span class="subside_title">인사 관리</span><br> <br>
+				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
+				<h5><a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a></h5>
+			</div>
+			<section class="section dashboard" style="width: calc(100% - 250px);">
+				<div class="col-xxl-4 col-md-6" style="width: 100%;">
+					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
+						<div class="card-body">
+							<div class="card-body-header">
+								<h2 class="card-title"><b>사원 목록</b></h2>
+								<div>
+									<button class="btn btn-primary rounded-pill"
+										style="margin-top: 20px;"
+										th:onclick="|location.href='@{/employee}'|">등록</button>
+								</div>
+							</div>
+							<hr>
+							<div class="emp_list">
+								<table class="table datatable">
+									<thead>
+										<tr>
+											<th>팀</th>
+											<th>직급</th>
+											<th>이름</th>
+											<th>입사일</th>
+											<th>재직 여부</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="emp:${empDtoList}"
+											th:onclick="|location.href='@{/employee/{emp_code}(emp_code=${emp.emp_code})}'|">
+											<td th:text="${emp.group_name}"></td>
+											<td th:text="${emp.emp_job_name}"></td>
+											<td th:text="${emp.emp_name}"></td>
+											<td th:text="${emp.emp_hiredate}"></td>
+											<td th:text="${emp.emp_resign.toUpperCase() == 'N' ? '재직 중' : '퇴사'}"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="d-flex align-items-center" style="display: flex; justify-content: flex-end;"></div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+	</th:block>
+	<!-- ======= Footer ======= -->
+	<footer id="footer" class="footer">
+		<div class="copyright">
+			&copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights
+			Reserved
+		</div>
+		<div class="credits">
+			<!-- All the links in the footer should remain intact. -->
+			<!-- You can delete the links only if you purchased the pro version. -->
+			<!-- Licensing information: https://bootstrapmade.com/license/ -->
+			<!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+			Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+		</div>
+	</footer>
+	<!-- End Footer -->
+	<a href="#"
+		class="back-to-top d-flex align-items-center justify-content-center"><i
+		class="bi bi-arrow-up-short"></i></a>
+	<!-- Vendor JS Files -->
+	<script>
+	 document.addEventListener("DOMContentLoaded", function () {
+        const message = /*[[${message}]]*/ '';  // 서버에서 전달된 메시지
+        const alertType = /*[[${alertType}]]*/ '';  // 성공 또는 오류 타입
+
+        if (message && alertType) {
+            Swal.fire({
+                icon: alertType,  // 성공 시 'success', 실패 시 'error'
+                title: alertType === 'success' ? '성공' : '실패',
+                text: message,
+                confirmButtonText: '확인'
+            });
+        }
+    });
+	 </script>
+</body>
+</html>

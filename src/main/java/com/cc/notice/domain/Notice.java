@@ -1,3 +1,4 @@
+
 package com.cc.notice.domain;
 
 import java.time.LocalDateTime;
@@ -56,3 +57,4 @@ public class Notice {
 	@Column(name="notice_comment_status")
 	private String noticeCommentStatus;
 }
+

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     layout:decorate="~{include/layout}">
+     <th:block layout:fragment="content">
+       	<link th:href="@{/css/board/list.css}" rel="stylesheet" type="text/css">
+		<style>
+			.my_chat {
+			  margin-top: 10px;
+			  margin-right: 20px;
+			  margin-bottom:20px;
+			  border-radius: 20px;
+			  border:1px solid #ea5936;
+			  width:200px;
+			}
+			#chat_container {
+			  display: inline-block;
+			  position: relative;
+			  color: #fff;
+			  padding: 7px 12px;
+			  margin-bottom: 10px;
+			  max-width: 230px;
+			}
+		</style>
+		<section>
+		<div id="section_wrap">
+			<div class="word">
+				<h3><span sec:authentication="principal.dto.mem_name"></span>님의 채팅 목록</h3>
+			</div><br>
+			<div style="text-align:center;">
+				<p>상대방 : <span th:text="${dto.not_me_name}"></span> </p>
+				<input type="hidden" th:value="${dto.room_no}" id="room_no"/>
+				<input type="hidden" th:value="${dto.from_id}" id="from_id"/>
+				<input type="hidden" th:value="${dto.not_me_id}" id="receiver_id"/>
+				<p>나 : <span th:text="${#authentication.principal.dto.mem_name}"></span></p>
+				<input type="hidden" id="sender_id" th:value="${#authentication.principal.dto.mem_id}">
+				<div id="chat_container">
+					<th:block th:if="${!#lists.isEmpty(resultList)}">
+						<div th:each = "msg, msgStat : ${resultList}" class="my_chat" 
+							th:style = "${#strings.equals(msg.me_flag, 'Y')} ? 'text-align:right' : 'text-align:left'"
+							th:text = "${msg.chat_content}"> 
+							
+						</div>
+					</th:block>
+				</div>
+				<br>
+				<textarea id="txt_msg" rows="3" cols="17" placeholder="채팅 입력하기"></textarea>
+				<input type="button" id="send_btn" value="보내기">
+			</div>
+		</div>
+	</section>
+	<script>
+		const websocket = new WebSocket("ws://localhost:8093/chatting");
+		
+		websocket.onopen = (data) => {
+			
+		}
+		
+		websocket.onmessage = (response) => {
+			
+		}
+		
+		websocket.onclose = () => {
+			
+		}
+		
+		document.getElementById('send_btn').addEventListener('click',function(){
+			const roomNo = document.getElementById('room_no').value;
+			const sender = document.getElementById('sender_id').value;
+			const fromId = document.getElementById('from_id').value;
+			const isFromSender = (sender == fromId) ? 'Y' : 'N';
+			const msg = document.getElementById('txt_msg').value;
+			const obj = {
+					room_no : roomNo,
+					is_from_sender : isFromSender,
+					chat_content : msg
+			};
+			websocket.send(JSON.stringify(obj));
+			
+		})
+	</script>
+     </th:block>
+</html>

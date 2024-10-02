@@ -1,6 +1,7 @@
 package com.cc.security.service;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
@@ -29,7 +31,10 @@ public class SecurityService implements UserDetailsService{
 			EmployeeDto dto = new EmployeeDto().toDto(employee);
 			
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-//			authorities.add(new SimpleGrantedAuthority(employee.getJobCode()));
+
+			authorities.add(new SimpleGrantedAuthority(employee.getEmpJobCode()));
+
+
 			dto.setAuthorities(authorities);
 			
 			
