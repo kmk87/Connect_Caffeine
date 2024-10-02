@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Connect Caffeine</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.js"></script>
+<link th:href = "@{/css/calendar/calendar.css}" rel="stylesheet" type="text/css">
+<style>
+
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<section class="section dashboard" style="width: calc(100% - 50px);">
+				<div class="col-xxl-4 col-md-6" style="width: 100%;">
+					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
+						<div class="card-body">
+							<div class="card-body-header">
+								<h2 class="card-title"><b>근태 관리</b></h2>
+								<hr>
+							</div>
+							<!-- Default Accordion -->
+			              <div class="accordion" id="accordionExample">
+			                <div class="accordion-item">
+			                  <h2 class="accordion-header" id="headingOne">
+			                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+			                      <b>출결 현황</b>
+			                    </button>
+			                  </h2>
+			                  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+			                    <div class="accordion-body">
+			                    	<div id='calendar'></div>
+			                    </div>
+			                  </div>
+			                </div>
+			                <div class="accordion-item">
+			                  <h2 class="accordion-header" id="headingTwo">
+			                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+			                      <b>연차 현황</b>
+			                    </button>
+			                  </h2>
+			                  <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+			                    <div class="accordion-body">
+			                      <table class="table table-bordered" id="yearOffTable">
+			                      	<thead>
+			                      		<tr>
+			                      			<th>월</th>
+										    <th th:each="month, iterStat : ${#numbers.sequence(1, 12)}">
+										        <span th:text="${iterStat.count} + '월'"></span>
+										    </th>
+										    <th>소계</th>
+			                      		</tr>
+			                      		<tr>
+			                      			<th>사용 연차</th>
+			                      			 <td th:each="month, iterStat : ${#numbers.sequence(1, 12)}">
+										        <span th:text="${iterStat.count}"></span>
+										    </td>
+										    <td>계산값</td>
+			                      		</tr>
+			                      		<tr>
+			                      			<th>남은 연차</th>
+			                      			 <td th:each="month, iterStat : ${#numbers.sequence(1, 12)}">
+										        <span th:text="${iterStat.count}"></span>
+										    </td>
+										    <td>계산값</td>
+			                      		</tr>
+			                      	</thead>
+			                      	<tbody>
+			                      	</tbody>
+			                      </table>
+			                    </div>
+			                  </div>
+			                </div>
+			              </div><!-- End Default Accordion Example -->
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+	<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        
+        // 서버에서 전달된 JSON 데이터를 JavaScript로 파싱
+        var attendanceData = /*[[${attnList}]]*/ [];
+        console.log(attendanceData); 
+      
+        
+     	// 날짜와 시간을 포맷팅하는 함수
+        function formatTime(dateString) {
+            
+     		var date = new Date(dateString);
+
+            var hours = ('0' + date.getHours()).slice(-2);      
+            var minutes = ('0' + date.getMinutes()).slice(-2); 
+            return hours + ':' + minutes;
+        }
+        
+        
+        // JSON 데이터를 이벤트로 변환
+        var events = attendanceData.map(function (attendance) {
+            return {
+            	title: '출근: ' + formatTime(attendance.attn_start) + ' \n 퇴근: ' + formatTime(attendance.attn_end),  // 시:분 형식으로 변환된 시간 표시
+                start: new Date(attendance.attn_start),
+                end: new Date(attendance.attn_start), 
+                allDay: true  // 하루 단위 이벤트로 표시
+            };
+        });
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar : {
+                left: '',
+                center : 'title'
+            },
+            titleFormat : function(date) {
+                return date.date.year + '년 ' + (parseInt(date.date.month) + 1) + '월';
+            },
+            selectable : true,
+            droppable : true,
+            editable : false,
+            nowIndicator: true,
+            locale: 'ko',
+            events: events,
+            eventContent: function(arg) {
+                return {
+                    html: arg.event.title.replace(/\n/g, '<br/>')  // 줄바꿈 적용
+                };
+            }
+        });
+
+        calendar.render();
+    });
+	</script>
+	</th:block>
+	<!-- ======= Footer ======= -->
+	<footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+    </div>
+	<div class="credits">
+      All the links in the footer should remain intact.
+      You can delete the links only if you purchased the pro version.
+      Licensing information: https://bootstrapmade.com/license/
+      Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+	</footer>
+	<!-- End Footer -->
+	<a href="#"
+		class="back-to-top d-flex align-items-center justify-content-center"><i
+		class="bi bi-arrow-up-short"></i></a>
+	<!-- Vendor JS Files -->
+	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+	<script src="/bootstrap/vendor/quill/quill.js"></script>
+	<script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+	<!-- Template Main JS File -->
+	<script src="/bootstrap/js/main.js"></script>
+</body>
+</html>

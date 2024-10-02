@@ -6,16 +6,13 @@
 <head>
 <!-- <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script> -->
 <title>사원 등록</title>
-<!-- Bootstrap JS -->
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 .sub-sidebar {
 	width: 250px;
 	background-color: #fff;
 	padding: 20px;
-	font-size: 15px;
 	font-weight: 600;
 	color: #012970;
 }
@@ -90,7 +87,9 @@ table td, table th {
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
 			<div class="sub-sidebar" id="sub-sidebar">
-				<div id="treeContainer" style="width: 300px;"></div>
+				<span class="subside_title">인사 관리</span><br> <br>
+				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
+				<h5><a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a></h5>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
 				<div class="col-xxl-4 col-md-6" style="width: 100%;">

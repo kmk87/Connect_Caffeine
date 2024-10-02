@@ -30,7 +30,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		@Query("SELECT e.empName FROM Employee e " +
 		           "JOIN Approval a ON a.employee.empCode = e.empCode " +
 		           "WHERE e.empAccount = :memId")
-		    String findEmpNameByMemId(@Param("memId") String memId);
+		String findEmpNameByMemId(@Param("memId") String memId);
 		
 		// 사원 리스트
 		@Query("SELECT e FROM Employee e ORDER BY e.empHiredate DESC")

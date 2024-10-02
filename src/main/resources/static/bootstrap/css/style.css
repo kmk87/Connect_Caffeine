@@ -44,8 +44,8 @@ h6 {
 #main {
   margin-top: 60px;
   /* padding: 20px 30px; */
-  transition: all 0.3s;
-  display: flex;          /* Flexbox 활성화 */
+  transition: all 0.3s;  /* Flexbox 활성화 */
+  display: flex;
   justify-content: flex-start;  /* 왼쪽 정렬 */
 }
 

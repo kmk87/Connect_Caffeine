@@ -8,22 +8,8 @@
   <title>Connect Caffeine</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-  <!-- Favicons -->
-  <link href="/bootstrap/img/쿼카.png" rel="icon">
-  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  <!-- Vendor CSS Files -->
-  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
-  <!-- Template Main CSS File -->
-  <link href="/bootstrap/css/style.css" rel="stylesheet">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <!-- 조직도 관련 -->
 	  <!-- Include jQuery -->
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -31,10 +17,15 @@
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
   <!-- 조직도 끝 -->
+  <style>
+  .ps-3{
+  	width:350px;
+  }
+  </style>
 </head>
 <body>
  <th:block layout:fragment="content">
-  <main id="main" class="main">
+  <main id="main" class="main" style="display: block; margin-top: 80px;">
     <div class="pagetitle">
       <h1>메인화면</h1>
       <nav>
@@ -44,43 +35,117 @@
         </ol>
       </nav>
     </div><!-- End Page Title -->
-    <section class="section dashboard">
+    <section class="section">
       <div class="row">
-        <!-- Left side columns -->
-        <div class="col-lg-8">
+        <!-- Start 왼쪽 columns -->
+        <div class="col-lg-11">
           <div class="row">
-            <!-- Sales Card -->
+            <!-- Start 근무 시간 -->
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card">
                 <div class="card-body">
                   <h5 class="card-title"><b>근무 시간</b></h5>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
-                    <div style="font-size:20px;">개발팀 이후추 대리</div>
-                    <div>2024년 10월 10일</div>
-                    <div>근무 시간: 00시간 00분</div>
-                    <div class="button-box" style="margin-top: 10px;">
-	                    <button type="button" class="btn btn-danger"><b>출근</b></button>
-	                    <button type="button" class="btn btn-info"><b>퇴근</b></button>
+                    <div id="userInfo" style="text-align:center; font-size:20px;"></div>
+                    <div id="userDate" style="text-align:center;"></div>
+                    <div id="userWorktime" style="text-align:center;"><h3>00시간 00분</h3></div>
+                    <div id="timestamp">
+	                    <div id="startTime" style="text-align:center;">출근: 00시 00분</div>
+	                    <div id="finishTime" style="text-align:center;">퇴근: 00시 00분</div>
+                    </div>
+                    <hr>
+                    <div class="button-box" style="text-align:center; margin-top: 10px;">
+	                    <form id="attendanceForm">
+		                    <button type="button" class="btn btn-danger" id="workStart" style="margin-right:20px;"><b>출근</b></button>
+		                    <button type="button" class="btn btn-info" id="workFinish"><b>퇴근</b></button>
+	                    </form>
                     </div>
                     </div>
                   </div>
+                  <script th:inline="javascript">
+                  // 1. 기본 정보 표기
+               	  // (1) 일자
+                  const today = new Date(); // 오늘 날짜
+
+				  // 년, 월, 일 추출
+				  let year = today.getFullYear();    
+				  let month = today.getMonth() + 1; 
+				  let day = today.getDate(); 
+					
+				  let formattedDate = `${year}년 ${month}월 ${day}일`; // 원하는 형식으로 변환 후 넣기
+                  
+               	  document.getElementById('userDate').innerHTML = formattedDate;
+               	  
+				  // (2) 사용자 정보
+                  var userInfo = /*[[${dto}]]*/ {};
+                  console.log('사용자 정보: ' + userInfo); 
+				  
+                  document.getElementById('userInfo').innerHTML = userInfo.group_name + ' ' + userInfo.emp_name 
+                  												+ '(' + userInfo.emp_job_name + ')';
+				  
+				  
+               	  // 2. 출퇴근 시간 전송
+               	  	// (1) 출근 시간 전송
+                  $(document).ready(function() {
+                	  var token = $("meta[name='_csrf']").attr("content");
+                	  var header = $("meta[name='_csrf_header']").attr("content");
+				    $('#workStart').click(function() {
+				        $.ajax({
+				            url: '/attendanceRecord',
+				            type: 'POST',
+				            beforeSend: function(xhr) {
+				                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+				            },
+				            data: { action: 'start' },
+				            success: function(response) {
+				                $('#startTimeDisplay').text('출근 시간: ' + response.attnStart);
+				            },
+				            error: function() {
+				                alert('출근 기록에 실패했습니다.');
+				            }
+				        });
+				    });
+				 		// (2) 퇴근 시간 전송
+				    $('#workFinish').click(function() {
+				        $.ajax({
+				            url: '/attendanceRecord',
+				            type: 'POST',
+				            beforeSend: function(xhr) {
+				                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+				            },
+				            data: { action: 'end' },
+				            success: function(response) {
+				                $('#endTimeDisplay').text('퇴근 시간: ' + response.attnEnd);
+				            },
+				            error: function() {
+				                alert('퇴근 기록에 실패했습니다.');
+				            }
+				        });
+				    });
+				});
+    	  
+               	  // 3. 출퇴근 시간 표기
+               	  
+                  </script>
                 </div>
               </div>
-            </div><!-- End Sales Card -->
-            <!-- Revenue Card -->
+            </div><!-- End 근무 시간 -->
+            <!-- Start 예약 현황 -->
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card revenue-card">
                 <div class="card-body">
-                  <h5 class="card-title"><b>일정</b></h5>
+                  <h5 class="card-title"><b>예약 현황</b></h5>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
                     </div>
                   </div>
+                  <script>/* 예약 현황 자바스크립트 */
+                  </script>
                 </div>
               </div>
-            </div><!-- End Revenue Card -->
-            <!-- Customers Card -->
+            </div><!-- End 예약 현황 -->
+            <!-- Start 결재 현황 -->
             <div class="col-xxl-4 col-xl-12">
               <div class="card info-card customers-card">
                 <div class="card-body">
@@ -89,14 +154,16 @@
                     <div class="ps-3">
                     </div>
                   </div>
+                  <script>/* 결재 현황 자바스크립트 */
+                  </script>
                 </div>
               </div>
-            </div><!-- End Customers Card -->
-            <!-- Reports -->
-            <div class="col-12">
+            </div><!-- End 결재 현황 -->
+            <!-- Start 공지사항 -->
+            <div class="col-lg-6">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">값 입력</span></h5>
+                  <h5 class="card-title"><b>공지사항</b></h5>
                   <!-- Line Chart -->
                   <div id="reportsChart"></div>
                   <script>
@@ -151,15 +218,14 @@
                       }).render();
                     });
                   </script>
-                  <!-- End Line Chart -->
                 </div>
               </div>
-            </div><!-- End Reports -->
-            <!-- Recent Sales -->
-            <div class="col-12">
+            </div><!-- End 공지사항 -->
+            <!-- Start 매출 현황 -->
+            <div class="col-lg-6">
               <div class="card recent-sales overflow-auto">
                 <div class="card-body">
-                  <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+                  <h5 class="card-title"><b>매출 현황</b></h5>
                   <table class="table table-borderless datatable">
                     <thead>
                       <tr>
@@ -182,37 +248,38 @@
                   </table>
                 </div>
               </div>
-            </div><!-- End Recent Sales -->
-            <!-- Top Selling -->
-            <div class="col-12">
-              <div class="card top-selling overflow-auto">
-                <div class="card-body pb-0">
-                  <h5 class="card-title">Top Selling <span>| Today</span></h5>
-                  <table class="table table-borderless">
-                    <thead>
-                      <tr>
-                        <th scope="col">Preview</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Sold</th>
-                        <th scope="col">Revenue</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row"><a href="#"><img src="bootstrap/img/product-1.jpg" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
-                        <td>$64</td>
-                        <td class="fw-bold">124</td>
-                        <td>$5,828</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- End Top Selling -->
+            </div><!-- End 매출 현황 -->
           </div>
         </div><!-- End Left side columns -->
+        <!-- End 왼쪽 컬럼 -->
+        <!-- Start 오른쪽 컬럼 -->
+<!--         <div class="col-lg-4">
+        	Start 오늘의 날씨
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title"><b>오늘의 날씨</b></h5>
+
+                </div>
+
+              </div>
+            </div>End 오늘의 날씨
+        </div> -->
+        <!-- End 오른쪽 컬럼 -->
       </div>
     </section>
   </main><!-- End #main -->

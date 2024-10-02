@@ -2,6 +2,7 @@ package com.cc.employee.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.cc.annualLeave.domain.AnnualLeave;
 import com.cc.attendance.domain.Attendance;
 import com.cc.empGroup.domain.EmpGroup;
 
@@ -96,5 +97,8 @@ public class Employee {
    
    @OneToMany(mappedBy="employees")
    private List<Attendance> attendances;
+   
+   @OneToMany(mappedBy="employees")
+   private List<AnnualLeave> AnnualLeaves;
 
 }

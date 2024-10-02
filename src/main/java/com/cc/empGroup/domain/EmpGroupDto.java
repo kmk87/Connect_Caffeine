@@ -24,7 +24,6 @@ public class EmpGroupDto {
 	private Long group_parent_no;
 	private String group_name;
 	private Long group_leader_code;
-	//private LocalDateTime group_reg_date;
 	private Long group_headcount;
 	private String group_location;
 	private String group_status;
@@ -34,11 +33,11 @@ public class EmpGroupDto {
 	private List<GrantedAuthority> authorities;
 
 	
-	// 트리 구조 쿼리문에 필요한 생성자
-	 public EmpGroupDto(Long groupNo, String groupName) {
+	// 쿼리문에 필요한 생성자
+	public EmpGroupDto(Long groupNo, String groupName) {
 	        this.group_no = groupNo;
 	        this.group_name = groupName;
-	 }
+	}
 	
 	public EmpGroup toEntity() {
 		return EmpGroup.builder()

@@ -22,7 +22,6 @@ public class GroupViewController {
 	
 	private final EmployeeService employeeService;
 	private final EmpGroupService empGroupService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(GroupViewController.class);
 	
 	@Autowired
 	public GroupViewController(EmployeeService employeeService, EmpGroupService empGroupService) {
@@ -49,6 +48,8 @@ public class GroupViewController {
 	public String selectEmpGroupList(Model model) {
 		
 		List<EmpGroupDto> empGroupDtoList = empGroupService.selectGroupList();	
+		
+//		List<EmpGroupDto>
 		
 		model.addAttribute("empGroupDtoList", empGroupDtoList);
 		
@@ -103,12 +104,21 @@ public class GroupViewController {
 		List<EmployeeDto> empList = employeeService.selectEmployeeList();
 		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
 		
-		System.out.println("뷰컨트롤러의 egdto: " + egDto);
+		// 부서 인원 가져오기
+		Long deptHeadcount = empGroupService.getDeptHeadcountByGroupNo(group_no);
+		
+		// 책임자 정보 가져오기
+		Employee leader = empGroupService.getLeaderInfoByGroupNo(group_no);
+		String leaderName = leader.getEmpName();
+		String leaderDeskPhone = leader.getEmpDeskPhone();
 		
 		
 		model.addAttribute("egDto", egDto);
 		model.addAttribute("empList", empList);
 		model.addAttribute("groupList", groupList);
+		model.addAttribute("deptHeadcount", deptHeadcount);
+		model.addAttribute("leaderName", leaderName);
+		model.addAttribute("leaderDeskPhone", leaderDeskPhone);
 		
 		return "empGroup/update";
 	}
