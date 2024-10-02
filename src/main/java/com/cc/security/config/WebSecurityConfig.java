@@ -30,7 +30,7 @@ public class WebSecurityConfig {
 				request
 				.requestMatchers("/login","/static/**", "/employee", "/employeeCreate", "/employeeList", "/bootstrap/**", "/employeeUpdate/**", "/employeeUpdate"
 						, "/employeeDelete",  "/employeeDelete/**", "/empGroupList", "/empGroupList/**"
-						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**",
+						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**","/approvalUploadImg/**",
 						"/empGroupUpdate", "/empGroupUpdate/**", "/empGroupDelete", "/empGroupDelete/**", "employeeCreate","/approval/**","/createDraft").permitAll()
                                
 				//.requestMatchers("/**").permitAll()

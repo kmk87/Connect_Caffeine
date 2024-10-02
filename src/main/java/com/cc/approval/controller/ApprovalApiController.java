@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,26 +115,27 @@ public class ApprovalApiController {
 	
 	
 	// 기안서 임시저장
-	@ResponseBody
-	@PostMapping("/apprSave")
-	public Map<String,String> updateAppr(@RequestBody TemporaryStorageDto dto){
-		Map<String, String> resultMap = new HashMap<String, String>();
-		resultMap.put("res_code", "404");
-		resultMap.put("res_msg","임시저장 중 오류가 발생했습니다.");
-		
-		// DTO에 appr_form_no 설정
-	    //dto.setAppr_form_no(apprFormNo);
-		
-		// 서비스에서 로그인된 사용자의 empCode(사원 코드)를 가져와 DTO에 설정
-	    if (approvalService.updateApprWithEmpCode(dto)) {
-	        resultMap.put("res_code","200");
-	        resultMap.put("res_msg", "임시저장 되었습니다.");
-	    }
-	    
-		return resultMap;
-		
-	
-	}
+			@ResponseBody
+			@PostMapping("/apprSave")
+			public Map<String,String> updateAppr(@RequestBody TemporaryStorageDto dto){
+				Map<String, String> resultMap = new HashMap<String, String>();
+				resultMap.put("res_code", "404");
+				resultMap.put("res_msg","임시저장 중 오류가 발생했습니다.");
+				
+				// DTO에 appr_form_no 설정
+			    //dto.setAppr_form_no(apprFormNo);
+				
+				// 서비스에서 로그인된 사용자의 empCode(사원 코드)를 가져와 DTO에 설정
+			    if (approvalService.updateApprWithEmpCode(dto)) {
+			        resultMap.put("res_code","200");
+			        resultMap.put("res_msg", "임시저장 되었습니다.");
+			    }
+			    
+				return resultMap;
+				
+				
+			
+			}
 	
 	// 기안서 임시저장에서 삭제
 	@ResponseBody
@@ -154,48 +157,50 @@ public class ApprovalApiController {
 	
 	// 전자 서명 설정
 	@PostMapping("/uploadSignature")
-    public ResponseEntity<?> uploadSignature(@RequestBody Map<String, String> data) {
-        // Base64 데이터 추출
-        String base64Image = data.get("image").split(",")[1]; 
-        byte[] decodedBytes = Base64.getDecoder().decode(base64Image);
+	public ResponseEntity<?> uploadSignature(@RequestBody Map<String, String> data) {
+	    // Base64 데이터 추출
+	    String base64Image = data.get("image").split(",")[1];
+	    byte[] decodedBytes = Base64.getDecoder().decode(base64Image);
 
-        
-        // 이미지 파일 경로 설정
-        String directoryPath = "C:/approval/upload/";
-        String filePath = directoryPath + "signature.png";
-        
-        // 디렉토리 확인 및 생성
-        File directory = new File(directoryPath);
-        if (!directory.exists()) {
-            directory.mkdirs();  // 경로가 없다면 디렉토리 생성
-        }
+	    // 현재 로그인된 사용자 정보 가져오기
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    String empAccount;
 
-        
-        try (OutputStream stream = new FileOutputStream(filePath)) {
-            stream.write(decodedBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+	    if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+	        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+	        empAccount = userDetails.getUsername(); // 로그인된 사용자의 empAccount
+	    } else {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 정보가 없습니다.");
+	    }
 
-        // 현재 로그인된 사용자 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String empAccount;
+	    // 사용자별로 고유한 파일명 생성
+	    String directoryPath = "C:/approval/upload/";
+	    String filePath = directoryPath + empAccount + "_signature.png"; // 사용자 계정을 포함한 파일명
 
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            empAccount = userDetails.getUsername(); // 로그인된 사용자의 empAccount
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 정보가 없습니다.");
-        }
+	    // 디렉토리 확인 및 생성
+	    File directory = new File(directoryPath);
+	    if (!directory.exists()) {
+	        directory.mkdirs();  // 경로가 없다면 디렉토리 생성
+	    }
 
-        // 서비스로 empAccount와 이미지 경로 전달
-        boolean isUpdated = employeeService.updateEmployeeSignatureByAccount(empAccount, filePath);
-        if (!isUpdated) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
-        }
+	    try (OutputStream stream = new FileOutputStream(filePath)) {
+	        stream.write(decodedBytes);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서명 저장에 실패했습니다.");
+	    }
 
-        return ResponseEntity.ok("서명이 저장되었습니다.");
-    }
+	    // 서비스로 empAccount와 이미지 경로 전달
+	    boolean isUpdated = employeeService.updateEmployeeSignatureByAccount(empAccount, filePath);
+	    if (!isUpdated) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
+	    }
+
+	    return ResponseEntity.ok("서명이 성공적으로 저장되었습니다.");
+	}
+	
+		
+	
 	
 		// 결재 승인
 		@ResponseBody

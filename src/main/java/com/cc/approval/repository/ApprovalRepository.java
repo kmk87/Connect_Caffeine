@@ -15,7 +15,7 @@ import com.cc.approval.domain.ApprovalLine;
 
 public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	
-Approval findByApprNo(Long appr_no);
+	Approval findByApprNo(Long appr_no);
 	
 	Approval findByEmployee_EmpCode(Long empCode);
 	
@@ -30,8 +30,9 @@ Approval findByApprNo(Long appr_no);
 	
 	
 	// 전자결재 홈에서 기안문서 리스트
-	@Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :memId ORDER BY a.draftDay DESC")
+	@Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :memId ORDER BY a.draftDay DESC, a.apprNo DESC") 
 	Page<Approval> findByEmployeeAccountOrderByDraftDayDesc(@Param("memId") String memId, Pageable pageable);
+
     
     // 팀명과 연도를 기준으로 가장 최근의 문서번호 하나만 가져오기
     @Query("SELECT a FROM Approval a WHERE a.docuNo LIKE CONCAT(:teamName, '-%', :year, '-%') ORDER BY a.docuNo DESC")
@@ -48,11 +49,15 @@ Approval findByApprNo(Long appr_no);
     @Query("SELECT a FROM Approval a JOIN a.approvalLines al WHERE al.employee.empCode = :empCode AND al.apprOrder = 2 AND al.apprState = 'S'")
     List<Approval> findDocumentsForSecondApprover(@Param("empCode") Long empCode);
 
-
-
+    // Approval 항목을 가져오는 메서드
+    List<Approval> findTop10ByOrderByDraftDayDesc();  
     
+    
+    // draftDay 기준 내림차순으로 모든 데이터를 가져오는 쿼리 메서드
+    List<Approval> findAllByOrderByDraftDayDesc();
 
-
+    // Approval 엔티티에서 appr_no 기준으로 내림차순 정렬하는 쿼리
+    List<Approval> findAllByOrderByApprNoDesc();
     
     
 	

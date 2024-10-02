@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -146,16 +147,52 @@ public class ApprovalViewController {
 	
 	// 전자결재홈에서 기안서 상세 조회
 	@GetMapping("/approval/{appr_no}")
-	public String selectapprovalOne(Model model,
-			@PathVariable("appr_no") Long appr_no) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    User user = (User) authentication.getPrincipal();
-	    String username = user.getUsername();
+	public String selectapprovalOne(Model model, 
+	        @PathVariable("appr_no") Long appr_no) {
+	    
+	    // 현재 로그인한 사용자 정보 가져오기
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    
+	    // 사용자 이름을 가져올 변수 선언
+	    String username = null;
+	    
+	    // principal이 String 또는 UserDetails일 경우를 처리
+	    if (authentication != null) {
+	        Object principal = authentication.getPrincipal();
+	        
+	        // principal이 String 타입일 경우 (username 자체)
+	        if (principal instanceof String) {
+	            username = (String) principal;
+	        }
+	        // principal이 UserDetails 타입일 경우
+	        else if (principal instanceof UserDetails) {
+	            UserDetails userDetails = (UserDetails) principal;
+	            username = userDetails.getUsername(); // 로그인된 사용자의 username을 가져옴
+	        } else {
+	            throw new RuntimeException("알 수 없는 사용자 유형입니다.");
+	        }
+	    } else {
+	        throw new RuntimeException("로그인 정보가 없습니다.");
+	    }
+	    
+	    // 로그인된 사용자의 팀명 가져오기
 	    String groupName = employeeService.getUserTeamName(username);
 	    model.addAttribute("groupNames", groupName);
-		ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
-		model.addAttribute("dto",approvalDto);
-		return "approval/apprDetail";
+	    
+	    // 기안서 상세 정보 가져오기
+	    ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
+	    model.addAttribute("dto", approvalDto);
+	    
+	    // 문서번호 가져오기
+	    String documentNumber = approvalDto.getDocu_no();  // docu_no를 직접 가져옴
+	    model.addAttribute("documentNumber", documentNumber);
+	    
+	    // 결재선 및 참조선 정보 가져오기
+	    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
+	    model.addAttribute("approvers", approvalLines.get("approvers"));
+	    model.addAttribute("referers", approvalLines.get("referers"));
+	    
+	    return "approval/apprDetail";
 	}
 	
 	
@@ -198,17 +235,37 @@ public class ApprovalViewController {
 	// 기안문서함
 	@GetMapping("/draftStorage")
 	public String showDraftStorage(Model model) {
-		// 데이터베이스에서 결재 진행 문서 리스트를 조회
-        List<ApprovalDto> top10Approvals  = approvalService.getAllApprovals(10); 
-        
-        // 상위 10개 항목만 가져오기-내림차순
-        //List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 10 ? apprDtoList.subList(0, 10) : apprDtoList;
-        
-        model.addAttribute("apprDraftDtoList", top10Approvals);
-			        
-		return "approval/draftStorage"; 
+	    
+	    // 페이지별로 size 만큼의 기안서를 가져오는 로직
+	    List<ApprovalDto> allApprovals = approvalService.getDraftList();
+
+	    // 모델에 리스트 추가
+	    model.addAttribute("apprDraftDtoList", allApprovals);
+
+	    return "approval/draftStorage"; 
 	}
 	
+	// 기안문서함 기안서 상세 조회
+		@GetMapping("/draftStorageDetail/{appr_no}")
+		public String selectDraftStorageOne(Model model,
+				@PathVariable("appr_no") Long appr_no) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		    User user = (User) authentication.getPrincipal();
+		    String username = user.getUsername();
+		    String groupName = employeeService.getUserTeamName(username);
+		    model.addAttribute("groupNames", groupName);
+		    // 기안서 상세 정보 가져오기
+			ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
+			model.addAttribute("dto",approvalDto);
+			// 문서번호 가져오기
+			String documentNumber = approvalDto.getDocu_no();  // docu_no를 직접 가져옴
+		    model.addAttribute("documentNumber", documentNumber);
+			// 결재선 및 참조선 정보 가져오기
+		    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
+		    model.addAttribute("approvers", approvalLines.get("approvers"));
+		    model.addAttribute("referers", approvalLines.get("referers"));
+			return "approval/draftStorageDetail";
+		}
 	
 		
 		// 조직도
@@ -221,73 +278,77 @@ public class ApprovalViewController {
 		
 		
 		// 결재문서함
-		@GetMapping("/apprStorage")
-		public String showApprStorage(Model model) {
-			List<ApprovalDto> pendingApprovals = approvalService.getPendingApprovalDtosForCurrentUser(10);
-	        model.addAttribute("approvals", pendingApprovals);
-					        
-			return "approval/apprStorage"; 
-		}
-		
-		
-			// 결재문서함 상세 조회
-			@GetMapping("/apprStorage/{appr_no}")
-			public String getApprovalLineByApprNo(Model model,
-					@PathVariable("appr_no") Long apprNo) {
-				// 현재 로그인한 사용자 정보 가져오기
-				SecurityUser loginUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				@GetMapping("/apprStorage")
+				public String showApprStorage(Model model) {
+					List<ApprovalDto> pendingApprovals = approvalService.getPendingApprovalDtosForCurrentUser(10);
+			        model.addAttribute("approvals", pendingApprovals);
+							        
+					return "approval/apprStorage"; 
+				}
+				
+				
+					// 결재문서함 상세 조회
+					@GetMapping("/apprStorageDetail/{appr_no}")
+					public String getApprovalLineByApprNo(Model model,
+							@PathVariable("appr_no") Long apprNo) {
+						// 현재 로그인한 사용자 정보 가져오기
+						SecurityUser loginUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-				// 로그인한 사용자의 empCode 가져오기
-				Long empCode = loginUser.getDto().getEmp_code();
-		     
+						// 로그인한 사용자의 empCode 가져오기
+						Long empCode = loginUser.getDto().getEmp_code();
+				     
 
-			    ApprovalDto approvalDto = approvalService.selectapprovalOne(apprNo);
-			    System.out.println("approval : "+approvalDto);
-			    model.addAttribute("approval", approvalDto);
-			    
-			    // 결재문서를 작성한 사람의 emp_code를 통해 작성자 정보 가져오기
-			    Long apprWriterNo = approvalDto.getAppr_writer_code(); // 작성자의 emp_code
+					    ApprovalDto approvalDto = approvalService.selectapprovalOne(apprNo);
+					    System.out.println("approval : "+approvalDto);
+					    model.addAttribute("approval", approvalDto);
+					    
+					    // 결재문서를 작성한 사람의 emp_code를 통해 작성자 정보 가져오기
+					    Long apprWriterNo = approvalDto.getAppr_writer_code(); // 작성자의 emp_code
 
-			    // 작성자의 팀명 가져오기
-			    String writerTeamName = employeeService.getTeamNameByEmpCode(apprWriterNo); // 작성자의 팀명을 가져옴
-			    model.addAttribute("groupNames", writerTeamName);
-			    
-			    
-			    // 결재선 정보 가져오기
-			    List<ApprovalLineDto> approvalLines = approvalService.getApprovalLinesByApprNo(apprNo);
-			    
-				// 1차, 2차 결재자 처리 로직 추가
-		        processApprovalButtons(model, approvalLines, empCode);
-				return "approval/apprStorageDetail";
-			}
-			
-			
-			private void processApprovalButtons(Model model, List<ApprovalLineDto> approvalLines, Long empCode) {
-		        ApprovalLineDto firstApprover = approvalLines.stream()
-		                .filter(line -> line.getAppr_order() == 1)
-		                .findFirst()
-		                .orElse(null);
+					    // 작성자의 팀명 가져오기
+					    String writerTeamName = employeeService.getTeamNameByEmpCode(apprWriterNo); // 작성자의 팀명을 가져옴
+					    model.addAttribute("groupNames", writerTeamName);
+					    
+					    
+					    // 결재선 정보 가져오기
+					    //List<ApprovalLineDto> approvalLines = approvalService.getApprovalLinesByApprNo(apprNo);
+					    // 결재선 및 참조선 정보 가져오기
+					    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
+					    model.addAttribute("approvers", approvalLines.get("approvers"));
+					    model.addAttribute("referers", approvalLines.get("referers"));
+					    
+						// 1차, 2차 결재자 처리 로직 추가
+				        //processApprovalButtons(model, approvalLines, empCode);
+						return "approval/apprStorageDetail";
+					}
+					
+					
+					private void processApprovalButtons(Model model, List<ApprovalLineDto> approvalLines, Long empCode) {
+				        ApprovalLineDto firstApprover = approvalLines.stream()
+				                .filter(line -> line.getAppr_order() == 1)
+				                .findFirst()
+				                .orElse(null);
 
-		        ApprovalLineDto secondApprover = approvalLines.stream()
-		                .filter(line -> line.getAppr_order() == 2)
-		                .findFirst()
-		                .orElse(null);
+				        ApprovalLineDto secondApprover = approvalLines.stream()
+				                .filter(line -> line.getAppr_order() == 2)
+				                .findFirst()
+				                .orElse(null);
 
-		        // 승인 버튼 노출 여부 설정
-		        boolean showFirstApproveButton = (firstApprover != null &&
-		                empCode.equals(firstApprover.getEmp_code()) &&
-		                firstApprover.getAppr_state().equals("S"));
+				        // 승인 버튼 노출 여부 설정
+				        boolean showFirstApproveButton = (firstApprover != null &&
+				                empCode.equals(firstApprover.getEmp_code()) &&
+				                firstApprover.getAppr_state().equals("S"));
 
-		        boolean showSecondApproveButton = (secondApprover != null &&
-		                empCode.equals(secondApprover.getEmp_code()) &&
-		                secondApprover.getAppr_state().equals("S"));
+				        boolean showSecondApproveButton = (secondApprover != null &&
+				                empCode.equals(secondApprover.getEmp_code()) &&
+				                secondApprover.getAppr_state().equals("S"));
 
-		        model.addAttribute("showFirstApproveButton", showFirstApproveButton);
-		        model.addAttribute("showSecondApproveButton", showSecondApproveButton);
-		        model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
-		        model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
-		        model.addAttribute("approvalLines", approvalLines);
-		    }
+				        model.addAttribute("showFirstApproveButton", showFirstApproveButton);
+				        model.addAttribute("showSecondApproveButton", showSecondApproveButton);
+				        model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
+				        model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
+				        model.addAttribute("approvalLines", approvalLines);
+				    }
 
 		
 		

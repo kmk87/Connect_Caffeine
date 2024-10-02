@@ -144,15 +144,20 @@
     										<td id="approver2" th:text="${#lists.size(approvers) > 1 ? approvers[1].employee.empName : ''}" data-emp-code="">결재선</td>										
 									</tr>
 									<tr>
-										<td id="sign1">
-        									<!-- 1차 서명 이미지가 있을 때만 표시 -->
-        									<img th:if="${dto.signImagePath1 != null}" th:src="@{${dto.signImagePath1}}" alt="1차 서명" width="200">
-        									<span th:if="${dto.signImagePath1 == null}">서명 없음</span>
+    									<!-- 1차 서명 -->
+    									<td id="sign1">
+        									<!-- 결재 상태가 "C"이고 서명 이미지가 있을 때만 서명 이미지를 출력 -->
+        									<img th:if="${dto.appr_state == 'C' and dto.signImagePath1 != null}" th:src="@{${dto.signImagePath1}}" alt="1차 서명" width="200">
+        									<!-- 서명이 없을 때 텍스트 출력 -->
+        									<span th:if="${dto.signImagePath1 == null or dto.appr_state != 'C'}">서명 없음</span>
     									</td>
-    									<td id="sign2">
-        									<!-- 2차 서명 이미지가 있을 때만 표시 -->
-        									<img th:if="${dto.signImagePath2 != null}" th:src="@{${dto.signImagePath2}}" alt="2차 서명" width="100">
-        									<span th:if="${dto.signImagePath2 == null}">서명 없음</span>
+
+    									<!-- 2차 서명 -->
+    										<td id="sign2">
+        									<!-- 결재 상태가 "C"이고 서명 이미지가 있을 때만 서명 이미지를 출력 -->
+        									<img th:if="${dto.appr_state == 'C' and dto.signImagePath2 != null}" th:src="@{${dto.signImagePath2}}" alt="2차 서명" width="200">
+        									<!-- 서명이 없을 때 텍스트 출력 -->
+        									<span th:if="${dto.signImagePath2 == null or dto.appr_state != 'C'}">서명 없음</span>
     									</td>
 									</tr>
 								</thead>

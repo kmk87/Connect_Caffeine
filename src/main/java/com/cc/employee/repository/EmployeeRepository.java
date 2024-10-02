@@ -19,6 +19,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		
 		
 		Employee findByempAccount(String emp_account);
+		//Optional<Employee> findByempAccount(String emp_account);
 
 		
 		Employee findByempName(String emp_name);
@@ -62,8 +63,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		@Query("SELECT e FROM Employee e WHERE e.empCode = :empCode")
 	    Optional<Employee> findByEmpCode(@Param("empCode") Long empCode);
 
-	    // 기존 findByEmpAccount 메서드
-	    //Optional<Employee> findByEmpAccount(String empAccount);
+	    
 		
 		
 }

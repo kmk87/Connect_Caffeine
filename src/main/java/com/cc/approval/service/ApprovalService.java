@@ -2,7 +2,9 @@ package com.cc.approval.service;
 
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -196,6 +198,25 @@ public class ApprovalService {
 				
 		return dto;
 	}
+	
+	// 결재상태 업데이트 하는 메소드
+	@Transactional
+	public void updateApprovalState(Long apprNo) {
+	    // Approval 테이블에서 해당 기안서 가져오기
+	    Approval approval = approvalRepository.findById(apprNo)
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid Approval No: " + apprNo));
+
+	    // approval_line 테이블에서 최신 결재 상태 가져오기
+	    List<String> latestApprStates = approvalLineRepository.findLatestApprStateByDocuNo(approval.getDocuNo());
+
+	    if (!latestApprStates.isEmpty()) {
+	        // 첫 번째 결과만 사용하여 상태 업데이트
+	        String latestApprState = latestApprStates.get(0);  // 첫 번째 결과
+	        approval.setApprState(latestApprState);
+	        approvalRepository.save(approval);  // 업데이트 후 저장
+	    }
+	}
+
 
 	
 	// 전자결재 메인 결재대기리스트 조회
@@ -206,7 +227,7 @@ public class ApprovalService {
 	    // 페이지 크기를 동적으로 받아서 처리 (예: 5개 또는 10개)
 	    Pageable pageable = PageRequest.of(0, size); 
 	    
-	    // 레포지토리에서 내림차순으로 정렬된 상위 5개의 데이터 조회
+	    // 레포지토리에서 오름차순으로 정렬된 상위 5개의 데이터 조회
         List<Approval> apprList = approvalRepository.findByEmployeeAccountOrderByDraftDayDesc(currentUserId, pageable).getContent();
         
         // Approval 엔티티를 ApprovalDto로 변환
@@ -214,6 +235,38 @@ public class ApprovalService {
                        .map(approval -> new ApprovalDto().toDto(approval))
                        .collect(Collectors.toList());
     }
+	
+	// 기안문서함 리스트 조회
+	public List<ApprovalDto> getDraftList() {
+	    // Approval 테이블의 데이터를 apprNo 기준으로 내림차순 정렬하여 가져오기
+	    List<Approval> approvals = approvalRepository.findAllByOrderByApprNoDesc();  // appr_no로 정렬된 데이터 조회
+	    
+	    // ApprovalDto 리스트 생성
+	    List<ApprovalDto> approvalDtoList = new ArrayList<>();
+	    
+	    for (Approval approval : approvals) {
+	        // Approval 엔티티를 ApprovalDto로 변환
+	        ApprovalDto dto = new ApprovalDto().toDto(approval);
+	        
+	        // approval_line에서 최신 결재 상태 가져오기
+	        List<String> latestApprStates = approvalLineRepository.findLatestApprStateByDocuNo(approval.getDocuNo());
+	        
+	        if (!latestApprStates.isEmpty()) {
+	            dto.setAppr_state(latestApprStates.get(0));  // 첫 번째 결재 상태 설정
+	        }
+
+	        // 결재 상태를 사용자 친화적으로 변환
+	        String apprStateDisplay = dto.getApprStateDisplay();  // 결재 상태 문자열 변환
+	        dto.setAppr_state(apprStateDisplay);  // 변환된 상태 설정
+
+	        approvalDtoList.add(dto);
+	    }
+
+	    return approvalDtoList;  // appr_no 기준으로 정렬된 데이터를 반환
+	}
+
+    
+	
 	
 	
 	// 기안서 상세 조회
@@ -223,6 +276,17 @@ public class ApprovalService {
 		return new ApprovalDto().toDto(approval);
 	}
 	
+	// 기안서 상세조회 시 결재자,참조자 정보 가져오기
+	public Map<String, List<ApprovalLine>> getApprovalLines(String docuNo) {
+        List<ApprovalLine> approvers = approvalLineRepository.findApproversByDocuNo(docuNo);
+        List<ApprovalLine> referers = approvalLineRepository.findReferersByDocuNo(docuNo);
+
+        Map<String, List<ApprovalLine>> approvalLines = new HashMap<String, List<ApprovalLine>>();
+        approvalLines.put("approvers", approvers);
+        approvalLines.put("referers", referers);
+
+        return approvalLines;
+    }
 	
 	// 기안서 임시저장
 	public boolean updateApprWithEmpCode(TemporaryStorageDto dto) {
@@ -439,26 +503,43 @@ public class ApprovalService {
 	  		
 	  		
 
-	    // 결재 상태 변경
-	 		public void approveDocument(Long apprNo, int apprOrder) {
-	 		// 로그 추가
-	 		    System.out.println("결재 번호: " + apprNo + ", 결재 순서: " + apprOrder);
+	  	// 결재 상태 변경
+	  		public void approveDocument(Long apprNo, int apprOrder) {
+	  		    System.out.println("결재 번호: " + apprNo + ", 결재 순서: " + apprOrder);
 
-	 		    ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
-	 		    if (approvalLine != null) {
-	 		        System.out.println("현재 결재 상태: " + approvalLine.getApprState());
-	 		        approvalLine.setApprState("C");
-	 		        approvalLineRepository.save(approvalLine);
-	 		    }
+	  		    // ApprovalLine 상태 업데이트
+	  		    ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
+	  		    if (approvalLine != null) {
+	  		        System.out.println("현재 결재 상태: " + approvalLine.getApprState());
+	  		        approvalLine.setApprState("C");
+	  		        approvalLineRepository.save(approvalLine);
+	  		    }
 
-	 		    if (apprOrder == 1) {
-	 		        ApprovalLine secondLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
-	 		        if (secondLine != null) {
-	 		            secondLine.setApprState("S");
-	 		            approvalLineRepository.save(secondLine);
-	 		        }
-	 		    }
-	 	    }
+	  		    // 모든 결재선이 완료되었을 때 Approval 상태 업데이트
+	  		    if (isAllApprovalCompleted(apprNo)) {
+	  		        Approval approval = approvalRepository.findById(apprNo)
+	  		                .orElseThrow(() -> new IllegalArgumentException("결재 정보를 찾을 수 없습니다."));
+	  		        approval.setApprState("C");
+	  		        approvalRepository.save(approval);
+	  		    }
+
+	  		    if (apprOrder == 1) {
+	  		        ApprovalLine secondLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
+	  		        if (secondLine != null) {
+	  		            secondLine.setApprState("S");
+	  		            approvalLineRepository.save(secondLine);
+	  		        }
+	  		    }
+	  		// 상태가 업데이트된 후 서명 경로 삽입
+//	  		    ApprovalDto approvalDto = getApprovalDetails(apprNo);
+//	  		    System.out.println("서명 경로 1: " + approvalDto.getSignImagePath1());
+//	  		    System.out.println("서명 경로 2: " + approvalDto.getSignImagePath2());
+	  		}
+
+	  		private boolean isAllApprovalCompleted(Long apprNo) {
+	  		    List<ApprovalLine> approvalLines = approvalLineRepository.findByApproval_ApprNo(apprNo);
+	  		    return approvalLines.stream().allMatch(line -> "C".equals(line.getApprState()));
+	  		}
 
 	 	
 	 	// 결재선 저장 메서드 추가
@@ -486,7 +567,43 @@ public class ApprovalService {
 	 	      return approvalLineRepository.save(approvalLine);
 	 	    }
 
-		
+	 	// 결재완료 시 서명 삽입
+//	 	   public ApprovalDto getApprovalDetails(Long apprNo) {
+//	 		    Approval approval = approvalRepository.findById(apprNo)
+//	 		            .orElseThrow(() -> new IllegalArgumentException("결재 정보를 찾을 수 없습니다."));
+//
+//	 		    ApprovalDto dto = new ApprovalDto().toDto(approval);
+//	 		    
+//	 		    // 로그 출력
+//	 		    System.out.println("결재 번호: " + apprNo);
+//	 		    System.out.println("결재 상태: " + approval.getApprState());
+//	 		    
+//	 		    
+//	 		    // 결재가 완료되었을 때 서명 경로 설정
+//	 		    if ("C".equals(approval.getApprState())) {
+//	 		        List<ApprovalLine> approvalLines = approval.getApprovalLines();
+//	 		        if (!approvalLines.isEmpty()) {
+//	 		            // 1차 결재자 서명
+//	 		            Employee approver1 = approvalLines.get(0).getEmployee();
+//	 		           System.out.println("1차 결재자 서명 경로: " + approver1.getEmpSignatureImagePath());
+//	 		            dto.setSignImagePath1(approver1.getEmpSignatureImagePath());
+//
+//	 		            // 2차 결재자 서명
+//	 		            if (approvalLines.size() > 1) {
+//	 		                Employee approver2 = approvalLines.get(1).getEmployee();
+//	 		               System.out.println("2차 결재자 서명 경로: " + approver2.getEmpSignatureImagePath());
+//	 		                dto.setSignImagePath2(approver2.getEmpSignatureImagePath());
+//	 		            }
+//	 		        }
+//	 		    }
+//
+//	 		    return dto;
+//	 		}
+//
+//	 	    
+	 	    
+	 	    
+	 	    
 	}
 		
 	

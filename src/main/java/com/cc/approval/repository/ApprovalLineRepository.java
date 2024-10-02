@@ -73,8 +73,35 @@ public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long
 		Page<Approval> findPendingApprovalsForSecondApprover(@Param("empCode") Long empCode, Pageable pageable);
 
 
+	// 결재선 정보 조회
+	@Query("SELECT al FROM ApprovalLine al WHERE al.approval.docuNo = :docuNo AND al.apprRole = 1 ORDER BY al.apprOrder ASC")
+	List<ApprovalLine> findApproversByDocuNo(@Param("docuNo") String docuNo);
 
+
+    // 참조선 정보 조회
+	@Query("SELECT al FROM ApprovalLine al WHERE al.approval.docuNo = :docuNo AND al.apprRole = 2 ORDER BY al.apprOrder ASC")
+    List<ApprovalLine> findReferersByDocuNo(@Param("docuNo") String docuNo);
 	
+	
+	
+	// 결재상태를 최신 결재번호 기준으로 가져오기
+	@Query("SELECT al.apprState FROM ApprovalLine al WHERE al.approval.docuNo = :docuNo ORDER BY al.apprLineId DESC")
+	List<String> findLatestApprStateByDocuNo(@Param("docuNo") String docuNo);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	
 	
