@@ -1,15 +1,19 @@
 package com.cc.approval.controller;
 
+
 import java.awt.print.Pageable;
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -19,8 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -42,7 +48,11 @@ import com.cc.security.vo.SecurityUser;
 import com.cc.tree.domain.TreeMenuDto;
 import com.cc.tree.service.OrgService;
 
+
 import jakarta.persistence.EntityNotFoundException;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @Controller
 public class ApprovalViewController {
@@ -73,13 +83,15 @@ public class ApprovalViewController {
 
 	// 전자결재 홈
 	 @GetMapping("/approvalHome")
-	 public String showApprovalHome(Model model) {
+	 public String showApprovalHome(HttpServletRequest request, Model model) { 
 	        // 데이터베이스에서 결재 진행 문서 리스트를 조회
 	        List<ApprovalDto> top5Approvals = approvalService.getAllApprovals(5); 
 	        
 	        // 상위 5개 항목만 가져오기-내림차순
 	        //List<ApprovalDto> top5ApprDtoList = apprDtoList.size() > 5 ? apprDtoList.subList(0, 5) : apprDtoList;
-	        
+	        String currentUri = request.getRequestURI();
+		     model.addAttribute("currentUri", currentUri);
+		     
 	        model.addAttribute("apprDtoList", top5Approvals); 
 
 	        

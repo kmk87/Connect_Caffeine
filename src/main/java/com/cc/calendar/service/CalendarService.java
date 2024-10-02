@@ -1,9 +1,7 @@
 package com.cc.calendar.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +13,19 @@ import com.cc.calendar.repository.CalendarRepository;
 import com.cc.employee.domain.Employee;
 import com.cc.employee.repository.EmployeeRepository;
 
+
 @Service
 public class CalendarService {
 	
 	private final EmployeeRepository employeeRepository;
 	private final CalendarRepository calendarRepository;
 	
+	
 	@Autowired
 	public CalendarService(EmployeeRepository employeeRepository, CalendarRepository calendarRepository) {
 		this.employeeRepository = employeeRepository;
 		this.calendarRepository = calendarRepository;
+	
 	}
 	
 	public Calendar createSchedule(CalendarDto dto){
@@ -45,19 +46,16 @@ public class CalendarService {
 							.endTime(dto.getEnd_time())
 							.employee(employee)
 							.build();
-		return calendarRepository.save(calendar);
+
+		// 1. 일정 등록
+        Calendar savedCalendar = calendarRepository.save(calendar);
+
+  
+
+        return savedCalendar;
 	}
 	
 	public List<CalendarDto> selectCalendarList(Long empCode, Long deptNo, Long teamNo) {
-//	    List<Calendar> calendarList = calendarRepository.findAllWithColors(); // 조인된 데이터를 가져옴
-//	    List<CalendarDto> calendarDtoList = new ArrayList<>();
-//
-//	    for (Calendar calendar : calendarList) {
-//	        CalendarDto calendarDto = new CalendarDto().toDto(calendar);
-//	        calendarDto.setColor_code(calendar.getColor().getColorCode());  // 색상 코드 설정
-//	        calendarDtoList.add(calendarDto);
-//	    }
-//	    return calendarDtoList;
 		 // 모든 일정을 가져오되, 사용자의 empCode, deptNo, teamNo에 따라 필터링
 		 List<Calendar> calendarList = calendarRepository.findAll();
 		    List<CalendarDto> calendarDtoList = new ArrayList<>();
@@ -120,6 +118,7 @@ public class CalendarService {
 	    return calendarRepository.save(calendar);
 	}
 	
+	// 일정 삭제
 	public int deleteSchedule(Long schedule_no) {
 		int result = 0;
 		try {

@@ -1,3 +1,4 @@
+
 package com.cc.tree.domain;
 
 import lombok.AllArgsConstructor;
@@ -24,3 +25,5 @@ public class TreeMenuDto {
 	 private boolean opened;
 	 
 }
+
+

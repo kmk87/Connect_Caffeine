@@ -273,9 +273,20 @@ public class EmployeeService {
 			
 			
 		
-    
+			//모든 직원 조회 
+	        public List<Employee> getAllEmployees(){
+	           return employeeRepository.findAll();
+	        }
 
+	        // 부서 번호로 직원 목록을 조회하는 메서드 (group_parent_no 기준)
+	        public List<Employee> getEmployeesByDeptNo(Long deptNo) {
+	            return employeeRepository.findByEmpGroup_GroupParentNo(deptNo);  // group_parent_no 기준으로 직원 조회
+	        }
     
+	        // 팀 번호로 직원 목록을 조회하는 메서드
+	        public List<Employee> getEmployeesByTeamNo(Long groupNo) {
+	            return employeeRepository.findByEmpGroup_GroupNo(groupNo);
+	        }
     
 	///////////////////////////////
     // 전자서명 설정

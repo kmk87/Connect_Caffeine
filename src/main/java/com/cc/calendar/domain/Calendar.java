@@ -33,10 +33,6 @@ public class Calendar {
 	@Column(name="schedule_no")
 	private Long scheduleNo;
 	
-//    @ManyToOne	
-//	@JoinColumn(name="schedule_color_no")
-//	private UserScheduleColor userScheduleColor;
-//	
 	@Column(name="schedule_title")
 	private String scheduleTitle;
 	
@@ -44,7 +40,7 @@ public class Calendar {
 	private String scheduleContent;
 	
 	@Column(name="schedule_type")
-	private Long scheduleType;
+	private int scheduleType;
 	
 	@Column(name="location")
 	private String location;

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<meta charset="UTF-8">
+<title>notification</title>
+<link th:href="@{/css/notification/notification.css}" rel="stylesheet"
+	type="text/css">
+<!-- DataTables CSS -->
+<!-- DataTables CSS 파일을 포함하지 않음 -->
+<link
+	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
+	rel="stylesheet" disabled="disabled">
+
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script
+	src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+
+			<!-- 사이드바 (이미 있으므로 생략 가능) -->
+			<div class="sub-sidebar" id="sub-sidebar">
+				<div class="pagetitle">
+					<h1>알림</h1>
+				</div>
+				<a th:href="@{/notification}" class="sidebar-link"
+					id="all-notifications-link">전체 알림</a>
+					<br> <a
+					th:href="@{/unreadNotification}" class="sidebar-link"
+					id="unread-notifications-link">안읽은 알림</a>
+			</div>
+
+			<!-- 알림 제목 -->
+			<div class="notification-list">
+				<div class="notification-title">
+					<span>안읽은 알림</span>
+				</div>
+				<hr style="margin: 0;">
+
+				<!-- 알림 리스트 부분 (테이블 형태로 구현 가능) -->
+				<div class="notification-buttons-select">
+					<div class="notification-buttons">
+
+						<!-- 삭제 버튼 -->
+						<!-- 전체 선택 체크박스 추가 -->
+						<input type="checkbox" id="select-all" style="margin-left: 6px;">
+						<button type="button" id="read-button"
+							class="btn btn-outline-primary btn-sm"
+							style="margin-top: 5px; margin-left: 20px; margin-bottom: 3px;">읽음</button>
+						<button type="button" id="delete-button"
+							class="btn btn-outline-danger btn-sm"
+							style="margin-top: 5px; margin-left: 10px; margin-bottom: 3px;">삭제</button>
+					</div>
+
+					<!-- 필터 선택 -->
+					<div class="notification-select">
+						<select class="form-select" aria-label="Default select example">
+							<option value="1">전체</option>
+							<option value="2">일정</option>
+							<option value="3">게시판</option>
+							<option value="4">전자결재</option>
+						</select>
+					</div>
+				</div>
+				<hr style="margin: 0;">
+				<!-- 알림 목록을 테이블로 표시 -->
+				<table id="notification_list" class="display">
+					<thead>
+						<tr>
+							<th>선택</th>
+							<th>내용</th>
+							<th>시간</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:if="${#lists.isEmpty(unreadNotifications)}">
+							<tr>
+								<td colspan="3">알림이 존재하지 않습니다.</td>
+							</tr>
+						</th:block>
+						<th:block th:if="${!#lists.isEmpty(unreadNotifications)}">
+							<tr th:each="unreadNotification : ${unreadNotifications}" 
+								th:data-id="${unreadNotification.notification_no}"
+								th:data-type="${unreadNotification.notificationType}">
+								<td class="checkbox-column"><input type="checkbox"></td>
+								<td><a th:href="${unreadNotification.relatedLink}"
+        								th:utext="${unreadNotification.notificationContent}"
+        								class="notification-link"></a></td>
+								<td class="notify-time" th:text="${unreadNotification.relativeTime}"></td> <!-- 상대 시간 출력 -->
+							</tr>
+								<input type="hidden" id="csrf_token"
+									   th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+						</th:block>
+
+					</tbody>
+				</table>
+				<!-- 페이지네이션 -->
+				<div class="pagination-container">
+					<div id="notification_pagination"></div>
+				</div>
+			</div>
+		</main>
+		<script>
+		
+		 // 현재 URL 가져오기
+	    const currentUrl = window.location.pathname;
+
+	     // URL에 따라 해당 링크에 active 클래스 추가
+	    if (currentUrl.includes('/notification')) {
+	        document.getElementById('all-notifications-link').classList.add('active');
+	    } else if (currentUrl.includes('/unreadNotification')) {
+	        document.getElementById('unread-notifications-link').classList.add('active');
+	    } 
+	    
+			$(document).ready(function() {
+				$('#notification_list').DataTable({
+					"paging" : true,
+					"lengthChange" : false,
+					"searching" : false,
+					"pageLength" : 15,
+					"ordering" : false,
+					"info" : false,
+					"autoWidth" : false,
+					"language" : {
+						"paginate" : {
+							"previous" : "<", // 이전을 <로 표시
+							"next": ">"      // 다음을 >로 표시
+						},
+					},
+					"pagingType" : "simple_numbers"
+				});
+			});
+			
+			 // 알림 목록 필터링 기능
+	        $('.notification-select select').on('change', function() {
+	            const selectedType = $(this).val(); // 선택된 필터 값
+	            filterNotifications(selectedType);
+	        });
+
+	        function filterNotifications(type) {
+	            $('#notification_list tbody tr').each(function() {
+	                const notificationType = $(this).data('type'); // 알림 타입을 가져옴
+	                
+	                // 선택된 타입에 따라 알림을 표시하거나 숨김
+	                if (type === "1") { // 전체
+	                    $(this).show();
+	                } else if (type === "2" && notificationType === "SCHEDULE") { // 일정
+	                    $(this).show();
+	                } else if (type === "3" && notificationType === "NOTICE") { // 게시판
+	                    $(this).show();
+	                } else if (type === "4" && notificationType === "APPROVAL") { // 전자결재
+	                    $(this).show();
+	                } else {
+	                    $(this).hide();
+	                }
+	            });
+	        }
+	        
+			 // 전체 선택 기능 추가
+		    $('#select-all').on('click', function() {
+		        let isChecked = $(this).prop('checked');
+		        $('input[type="checkbox"]').prop('checked', isChecked);
+		    });
+			 
+			  // 삭제 버튼 클릭 시 선택된 알림 삭제
+		   $('#delete-button').on('click', function() {
+    	   let selectedNotifications = [];
+   		   $('input[type="checkbox"]:checked').each(function() {
+        	// 선택된 알림의 ID 가져오기
+	        let notificationId = $(this).closest('tr').data('id');
+	        if (notificationId) {
+	            selectedNotifications.push(notificationId);
+	        }
+	        console.log(notificationId)
+    });
+
+    if (selectedNotifications.length > 0) {
+        // fetch API로 선택된 알림 삭제 요청 보내기
+        fetch('/notificationDelete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                // CSRF 토큰이 필요한 경우 추가
+                'X-CSRF-TOKEN': document.getElementById('csrf_token').value
+            },
+            body: JSON.stringify({ notificationIds: selectedNotifications })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code === "200") {
+                // 삭제 성공 시 페이지 새로고침
+                Swal.fire({
+                    title: '성공',
+                    text: '알림이 삭제되었습니다.',
+                    icon: 'success',
+                    confirmButtonText: '확인'
+                }).then(() => {
+                    location.reload(); // 페이지 새로고침
+                });
+            } else {
+                Swal.fire({
+                    title: '오류',
+                    text: data.res_msg,
+                    icon: 'error',
+                    confirmButtonText: '확인'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: '오류',
+                text: '알림 삭제에 실패했습니다.',
+                icon: 'error',
+                confirmButtonText: '확인'
+            });
+        });
+    } else {
+        Swal.fire({
+            title: '오류',
+            text: '삭제할 알림을 선택해주세요.',
+            icon: 'error',
+            confirmButtonText: '확인'
+        });
+    }
+    
+    
+});
+			  
+		   $('#read-button').on('click', function() {
+			    let selectedNotifications = [];
+			    $('input[type="checkbox"]:checked').each(function() {
+			        let notificationId = $(this).closest('tr').data('id');
+			        if (notificationId) {
+			            selectedNotifications.push(notificationId);
+			        }
+			    });
+
+			    if (selectedNotifications.length > 0) {
+			        // fetch API로 선택된 알림 읽음 요청 보내기
+			        fetch('/notificationRead', {
+			            method: 'PUT',
+			            headers: {
+			                'Content-Type': 'application/json',
+			                'X-CSRF-TOKEN': document.getElementById('csrf_token').value
+			            },
+			            body: JSON.stringify({ notificationIds: selectedNotifications })
+			        })
+			        .then(response => response.json())
+			        .then(data => {
+			            if (data.res_code === "200") {
+			                Swal.fire({
+			                    title: '성공',
+			                    text: '알림이 읽음 처리되었습니다.',
+			                    icon: 'success',
+			                    confirmButtonText: '확인'
+			                }).then(() => {
+			                    location.reload();
+			                });
+			            } else {
+			                Swal.fire({
+			                    title: '오류',
+			                    text: data.res_msg,
+			                    icon: 'error',
+			                    confirmButtonText: '확인'
+			                });
+			            }
+			        })
+			        .catch(error => {
+			            console.error('Error:', error);
+			            Swal.fire({
+			                title: '오류',
+			                text: '알림 읽음 처리에 실패했습니다.',
+			                icon: 'error',
+			                confirmButtonText: '확인'
+			            });
+			        });
+			    } else {
+			        Swal.fire({
+			            title: '오류',
+			            text: '읽음 처리할 알림을 선택해주세요.',
+			            icon: 'error',
+			            confirmButtonText: '확인'
+			        });
+			    }
+			});
+			
+		   $(document).ready(function() {
+			    // 알림 클릭 시 읽음 처리
+			    $('.notification-link').on('click', function(event) {
+			        event.preventDefault(); // 기본 클릭 동작을 막음
+			        const notificationLink = $(this).attr('href'); // 이동할 링크 주소
+			        const notificationId = $(this).closest('tr').data('id'); // 알림 ID 가져오기
+
+			        // 읽음 처리 요청
+			        fetch('/updateReadStatus', {
+			            method: 'POST',
+			            headers: {
+			                'Content-Type': 'application/x-www-form-urlencoded',
+			                'X-CSRF-TOKEN': document.getElementById('csrf_token').value
+			            },
+			            body: `notificationId=${notificationId}`
+			        }).then(response => {
+			            if (response.ok) {
+			                // 성공 시 알림 스타일 변경
+			                $(this).closest('tr').addClass('read-notification'); // 읽음 처리 스타일 추가
+			                
+			                // 알림 처리 후 페이지로 이동
+			                window.location.href = notificationLink;
+			            } else {
+			                console.error('Failed to update notification read status.');
+			            }
+			        }).catch(error => console.error('Error:', error));
+			    });
+			});
+
+		</script>
+	</th:block>
+	
+</body>
+</html>
