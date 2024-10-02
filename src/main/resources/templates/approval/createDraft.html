@@ -16,24 +16,32 @@
 <!-- jQuery 추가 -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- jsTree와 Bootstrap을 사용할 경우 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css"
+	rel="stylesheet">
+
+
+
+
+
 <style>
-        .jstree-icon.ri-building-fill { /* 회사 아이콘 */
-    color: #3e4a6e;
-    font-size: 24px;
+.jstree-icon.ri-building-fill { /* 회사 아이콘 */
+	color: #3e4a6e;
+	font-size: 24px;
 }
 
 .jstree-icon.ri-team-fill { /* 부서 아이콘 */
-    color: #3577f1;
-    font-size: 20px;
+	color: #3577f1;
+	font-size: 20px;
 }
 
 .jstree-icon.ri-user-2-fill { /* 직원 아이콘 */
-    color: #9a9ba0;
-    font-size: 16px;
+	color: #9a9ba0;
+	font-size: 16px;
 }
-    </style>
+</style>
 </head>
 <body>
 	<th:block layout:fragment="content">
@@ -79,7 +87,8 @@
 									class="bi bi-circle"></i><span>임시 저장함</span>
 							</a></li>
 						</ul> <a class="nav-link collapsed" data-bs-target="#components-nav"
-						th:href="@{/signSetting}"> <i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+						th:href="@{/signSetting}"> <i class="bi bi-gear"></i><span>전자
+								결재 환경 설정</span>
 					</a></li>
 				</ul>
 			</aside>
@@ -98,12 +107,16 @@
 				</div>
 				<hr>
 				<form id="draftAdd">
-					<input type="hidden" id="appr_form_no" name="appr_form_no"th:value="${apprFormNo}"> 
-					<input type="hidden" id="docu_no" name="docu_no" th:value="${documentNumber}">
-					<input type="hidden"id="csrf_token" th:value="${_csrf.token}"> 
-					<input type="hidden" id="empNum" th:value="${memId ?: ''}">
-					<button type="button" class="btn btn-outline-success" id="tempSaveBtn">임시 저장</button>
-					<input type="submit" class="btn btn-outline-warning" id="approvalBtn" name="approval" value="상신">
+					<input type="hidden" id="appr_form_no" name="appr_form_no"
+						th:value="${apprFormNo}"> <input type="hidden"
+						id="docu_no" name="docu_no" th:value="${documentNumber}">
+					<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
+					<input type="hidden" id="empNum" th:value="${username}">
+					<input type="hidden" id="drEmpCode" th:value="${employee.empCode}">
+					<button type="button" class="btn btn-outline-success"
+						id="tempSaveBtn">임시 저장</button>
+					<input type="submit" class="btn btn-outline-warning"
+						id="approvalBtn" name="approval" value="상신">
 					<button type="button" class="btn btn-outline-danger" id="cancelBtn">취소</button>
 
 					<div class="form-content">
@@ -137,28 +150,38 @@
 									<col style="background-color: #d3d3d3;">
 								</colgroup>
 								<thead>
-    								<tr>
-        								<td rowspan="4"><b>결재선</b></td>
-        								<td>
-            								<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(1)">1차 결재선 지정</button>
-        								</td>
-        								<td>
-            								<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal" onclick="setApproverOrder(2)">2차 결재선 지정</button>
-        								</td>
-    								</tr>
-    								<tr>
-        								<td id="sign1">서명</td> <!-- 1차 서명 -->
-        								<td id="sign2">서명</td> <!-- 2차 서명 -->
-    								</tr>
-    								<tr>
-        								<td id="approver1">결재선</td> <!-- 1차 결재자 이름이 들어갈 부분 -->
-        								<td id="approver2">결재선</td> <!-- 2차 결재자 이름이 들어갈 부분 -->
-    								</tr>
+									<tr>
+										<td rowspan="4"><b>결재선</b></td>
+										<td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(1)">1차 결재선 지정</button>
+										</td>
+										<td>
+											<button type="button" class="btn btn-outline-primary"
+												data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal"
+												onclick="setApproverOrder(2)">2차 결재선 지정</button>
+										</td>
+									</tr>
+									<tr>
+										<td id="sign1">서명</td>
+										<!-- 1차 서명 -->
+										<td id="sign2">서명</td>
+										<!-- 2차 서명 -->
+									</tr>
+									<tr>
+										<td id="approver1" data-emp-code="">결재선</td>
+										<!-- 1차 결재자 이름이 들어갈 부분 -->
+										<td id="approver2" data-emp-code="">결재선</td>
+										<!-- 2차 결재자 이름이 들어갈 부분 -->
+									</tr>
 								</thead>
 							</table>
 						</div>
-						
-					<!-- </div> -->
+
+						<!-- </div> -->
 						<!-- 참조선 테이블 -->
 						<div class="right-content">
 							<table class="reference-line-table">
@@ -168,414 +191,464 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<td><button type="button" onclick="referAdd()"
-												class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
-										<td><button type="button" onclick="referAdd()"
-												class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td>
+										<td><button type="button" onclick="setReferOrder(1)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
+										<td><button type="button" onclick="setReferOrder(2)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td>
 									</tr>
 									<tr>
-										<td>결재자1</td>
-										<td>결재자2</td>
+										<td id="referer1" data-emp-code="">참조선</td>
+										<td id="referer2" data-emp-code="">참조선</td>
 									</tr>
 								</thead>
 							</table>
 						</div>
 					</div>
-					
-			<!-- </div> -->
 
-			
+					<!-- </div> -->
 
 
-			<!-- 결재선 모달 -->
-			<div class="modal fade" id="apprDesignationModal" tabindex="-1"
-				aria-labelledby="apprDesignationLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="apprDesignationLabel">결재선 지정</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"
-								aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-                		<!-- 여기에 조직도 내용을 넣습니다 -->
-                			<div id="treeContainer"></div> <!-- 조직도 트리를 표시할 영역 -->
-            			</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary"
-								data-bs-dismiss="modal">닫기</button>
-							<button type="button" class="btn btn-primary"
-								id="saveDesignation">저장</button>
-						</div>
-					</div>
-				</div>
-			</div>
-				
-				<!-- 휴가신청서 폼 -->
-				<div th:if="${apprFormNo == 1}">
-					<div class="form-group">
-						<label for="leave-type">휴가 종류</label> 
-						<!-- <select id="leave-type"name="leave-type">
+
+
+
+
+					<!-- 휴가신청서 폼 -->
+					<div th:if="${apprFormNo == 1}">
+						<div class="form-group">
+							<label for="leave-type">휴가 종류</label>
+							<!-- <select id="leave-type"name="leave-type">
 							<option>연차</option>
 							<option>경조</option>
 						</select> -->
-						<input type="text" class="leave-type" value="연차" disabled>
-					</div>
-					<div class="form-group">
-						<label for="start-date">기간 및 일수</label> 
-						<input type="date"id="start-date" name="appr_holi_start"> <span>~</span> 
-						<input type="date" id="end-date" name="appr_holi_end"> <span>사용일수:</span>
-						<input type="number" id="appr_holi_use_count" name="appr_holi_use_count">
-						<span> 일</span>
-					</div>
-					<div class="form-group">
-						<label for="subject">제목</label> <input type="text" id="appr_title"
-							name="appr_title" placeholder="제목을 입력해 주세요.">
-					</div>
-					<div class="form-group">
-						<label for="content">내용</label>
-						<textarea id="appr_content" name="appr_content"
-							placeholder="내용을 입력해 주세요."></textarea>
-					</div>
-					<div class="form-group">
-						<label for="attachment">첨부 파일</label> <input type="file"
-							id="attachment">
-						<button class="btn-delete">파일 제거</button>
-					</div>
-				</div>
-				<div class="formDiv">
-				<!-- 사유서 폼 -->
-				<div th:if="${apprFormNo == 2}">
-					<div class="form-group">
-						<label for="subject">제목</label> <input type="text" id="appr_title"
-							name="appr_title" placeholder="제목을 입력해 주세요.">
-					</div>
-					<div class="form-group">
-						<label for="content">내용</label>
-						<textarea id="appr_content" name="appr_content"
-							placeholder="내용을 입력해 주세요."></textarea>
-					</div>
-					<div class="form-group">
-						<label for="attachment">첨부 파일</label> <input type="file"
-							id="attachment">
-						<button class="btn-delete">파일 제거</button>
-					</div>
-				</div>
-
-				<!-- 품의서 폼 -->
-				<div th:if="${apprFormNo == 3}">
-					<div class="form-group">
+							<input type="text" class="leave-type" value="연차" disabled>
+						</div>
+						<div class="form-group">
+							<label for="start-date">기간 및 일수</label> <input type="date"
+								id="start-date" name="appr_holi_start"> <span>~</span> <input
+								type="date" id="end-date" name="appr_holi_end"> <span>사용일수:</span>
+							<input type="number" id="appr_holi_use_count"
+								name="appr_holi_use_count"> <span> 일</span>
+						</div>
 						<div class="form-group">
 							<label for="subject">제목</label> <input type="text"
 								id="appr_title" name="appr_title" placeholder="제목을 입력해 주세요.">
 						</div>
+						<div class="form-group">
+							<label for="content">내용</label>
+							<textarea id="appr_content" name="appr_content"
+								placeholder="내용을 입력해 주세요."></textarea>
+						</div>
+						<div class="form-group">
+							<label for="attachment">첨부 파일</label> <input type="file"
+								id="attachment">
+							<button class="btn-delete">파일 제거</button>
+						</div>
 					</div>
-					<div class="form-group">
-						<label for="content">내용</label>
-						<textarea id="appr_content" name="appr_content"
-							placeholder="내용을 입력해 주세요."></textarea>
+					<div class="formDiv">
+						<!-- 사유서 폼 -->
+						<div th:if="${apprFormNo == 2}">
+							<div class="form-group">
+								<label for="subject">제목</label> <input type="text"
+									id="appr_title" name="appr_title" placeholder="제목을 입력해 주세요.">
+							</div>
+							<div class="form-group">
+								<label for="content">내용</label>
+								<textarea id="appr_content" name="appr_content"
+									placeholder="내용을 입력해 주세요."></textarea>
+							</div>
+							<div class="form-group">
+								<label for="attachment">첨부 파일</label> <input type="file"
+									id="attachment">
+								<button class="btn-delete">파일 제거</button>
+							</div>
+						</div>
+
+						<!-- 품의서 폼 -->
+						<div th:if="${apprFormNo == 3}">
+							<div class="form-group">
+								<div class="form-group">
+									<label for="subject">제목</label> <input type="text"
+										id="appr_title" name="appr_title" placeholder="제목을 입력해 주세요.">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="content">내용</label>
+								<textarea id="appr_content" name="appr_content"
+									placeholder="내용을 입력해 주세요."></textarea>
+							</div>
+							<div class="form-group">
+								<label for="attachment">첨부 파일</label> <input type="file"
+									id="attachment">
+								<button class="btn-delete">파일 제거</button>
+							</div>
+						</div>
 					</div>
-					<div class="form-group">
-						<label for="attachment">첨부 파일</label> <input type="file"
-							id="attachment">
-						<button class="btn-delete">파일 제거</button>
-					</div>
-				</div>
-				</div>
 				</form>
+				<!-- 결재선 모달 -->
+				<div class="modal fade" id="apprDesignationModal" tabindex="-1"
+					aria-labelledby="apprDesignationLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="apprDesignationLabel">결재선 지정</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<!-- 여기에 조직도 내용을 넣습니다 -->
+								<div id="treeContainer_appr"
+									style="height: 400px; overflow: auto;"></div>
+								<!-- 조직도 트리를 표시할 영역 -->
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">닫기</button>
+								<button type="button" class="btn btn-primary"
+									id="saveDesignation">저장</button>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</main>
 
-		<!-- JavaScript for Form Submission -->
 		<script>
+    // 결재선 관련 로직
+    let currentApproverOrder = 0;
+    let currentReferOrder = 0;
+    let approvalLineList = []; // 결재선 리스트
 
-		// 로그인한 사용자 정보 가져오기
-		document.addEventListener('DOMContentLoaded',function(){
-		const empNum = document.getElementById('empNum').value;
-			console.log("로그인한 정보"+empNum);
-		/* }); */
+ 	// 결재선 지정 버튼 클릭 시 호출되는 함수
+    function setApproverOrder(order) {
+        currentApproverOrder = order;  // 1차 또는 2차 결재선 설정
+        currentReferOrder = 0;         // 참조선 순서는 초기화
+        console.log("Current approver order set to: " + order);
+    }
+
+    // 참조선 지정 버튼 클릭 시 호출되는 함수
+    function setReferOrder(order) {
+        currentReferOrder = order;     // 1차 또는 2차 참조선 설정
+        currentApproverOrder = 0;      // 결재선 순서는 초기화
+        console.log("Current refer order set to: " + order);
+    }
+    
+ 
+document.addEventListener('DOMContentLoaded', function() {
+
+    function formatDataForJsTree(nodes) {
+        const formattedNodes = nodes.map(node => {
+            return {
+                id: node.id,
+                text: node.text,
+                parent: node.parent === '1' ? '#' : node.parent,
+                type: node.type,
+                icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill',
+                li_attr: {
+                    'data-emp-code': node.primaryKey  // empCode를 데이터 속성으로 추가
+                }
+            };
+        });
+
+        console.log("Formatted Data for jsTree:", formattedNodes);
+        return formattedNodes;
+    }
+
+    // 모달이 열릴 때 조직도를 가져오는 코드
+    document.getElementById('apprDesignationModal').addEventListener('show.bs.modal', function () {
+        fetch('/getOrgChart')  // 조직도 데이터를 가져오는 API
+            .then(response => response.json())
+            .then(data => {
+                console.log("Fetched Org Data:", data);
+
+                // 조직도 데이터를 jsTree에 맞게 변환
+                const formattedData = formatDataForJsTree(data);
+                console.log("formattedData: " + formattedData);
+
+                // jsTree 초기화 및 데이터 적용
+                $('#treeContainer_appr').jstree({
+                    'core': {
+                        "animation": 0,
+                        "check_callback": true,
+                        'data': formattedData  // jsTree에 데이터를 전달
+                    },
+                    "plugins": ["types"],  // 아이콘 사용을 위한 플러그인 설정
+                    "types": {
+                        "team": {
+                            "icon": "ri-team-fill"  // 팀 아이콘
+                        },
+                        "employee": {
+                            "icon": "ri-user-2-fill"  // 직원 아이콘
+                        }
+                    }
+                });
+            })
+            .catch(err => {
+                console.error("Error fetching org chart data:", err);
+            });
+    });
+ 	
+ 
+ 	// 결재자 및 참조자 선택 시 처리 로직
+    $('#treeContainer_appr').on('select_node.jstree', function(e, data) {
+        const selectedName = data.node.text;
+        const selectedEmpCode = data.node.original.li_attr['data-emp-code'];
+
+        console.log("선택된 사용자 이름: " + selectedName);
+        console.log("선택된 사용자의 empCode: " + selectedEmpCode);
+
+        // 결재선 지정 로직
+        if (currentApproverOrder === 1) {
+            const approver1 = document.getElementById('approver1');
+            approver1.innerText = selectedName;
+            approver1.setAttribute('data-emp-code', selectedEmpCode);
+            console.log("approver1에 저장된 empCode: " + approver1.getAttribute('data-emp-code'));
+            saveApprovalLine(1, selectedEmpCode, 'approver'); // 1차 결재선 저장
+        } else if (currentApproverOrder === 2) {
+            const approver2 = document.getElementById('approver2');
+            approver2.innerText = selectedName;
+            approver2.setAttribute('data-emp-code', selectedEmpCode);
+            console.log("approver2에 저장된 empCode: " + approver2.getAttribute('data-emp-code'));
+            saveApprovalLine(2, selectedEmpCode, 'approver'); // 2차 결재선 저장
+        }
+
+        // 참조선 지정 로직
+        if (currentReferOrder === 1) {
+            const referer1 = document.getElementById('referer1');
+            referer1.innerText = selectedName;
+            referer1.setAttribute('data-emp-code', selectedEmpCode);
+            console.log("referer1에 저장된 empCode: " + referer1.getAttribute('data-emp-code'));
+            saveApprovalLine(null, selectedEmpCode, 'referer'); // 1차 참조선 저장
+        } else if (currentReferOrder === 2) {
+            const referer2 = document.getElementById('referer2');
+            referer2.innerText = selectedName;
+            referer2.setAttribute('data-emp-code', selectedEmpCode);
+            console.log("referer2에 저장된 empCode: " + referer2.getAttribute('data-emp-code'));
+            saveApprovalLine(null, selectedEmpCode, 'referer'); // 2차 참조선 저장
+        }
+    });
+ 
+ 
+ // 결재선 리스트에 저장하는 함수
+    function saveApprovalLine(order, empCode, type) {
+    	console.log("saveApprovalLine called with order:", order, "empCode:", empCode, "type:", type);
+    	
+        let apprOrder = null;
+        let apprRole = '1';  // 기본 결재자 역할
+
+        if (type === 'approver') {
+            apprOrder = order;  // 결재선인 경우 1차/2차에 따른 order 설정
+            apprRole = '1';     // 결재자 역할 설정
+        } else if (type === 'referer') {
+            apprRole = '2';     // 참조자의 경우 역할을 참조로 설정
+            apprOrder = null;   // 참조자의 경우 order는 null로 설정
+        }
+
+        approvalLineList.push({
+            appr_order: apprOrder,
+            emp_code: empCode,
+            appr_role: apprRole,
+            appr_state: 'S'  // 기본 상태 (대기)
+        });
+
+        console.log("Current approvalLineList:", approvalLineList);
+    }
+ 
+ 
+    // 저장 버튼 클릭 시 결재자 정보 저장
+    document.getElementById("saveDesignation").addEventListener("click", function() {
+        const selectedApproverElement = currentApproverOrder === 1 ? document.getElementById('approver1') : document.getElementById('approver2');
+        const selectedEmpCode = selectedApproverElement.dataset.empCode;
+        const selectedApproverName = selectedApproverElement.innerText;
+        
+        console.log("저장 버튼 클릭 시 selectedEmpCode: " + selectedEmpCode);
+
+        // 선택된 결재선에 대한 유효성 검사
+        if (!selectedEmpCode || selectedApproverName === "결재선") {
+            alert('결재자를 선택하세요.');
+            return;
+        }
+
+        console.log("Saved designation with current approver order: " + currentApproverOrder);
+        $('#apprDesignationModal').modal('hide');  // 모달 닫기
+    });
+
+    
+    
+    
+    // 로그인한 사용자 정보 가져오기
+    const empNum = document.getElementById('empNum').value;
+    console.log("로그인한 정보" + empNum);
+
+    const documentNumber = document.getElementById("docu_no").value;
+    const drEmpCode = document.getElementById("drEmpCode").value;
+    
+    // 기안서 등록
+    // 기안서 상신 시 결재선 리스트도 함께 전송
+    document.getElementById("draftAdd").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        let form = this;
+        let vali_check = true;
+        let vali_text = "";
+
+        if (apprFormNo === 1) {
+            if (form.appr_title.value === "") {
+                vali_text = '제목을 입력하세요';
+                form.appr_title.focus();
+                vali_check = false;
+            } else if (form.appr_content.value === "") {
+                vali_text = "내용을 입력하세요";
+                form.appr_content.focus();
+                vali_check = false;
+            } else if (form.appr_holi_use_count && form.appr_holi_use_count.value === "") {
+                vali_text = '사용일수를 입력하세요';
+                form.appr_holi_use_count.focus();
+                vali_check = false;
+            }
+        }
+
+        // 사유서 폼 유효성 검사
+        if (apprFormNo === 2) {
+            if (form.appr_title.value === "") {
+                vali_text = '제목을 입력하세요';
+                form.appr_title.focus();
+                vali_check = false;
+            } else if (form.appr_content.value === "") {
+                vali_text = "내용을 입력하세요";
+                form.appr_content.focus();
+                vali_check = false;
+            }
+        }
+
+        // 품의서 폼 유효성 검사
+        if (apprFormNo === 3) {
+            if (form.appr_title.value === "") {
+                vali_text = '제목을 입력하세요';
+                form.appr_title.focus();
+                vali_check = false;
+            } else if (form.appr_content.value === "") {
+                vali_text = "내용을 입력하세요";
+                form.appr_content.focus();
+                vali_check = false;
+            }
+        }
+
+        if (vali_check == false) {
+            alert(vali_text);
+        } else {
+            if (confirm("상신하시겠습니까?")) {
+                let obj = {};
+                const payload = new FormData(form);
+                payload.forEach(function(value, key) {
+                    obj[key] = value;
+                });
+
+                obj.appr_writer_code = drEmpCode;
+                obj.docu_no = documentNumber;
+                obj.approvalLineList = approvalLineList; // 결재선 리스트 추가
+
+                const jsonData = JSON.stringify(obj);
+                const csrfToken = document.getElementById("csrf_token").value;
+                
+                console.log("Data sent to server:", obj); 
+
+                fetch('/draft', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json;charset=utf-8",
+                        "Accept": "application/json",
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: jsonData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                	console.log("Server response:", data);  // 서버 응답 로그 추가
+                    if (data.res_code == '200') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '성공',
+                            text: data.res_msg,
+                            confirmButtonText: "닫기"
+                        }).then(() => {
+                            location.href = "/approvalHome";
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '실패',
+                            text: data.res_msg,
+                            confirmButtonText: "닫기"
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    // 임시 저장 버튼 이벤트 리스너
+    document.getElementById("tempSaveBtn").addEventListener("click", function() {
+        const apprFormNo = document.getElementById("appr_form_no").value;
+        const empNum = document.getElementById("empNum").value;
+        const csrfToken = document.getElementById("csrf_token").value;
+        const apprTitle = document.getElementById("appr_title").value;
+        const apprContent = document.getElementById("appr_content").value;
+        const apprHoliStart = document.getElementById("start-date") ? document.getElementById("start-date").value : null;
+        const apprHoliEnd = document.getElementById("end-date") ? document.getElementById("end-date").value : null;
+        const apprHoliUseCount = document.getElementById("appr_holi_use_count") ? document.getElementById("appr_holi_use_count").value : null;
+
+        const obj = {
+            appr_form_no: apprFormNo,
+            appr_title: apprTitle,
+            appr_content: apprContent,
+            employee: { empCode: empNum },
+            appr_holi_start: apprHoliStart,
+            appr_holi_end: apprHoliEnd,
+            appr_holi_use_count: apprHoliUseCount,
+        };
+
+        fetch('/apprSave', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(obj)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code == '200') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '성공',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                }).then((result) => {
+                    location.href = "/approvalHome";
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '실패',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                });
+            }
+        });
+    });
+
+    // 취소 버튼 이벤트 리스너
+    document.getElementById("cancelBtn").addEventListener("click", function() {
+        if (confirm("작성을 취소하시겠습니까?")) {
+            location.href = "/approvalHome";
+        }
+    });
+});
+</script>
 		
-		/* const emp = document.getElementById('empNum').value; */
-		const documentNumber = document.getElementById("docu_no").value
-		
-		// 기안서 등록
-		// 상신 버튼의 유효성 검사 및 제출 처리
-		document.getElementById("draftAdd").addEventListener("submit", function(e) {
-			e.preventDefault();
-				
-			let form = this;
-			let vali_check = true;
-			let vali_text = "";
-			
-			// 휴가신청서 폼 유효성 검사
-			if (apprFormNo === 1) {
-			    if (form.appr_title.value === "") {
-			        vali_text = '제목을 입력하세요';
-			        form.appr_title.focus();
-			        vali_check = false;
-			    } else if (form.appr_content.value === "") {
-			        vali_text = "내용을 입력하세요";
-			        form.appr_content.focus();
-			        vali_check = false;
-			    } else if (form.appr_holi_use_count && form.appr_holi_use_count.value === "") {
-			        vali_text = '사용일수를 입력하세요';
-			        form.appr_holi_use_count.focus();
-			        vali_check = false;
-			    }
-			}
 
-			// 사유서 폼 유효성 검사
-			if (apprFormNo === 2) {
-			    if (form.appr_title.value === "") {
-			        vali_text = '제목을 입력하세요';
-			        form.appr_title.focus();
-			        vali_check = false;
-			    } else if (form.appr_content.value === "") {
-			        vali_text = "내용을 입력하세요";
-			        form.appr_content.focus();
-			        vali_check = false;
-			    }
-			}
-
-			// 품의서 폼 유효성 검사
-			if (apprFormNo === 3) {
-				if (form.appr_title.value === "") {
-			        vali_text = '제목을 입력하세요';
-			        form.appr_title.focus();
-			        vali_check = false;
-			    } else if (form.appr_content.value === "") {
-			        vali_text = "내용을 입력하세요";
-			        form.appr_content.focus();
-			        vali_check = false;
-			    }
-			}
-			
-			
-			
-			if(vali_check == false){
-				alert(vali_text);
-				
-			} else {
-				if(confirm("상신하시겠습니까?")){
-					// 토큰
-					let obj ={};
-					const payload = new FormData(form);
-					payload.forEach(function(value,key){
-						obj[key] = value;
-					});
-					
-				
-					obj.appr_writer_code = empNum; // empNum 추가
-					obj.docu_no = documentNumber;
-					
-					console.log("Payload before sending:", obj);
-				
-					const jsonData = JSON.stringify(obj);
-					const csrfToken = document.getElementById("csrf_token").value;
-
-				
-					fetch('/draft',{
-						method: 'POST',
-						headers : {
-							"Content-Type": "application/json;charset=utf-8",
-							"Accept": "application/json",
-							'X-CSRF-TOKEN': csrfToken
-						},
-						body: jsonData,
-					
-					})
-					.then(response => response.json())
-					.then(data =>{
-						if(data.res_code == '200'){
-							Swal.fire({
-								icon: 'success',
-								title: '성공',
-								text: data.res_msg,
-								confirmButtonText: "닫기"
-							}) .then((result)=>{
-								location.href="/approvalHome";
-							});
-						} else{
-							Swal.fire({
-								icon: 'error',
-								title: '실패',
-								text: data.res_msg,
-								confirmButtonText: "닫기"
-							});
-						}
-					});
-					
-					
-				}
-			}
-			
-		}); 
-	});
-		
-	
-		
-		// 임시 저장 버튼 이벤트 리스너
-		document.getElementById("tempSaveBtn").addEventListener("click",function(){
-			const apprFormNo = document.getElementById("appr_form_no").value;
-			const empNum = document.getElementById("empNum").value;
-			const csrfToken = document.getElementById("csrf_token").value;
-			const apprTitle = document.getElementById("appr_title").value;
-			const apprContent = document.getElementById("appr_content").value;
-			const apprHoliStart = document.getElementById("start-date") ? document.getElementById("start-date").value : null;
-		    const apprHoliEnd = document.getElementById("end-date") ? document.getElementById("end-date").value : null;
-		    const apprHoliUseCount = document.getElementById("appr_holi_use_count") ? document.getElementById("appr_holi_use_count").value : null;
-			
-			const obj = {
-					appr_form_no: apprFormNo,
-					appr_title: apprTitle,
-					appr_content: apprContent,
-					employee: { empCode: empNum},
-					appr_holi_start: apprHoliStart,
-			        appr_holi_end: apprHoliEnd,
-			        appr_holi_use_count: apprHoliUseCount,
-			};
-			
-			
-			
-			fetch('/apprSave',{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRF-TOKEN': csrfToken
-				},
-				body: JSON.stringify(obj)
-			})
-			.then(response => response.json())
-			.then(data => {
-				if(data.res_code == '200'){
-					Swal.fire({
-						icon: 'success',
-						title: '성공',
-						text: data.res_msg,
-						confirmButtonText: "닫기"
-					}) .then((result)=>{
-						location.href="/approvalHome";
-					});
-				} else{
-					Swal.fire({
-						icon: 'error',
-						title: '실패',
-						text: data.res_msg,
-						confirmButtonText: "닫기"
-					});
-				}
-			});
-			
-		});
-		
-		// 취소 버튼 이벤트 리스너
-		document.getElementById("cancelBtn").addEventListener("click", function() {
-		    if (confirm("작성을 취소하시겠습니까?")) {
-		        location.href = "/approvalHome";  // 취소 시 홈으로 이동
-		    }
-		});
-
-		// 결재선 관련 로직
-		let currentApproverOrder = 0;
-
-		// 1차 또는 2차 결재선 버튼을 클릭할 때 순서를 지정하는 함수
-		function setApproverOrder(order) {
-		    currentApproverOrder = order;  // 1차인지 2차인지 설정
-		}
-		
-		function formatDataForJsTree(nodes) {
-		    return nodes.map(node => {
-		        return {
-		            id: node.id,  // 노드의 ID
-		            text: node.text,  // 노드의 텍스트 (이름)
-		            parent: node.parent === '1' ? '#' : node.parent,  // 부모 노드의 ID가 1이면 루트로 설정
-		            type: node.type,  // 노드 타입 (team 또는 employee)
-		            icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill'  // 팀이면 팀 아이콘, 직원이면 직원 아이콘
-		        };
-		    });
-		}
-
-
-		
-		// 모달이 열릴 때 조직도를 가져오는 코드
-		document.getElementById('apprDesignationModal').addEventListener('show.bs.modal', function () {
-		    fetch('/getOrgChart')  // 조직도 데이터를 가져오는 API
-		        .then(response => response.json())
-		        .then(data => {
-		            console.log("Fetched Org Data:", data);
-
-		            // 조직도 데이터를 jsTree에 맞게 변환
-		            const formattedData = formatDataForJsTree(data);
-
-		            // jsTree 초기화 및 데이터 적용
-		            $('#treeContainer').jstree({
-		                'core': {
-		                    "animation": 0,
-		                    "check_callback": true,
-		                    'data': formattedData  // jsTree에 데이터를 전달
-		                },
-		                "plugins": ["types"],  // 아이콘 사용을 위한 플러그인 설정
-		                "types": {
-		                    "team": {
-		                        "icon": "ri-team-fill"  // 팀 아이콘
-		                    },
-		                    "employee": {
-		                        "icon": "ri-user-2-fill"  // 직원 아이콘
-		                    }
-		                }
-		            });
-		        })
-		        .catch(err => {
-		            console.error("Error fetching org chart data:", err);
-		        });
-		});
-		
-		document.getElementById('saveDesignation').addEventListener('click', function() {
-		    // 저장할 때 1차 또는 2차 결재자가 선택되었는지 확인
-		    if (currentApproverOrder === 1) {
-		        const approver1 = document.getElementById('approver1').innerText;
-		        if (!approver1 || approver1 === '결재선') {
-		            alert('1차 결재자를 선택하세요.');
-		            return;
-		        }
-		    } else if (currentApproverOrder === 2) {
-		        const approver2 = document.getElementById('approver2').innerText;
-		        if (!approver2 || approver2 === '결재선') {
-		            alert('2차 결재자를 선택하세요.');
-		            return;
-		        }
-		    }
-
-		    // 선택된 결재자 및 순서 초기화
-		    currentApproverOrder = 0;
-
-		    // 모달 닫기
-		    const modalElement = document.getElementById('apprDesignationModal');
-		    const modal = bootstrap.Modal.getInstance(modalElement);
-		    modal.hide();
-		});
-
-
-	
-		// jsTree에서 노드를 클릭했을 때 결재선에 반영하는 코드
-		$('#treeContainer').on('select_node.jstree', function (e, data) {
-    		const selectedName = data.node.text;  // 선택된 노드의 이름
-    		console.log('Selected Approver:', selectedName); // 선택된 결재자 이름 확인용 로그
-
-    		// 현재 선택된 결재선 순서에 따라 반영
-    		if (currentApproverOrder === 1) {
-        		document.getElementById('approver1').innerText = selectedName;
-    		} else if (currentApproverOrder === 2) {
-        		document.getElementById('approver2').innerText = selectedName;
-    		}
-		});
-
-	
-		
-
-	
-	
-    </script>
 	</th:block>
 </body>
 </html>

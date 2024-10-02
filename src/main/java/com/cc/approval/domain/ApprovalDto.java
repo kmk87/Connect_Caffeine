@@ -3,6 +3,7 @@ package com.cc.approval.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import com.cc.employee.domain.Employee;
 
@@ -37,7 +38,25 @@ public class ApprovalDto {
     private LocalDate appr_holi_start; 
     private LocalDate appr_holi_end;
     private String docu_no;
+    private String emp_account;
+    
+    private String signImagePath1;	// 1차 결재자 서명 경로
+    private String signImagePath2;  // 2차 결재자 서명 경로
+    
+    
+    // 결재선 리스트 추가
+    private List<ApprovalLineDto> approvalLineList;
+    
+    
+    // 서명 경로 설정 메소드 (이미지 경로가 null이면 기본 이미지 경로 설정)
+    public String getSignImagePath1() {
+        return signImagePath1 != null ? signImagePath1 : "/upload/default_signature.png"; // 기본 이미지 설정 가능
+    }
 
+    public String getSignImagePath2() {
+        return signImagePath2 != null ? signImagePath2 : "/upload/default_signature.png"; // 기본 이미지 설정 가능
+    }
+    
     // 날짜를 문자열로 변환하는 메소드 추가
     public String getFormattedDraftDay() {
     	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -82,8 +101,6 @@ public class ApprovalDto {
                 return "반려";
             case "C":
                 return "결재완료";
-            case "A":
-                return "1차승인";
             default:
                 return "알 수 없음"; 
         }
@@ -133,6 +150,19 @@ public class ApprovalDto {
 
 	    // 결재양식 이름 설정 메소드 호출
 	    dto.setFormName();
+	    
+	    // 결재라인에서 서명 이미지 경로를 가져오는 로직 추가
+	    List<ApprovalLine> approvalLines = approval.getApprovalLines();
+	    if (approvalLines != null && !approvalLines.isEmpty()) {
+	        // 1차 결재자의 서명 경로 추가
+	        dto.setSignImagePath1(approvalLines.get(0).getEmployee().getEmpSignatureImagePath());
+
+	        // 2차 결재자가 있는 경우 서명 경로 추가
+	        if (approvalLines.size() > 1) {
+	            dto.setSignImagePath2(approvalLines.get(1).getEmployee().getEmpSignatureImagePath());
+	        }
+	    }
+	    
 
 	    return dto;
 	}

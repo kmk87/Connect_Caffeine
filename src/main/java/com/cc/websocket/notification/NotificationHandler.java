@@ -1,4 +1,3 @@
-
 package com.cc.websocket.notification;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class NotificationHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-    	String payload = message.getPayload();
+       String payload = message.getPayload();
         System.out.println("수신한 메시지: " + payload);
 
         // 수신한 메시지를 모든 연결된 클라이언트에게 전송 (Broadcast)
@@ -116,4 +115,3 @@ public class NotificationHandler extends TextWebSocketHandler {
     }
 
 }
-

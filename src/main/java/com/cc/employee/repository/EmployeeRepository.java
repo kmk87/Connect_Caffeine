@@ -2,7 +2,7 @@ package com.cc.employee.repository;
 
 
 import java.util.List;
-
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -20,7 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		
 		
 		Employee findByempAccount(String emp_account);
-  
+
 		Employee findByempName(String emp_name);
 
 		// empAccount(사용자 이름)로 emp_code를 찾는 메서드
@@ -52,15 +52,19 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		List<EmployeeDto> findAllempList();
 		
 		
-		// 전자결재 관련
-		@Query("SELECT e.empName FROM Employee e " +
-		           "JOIN Approval a ON a.employee.empCode = e.empCode " +
-		           "WHERE e.empAccount = :memId")
-		    String findEmpNameByMemId(@Param("memId") String memId);
-		
-
+		// 전자서명 
 		@Modifying
 		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")
 		int updateEmployeeSignatureByAccount(@Param("empAccount") String empAccount, @Param("filePath") String filePath);
 
+		// 결재자 사원 계정으로 사원코드 가져오기
+		@Query("SELECT e.empCode FROM Employee e WHERE e.empAccount = :empAccount")
+		Long findEmpCodeByEmpAccount(@Param("empAccount") String empAccount);
+		
+		@Query("SELECT e FROM Employee e WHERE e.empCode = :empCode")
+	    Optional<Employee> findByEmpCode(@Param("empCode") Long empCode);
+
+	    
+		
+	
 }

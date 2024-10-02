@@ -85,7 +85,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="appr, iterStat : ${approvals}" th:onclick="|location.href='@{/apprStorage/{no}(no=${appr.appr_no})}'|">
+									<tr th:each="appr, iterStat : ${approvals}" th:onclick="|location.href='@{/apprStorageDetail/{no}(no=${appr.appr_no})}'|">
 										<td th:text="${iterStat.index + 1}"></td>
 										<td th:text="${appr.formName}"></td>
 										<td th:text="${appr.appr_title}"></td>
