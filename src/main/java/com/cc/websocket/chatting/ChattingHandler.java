@@ -1,10 +1,13 @@
 package com.cc.websocket.chatting;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -15,8 +18,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.cc.chatting.domain.ChatMessageDto;
 import com.cc.chatting.service.ChattingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class ChattingHandler extends TextWebSocketHandler {
@@ -32,6 +33,7 @@ public class ChattingHandler extends TextWebSocketHandler {
         this.chattingService = chattingService;
         this.sessionManager = sessionManager;
         this.objectMapper = new ObjectMapper(); // ObjectMapper를 클래스 필드로 선언
+        
     }
 
     // WebSocket 연결이 성공했을 때 호출되는 메서드
@@ -64,11 +66,14 @@ public class ChattingHandler extends TextWebSocketHandler {
             case "msg":
                 // 메시지 전송 및 저장 로직 처리
                 if(chattingService.createChatMessage(msg) > 0) {
+                	LocalDateTime now = LocalDateTime.now();
+                	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
                 	resultMap.put("res_code", "200");
                 	resultMap.put("message_content", msg.getMessage_content());
                 	resultMap.put("room_no", String.valueOf(msg.getRoom_no()));
                 	resultMap.put("emp_code", String.valueOf(msg.getEmp_code()));
-                	
+                	resultMap.put("sender_name", msg.getSender_name());
+                	resultMap.put("message_date", String.valueOf(now.format(formatter)));
                 	TextMessage resultMsg
                 	= new TextMessage(objectMapper.writeValueAsString(resultMap));
                 	
@@ -76,11 +81,7 @@ public class ChattingHandler extends TextWebSocketHandler {
                 		WebSocketSession client = sessionMap.get(id);
                 		client.sendMessage(resultMsg);
                 	}
-                	
                 }
-            	
-            	
-                System.out.println("메세시 전송 : " + msg);
                 break;
 
             default:
@@ -102,35 +103,4 @@ public class ChattingHandler extends TextWebSocketHandler {
             logger.warn("WebSocket 연결 종료 시 empCode가 null입니다. sessionId={}", session.getId());
         }
     }
-
-//    // 세션에서 empCode 추출
-//    private String getEmpCodeFromSession(WebSocketSession session) {
-//        // 세션에서 empCode를 추출하는 로직 (Principal 또는 Attributes를 사용)
-//        Map<String, Object> attributes = session.getAttributes();
-//        if (attributes != null && attributes.containsKey("empCode")) {
-//        	System.err.println("attributes : " + attributes);
-//            return attributes.get("empCode").toString();
-//        }
-//        logger.warn("WebSocket 세션에 empCode가 없습니다. sessionId={}", session.getId());
-//        return null; // empCode가 없을 경우 null 반환
-//    }
-
-    // 메시지 전송 및 저장 처리
-//    private void handleMessage(WebSocketSession session, ChatMessageDto msg) throws Exception {
-//        // 채팅 메시지 DB 저장
-//        if (chattingService.createChatMessage(msg) > 0) {
-//            // 방에 속한 모든 세션에게 메시지를 전송
-//            List<WebSocketSession> sessions = sessionManager.getSessionsInRoom(String.valueOf(msg.getRoom_no()));
-//            TextMessage resultMsg = new TextMessage(objectMapper.writeValueAsString(msg));
-//
-//            for (WebSocketSession clientSession : sessions) {
-//                if (clientSession.isOpen()) {
-//                    clientSession.sendMessage(resultMsg);
-//                }
-//            }
-//            logger.info("메시지 전송 완료: roomNo={}, messageContent={}", msg.getRoom_no(), msg.getMessage_content());
-//        } else {
-//            logger.error("메시지 저장 중 오류 발생: roomNo={}, messageContent={}", msg.getRoom_no(), msg.getMessage_content());
-//        }
-//    }
 }

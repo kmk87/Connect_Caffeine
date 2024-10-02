@@ -22,6 +22,7 @@ public class ChatMessageDto {
     private String message_content;  // 메시지 내용
     private LocalDateTime message_date; // 메시지 날짜
     private String chat_type;        // 채팅 타입 (ex: 메시지 전송, 방 입장 등)
+    private String sender_name;
     private String emp_name;
 
     // DTO에서 ChatMessage 엔티티로 변환
