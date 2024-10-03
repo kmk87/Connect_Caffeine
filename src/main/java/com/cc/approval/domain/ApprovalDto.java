@@ -26,7 +26,6 @@ public class ApprovalDto {
 	private String appr_title;
 	private String appr_content;
 	private LocalDate draft_day;
-	private LocalDate appr_date;
     private String emp_code;
     private Long appr_form_no;
     private Long appr_writer_code;
@@ -119,7 +118,6 @@ public class ApprovalDto {
 				.apprTitle(appr_title)
 				.apprContent(appr_content)
 				.draftDay(draft_day)
-				.apprDate(appr_date)
 				.apprHoliStart(appr_holi_start) 
 	            .apprHoliEnd(appr_holi_end)     
 	            .apprHoliUseCount(appr_holi_use_count)
@@ -138,7 +136,6 @@ public class ApprovalDto {
 	            .appr_title(approval.getApprTitle())
 	            .appr_content(approval.getApprContent())
 	            .draft_day(approval.getDraftDay())
-	            .appr_date(approval.getApprDate())
 	            .is_deleted(approval.getIsDeleted())
 	            .docu_no(approval.getDocuNo())
 	            .appr_holi_start(approval.getApprHoliStart())

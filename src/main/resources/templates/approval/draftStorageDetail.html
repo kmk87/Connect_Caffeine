@@ -11,6 +11,8 @@
     <link th:href="@{/css/approval/create.css}" rel="stylesheet" type="text/css">
     <title>기안서 상세 조회</title>
     <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
 </head>
 <body>
     <th:block layout:fragment="content">
@@ -124,42 +126,32 @@
 								<thead>
 									<tr>
 										<td rowspan="4"><b>결재선</b></td>
-										<!-- <td>
-											<button type="button" class="btn btn-outline-primary"
-												data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal"
-												onclick="setApproverOrder(1)">1차 결재선 지정</button>
-										</td>
-										<td>
-											<button type="button" class="btn btn-outline-primary"
-												data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal"
-												onclick="setApproverOrder(2)">2차 결재선 지정</button>
-										</td> -->
+										
 									</tr> 
 									<tr>
-    										<!-- 1차 결재선이 존재하는지 확인 -->
-    										<td id="approver1" th:text="${#lists.size(approvers) > 0 ? approvers[0].employee.empName : ''}" data-emp-code="">결재선</td>
-    										<!-- 2차 결재선이 존재하는지 확인 -->
-    										<td id="approver2" th:text="${#lists.size(approvers) > 1 ? approvers[1].employee.empName : ''}" data-emp-code="">결재선</td>										
-									</tr>
-									<tr>
-    									<!-- 1차 서명 -->
-    									<td id="sign1">
-        									<!-- 결재 상태가 "C"이고 서명 이미지가 있을 때만 서명 이미지를 출력 -->
-        									<img th:if="${dto.appr_state == 'C' and dto.signImagePath1 != null}" th:src="@{${dto.signImagePath1}}" alt="1차 서명" width="200">
-        									<!-- 서명이 없을 때 텍스트 출력 -->
-        									<span th:if="${dto.signImagePath1 == null or dto.appr_state != 'C'}">서명 없음</span>
-    									</td>
+    <td id="approver1" th:text="${approvers != null and #lists.size(approvers) > 0 ? approvers[0].employee.empName : '결재자 없음'}"></td>
 
-    									<!-- 2차 서명 -->
-    										<td id="sign2">
-        									<!-- 결재 상태가 "C"이고 서명 이미지가 있을 때만 서명 이미지를 출력 -->
-        									<img th:if="${dto.appr_state == 'C' and dto.signImagePath2 != null}" th:src="@{${dto.signImagePath2}}" alt="2차 서명" width="200">
-        									<!-- 서명이 없을 때 텍스트 출력 -->
-        									<span th:if="${dto.signImagePath2 == null or dto.appr_state != 'C'}">서명 없음</span>
-    									</td>
-									</tr>
+    <!-- 두 번째 결재자가 있는지 확인하고 없으면 '결재자 없음' 표시 -->
+    <td id="approver2" th:text="${approvers != null and #lists.size(approvers) > 1 ? approvers[1].employee.empName : '결재자 없음'}"></td>
+</tr>
+<tr>
+    <td id="sign1">
+        <!-- 1차 결재자 서명 -->
+        <img th:if="${dto.signImagePath1 != null && #lists.size(approvers) > 0 && approvers[0].apprState == 'C'}" 
+             th:src="@{${dto.signImagePath1}}" alt="1차 서명" width="100">
+        <span th:if="${dto.signImagePath1 == null}">1차 서명 없음</span>
+    </td>
+    <td id="sign2">
+        <!-- 2차 결재자 서명 -->
+        <img th:if="${dto.signImagePath2 != null && #lists.size(approvers) > 1 && approvers[1].apprState == 'C'}" 
+             th:src="@{${dto.signImagePath2}}" alt="2차 서명" width="100">
+        <span th:if="${dto.signImagePath2 == null}">2차 서명 없음</span>
+    </td>
+</tr>
+
+
+
+
 								</thead>
 							</table>
 						</div>
@@ -173,18 +165,11 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<!-- <td><button type="button" onclick="setReferOrder(1)"
-												class="btn btn-outline-primary" data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
-										<td><button type="button" onclick="setReferOrder(2)"
-												class="btn btn-outline-primary" data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td> -->
 									</tr>
 									<tr>
-										<!-- 1차 참조선이 존재하는지 확인 -->
-    									<td id="referer1" th:text="${#lists.size(referers) > 0 ? referers[0].employee.empName : ''}" data-emp-code=""></td>
-    									<!-- 2차 참조선이 존재하는지 확인 -->
-    									<td id="referer2" th:text="${#lists.size(referers) > 1 ? referers[1].employee.empName : ''}" data-emp-code=""></td>
+										<td id="referer1" th:text="${referers != null and #lists.size(referers) > 0 ? referers[0].employee.empName : '참조자 없음'}"></td>
+
+<td id="referer2" th:text="${referers != null and #lists.size(referers) > 1 ? referers[1].employee.empName : '참조자 없음'}"></td>
 									</tr>
 								</thead>
 							</table>

@@ -59,7 +59,8 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     // Approval 엔티티에서 appr_no 기준으로 내림차순 정렬하는 쿼리
     List<Approval> findAllByOrderByApprNoDesc();
     
-    
+    // 결재 상태와 결재 번호를 기준으로 조회
+    Optional<Approval> findByApprStateAndApprNo(String apprState, Long apprNo);
 	
 	
 }

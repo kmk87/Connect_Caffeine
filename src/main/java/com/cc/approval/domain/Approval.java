@@ -63,10 +63,6 @@ public class Approval {
 	@CreationTimestamp
 	private LocalDate draftDay;
 	
-	@Column(name="appr_date")
-	@UpdateTimestamp
-	private LocalDate apprDate;
-	
 	@Column(name="appr_holi_start")
 	private LocalDate apprHoliStart;
 	

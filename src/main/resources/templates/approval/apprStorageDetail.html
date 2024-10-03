@@ -12,6 +12,7 @@
 	type="text/css">
 <title>결재문서함 상세 조회</title>
 <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 	<th:block layout:fragment="content">
@@ -93,9 +94,8 @@
         				id="secondApprovalBtn">
         				2차 승인
     				</button>
-					<button type="button" class="btn btn-outline-warning"
-						id="companionBtn">반려</button>
-					<button type="button" class="btn btn-outline-danger" id="cancelBtn">취소</button>
+					<button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#rejectReasonModal">반려</button>
+					<button type="button" class="btn btn-outline-danger" id="cancelBtn">돌아가기</button>
 
 					<div class="form-content">
 						<div class="left-content-box">
@@ -131,34 +131,28 @@
 								<thead>
 									<tr>
 										<td rowspan="4"><b>결재선</b></td>
-										<!-- <td>
-											<button type="button" class="btn btn-outline-primary"
-												data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal"
-												onclick="setApproverOrder(1)">1차 결재선 지정</button>
-										</td>
-										<td>
-											<button type="button" class="btn btn-outline-primary"
-												data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal"
-												onclick="setApproverOrder(2)">2차 결재선 지정</button>
-										</td> -->
-									</tr> 
-									<tr>
-    										<td id="approver1" th:text="${approvers != null and #lists.size(approvers) > 0 ? approvers[0].employee.empName : '결재자 없음'}"></td>
-
-<td id="approver2" th:text="${approvers != null and #lists.size(approvers) > 1 ? approvers[1].employee.empName : '결재자 없음'}"></td>		
+										<tr>
+    										<!-- 1차 결재선이 존재하는지 확인 -->
+    										<td id="approver1" th:text="${#lists.size(approvers) > 0 ? approvers[0].employee.empName : ''}" data-emp-code="">결재선</td>
+    										<!-- 2차 결재선이 존재하는지 확인 -->
+    										<td id="approver2" th:text="${#lists.size(approvers) > 1 ? approvers[1].employee.empName : ''}" data-emp-code="">결재선</td>										
 									</tr>
 									<tr>
-										<td id="sign1">
-        									
-        									<span>서명 없음</span>
-    									</td>
-    									<td id="sign2">
-        									
-        									<span>서명 없음</span>
-    									</td>
-									</tr>
+    <td id="sign1">
+        <!-- 1차 결재자 서명 -->
+        <img th:if="${firstApprover != null && firstApprover.apprState == 'C' && firstApprover.signaturePath != null}" 
+             th:src="@{/uploadImg/ + ${firstApprover.signaturePath}}" 
+             alt="1차 서명" width="200">
+        <span th:if="${firstApprover == null || firstApprover.apprState != 'C'}">1차 서명 없음</span>
+    </td>
+    <td id="sign2">
+        <!-- 2차 결재자 서명 -->
+        <img th:if="${secondApprover != null && secondApprover.apprState == 'C' && secondApprover.signaturePath != null}" 
+             th:src="@{/uploadImg/ + ${secondApprover.signaturePath}}" 
+             alt="2차 서명" width="200">
+        <span th:if="${secondApprover == null || secondApprover.apprState != 'C'}">2차 서명 없음</span>
+    </td>
+</tr>
 								</thead>
 							</table>
 						</div>
@@ -172,12 +166,6 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<!-- <td><button type="button" onclick="setReferOrder(1)"
-												class="btn btn-outline-primary" data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
-										<td><button type="button" onclick="setReferOrder(2)"
-												class="btn btn-outline-primary" data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td> -->
 									</tr>
 									<tr>
 										<td id="referer1" th:text="${referers != null and #lists.size(referers) > 0 ? referers[0].employee.empName : '참조자 없음'}"></td>
@@ -188,6 +176,30 @@
 							</table>
 						</div>
 					</div>
+
+
+<!-- 반려 사유 입력 모달창 -->
+<div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectReasonLabel">반려 사유 입력</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 반려 사유 입력 폼 -->
+                <div class="form-group">
+                    <label for="rejectReason">반려 사유</label>
+                    <textarea class="form-control" id="rejectReason" rows="5" placeholder="반려 사유를 입력하세요"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="submitRejectReason">반려</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -302,6 +314,7 @@
                 alert(result);
                 // 승인 완료 후 버튼 숨기기
                 firstApprovalBtn.style.display = "none";
+                location.href = "/apprStorage";
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -347,25 +360,53 @@
     } else {
         console.error("2차 승인 버튼을 찾을 수 없습니다.");
     }
+    
+    
+    // 반려
+    document.getElementById("submitRejectReason").addEventListener("click", function() {
+        var rejectReason = document.getElementById("rejectReason").value;
+        var apprNo = document.querySelector("input[name='apprNo']").value; // 결재 번호 가져오기
 
-    // 취소 버튼 이벤트
-    document.getElementById("cancelBtn").addEventListener("click", function() {
-        if (confirm("작성을 취소하시겠습니까?")) {
-            location.href = "/apprStorage";  
+        if (rejectReason.trim() === "") {
+            alert("반려 사유를 입력해주세요.");
+            return;
         }
+
+        // AJAX 요청으로 반려 사유 전송
+        fetch('/reject', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-TOKEN': document.querySelector("input[name='_csrf']").value
+            },
+            body: new URLSearchParams({
+                'apprNo': apprNo,
+                'rejectReason': rejectReason
+            })
+        })
+        .then(response => response.text())
+        .then(result => {
+            alert("반려 처리되었습니다.");
+            location.href = "/apprStorage";  // 처리 후 결재 문서함으로 이동
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     });
+    
+    
+    
+
+ 	// 취소 버튼 이벤트
+ 	document.getElementById("cancelBtn").addEventListener("click", function() {
+ 	    if (confirm(" 이전 화면으로 돌아가시겠습니까?")) {
+ 	        location.href = "/apprStorage";  // 취소 시 홈으로 이동
+ 	    }
+ 	});
 });
 
     
     
-    		
-    	// 취소 버튼 이벤트
-	 	document.getElementById("cancelBtn").addEventListener("click", function() {
-	 	    if (confirm("작성을 취소하시겠습니까?")) {
-	 	        location.href = "/apprStorage";  // 취소 시 홈으로 이동
-	 	    }
-	 	});
-    	
     </script>
 	</th:block>
 </body>

@@ -163,7 +163,8 @@ public class ApprovalApiController {
 
 	    // 사용자별로 고유한 파일명 생성
 	    String directoryPath = "C:/approval/upload/";
-	    String filePath = directoryPath + empAccount + "_signature.png"; // 사용자 계정을 포함한 파일명
+	    String fileName = empAccount + "_signature.png";  // 파일명
+	    String filePath = directoryPath + fileName;
 
 	    // 디렉토리 확인 및 생성
 	    File directory = new File(directoryPath);
@@ -171,6 +172,7 @@ public class ApprovalApiController {
 	        directory.mkdirs();  // 경로가 없다면 디렉토리 생성
 	    }
 
+	    // 파일 저장
 	    try (OutputStream stream = new FileOutputStream(filePath)) {
 	        stream.write(decodedBytes);
 	    } catch (IOException e) {
@@ -178,16 +180,18 @@ public class ApprovalApiController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서명 저장에 실패했습니다.");
 	    }
 
-	    // 서비스로 empAccount와 이미지 경로 전달
-	    boolean isUpdated = employeeService.updateEmployeeSignatureByAccount(empAccount, filePath);
+	    // 실제 서버에서 접근 가능한 경로로 변환하여 데이터베이스에 저장
+	    String webPath = "/upload/" + fileName;  // 웹 경로
+
+	    // 서비스로 empAccount와 웹 경로 전달
+	    boolean isUpdated = employeeService.updateEmployeeSignatureByAccount(empAccount, webPath);
 	    if (!isUpdated) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
 	    }
 
 	    return ResponseEntity.ok("서명이 성공적으로 저장되었습니다.");
 	}
-	
-		
+
 	
 	
 		// 결재 승인
@@ -197,11 +201,22 @@ public class ApprovalApiController {
 		    // 결재 상태를 업데이트하는 비즈니스 로직 호출
 		    approvalService.approveDocument(apprNo, apprOrder);
 		    
-		    // 성공 메시지 반환
-		    return "결재 완료";
+		  
+		    return "approval/approvalHome";
 		}
 
+		// 반려
+		@PostMapping("/reject")
+		public ResponseEntity<String> rejectApproval(@RequestParam("apprNo") Long apprNo,
+		                                             @RequestParam("rejectReason") String rejectReason) {
+		    try {
+		        approvalService.rejectApproval(apprNo, rejectReason);
+		        return ResponseEntity.ok("반려 처리가 완료되었습니다.");
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("반려 처리 중 오류가 발생했습니다.");
+		    }
+		}
 
-
+		
 	
 }

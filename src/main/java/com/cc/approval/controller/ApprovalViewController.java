@@ -192,10 +192,13 @@ public class ApprovalViewController {
 	    String groupName = employeeService.getUserTeamName(username);
 	    model.addAttribute("groupNames", groupName);
 	    
+	    
+	    
 	    // 기안서 상세 정보 가져오기
 	    ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
 	    model.addAttribute("dto", approvalDto);
 	    
+	    System.out.println("전자결재홈 기안서 상세조회: "+approvalDto);
 	    // 문서번호 가져오기
 	    String documentNumber = approvalDto.getDocu_no();  // docu_no를 직접 가져옴
 	    model.addAttribute("documentNumber", documentNumber);
@@ -306,6 +309,7 @@ public class ApprovalViewController {
 		    model.addAttribute("documentNumber", documentNumber);
 			// 결재선 및 참조선 정보 가져오기
 		    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
+		
 		    model.addAttribute("approvers", approvalLines.get("approvers"));
 		    model.addAttribute("referers", approvalLines.get("referers"));
 			return "approval/draftStorageDetail";
@@ -354,6 +358,10 @@ public class ApprovalViewController {
 					    
 					    // 결재선 및 참조선 정보 가져오기
 					    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
+					    
+					    System.out.println("결재선Approvers: " + approvalLines.get("approvers"));
+					    System.out.println("참조선Referers: " + approvalLines.get("referers"));
+					    
 					    model.addAttribute("approvers", approvalLines.get("approvers"));
 					    model.addAttribute("referers", approvalLines.get("referers"));
 					    
@@ -365,6 +373,11 @@ public class ApprovalViewController {
 					
 					
 					private void processApprovalButtons(Model model, List<ApprovalLine> approvalLines, Long empCode) {
+						// 결재선 데이터 로그 출력
+					    approvalLines.forEach(line -> {
+					        System.out.println("결재자: " + line.getEmployee().getEmpName() + ", 결재 순서: " + line.getApprOrder() + ", 상태: " + line.getApprState());
+					    });
+
 					    ApprovalLine firstApprover = approvalLines.stream()
 					            .filter(line -> line.getApprOrder() == 1)
 					            .findFirst()
@@ -378,23 +391,35 @@ public class ApprovalViewController {
 					    // 승인 버튼 노출 여부 설정
 					    boolean showFirstApproveButton = (firstApprover != null &&
 					            empCode.equals(firstApprover.getEmployee().getEmpCode()) && // Employee의 empCode
-					            firstApprover.getApprState().equals("S"));
+					            "S".equals(firstApprover.getApprState()));
 
 					    boolean showSecondApproveButton = (secondApprover != null &&
 					            empCode.equals(secondApprover.getEmployee().getEmpCode()) && // Employee의 empCode
-					            secondApprover.getApprState().equals("S"));
+					            "S".equals(secondApprover.getApprState()));
+
+					    // 로그로 확인
+					    System.out.println("1차 승인 버튼 표시 여부: " + showFirstApproveButton);
+					    System.out.println("2차 승인 버튼 표시 여부: " + showSecondApproveButton);
 
 					    model.addAttribute("showFirstApproveButton", showFirstApproveButton);
 					    model.addAttribute("showSecondApproveButton", showSecondApproveButton);
 
-					    model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getEmployee().getEmpName() : "결재자 없음"); // Employee의 empName
-					    model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getEmployee().getEmpName() : "결재자 없음"); // Employee의 empName
+					    model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getEmployee().getEmpName() : "결재자 없음");
+					    model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getEmployee().getEmpName() : "결재자 없음");
 					}
+		
+		
+		
+					// 반려사유 가져오기
+					@GetMapping("/getRejectReason")
+					public ResponseEntity<Map<String, String>> getRejectReason(@RequestParam("apprNo") Long apprNo) {
+					    Approval approval = approvalService.getApprovalByStateAndNo("R", apprNo);  // 반려 상태("R")와 결재 번호로 조회
 
-		
-		
-		
-		
+					    Map<String, String> response = new HashMap<>();
+					    response.put("rejectContent", approval.getRejectContent() != null ? approval.getRejectContent() : "반려 사유가 없습니다.");
+
+					    return ResponseEntity.ok(response);
+					}
 		
 		
 		
