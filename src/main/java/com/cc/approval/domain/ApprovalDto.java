@@ -39,6 +39,7 @@ public class ApprovalDto {
     private LocalDate appr_holi_end;
     private String docu_no;
     private String emp_account;
+    private Long tem_no;
     
     private String signImagePath1;	// 1차 결재자 서명 경로
     private String signImagePath2;  // 2차 결재자 서명 경로

@@ -68,50 +68,36 @@ public class ApprovalApiController {
 	// 기안서 폼 생성
 	@ResponseBody
 	@PostMapping("/draft")
-	public Map<String,String> createDraft(@RequestBody ApprovalDto dto){
-		
-		Map<String,String> resultMap = new HashMap<String,String>();
-		
-		 try {
-		        // 1. 기안서 저장
-		        Approval savedApproval = approvalService.saveApproval(dto);
-		        
-		        System.out.println("savedApproval: "+savedApproval);
-		        // 2. 저장된 기안서의 appr_no 가져오기
-		        Long apprNo = savedApproval.getApprNo();
-		        
-		        System.out.println("apprNo: "+apprNo);
-		        
-		        // 3. 결재선 정보가 있을 경우, 결재선 저장
-		        if (dto.getApprovalLineList() != null && !dto.getApprovalLineList().isEmpty()) {
-		        	System.out.println("DTO received in server: " + dto);
-		        	System.out.println("ApprovalLineList 1: " + dto.getApprovalLineList());
-		        	
-		        	for (ApprovalLineDto lineDto : dto.getApprovalLineList()) {
-		                System.out.println("ApprovalLineDto before save: " + lineDto);  // DTO 출력
-		                lineDto.setAppr_no(apprNo);  // 결재선에 생성된 appr_no 설정
-		                
-		                // Null 또는 부적절한 데이터가 없는지 확인
-		                if (lineDto.getAppr_no() == null || lineDto.getEmp_code() == null) {
-		                    System.err.println("Invalid Approval Line Data: " + lineDto);
-		                    continue;  // 부적절한 데이터는 저장하지 않고 넘어감
-		                }
+	public Map<String, String> createDraft(@RequestBody ApprovalDto dto) {
+	    Map<String, String> resultMap = new HashMap<>();
 
-		                
-		                approvalService.saveApprovalLine(lineDto);  // 결재선 저장
-		            }
-		        }
-		        
-		        System.out.println("getApprovalLineList: " + dto.getApprovalLineList());
+	    try {
+	        // 1. 임시 저장된 문서 삭제 또는 상태 변경
+	        if (dto.getTem_no() != null) {
+	            approvalService.deleteTempStorage(dto.getTem_no()); // 임시 저장 문서 삭제
+	        }
 
-		        resultMap.put("res_code", "200");
-		        resultMap.put("res_msg", "결재요청이 완료되었습니다.");
-		    } catch (Exception e) {
-		        resultMap.put("res_code", "404");
-		        resultMap.put("res_msg", "결재요청 중 오류가 발생했습니다." + e.getMessage());
-		    }
+	        // 2. 기안서 저장 (결재 테이블에 저장)
+	        Approval savedApproval = approvalService.saveApproval(dto);
+	        Long apprNo = savedApproval.getApprNo();
+	        dto.setAppr_no(apprNo); // 기안서 번호 설정
 
-		    return resultMap;
+	        // 3. 결재선 정보가 있을 경우, 결재선 저장
+	        if (dto.getApprovalLineList() != null && !dto.getApprovalLineList().isEmpty()) {
+	            for (ApprovalLineDto lineDto : dto.getApprovalLineList()) {
+	                lineDto.setAppr_no(apprNo); // 결재선에 생성된 appr_no 설정
+	                approvalService.saveApprovalLine(lineDto);  // 결재선 저장
+	            }
+	        }
+
+	        resultMap.put("res_code", "200");
+	        resultMap.put("res_msg", "결재요청이 완료되었습니다.");
+	    } catch (Exception e) {
+	        resultMap.put("res_code", "404");
+	        resultMap.put("res_msg", "결재요청 중 오류가 발생했습니다: " + e.getMessage());
+	    }
+
+	    return resultMap;
 	}
 	
 	

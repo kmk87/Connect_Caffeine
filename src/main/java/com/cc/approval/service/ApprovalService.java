@@ -269,10 +269,10 @@ public class ApprovalService {
 	
 	
 	
-	// 기안서 상세 조회
+	// 기안서 상세 조회(결재 관련 정보(문서번호, 팀명, 기안일, 기안자)를 가져옴)
 	public ApprovalDto selectapprovalOne(Long appr_no) {
 		Approval approval = approvalRepository.findByApprNo(appr_no);
-		System.out.println("서비스 appr_no"+approval);
+		System.out.println("서비스 appr_no: "+approval);
 		return new ApprovalDto().toDto(approval);
 	}
 	

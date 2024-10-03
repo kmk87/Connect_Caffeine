@@ -2,6 +2,7 @@ package com.cc.approval.controller;
 
 
 import java.awt.print.Pageable;
+import java.time.LocalDate;
 import java.util.HashMap;
 
 import java.util.List;
@@ -222,27 +223,58 @@ public class ApprovalViewController {
 	
 	// 임시저장 상세조회
 	@GetMapping("/temporaryStorage/{tem_no}")
-	public String selecttemproaryOne(@PathVariable("tem_no") Long tem_no,
-			Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    User user = (User) authentication.getPrincipal();
-	    String username = user.getUsername();
+	public String selectTemproaryOne(@PathVariable("tem_no") Long tem_no, Model model) {
+	    // 로그인된 사용자 정보 가져오기
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    
+	    String username = null;
+	    
+	    // principal이 String 또는 UserDetails일 경우를 처리
+	    if (authentication != null) {
+	        Object principal = authentication.getPrincipal();
+	        
+	        // principal이 String 타입일 경우 (username 자체)
+	        if (principal instanceof String) {
+	            username = (String) principal;
+	        }
+	        // principal이 UserDetails 타입일 경우
+	        else if (principal instanceof UserDetails) {
+	            UserDetails userDetails = (UserDetails) principal;
+	            username = userDetails.getUsername(); // 로그인된 사용자의 username을 가져옴
+	        } else {
+	            throw new RuntimeException("알 수 없는 사용자 유형입니다.");
+	        }
+	    } else {
+	        throw new RuntimeException("로그인 정보가 없습니다.");
+	    }
+
+	    // 로그인된 사용자의 팀명 가져오기
 	    String groupName = employeeService.getUserTeamName(username);
 	    model.addAttribute("groupNames", groupName);
+	    
+	    // 로그인된 사용자의 이름 가져오기
+	    String apprName = employeeService.getUserEmpName(username);
+	    model.addAttribute("apprName", apprName);
+	    
 	    // 임시 저장된 제목과 내용을 가져옴
 	    TemporaryStorageDto temporaryStorageDto = approvalService.selecttemproaryOne(tem_no);
-
-	    // 결재 관련 정보(문서번호, 팀명, 기안일, 기안자)를 가져옴
-	    ApprovalDto approvalDto = approvalService.selectapprovalOne(temporaryStorageDto.getAppr_form_no());
 	    
+	    // 문서번호 생성 로직을 호출하여 문서번호 생성
+	    String documentNumber = approvalService.generateDocumentNumber(groupName);
 	    
+	    // 문서번호와 함께 결재 관련 정보(팀명, 기안일, 기안자)를 가져옴
+	    ApprovalDto approvalDto = ApprovalDto.builder()
+	        .docu_no(documentNumber) // 문서번호 추가
+	        .draft_day(LocalDate.now()) // 기안일(당일)
+	        .appr_writer_name(apprName) // 기안자(로그인된 사용자 이름)
+	        .build();
 	    
+	    System.out.println("approvalDto 임시저장 상세: "+approvalDto);
+	    model.addAttribute("apprDto", approvalDto);
+	    model.addAttribute("tempDto", temporaryStorageDto);
 	    
-		model.addAttribute("apprDto",approvalDto);
-		model.addAttribute("tempDto",temporaryStorageDto);
-		return "approval/tempDetail";
+	    return "approval/tempDetail";
 	}
-	
 	
 	// 기안문서함
 	@GetMapping("/draftStorage")
@@ -301,70 +333,64 @@ public class ApprovalViewController {
 				
 					// 결재문서함 상세 조회
 					@GetMapping("/apprStorageDetail/{appr_no}")
-					public String getApprovalLineByApprNo(Model model,
-							@PathVariable("appr_no") Long apprNo) {
-						// 현재 로그인한 사용자 정보 가져오기
-						SecurityUser loginUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+					public String getApprovalLineByApprNo(Model model, @PathVariable("appr_no") Long apprNo) {
+					    // 현재 로그인한 사용자 정보 가져오기
+					    SecurityUser loginUser = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-						// 로그인한 사용자의 empCode 가져오기
-						Long empCode = loginUser.getDto().getEmp_code();
-				     
-
+					    // 로그인한 사용자의 empCode 가져오기
+					    Long empCode = loginUser.getDto().getEmp_code();
+					    
+					    // 결재문서 상세 정보 가져오기
 					    ApprovalDto approvalDto = approvalService.selectapprovalOne(apprNo);
-					    System.out.println("approval : "+approvalDto);
+					    System.out.println("approval : " + approvalDto);
 					    model.addAttribute("approval", approvalDto);
 					    
 					    // 결재문서를 작성한 사람의 emp_code를 통해 작성자 정보 가져오기
 					    Long apprWriterNo = approvalDto.getAppr_writer_code(); // 작성자의 emp_code
-
+					    
 					    // 작성자의 팀명 가져오기
 					    String writerTeamName = employeeService.getTeamNameByEmpCode(apprWriterNo); // 작성자의 팀명을 가져옴
 					    model.addAttribute("groupNames", writerTeamName);
 					    
-					    
-					    // 결재선 정보 가져오기
-					    //List<ApprovalLineDto> approvalLines = approvalService.getApprovalLinesByApprNo(apprNo);
 					    // 결재선 및 참조선 정보 가져오기
 					    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
 					    model.addAttribute("approvers", approvalLines.get("approvers"));
 					    model.addAttribute("referers", approvalLines.get("referers"));
 					    
-						// 1차, 2차 결재자 처리 로직 추가
-				        //processApprovalButtons(model, approvalLines, empCode);
-						return "approval/apprStorageDetail";
+					    // 1차, 2차 결재자 처리 로직 추가
+					    processApprovalButtons(model, approvalLines.get("approvers"), empCode);
+					    
+					    return "approval/apprStorageDetail";
 					}
 					
 					
-					private void processApprovalButtons(Model model, List<ApprovalLineDto> approvalLines, Long empCode) {
-				        ApprovalLineDto firstApprover = approvalLines.stream()
-				                .filter(line -> line.getAppr_order() == 1)
-				                .findFirst()
-				                .orElse(null);
+					private void processApprovalButtons(Model model, List<ApprovalLine> approvalLines, Long empCode) {
+					    ApprovalLine firstApprover = approvalLines.stream()
+					            .filter(line -> line.getApprOrder() == 1)
+					            .findFirst()
+					            .orElse(null);
 
-				        ApprovalLineDto secondApprover = approvalLines.stream()
-				                .filter(line -> line.getAppr_order() == 2)
-				                .findFirst()
-				                .orElse(null);
+					    ApprovalLine secondApprover = approvalLines.stream()
+					            .filter(line -> line.getApprOrder() == 2)
+					            .findFirst()
+					            .orElse(null);
 
-				        // 승인 버튼 노출 여부 설정
-				        boolean showFirstApproveButton = (firstApprover != null &&
-				                empCode.equals(firstApprover.getEmp_code()) &&
-				                firstApprover.getAppr_state().equals("S"));
+					    // 승인 버튼 노출 여부 설정
+					    boolean showFirstApproveButton = (firstApprover != null &&
+					            empCode.equals(firstApprover.getEmployee().getEmpCode()) && // Employee의 empCode
+					            firstApprover.getApprState().equals("S"));
 
-				        boolean showSecondApproveButton = (secondApprover != null &&
-				                empCode.equals(secondApprover.getEmp_code()) &&
-				                secondApprover.getAppr_state().equals("S"));
+					    boolean showSecondApproveButton = (secondApprover != null &&
+					            empCode.equals(secondApprover.getEmployee().getEmpCode()) && // Employee의 empCode
+					            secondApprover.getApprState().equals("S"));
 
-				        model.addAttribute("showFirstApproveButton", showFirstApproveButton);
-				        model.addAttribute("showSecondApproveButton", showSecondApproveButton);
-				        model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getApprWriterName() : "결재자 없음");
-				        model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getApprWriterName() : "결재자 없음");
-				        model.addAttribute("approvalLines", approvalLines);
-				    }
+					    model.addAttribute("showFirstApproveButton", showFirstApproveButton);
+					    model.addAttribute("showSecondApproveButton", showSecondApproveButton);
 
-		
-		
-		
+					    model.addAttribute("firstApproverName", firstApprover != null ? firstApprover.getEmployee().getEmpName() : "결재자 없음"); // Employee의 empName
+					    model.addAttribute("secondApproverName", secondApprover != null ? secondApprover.getEmployee().getEmpName() : "결재자 없음"); // Employee의 empName
+					}
+
 		
 		
 		

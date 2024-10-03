@@ -27,6 +27,10 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 	    @Query("SELECT e.empCode FROM Employee e WHERE e.empAccount = :empAccount")
 	    Long findEmpCodeByEmpName(@Param("empAccount") String empAccount);
 		
+	    // empAccount(사용자 이름)로 emp_name을 찾는 메서드
+	    @Query("SELECT e.empName FROM Employee e WHERE e.empAccount = :empAccount")
+	    String findEmpNameByEmpAccount(@Param("empAccount") String empAccount);
+	    
 	 // EmpGroup의 groupNo로 직원 목록을 조회하는 메서드
 	    List<Employee> findByEmpGroup_GroupNo(Long groupNo);
 	    
