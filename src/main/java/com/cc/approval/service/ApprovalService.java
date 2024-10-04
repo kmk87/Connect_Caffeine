@@ -670,7 +670,20 @@ public class ApprovalService {
 	 	}
 	 	   
 	 	   
-	 	   
+	 	// 결재자로 등록된 모든 문서를 조회(결재문서함)
+	 	public List<ApprovalDto> getAllApprovalsByEmpCode(String empAccount) {
+	 	    // 현재 로그인한 사용자의 정보를 가져옴
+	 	    Employee currentUser = employeeRepository.findByempAccount(empAccount);
+	 	    
+	 	    // 사용자가 결재자로 들어가 있는 모든 결재 라인 조회
+	 	    List<ApprovalLine> approvalLines = approvalLineRepository.findAllApprovalLinesByEmpCode(currentUser.getEmpCode());
+
+	 	    // ApprovalLine에서 Approval을 추출하여 ApprovalDto로 변환
+	 	    return approvalLines.stream()
+	 	            .map(approvalLine -> new ApprovalDto(approvalLine.getApproval()))  // ApprovalLine에서 Approval을 추출하여 DTO로 변환
+	 	            .collect(Collectors.toList());
+	 	}
+
 	 	   
 	 	   
 	 	   

@@ -77,9 +77,7 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 
 
 
-    // 결재자로 등록된 모든 문서 리스트 가져오기
-    @Query("SELECT al FROM ApprovalLine al WHERE al.employee.empCode = :empCode AND al.apprState IN ('S', 'C', 'R')")
-    List<ApprovalLine> findAllApprovalLinesByEmpCode(@Param("empCode") Long empCode);
+    
 
 
 
