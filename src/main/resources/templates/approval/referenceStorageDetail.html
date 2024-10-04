@@ -93,7 +93,7 @@
                 <input type="hidden" id="empNum" th:value="${dto.appr_writer_code != null ? dto.appr_writer_code : ''}">
                 <input type="hidden"
 						id="docu_no" name="docu_no" th:value="${documentNumber}">
-						<input type="hidden" name="apprNo" value="${approval.appr_no}">
+						<input type="hidden" name="apprNo" value="${dto.appr_no}">
                 <button type="button" class="btn btn-outline-danger" id="cancelBtn">돌아가기</button>
                 <button type="button" th:if="${dto.appr_state == 'R'}" class="btn btn-outline-success" id="rejectContentBtn">반려사유 확인</button>
                 
@@ -301,7 +301,7 @@
     	// 취소 버튼 이벤트
 	 	document.getElementById("cancelBtn").addEventListener("click", function() {
 	 	    if (confirm("이전 화면으로 돌아가시겠습니까?")) {
-	 	        location.href = "/apprStorage";  
+	 	        location.href = "/referenceStorage";  
 	 	    }
 	 	});
     	

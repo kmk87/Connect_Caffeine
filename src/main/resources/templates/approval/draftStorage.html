@@ -97,15 +97,12 @@
                   </tr>
                 </thead>
                 <tbody>
-    				<tr th:if="${#lists.isEmpty(apprDraftDtoList)}">
-        			<td colspan="5">데이터가 없습니다.</td>
-    				</tr>
     				<tr th:each="apprDraft, iterStat : ${apprDraftDtoList}" th:onclick="|location.href='@{/draftStorageDetail/{no}(no=${apprDraft.appr_no})}'|">
         				<td th:text="${iterStat.index + 1}"></td>
         				<td th:text="${#temporals.format(apprDraft.draft_day, 'yyyy-MM-dd')}">기안일</td>
         				<td th:text="${apprDraft.formName}"></td>
         				<td th:text="${apprDraft.appr_title}"></td>
-        				<td th:text="${apprDraft.appr_state}"></td>
+        				<td th:text="${apprDraft.getApprStateDisplay()}"></td>
     				</tr>
 				</tbody>
               </table>

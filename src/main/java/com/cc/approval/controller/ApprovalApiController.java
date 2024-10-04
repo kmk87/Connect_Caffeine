@@ -68,50 +68,36 @@ public class ApprovalApiController {
 	// 기안서 폼 생성
 	@ResponseBody
 	@PostMapping("/draft")
-	public Map<String,String> createDraft(@RequestBody ApprovalDto dto){
-		
-		Map<String,String> resultMap = new HashMap<String,String>();
-		
-		 try {
-		        // 1. 기안서 저장
-		        Approval savedApproval = approvalService.saveApproval(dto);
-		        
-		        System.out.println("savedApproval: "+savedApproval);
-		        // 2. 저장된 기안서의 appr_no 가져오기
-		        Long apprNo = savedApproval.getApprNo();
-		        
-		        System.out.println("apprNo: "+apprNo);
-		        
-		        // 3. 결재선 정보가 있을 경우, 결재선 저장
-		        if (dto.getApprovalLineList() != null && !dto.getApprovalLineList().isEmpty()) {
-		        	System.out.println("DTO received in server: " + dto);
-		        	System.out.println("ApprovalLineList 1: " + dto.getApprovalLineList());
-		        	
-		        	for (ApprovalLineDto lineDto : dto.getApprovalLineList()) {
-		                System.out.println("ApprovalLineDto before save: " + lineDto);  // DTO 출력
-		                lineDto.setAppr_no(apprNo);  // 결재선에 생성된 appr_no 설정
-		                
-		                // Null 또는 부적절한 데이터가 없는지 확인
-		                if (lineDto.getAppr_no() == null || lineDto.getEmp_code() == null) {
-		                    System.err.println("Invalid Approval Line Data: " + lineDto);
-		                    continue;  // 부적절한 데이터는 저장하지 않고 넘어감
-		                }
+	public Map<String, String> createDraft(@RequestBody ApprovalDto dto) {
+	    Map<String, String> resultMap = new HashMap<>();
 
-		                
-		                approvalService.saveApprovalLine(lineDto);  // 결재선 저장
-		            }
-		        }
-		        
-		        System.out.println("getApprovalLineList: " + dto.getApprovalLineList());
+	    try {
+	        // 1. 임시 저장된 문서 삭제 또는 상태 변경
+	        if (dto.getTem_no() != null) {
+	            approvalService.deleteTempStorage(dto.getTem_no()); // 임시 저장 문서 삭제
+	        }
 
-		        resultMap.put("res_code", "200");
-		        resultMap.put("res_msg", "결재요청이 완료되었습니다.");
-		    } catch (Exception e) {
-		        resultMap.put("res_code", "404");
-		        resultMap.put("res_msg", "결재요청 중 오류가 발생했습니다." + e.getMessage());
-		    }
+	        // 2. 기안서 저장 (결재 테이블에 저장)
+	        Approval savedApproval = approvalService.saveApproval(dto);
+	        Long apprNo = savedApproval.getApprNo();
+	        dto.setAppr_no(apprNo); // 기안서 번호 설정
 
-		    return resultMap;
+	        // 3. 결재선 정보가 있을 경우, 결재선 저장
+	        if (dto.getApprovalLineList() != null && !dto.getApprovalLineList().isEmpty()) {
+	            for (ApprovalLineDto lineDto : dto.getApprovalLineList()) {
+	                lineDto.setAppr_no(apprNo); // 결재선에 생성된 appr_no 설정
+	                approvalService.saveApprovalLine(lineDto);  // 결재선 저장
+	            }
+	        }
+
+	        resultMap.put("res_code", "200");
+	        resultMap.put("res_msg", "결재요청이 완료되었습니다.");
+	    } catch (Exception e) {
+	        resultMap.put("res_code", "404");
+	        resultMap.put("res_msg", "결재요청 중 오류가 발생했습니다: " + e.getMessage());
+	    }
+
+	    return resultMap;
 	}
 	
 	
@@ -177,7 +163,8 @@ public class ApprovalApiController {
 
 	    // 사용자별로 고유한 파일명 생성
 	    String directoryPath = "C:/approval/upload/";
-	    String filePath = directoryPath + empAccount + "_signature.png"; // 사용자 계정을 포함한 파일명
+	    String fileName = empAccount + "_signature.png";  // 파일명
+	    String filePath = directoryPath + fileName;
 
 	    // 디렉토리 확인 및 생성
 	    File directory = new File(directoryPath);
@@ -185,6 +172,7 @@ public class ApprovalApiController {
 	        directory.mkdirs();  // 경로가 없다면 디렉토리 생성
 	    }
 
+	    // 파일 저장
 	    try (OutputStream stream = new FileOutputStream(filePath)) {
 	        stream.write(decodedBytes);
 	    } catch (IOException e) {
@@ -192,16 +180,18 @@ public class ApprovalApiController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서명 저장에 실패했습니다.");
 	    }
 
-	    // 서비스로 empAccount와 이미지 경로 전달
-	    boolean isUpdated = employeeService.updateEmployeeSignatureByAccount(empAccount, filePath);
+	    // 실제 서버에서 접근 가능한 경로로 변환하여 데이터베이스에 저장
+	    String webPath = "/upload/" + fileName;  // 웹 경로
+
+	    // 서비스로 empAccount와 웹 경로 전달
+	    boolean isUpdated = employeeService.updateEmployeeSignatureByAccount(empAccount, webPath);
 	    if (!isUpdated) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
 	    }
 
 	    return ResponseEntity.ok("서명이 성공적으로 저장되었습니다.");
 	}
-	
-		
+
 	
 	
 		// 결재 승인
@@ -211,11 +201,22 @@ public class ApprovalApiController {
 		    // 결재 상태를 업데이트하는 비즈니스 로직 호출
 		    approvalService.approveDocument(apprNo, apprOrder);
 		    
-		    // 성공 메시지 반환
-		    return "결재 완료";
+		  
+		    return "approval/approvalHome";
 		}
 
+		// 반려
+		@PostMapping("/reject")
+		public ResponseEntity<String> rejectApproval(@RequestParam("apprNo") Long apprNo,
+		                                             @RequestParam("rejectReason") String rejectReason) {
+		    try {
+		        approvalService.rejectApproval(apprNo, rejectReason);
+		        return ResponseEntity.ok("반려 처리가 완료되었습니다.");
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("반려 처리 중 오류가 발생했습니다.");
+		    }
+		}
 
-
+		
 	
 }
