@@ -255,11 +255,7 @@
         		</li>
             </ul>
 			</div>
-<<<<<<< HEAD
         <a th:href="@{/Building}"><button class="building-register-btn"> 건물 등록</button></a>
-=======
-        <a th:href="@{/Building}"><button class="building-register-btn">+ 건물 등록</button></a>
->>>>>>> refs/remotes/origin/reservation
     </div>
     </aside>
 	    </div>
@@ -316,7 +312,6 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
 </section>
 
 			
@@ -608,32 +603,6 @@
 
 
 			</script>
-=======
-    <div id="meetingRoomList">
-			<div class="information">
-			  <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
-   			  <button class="tab-button" onclick="showMeetingTab()">회의실</button>
-			  <hr>
-			</div>
-    </div>
-	<script>
-	//빌딩 정보를 보여주는 기능, 수정 삭제 포함
-	function showBuildingTab(button) {
-	    const buildingNo = button.getAttribute('data-building-no');
-	    const parsedBuildingNo = parseInt(buildingNo);
-	    if (isNaN(parsedBuildingNo)) {
-	        return;
-	    }
-	    window.location.href = `/building_information/${parsedBuildingNo}`;
-	}
-	
-	
-	
-	
-	
-	
-    </script>
->>>>>>> refs/remotes/origin/reservation
     </main>
     </th:block>
     </body>

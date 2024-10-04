@@ -103,9 +103,10 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
-            <i class="bx bx-chat"></i><span>채팅</span>
-          </a>
+          <a class="nav-link collapsed" 
+   				th:href="@{/chatRoomList/{empCode}(empCode=${#authentication.principal.dto.emp_code})}">
+    			<i class="bx bx-chat"></i><span>채팅</span>
+		      </a>
         </li>
         <li class="nav-item">
           <a class="nav-link collapsed" th:href="@{/toTree}">
