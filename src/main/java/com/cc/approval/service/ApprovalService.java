@@ -400,31 +400,26 @@ public class ApprovalService {
 		return result;
 	}
 	
-	// 결재문서함 데이터 리스트
-			public List<ApprovalDto> getPendingApprovalDtosForCurrentUser(int size) {
-			    // 현재 로그인한 사용자의 emp_code 가져오기
-				String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
-			    Employee currentUser = employeeRepository.findByempAccount(currentUserId);
-			     
-			    // 페이지 요청 생성 (page와 size를 받아서 처리)
-			    Pageable pageable = PageRequest.of(0, size);
+	// 결재수신문서 데이터 리스트
+	public List<ApprovalDto> getPendingApprovalDtosForCurrentUser(int size) {
+	    // 현재 로그인한 사용자의 emp_code 가져오기
+	    String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+	    Employee currentUser = employeeRepository.findByempAccount(currentUserId);
+	     
+	    // 페이지 요청 생성 (size에 따라 페이징 처리)
+	    Pageable pageable = PageRequest.of(0, size);
 
-			    // 결재 상태가 'S'이고 현재 사용자가 결재자로 등록된 문서 조회
-			    Page<Approval> pendingApprovals = approvalLineRepository.findPendingApprovalsForCurrentUser(currentUser.getEmpCode(), pageable);
-			    
-			    // 추가 로그 출력
-			    System.out.println("결재 대기 문서 개수: " + pendingApprovals.getTotalElements());
+	    // 결재 상태가 'S'인 결재대기 문서 조회
+	    Page<Approval> pendingApprovals = approvalLineRepository.findPendingApprovalsForCurrentUser(currentUser.getEmpCode(), pageable);
+	    
+	    // 로그 출력 (선택 사항)
+	    System.out.println("결재 대기 문서 개수: " + pendingApprovals.getTotalElements());
 
-			    pendingApprovals.forEach(approval -> {
-			        System.out.println("결재 문서 번호: " + approval.getApprNo());
-			    });
-
-			    // Approval 엔티티를 ApprovalDto로 변환하여 반환
-			    return pendingApprovals.getContent().stream()
-			        .map(approval -> new ApprovalDto().toDto(approval))
-			        .collect(Collectors.toList());
-			}
-
+	    // Approval 엔티티를 ApprovalDto로 변환하여 반환
+	    return pendingApprovals.getContent().stream()
+	        .map(approval -> new ApprovalDto().toDto(approval))
+	        .collect(Collectors.toList());
+	}
 		
 		// 결재문서함 상세조회
 				public List<ApprovalLineDto> getApprovalLinesByApprNo(Long apprNo) {
@@ -592,16 +587,26 @@ public class ApprovalService {
 	  		
 	  		// 반려
 	  		@Transactional
-			public void rejectApproval(Long apprNo, String rejectReason) {
-			    // 결재 문서 가져오기
-			    Approval approval = approvalRepository.findById(apprNo)
-			            .orElseThrow(() -> new IllegalArgumentException("결재 정보를 찾을 수 없습니다."));
+	  		public void rejectApproval(Long apprNo, String rejectReason) {
+	  		    // 결재 문서 가져오기
+	  		    Approval approval = approvalRepository.findById(apprNo)
+	  		            .orElseThrow(() -> new IllegalArgumentException("결재 정보를 찾을 수 없습니다."));
 
-			    // 반려 사유 저장
-			    approval.setRejectContent(rejectReason);
-			    approval.setApprState("R");  // 결재 상태를 "R"로 변경 (반려 상태)
-			    approvalRepository.save(approval);
-			}
+	  		    // 결재 상태를 반려("R")로 변경
+	  		    approval.setRejectContent(rejectReason);
+	  		    approval.setApprState("R");  // 결재 상태를 "R"로 변경 (반려 상태)
+	  		    
+	  		    // 결재선(ApprovalLine) 상태를 "R"로 변경
+	  		    approval.getApprovalLines().forEach(line -> {
+	  		        if ("S".equals(line.getApprState())) {  // 대기 중인 결재 상태만 반려로 변경
+	  		            line.setApprState("R");
+	  		        }
+	  		    });
+
+	  		    // Approval 및 ApprovalLine 저장
+	  		    approvalRepository.save(approval);
+	  		}
+
 	  		
 	  		
 	 	// 결재선 저장 메서드 추가
@@ -650,8 +655,19 @@ public class ApprovalService {
 	 		    return approvalDtos;
 	 		}
 
+	 	// 결재대기 문서함
+	 	 public List<ApprovalDto> getStandByDraftListByEmpAccount(String empAccount) {
+	 	    // 현재 사용자의 empCode 가져오기
+	 	    Employee currentUser = employeeRepository.findByempAccount(empAccount);
+	 	    
+	 	    // 결재 대기 상태(S)인 문서들 조회
+	 	    List<Approval> approvals = approvalRepository.findStandByDraftsByEmpAccount(currentUser.getEmpCode());
 
-	 	   
+	 	    // Approval 엔티티를 ApprovalDto로 변환
+	 	    return approvals.stream()
+	 	        .map(approval -> new ApprovalDto(approval))
+	 	        .collect(Collectors.toList());
+	 	}
 	 	   
 	 	   
 	 	   

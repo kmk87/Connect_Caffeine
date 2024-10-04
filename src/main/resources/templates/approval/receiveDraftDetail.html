@@ -11,7 +11,7 @@
 </script>
 <link th:href="@{/css/approval/create.css}" rel="stylesheet"
 	type="text/css">
-<title>결재문서함 상세 조회</title>
+<title>결재대기문서 상세 조회</title>
 <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- jsTree와 Bootstrap을 사용할 경우 -->
@@ -224,11 +224,8 @@
 					<!-- 휴가신청서 폼 -->
 					<div th:if="${approval.appr_form_no == 1}">
 						<div class="form-group">
-							<label for="leave-type">휴가 종류</label> <select id="leave-type"
-								name="leave-type">
-								<option>연차</option>
-								<option>경조</option>
-							</select>
+							<label for="leave-type">휴가 종류</label>
+							<input type="text" class="leave-type" value="연차" disabled>
 						</div>
 						<div class="form-group">
 							<label for="start-date">기간 및 일수</label> <input type="date"
@@ -322,7 +319,7 @@
                     // 승인 완료 후 버튼 숨기기
                     firstApprovalBtn.style.display = "none";
                     // 승인 후 페이지 이동
-                    location.href = "/apprStorage";
+                    location.href = "/receiveDraft";
                 });
             })
             .catch(error => {
@@ -372,7 +369,7 @@
                     // 승인 완료 후 버튼 숨기기
                     firstApprovalBtn.style.display = "none";
                     // 승인 후 페이지 이동
-                    location.href = "/apprStorage";
+                    location.href = "/receiveDraft";
                 });
             })
             .catch(error => {
@@ -424,7 +421,7 @@
                         text: '반려 처리되었습니다.',
                         confirmButtonText: '확인'
                     }).then(() => {
-                        location.href = "/apprStorage";  // 처리 후 결재 문서함으로 이동
+                        location.href = "/receiveDraft";  // 처리 후 결재 문서함으로 이동
                     });
                 })
                 .catch(error => {
@@ -444,7 +441,7 @@
  	// 취소 버튼 이벤트
  	document.getElementById("cancelBtn").addEventListener("click", function() {
  	    if (confirm(" 이전 화면으로 돌아가시겠습니까?")) {
- 	        location.href = "/apprStorage";  // 취소 시 홈으로 이동
+ 	        location.href = "/receiveDraft";  // 취소 시 홈으로 이동
  	    }
  	});
 });
