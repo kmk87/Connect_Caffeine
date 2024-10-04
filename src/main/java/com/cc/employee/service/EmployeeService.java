@@ -288,7 +288,7 @@ public class EmployeeService {
 	            return employeeRepository.findByEmpGroup_GroupNo(groupNo);
 	        }
     
-	///////////////////////////////
+	//////////전자결재 사용////////////
     // 전자서명 설정
     @Transactional
     public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {
@@ -306,6 +306,6 @@ public class EmployeeService {
         return null; // 팀명이 없을 경우 null 반환
     }
     
-    
+
     
 }

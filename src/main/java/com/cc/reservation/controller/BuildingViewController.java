@@ -56,6 +56,8 @@ public class BuildingViewController {
 		return "/reservation/building_information";
 	}
 	
+
+
 	
 	@GetMapping("/building_meetingroom/{buildingNo}")
 	public String MeetingRoomInfomation(@PathVariable("buildingNo") Long buildingNo, Model model) {

@@ -70,3 +70,4 @@ public class ReservationApiController {
 		return resultMap;
 	}
 }
+
