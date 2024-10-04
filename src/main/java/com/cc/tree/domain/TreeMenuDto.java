@@ -1,3 +1,4 @@
+
 package com.cc.tree.domain;
 
 import lombok.AllArgsConstructor;
@@ -22,4 +23,7 @@ public class TreeMenuDto {
 	 private String jobCode;	// 실제 job_code(pk, 정렬 시 활용)
 	 private String type;		// 아이콘 변경 시 활용
 	 private boolean opened;
+	 
 }
+
+

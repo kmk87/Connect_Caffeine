@@ -3,7 +3,7 @@
 .apprSidebar {
     position: fixed;
     top: 60px;
-    left: 250px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    left: 290px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
     bottom: 0;
     width: 250px; /* 추가 사이드바의 너비 */
     z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
@@ -17,7 +17,7 @@
 }
 
 .content-area {
-    margin-left: -150px; /* 사이드바 너비 + 여백 */
+    margin-left: -60px; /* 사이드바 너비 + 여백 */
     padding: 20px; /* 내부 여백 */
     display: flex;
     flex-direction: column;
@@ -36,10 +36,10 @@
 
 .card {
     margin-top: -10px;
-    width: 1350px; /* 박스 너비를 화면에 맞게 확장 */
+    width: 1500px; /* 박스 너비를 화면에 맞게 확장 */
     /* max-width: 100%; 최대 너비 설정 */
-    margin-left: 540px; /* 카드의 왼쪽 여백 조정 */
-    height: 730px;
+    margin-left: 600px; /* 카드의 왼쪽 여백 조정 */
+    height: 850px;
     margin-right: -1100px;
 }
 

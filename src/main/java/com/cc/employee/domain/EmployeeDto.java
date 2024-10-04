@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -20,6 +22,7 @@ import lombok.ToString;
 @ToString
 @Builder
 public class EmployeeDto {
+
       
       private Long emp_code;
       private Long group_no;
@@ -47,7 +50,7 @@ public class EmployeeDto {
       private Long emp_holiday;
 
       private Long group_parent_no;
-      
+      private String empSignatureImagePath;
       
       // 검색
       private int search_type = 1;
@@ -107,6 +110,8 @@ public class EmployeeDto {
                .empResigndate(emp_resigndate_iso)
                .empImgFileName(emp_img_file_name)
                .empImgFilePath(emp_img_file_path)
+               
+               .empSignatureImagePath(empSignatureImagePath)
 
                .empMemo(emp_memo)
                .empHoliday(emp_holiday)
@@ -131,6 +136,7 @@ public class EmployeeDto {
          
          return EmployeeDto.builder()
                .emp_code(employee.getEmpCode())
+               .group_no(employee.getEmpGroup().getGroupNo()) 
                .group_name(employee.getEmpGroup().getGroupName())
                .emp_job_code(employee.getEmpJobCode())
                .emp_job_name(employee.getEmpJobName())
@@ -151,8 +157,9 @@ public class EmployeeDto {
                .emp_img_file_path(employee.getEmpImgFilePath())
                .emp_memo(employee.getEmpMemo())
                .emp_holiday(employee.getEmpHoliday())
-               .group_name(employee.getEmpGroup().getGroupName())
                .group_parent_no(employee.getEmpGroup().getGroupParentNo())
+               .empSignatureImagePath(employee.getEmpSignatureImagePath())
                .build();
       }
 }
+

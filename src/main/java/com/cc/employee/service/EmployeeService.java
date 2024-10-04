@@ -1,16 +1,13 @@
 package com.cc.employee.service;
 
-
-import java.util.List;
-
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.stereotype.Service;
-import com.cc.calendar.domain.CalendarDto;
+
 import com.cc.empGroup.domain.EmpGroup;
 import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.Employee;
@@ -18,6 +15,8 @@ import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.job.domain.Job;
 import com.cc.job.repository.JobRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -35,41 +34,7 @@ public class EmployeeService {
 		this.empGroupRepository = empGroupRepository;
 		this.jobRepository = jobRepository;
 	}
-
-	public EmployeeDto findByempName(String emp_name) {
-		Employee employee = employeeRepository.findByempName(emp_name);
-		
-		EmployeeDto dto = EmployeeDto.builder()
-						.emp_code(employee.getEmpCode())
-						.build();
-		return dto;
-	}
 	
-	 public Long findEmpCodeByEmpName(String empAccount) {
-	        return employeeRepository.findEmpCodeByEmpName(empAccount);
-	    }
-	
-	// empCode를 이용해 Employee 객체를 조회하는 메서드
-	    public Employee findByEmpCode(Long empCode) {
-	        return employeeRepository.findByempCode(empCode);   
-	    }
-	    
-	 		
- 	// 팀 번호로 직원 목록을 조회하는 메서드
- 	    public List<Employee> getEmployeesByTeamNo(Long groupNo) {
- 	        return employeeRepository.findByEmpGroup_GroupNo(groupNo);
- 	    }
- 	    
- 	// 부서 번호로 직원 목록을 조회하는 메서드 (group_parent_no 기준)
- 	    public List<Employee> getEmployeesByDeptNo(Long deptNo) {
- 	        return employeeRepository.findByEmpGroup_GroupParentNo(deptNo);  // group_parent_no 기준으로 직원 조회
- 	    }
- 	    
- 	    //모든 직원 조회 
- 	    public List<Employee> getAllEmployees(){
- 	    	return employeeRepository.findAll();
- 	    }
-
 	// 0. 메인
 	public EmployeeDto getEmployeeOne(String emp_account) {
 		
@@ -150,6 +115,26 @@ public class EmployeeService {
 		
 		return dto;
 	}
+	
+	public EmployeeDto findByempName(String emp_name) {
+		Employee employee = employeeRepository.findByempName(emp_name);
+		
+		EmployeeDto dto = EmployeeDto.builder()
+						.emp_code(employee.getEmpCode())
+						.build();
+		return dto;
+	}
+	
+	 public Long findEmpCodeByEmpName(String empAccount) {
+	        return employeeRepository.findEmpCodeByEmpName(empAccount);
+	    }
+	
+	// empCode를 이용해 Employee 객체를 조회하는 메서드
+	    public Employee findByEmpCode(Long empCode) {
+	        return employeeRepository.findByempCode(empCode);   
+	    }
+	
+
 	    
 	 // 그룹 번호 가져오는 메소드
 	 		public Long getGroupNoByEmpCode(Long emp_code) {
@@ -190,7 +175,7 @@ public class EmployeeService {
 		Employee result = employeeRepository.save(emp);
 		
 		return result;
-	}
+	}  
 
 		// 팀명 가져오기
 		public List<String> getDataInfoName() {
@@ -285,8 +270,25 @@ public class EmployeeService {
 				
 				return deptName;
 			}
+			
+			
+		
+			//모든 직원 조회 
+	        public List<Employee> getAllEmployees(){
+	           return employeeRepository.findAll();
+	        }
+
+	        // 부서 번호로 직원 목록을 조회하는 메서드 (group_parent_no 기준)
+	        public List<Employee> getEmployeesByDeptNo(Long deptNo) {
+	            return employeeRepository.findByEmpGroup_GroupParentNo(deptNo);  // group_parent_no 기준으로 직원 조회
+	        }
     
-    	///////////////////////////////
+	        // 팀 번호로 직원 목록을 조회하는 메서드
+	        public List<Employee> getEmployeesByTeamNo(Long groupNo) {
+	            return employeeRepository.findByEmpGroup_GroupNo(groupNo);
+	        }
+    
+	//////////전자결재 사용////////////
     // 전자서명 설정
     @Transactional
     public boolean updateEmployeeSignatureByAccount(String empAccount, String filePath) {
@@ -303,5 +305,16 @@ public class EmployeeService {
         }
         return null; // 팀명이 없을 경우 null 반환
     }
-
+    
+    // 로그인 한 사용자의 이름 가져오기
+    public String getUserEmpName(String username) {
+    	// username을 이용해 empName을 가져옴
+        return employeeRepository.findEmpNameByEmpAccount(username);
+    }
+    
+    // emp_account 사용해서 emo_code 가져오기
+    public Long getEmpCodeByEmpAccount(String empAccount) {
+        return employeeRepository.findEmpCodeByEmpAccount(empAccount);
+    }
+    
 }

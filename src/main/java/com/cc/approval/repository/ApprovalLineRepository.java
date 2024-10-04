@@ -1,7 +1,6 @@
 package com.cc.approval.repository;
 
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +12,11 @@ import org.springframework.data.repository.query.Param;
 
 import com.cc.approval.domain.Approval;
 import com.cc.approval.domain.ApprovalLine;
-import com.cc.approval.domain.ApprovalLineDto;
+
 
 public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long>{
+	
+	
 	
 	List<ApprovalLine> findByApproval(Approval approval);
 	
@@ -62,18 +63,46 @@ public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long
 	// 2차 결재자 문서 조회 쿼리
 	@Query("SELECT al.approval FROM ApprovalLine al " +
 		       "JOIN al.approval a " +
+		       "JOIN ApprovalLine al1 ON al1.approval = al.approval " +
 		       "WHERE al.employee.empCode = :empCode " +
 		       "AND al.apprOrder = 2 " + // 2차 결재자인지 확인
-		       "AND EXISTS (SELECT 1 FROM ApprovalLine al1 " +
-		       "            WHERE al1.approval.apprNo = al.approval.apprNo " +
-		       "            AND al1.apprOrder = 1 " +
-		       "            AND al1.apprState = 'C')" +  // 1차 결재자가 결재 완료 상태(C)인지 확인
-		       "AND al.apprState = 'S'")  // 결재 상태가 S인지 확인
-		Page<Approval> findPendingApprovalsForSecondApprover(@Param("empCode") Long empCode, Pageable pageable);
+		       "AND al1.apprOrder = 1 " + // 1차 결재자의 상태 확인
+		       "AND al1.apprState = :firstApprState") // 1차 결재 상태가 'C'인지 확인
+		Page<Approval> findPendingApprovalsForSecondApprover(@Param("empCode") Long empCode, @Param("firstApprState") String firstApprState, Pageable pageable);
 
 
 
+
+	// 결재선 정보 조회
+	@Query("SELECT al FROM ApprovalLine al WHERE al.approval.docuNo = :docuNo AND al.apprRole = 1 ORDER BY al.apprOrder ASC")
+	List<ApprovalLine> findApproversByDocuNo(@Param("docuNo") String docuNo);
+
+
+    // 참조선 정보 조회
+	@Query("SELECT al FROM ApprovalLine al WHERE al.approval.docuNo = :docuNo AND al.apprRole = 2 ORDER BY al.apprOrder ASC")
+    List<ApprovalLine> findReferersByDocuNo(@Param("docuNo") String docuNo);
 	
+	
+	
+	// 결재상태를 최신 결재번호 기준으로 가져오기
+	@Query("SELECT al.apprState FROM ApprovalLine al WHERE al.approval.docuNo = :docuNo ORDER BY al.apprLineId DESC")
+	List<String> findLatestApprStateByDocuNo(@Param("docuNo") String docuNo);
+
+
+	// 결재자로 등록된 모든 문서 리스트 가져오기
+    @Query("SELECT al FROM ApprovalLine al WHERE al.employee.empCode = :empCode AND al.apprState IN ('S', 'C', 'R')")
+    List<ApprovalLine> findAllApprovalLinesByEmpCode(@Param("empCode") Long empCode);
+
+
+
+
+
+
+
+
+
+
+
 	
 	
 	

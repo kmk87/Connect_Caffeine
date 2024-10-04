@@ -1,7 +1,6 @@
 package com.cc.approval.domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -25,12 +24,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="approval")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Builder
 public class Approval {
 	
@@ -61,10 +62,6 @@ public class Approval {
 	@Column(name="draft_day")
 	@CreationTimestamp
 	private LocalDate draftDay;
-	
-	@Column(name="appr_date")
-	@UpdateTimestamp
-	private LocalDate apprDate;
 	
 	@Column(name="appr_holi_start")
 	private LocalDate apprHoliStart;

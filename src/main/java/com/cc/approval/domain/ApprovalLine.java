@@ -43,10 +43,13 @@ public class ApprovalLine {
 	private Integer apprOrder;
 	
 	@Column(name="appr_role")
-	private String apprRole;
+	private int apprRole;
 	
 	@Column(name="appr_state")
 	private String apprState;
+	
+	@Column(name = "signature_path")
+	private String signaturePath;
 	
 
 }

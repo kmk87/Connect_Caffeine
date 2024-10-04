@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+"-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.chatting.mapper.ChatRoomMapper">
+    <select id="selectChatRoomList" resultType="com.cc.chatting.domain.ChatRoomVo"
+    parameterType="list"> <!-- 여기서 parameterType을 list로 -->
+        SELECT *
+        FROM chat_room
+        WHERE room_no IN
+        <foreach item="room_no" index="index" collection="list" open="(" separator="," close=")"> <!-- collection을 list로 -->
+            #{room_no}
+        </foreach>
+        ORDER BY 
+        last_date DESC
+    </select>
+</mapper>
+
+
