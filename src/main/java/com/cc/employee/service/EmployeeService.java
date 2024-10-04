@@ -306,6 +306,7 @@ public class EmployeeService {
         return null; // 팀명이 없을 경우 null 반환
     }
     
+
     // 로그인 한 사용자의 이름 가져오기
     public String getUserEmpName(String username) {
     	// username을 이용해 empName을 가져옴
@@ -316,5 +317,4 @@ public class EmployeeService {
     public Long getEmpCodeByEmpAccount(String empAccount) {
         return employeeRepository.findEmpCodeByEmpAccount(empAccount);
     }
-    
 }

@@ -1,4 +1,4 @@
-	<!DOCTYPE html>
+		<!DOCTYPE html>
 	<html xmlns:th="http://www.thymeleaf.org"
 	     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	     layout:decorate="~{include/layout}">
@@ -24,94 +24,126 @@
 	  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
 	  <!-- Template Main CSS File -->
 	  <link href="/bootstrap/css/style.css" rel="stylesheet">
-	  <link href="/bootstrap/css/nav_sider.css" rel="stylesheet">
+  <link href="/css/reservation/nav_sider.css" rel="stylesheet">
 	  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	<style>
-	.information{
-	    margin-left: 350px; /* 메인 콘텐츠와 동일하게 설정하여 일관성 유지 */
-    	padding: 40px;
-	}
-	      /* 건물 및 회의실 탭 버튼 */
-      .information {
-          padding: 20px 0;
-      }
-	      .tab-button {
-          display: inline-block;
-          padding: 10px 20px;
-          margin: 0 10px 20px 0; /* 좌우 및 아래 여백 설정 */
-          border: none;
-          background-color: #6c757d;
-          color: white;
-          cursor: pointer;
-          border-radius: 5px;
-      }
-	      .tab-button.active {
-          background-color: #007bff; /* 활성화된 버튼 색상 */
-      }
-	      /* 버튼 스타일 */
-      .btn {
-          padding: 10px 20px;
-          margin: 5px;
-      }
-	     /* 검은색 구분선 */
-      hr {
-          border: 0;
-          height: 1px;
-          background: black;
-          margin: 20px 0;
-      }
-	</style>
+<style>
+    .tab-button {
+        padding: 10px 20px; /* 버튼 패딩 */
+        border-radius: 20px; /* 둥근 모서리 */
+        background-color: #007bff; /* 기본 색상 */
+        color: white; /* 글자 색상 */
+        border: none; /* 테두리 없음 */
+        transition: background-color 0.3s; /* 호버 효과 전환 */
+        cursor: pointer; /* 마우스 커서 모양 */
+        font-weight: bold; /* 글씨 두껍게 */
+    }
+
+    .tab-button:hover {
+        background-color: #0056b3; /* 호버 시 색상 변경 */
+    }
+
+    .tab-button.active {
+        background-color: #0056b3; /* 활성화된 버튼 색상 */
+    }
+
+    .tab-button:not(.active):hover {
+        background-color: #6c757d; /* 비활성화된 버튼 호버 색상 */
+    }
+</style>
 	</head>
 	<body>
 	 <th:block layout:fragment="content">
 	  <main id="main" class="main">
 	    <div class="pagetitle">
-	      <h1>건물 등록</h1>
 	      <aside id="apprSidebar" class="apprSidebar">
-	     <div class="reservation-box">
-	        <div class="reservation-header">
-	            <h3>예약 목록</h3>
-	            </div> 
-	          <div th:each="building : ${buildings}">
-	          	<h2 th:text="${building.building_name}">Building Name</h2>
-	          	   <div class="building-name">
-	  			   	<button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|">
-	      		   <i class="bi bi-gear"></i>
-	  			   </button> 
-				</div>
-	          	<ul>
-					<li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}">
-	            		<a href="#"><span th:text="${meeting.meeting_name}"></span></a>
-	        		</li>
-	            </ul>
-				</div>
-	        <a th:href="@{/Building}"><button class="building-register-btn">+ 건물 등록</button></a>
-	    </div>
+<div class="reservation-box">
+    <div class="reservation-header" style="text-align: left; margin-bottom: 20px;">
+        <h4>건물 정보</h4>
+    </div>
+    
+    <div th:each="building : ${buildings}" style="margin-bottom: 30px;">
+        <div class="building-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 th:text="${building.building_name}" style="margin: 0; color: #555;">Building Name</h2>
+            <button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|"
+                style="background: none; border: none; cursor: pointer; color: #007bff;">
+                <i class="bi bi-gear" style="font-size: 1.5rem;"></i>
+            </button>
+        </div>
+
+        <ul style="list-style-type: none; padding: 0; margin-top: 10px;">
+            <li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}" style="margin-bottom: 8px;">
+                <a href="#" style="text-decoration: none; color: #007bff; font-size: 1.1rem;" th:text="${meeting.meeting_name}"></a>
+            </li>
+        </ul>
+        <hr style="border-top: 5px solid #e0e0e0; margin: 20px 0;">
+    </div>
+
+    <div style="text-align: center;">
+        <a th:href="@{/Building}">
+            <button class="building-register-btn" style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+                + 건물 등록
+            </button>
+        </a>
+    </div>
+</div>
+
 	    </aside>
 	    </div>
-			<div class="information">
-			  <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
-   			  <button class="tab-button" onclick="showMeetingTab()">회의실</button>
-			<hr>
-			</div>
-	    <div class="register_board_form" >
-	        <form id="buildingUpdateFrm" method="post">
-	            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-	            <input type="hidden" name="building_no" id="building_no" th:value="${dto.building_no}"/> <!-- 건물 번호 -->
-	            <p>이름: <input type="text" name="building_name" id="building_name" th:value="${dto.building_name}"></p>
-	            <p>주소: <input type="text" name="building_postcode" id="building_postcode" th:value="${dto.building_postcode}"></p>
-	            <p><input type="text" name="building_address" id="building_address" th:value="${dto.building_address}"></p>
-	            <p><input type="text" name="building_addr_detail" id="building_addr_detail" th:value="${dto.building_addr_detail}"></p>
-	           <div>
-	               <button type="submit" class="btn btn-primary">수정</button>
-	               <button type="button" class="btn btn-danger" onclick="deleteBuilding()">삭제</button>
-	           </div>
-	        </form>
-	        <br><button onclick="execDaumPostcode()">주소 검색</button>
-	    </div>
+<section class="section dashboard" style="width: calc(100% - 1000px); margin-left: 250px;">
+    <div class="col-xxl-4 col-md-6" style="width: 100%;">
+        <div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px; background-color: white;">
+            <div class="card-body">
+            <h4 style="margin-top:15px;">건물 정보</h4>
+                <div class="information" style="margin-top: 15px;">
+                    <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
+                    <button class="tab-button" th:data-building-no="${dto.building_no}" onclick="showMeetingTab(this)">회의실</button>
+                </div>
+                <hr>
+                <div class="register_board_form">
+                    <form id="buildingUpdateFrm" method="post">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <input type="hidden" name="building_no" id="building_no" th:value="${dto.building_no}"/> <!-- 건물 번호 -->
+                        <p>이름: <input type="text" name="building_name" id="building_name" th:value="${dto.building_name}" class="form-control"></p>
+                        <div style="display: flex; align-items: center;">
+                            <label style="margin-right: 10px;">우편번호:</label>
+                            <input type="text" name="building_postcode" id="building_postcode" th:value="${dto.building_postcode}" class="form-control" style="flex: 1; margin-right: 10px;">
+                            <button type="button" class="btn btn-secondary" onclick="execDaumPostcode()">주소 검색</button>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <label>주소:</label>
+                            <input type="text" name="building_address" id="building_address" th:value="${dto.building_address}" class="form-control">
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <label>상세주소:</label>
+                            <input type="text" name="building_addr_detail" id="building_addr_detail" th:value="${dto.building_addr_detail}" class="form-control">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                            <button type="submit" class="btn btn-primary">수정</button>
+                            <button type="button" class="btn btn-danger" onclick="deleteBuilding()">삭제</button>
+                        </div>
+                    </form>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
 	<script>
-	//처음 빌딩 정보 버튼을 누르고 회의실 정보를 보려고 들어가는 메서드
+	// 회의실 정보를 보려고 들어가는 기능
+function showMeetingTab(button){
+    const buildingNo = button.getAttribute('data-building-no');
+    const parsedBuildingNo = parseInt(buildingNo); // 'paseInt'를 'parseInt'로 수정
+    if (isNaN(parsedBuildingNo)) {
+        return;
+    }
+    window.location.href = `/building_meetingroom/${parsedBuildingNo}`;
+}
 	
 	//빌딩 버튼을 눌렀을때 다시 들어가는 기능 회의실에서 빌딩 누르면 다시 보이게(새로고침?).
 	function showBuildingTab(button) {
@@ -122,16 +154,10 @@
 	    }
 	    window.location.href = `/building_information/${parsedBuildingNo}`;
 	}
-
 	
 	
-	
-	
-	
-	
-	//HTML에서 CSRF 토큰 값을 가져옴
 	const csrfToken = document.querySelector('input[name="_csrf"]').value;
-	
+	//빌딩수정 폼	
 	const form = document.getElementById("buildingUpdateFrm");
 	form.addEventListener('submit', (e) => {
 	    e.preventDefault();
