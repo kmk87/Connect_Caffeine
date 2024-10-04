@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cc.calendar.domain.CalendarDto;
 import com.cc.calendar.service.CalendarService;
 import com.cc.notification.service.NotificationService;
-import com.cc.websocket.notification.NotificationHandler;
 
 @Controller
 public class CalendarApiController {
@@ -109,5 +110,26 @@ public class CalendarApiController {
 		}
 		return map;
 	}
+	
+	@PostMapping("/calendar/update")
+	public ResponseEntity<Map<String, String>> updateEvent(@RequestBody CalendarDto updatedEvent) {
+	    try {
+	        // 이벤트 업데이트 로직 (데이터베이스에 새로운 시간 저장)
+	        calendarService.updateEvent(updatedEvent);
+
+	        // 성공 메시지 반환
+	        Map<String, String> response = new HashMap<>();
+	        response.put("res_code", "200");
+	        response.put("res_msg", "이벤트가 성공적으로 업데이트되었습니다.");
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        // 실패 메시지 반환
+	        Map<String, String> response = new HashMap<>();
+	        response.put("res_code", "500");
+	        response.put("res_msg", "업데이트 실패");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
+	}
+
 
 }
