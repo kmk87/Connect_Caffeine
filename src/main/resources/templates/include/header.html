@@ -51,8 +51,7 @@
 									<i class="bi bi-check-circle text-success"></i>
 									<div>
 										<a th:href="${notification.relatedLink}">
-											<p th:text="${notification.notificationContent}"
-												class="notification-link" style="color:#333;"></p>
+											<p th:text="${notification.notificationContent}" class="notification-link" style="color:#333;"></p>
 										</a>
 										<p th:text="${notification.relativeTime}"></p>
 										<input type="hidden" id="csrf_token"
@@ -68,33 +67,6 @@
 						</ul></li>
 
 					<!-- End Notification Nav -->
-
-					<!-- 메시지 아이콘 및 메시지 목록 -->
-					<li class="nav-item dropdown"><a class="nav-link nav-icon"
-						href="#" data-bs-toggle="dropdown"> <i
-							class="bi bi-chat-left-text"></i> <span
-							class="badge bg-success badge-number">3</span>
-					</a>
-						<ul
-							class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-							<li class="dropdown-header">You have 3 new messages <a
-								href="#"><span
-									class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-							</li>
-							<li><hr class="dropdown-divider"></li>
-							<li class="message-item"><a href="#">
-									<div>
-										<h4>Message title</h4>
-										<p>Message content</p>
-										<p>Time</p>
-									</div>
-							</a></li>
-							<li><hr class="dropdown-divider"></li>
-							<li class="dropdown-footer"><a href="#">Show all
-									messages</a></li>
-						</ul></li>
-					<!-- End Messages Nav -->
-
 					<!-- 프로필 이미지 및 로그아웃 -->
 					<li class="nav-item dropdown pe-3"><a
 						class="nav-link nav-profile d-flex align-items-center pe-0"

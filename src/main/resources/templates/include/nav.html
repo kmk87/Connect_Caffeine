@@ -1,132 +1,164 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-<meta charset="UTF-8">
-<title>Navigation</title>
-<meta content="" name="description">
-<meta content="" name="keywords">
-
-<!-- 조직도 관련 -->
-<!-- Include jQuery -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Include jsTree CSS and JS -->
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-
+  <meta charset="UTF-8">
+  <title>Navigation</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- 조직도 관련 -->
+	  <!-- Include jQuery -->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	  <!-- Include jsTree CSS and JS -->
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
 <style>
+
 #left-info {
-	display: flex;
-	flex-direction: column; /* 세로로 배치 (행) */
-	gap: 10px; /* 각 행 사이의 간격 설정 */
+    display: flex;
+    flex-direction: column; /* 세로로 배치 (행) */
+    gap: 10px; /* 각 행 사이의 간격 설정 */
 }
 
 #left1, #left2, #left3 {
-	display: flex;
-	justify-content: space-between; /* 각 행 내에서의 요소 정렬 (필요 시) */
-	align-items: center;
-	height: 100px; /* 각 행의 높이 설정 */
-	background-color: #f0f0f0; /* 배경색 (선택 사항) */
-	padding: 10px; /* 내부 여백 (선택 사항) */
+    display: flex; 
+    justify-content: space-between; /* 각 행 내에서의 요소 정렬 (필요 시) */
+    align-items: center;
+    height: 100px; /* 각 행의 높이 설정 */
+    background-color: #f0f0f0; /* 배경색 (선택 사항) */
+    padding: 10px; /* 내부 여백 (선택 사항) */
 }
+
+
 </style>
-<!-- 조직도 끝 -->
-
 </head>
+
 <body>
-	<th:block th:fragment="navLayout">
-		<!-- ======= Sidebar ======= -->
-		<aside id="sidebar" class="sidebar">
-			<ul class="sidebar-nav" id="sidebar-nav">
-				<li class="nav-item">
-				<a class="nav-link"
-					th:classappend="${currentUri == '/' ? '' : 'collapsed'}"
-					th:href="@{/}"> 
-				<i class="bi bi-grid"></i><span>메인화면</span>
-				</a>
-				</li>
-				<li class="nav-item"><a class="nav-link collapsed"
-					data-bs-target="#components-nav" href="#"> 
-					<i class="ri-briefcase-line"></i><span>근태 관리</span>
-				</a>
-				</li>
-				<li class="nav-item">
-				<a class="nav-link"
-					th:classappend="${currentUri == '/employeeList' ? '' : 'collapsed'}"
-					th:href="@{/employeeList}"> 
-				<i class="bi bi-person-plus-fill"></i><span>인사관리</span>
-				</a>
-				</li>
-				<li class="nav-item">
-				<a class="nav-link"
-					th:classappend="${currentUri == '/Building' ? '' : 'collapsed'}"
-					th:href="@{/Building}"> 
-				<i class="ri-time-line"></i><span>예약관리</span>
-				</a>
-				</li>
-				<li class="nav-item">
-				<a class="nav-link"
-					th:classappend="${currentUri == '/calendar' ? '' : 'collapsed'}"
-					th:href="@{/calendar}"><i class="ri-calendar-2-line"></i><span>일정관리</span>
-				</a>
-				</li>
-				<li class="nav-item"><a class="nav-link collapsed"
-					data-bs-toggle="collapse" href="#"> <i
-						class="bx bxs-folder-open"></i><span>문서 관리</span>
-				</a></li>
-				<li class="nav-item"><a class="nav-link collapsed"
-					data-bs-toggle="collapse" href="#"> <i class="bi bi-shop"></i><span>점포
-							관리</span>
-				</a></li>
-				<li class="nav-item">
-				<a class="nav-link"
-					th:classappend="${currentUri == '/noticeList' ? '' : 'collapsed'}"
-					th:href="@{/noticeList}"><i class="bx bxs-category"></i><span>게시판</span>
-				</a>
-				</li>
-				<li class="nav-item">
-				<a class="nav-link"
-					th:classappend="${currentUri == '/approvalHome' ? '' : 'collapsed'}"
-					th:href="@{/approvalHome}"><i class="ri-file-edit-line"></i><span>전자결재</span>
-				</a>
-				</li>
+
+<th:block th:fragment="navLayout">
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-          <a class="nav-link collapsed" 
-   				th:href="@{/chatRoomList/{empCode}(empCode=${#authentication.principal.dto.emp_code})}">
-    			<i class="bx bx-chat"></i><span>채팅</span>
-		      </a>
+			<a class="nav-link"
+				th:classappend="${currentUri == '/' ? '' : 'collapsed'}"
+				th:href="@{/}"> 
+			<i class="bi bi-grid"></i><span>메인화면</span>
+			</a>
+		</li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" >
+            <i class="ri-briefcase-line"></i><span>근태 관리</span>
+          </a>
         </li>
-				<!-- Other nav items omitted for brevity -->
-				<li><a class="nav-link collapsed" th:href="@{/toOrganization}">조직도</a>
-				</li>
+       	<li class="nav-item">
+			<a class="nav-link"
+				th:classappend="${currentUri == '/employeeList' ? '' : 'collapsed'}"
+				th:href="@{/employeeList}"> 
+			<i class="bi bi-person-plus-fill"></i><span>인사관리</span>
+			</a>
+			</li>
+			<li class="nav-item">
+			<a class="nav-link"
+				th:classappend="${currentUri == '/reservation' ? '' : 'collapsed'}"
+				th:href="@{/reservation}"> 
+			<i class="ri-time-line"></i><span>예약관리</span>
+			</a>
+			</li>
+			<li class="nav-item">
+			<a class="nav-link"
+				th:classappend="${currentUri == '/calendar' ? '' : 'collapsed'}"
+				th:href="@{/calendar}"><i class="ri-calendar-2-line"></i><span>일정관리</span>
+			</a>
+		</li>
+        <li class="nav-item">
+          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+            <i class="bx bxs-folder-open"></i><span>문서 관리</span>
+          </a>
+        </li>
+      	<li class="nav-item">
+			<a class="nav-link"
+			   th:classappend="${currentUri == '/salesByProduct' ? '' : 'collapsed'}"
+			   th:href="@{/salesByProduct}"><i class="bi bi-shop"></i><span>점포관리</span>
+			</a>
+		</li>
+        <li class="nav-item">
+			<a class="nav-link"
+				th:classappend="${currentUri == '/noticeList' ? '' : 'collapsed'}"
+				th:href="@{/noticeList}"><i class="bx bxs-category"></i><span>게시판</span>
+			</a>
+		</li>
+        <li class="nav-item">
+			<a class="nav-link"
+				th:classappend="${currentUri == '/approvalHome' ? '' : 'collapsed'}"
+				th:href="@{/approvalHome}"><i class="ri-file-edit-line"></i><span>전자결재</span>
+			</a>
+		</li>
+	     <li class="nav-item"
+	    		th:classappend="${currentUri == '/chatRoomList/{empCode}' ? '' : 'collapsed'}">
+		  <a class="nav-link collapsed"
+		     th:href="@{/chatRoomList/{empCode}(empCode=${#authentication.principal.dto.emp_code})}">
+		    <i class="bx bx-chat"></i><span>채팅</span>
+		  </a>
+		</li>
 
 
-			</ul>
-		</aside>
-		<!-- End Sidebar-->
-	</th:block>
-	<a href="#"
-		class="back-to-top d-flex align-items-center justify-content-center"><i
-		class="bi bi-arrow-up-short"></i></a>
-	<!-- Vendor JS Files -->
-	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
-	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
-	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
-	<script src="/bootstrap/vendor/quill/quill.js"></script>
-	<script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
-	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
-	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
-	<!-- Template Main JS File -->
-	<script src="/bootstrap/js/main.js"></script>
+        <li class="nav-item">
+          <a class="nav-link collapsed" th:href="@{/toTree}">
+            <i class="bx bx-chat"></i><span>조직도 샘플</span>
+          </a>
+        </li>
+        <!-- Other nav items omitted for brevity -->
+      </ul>
+      <!-- 조직도 모달창1 -->
+      <button type="button" id="treeButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
+                조직도
+      </button>
+      <div class="modal fade" id="disablebackdrop" tabindex="-1" data-bs-backdrop="false">
+          <div class="modal-dialog">
+            <div class="modal-content" >
+              <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              	<div id="treeContainer"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+              </div>
+            </div>
+          </div>
+      </div>
+      <!-- 조직도 모달창1 끝-->
+      <!-- 조직도 모달창2 -->
+      <div class="modal fade" id="disablebackdrop2" tabindex="-1" data-bs-backdrop="false">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              	<div id="left-info">
+              		<div id="left1">첫 번째 칸</div>
+              		<div id="left2">두 번째 칸</div>
+              		<div id="left3">채팅 버튼</div>
+              	</div>
+              	<div id="right-info">
+              	</div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+              </div>
+            </div>
+          </div>
+      </div>
+       <!-- 조직도 모달창2 끝-->
+    </aside><!-- End Sidebar-->
+<!-- 조직도 js -->
+<script th:inline="javascript">
 
-
-	<!-- 조직도 js -->
-	<script th:inline="javascript">
 document.addEventListener('DOMContentLoaded', function () {
     var modal = document.getElementById('disablebackdrop');
 
@@ -147,6 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
         
         console.log(combinedData);
         
+       
+
         
         // 3. jsTree 생성
 		$("#treeContainer").jstree({
@@ -202,9 +236,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	    modal.addEventListener('hidden.bs.modal', function () {
 	        $("#treeContainer").jstree("destroy").empty(); 
 	    });
-
 });
 
 </script>
-</body>
+<!-- 조직도 관련 js 끝 -->
+</th:block>
+
+  </body>
 </html>

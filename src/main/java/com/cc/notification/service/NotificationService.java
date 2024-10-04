@@ -144,26 +144,28 @@ public class NotificationService {
         return notificationDtoList;
     }
     
-    //안읽은 알림 조회
+ // Service.java
     public List<NotificationDto> getUnreadNotifications(Long empCode) {
-        List<Notification> unreadNotifications = notificationRepository.findByEmployeeEmpCodeAndIsRead(empCode, 'N');
-        List<NotificationDto> notificationDtoList = new ArrayList<NotificationDto>();
+        // 최신순으로 정렬하여 알림 조회
+        List<Notification> unreadNotifications = notificationRepository.findByEmployeeEmpCodeAndIsReadOrderBySentTimeDesc(empCode, 'N');
+        List<NotificationDto> notificationDtoList = new ArrayList<>();
 
-        // 3. 각 Notification 객체를 NotificationDto로 변환하고 리스트에 추가
+        // 각 Notification 객체를 NotificationDto로 변환하고 리스트에 추가
         for (Notification notification : unreadNotifications) {
-        	NotificationDto dto = new NotificationDto().toDto(notification);
-            
-        	// 상대 시간 계산 후 DTO에 추가
+            NotificationDto dto = new NotificationDto().toDto(notification);
+
+            // 상대 시간 계산 후 DTO에 추가
             String relativeTime = calculateRelativeTime(notification.getSentTime());
             dto.setRelativeTime(relativeTime);
-            
-        	// 4. 리스트에 변환된 DTO 추가
+
+            // 리스트에 변환된 DTO 추가
             notificationDtoList.add(dto);
         }
-      
-        // 5. DTO 리스트 반환
+
+        // DTO 리스트 반환
         return notificationDtoList;
     }
+
     
    // 알림 삭제
     public int deleteNotificationsByIds(List<Long> notificationIds) {
@@ -218,4 +220,3 @@ public class NotificationService {
 
 
   
-

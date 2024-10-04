@@ -17,6 +17,8 @@ import com.cc.chatting.domain.ChatRoomVo;
 import com.cc.chatting.service.ChattingService;
 import com.cc.tree.service.OrgService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class ChattingViewController {
 	
@@ -31,11 +33,15 @@ public class ChattingViewController {
 	}
 	
 	@GetMapping("/chatRoomList/{emp_code}")
-	public String chatRoomList(Model model,
+	public String chatRoomList(HttpServletRequest request,
+Model model,
 			@PathVariable("emp_code") Long emp_code) {
 		List<ChatRoomVo> roomList = chattingService.selectChatRoomList(emp_code);
 //		List<ChatInviteDto> inviteList = chattingService.selectChatInviteList(emp_code);
-		
+		String currentUri = request.getRequestURI();
+		model.addAttribute("currentUri", currentUri);
+		System.out.println("Current URI: " + request.getRequestURI());
+
 		model.addAttribute("resultList", roomList);
 //		model.addAttribute("inviteList", inviteList);
 		

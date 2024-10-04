@@ -40,8 +40,12 @@ public class HomeController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
 		String username = user.getUsername();
+
+		System.out.println("로그인 정보:"+username);
+
 		String currentUri = request.getRequestURI();
         model.addAttribute("currentUri", currentUri);
+
 		EmployeeDto dto = employeeService.getEmployeeOne(username);
 
 		model.addAttribute("dto", dto);

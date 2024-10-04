@@ -43,10 +43,8 @@ h6 {
 --------------------------------------------------------------*/
 #main {
   margin-top: 60px;
-  /* padding: 20px 30px; */
+  padding: 20px 30px;
   transition: all 0.3s;
-  display: flex;          /* Flexbox 활성화 */
-  justify-content: flex-start;  /* 왼쪽 정렬 */
 }
 
 @media (max-width: 1199px) {
@@ -373,9 +371,6 @@ h6 {
   border-bottom: 2px solid #4154f1;
 }
 
-/*--------------------------------------------------------------
-# Header
---------------------------------------------------------------*/
 .logo {
   line-height: 1;
 }
@@ -387,6 +382,7 @@ h6 {
 }
 
 .logo img {
+  max-height: 26px;
  
   margin-right: 6px;
 }
@@ -635,7 +631,6 @@ h6 {
   background-color: #fff;
 }
 
-
 @media (max-width: 1199px) {
   .sidebar {
     left: -300px;
@@ -763,12 +758,6 @@ h6 {
   padding: 10px 0 10px 40px;
   transition: 0.3s;
 }
-
-.sidebar-nav .nav-link.collapsed.active {
-  color: #4154f1;
-  background-color: #f6f9ff;
-}
-
 
 .sidebar-nav .nav-content a i {
   font-size: 6px;

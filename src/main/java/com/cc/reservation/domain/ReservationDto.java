@@ -19,17 +19,15 @@ import lombok.ToString;
 @Builder
 public class ReservationDto {
 	private Long reservation_no;
-	private Long emp_code ;
 	private Long meeting_no;
 	private LocalDateTime meeting_start;
 	private LocalDateTime meeting_end;
 	private Long meeting_people;
 	private String meeting_content;
 	
-	public Reservation toEnetity(Employee employee, MeetingRoom meetingroom) {
+	public Reservation toEnetity(MeetingRoom meetingroom) {
 		return Reservation.builder()
 				.reservationNo(reservation_no)
-				.employee(employee)
 				.meetingroom(meetingroom)
 				.meetingStart(meeting_start)
 				.meetingEnd(meeting_end)
@@ -41,7 +39,6 @@ public class ReservationDto {
 	public ReservationDto toDto(Reservation reservation) {
 		return ReservationDto.builder()
 				.reservation_no(reservation.getReservationNo())
-				.emp_code(reservation.getEmployee().getEmpCode())
 				.meeting_no(reservation.getMeetingroom().getMeetingNo())
 				.meeting_start(reservation.getMeetingStart())
 				.meeting_end(reservation.getMeetingEnd())
