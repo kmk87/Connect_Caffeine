@@ -62,6 +62,12 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :empAccount ORDER BY a.apprNo DESC")
     List<Approval> findApprovalsByEmpAccount(@Param("empAccount") String empAccount);
 
+    // 참조자로 등록된 리스트 가져오기
+    @Query("SELECT a FROM Approval a " +
+    	       "JOIN ApprovalLine al ON a.apprNo = al.approval.apprNo " +
+    	       "JOIN Employee e ON al.employee.empCode = e.empCode " +
+    	       "WHERE al.apprRole = 2 AND e.empAccount = :empAccount")
+    	List<Approval> findReferenceDraftsByEmpAccount(@Param("empAccount") String empAccount);
 
 
 

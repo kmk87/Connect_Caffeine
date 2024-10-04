@@ -459,9 +459,17 @@ public class ApprovalViewController {
 		//////////////////////////////////////////////
 	
 	// 참조문서함
-	@GetMapping("/referenceStorage")
-	public String showReferebceStorage() {
-					
+		@GetMapping("/referenceStorage")
+		public String showReferenceStorage(Model model) {
+			// 현재 로그인한 사용자 정보 가져오기
+		    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		    String empAccount = authentication.getName();  // emp_account (로그인한 사용자 정보)
+
+		    // emp_account로 참조자 목록 조회
+		    List<ApprovalDto> referenceDrafts = approvalService.getReferenceListByEmpAccount(empAccount);
+
+		    // 모델에 리스트 추가
+		    model.addAttribute("referenceDraftDtoList", referenceDrafts);
 					        
 		return "approval/referenceStorage"; 
 	}

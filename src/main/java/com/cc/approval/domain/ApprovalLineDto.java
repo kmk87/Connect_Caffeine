@@ -39,6 +39,16 @@ public class ApprovalLineDto {
     public String getSignaturePath() {
         return signaturePath != null ? signaturePath : "";
     }
+    
+    
+    // ApprovalLine을 이용한 생성자
+    public ApprovalLineDto(ApprovalLine approvalLine) {
+        this.appr_line_id = approvalLine.getApprLineId();
+        this.emp_code = approvalLine.getEmployee().getEmpCode();
+        this.appr_writer_name = approvalLine.getEmployee().getEmpName();
+        this.appr_order = approvalLine.getApprOrder();
+        this.appr_state = approvalLine.getApprState();
+    }
 	
 	public ApprovalLine toEntity(Employee employee, Approval approval) {
 		

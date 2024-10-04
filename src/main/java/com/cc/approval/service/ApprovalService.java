@@ -637,6 +637,27 @@ public class ApprovalService {
 	 		}
 
 	 	    
+	 	   // 참조문서함
+	 	  public List<ApprovalDto> getReferenceListByEmpAccount(String empAccount) {
+	 		    // empAccount를 사용하여 참조자로 등록된 Approval 목록 조회
+	 		    List<Approval> approvals = approvalRepository.findReferenceDraftsByEmpAccount(empAccount);
+
+	 		    // Approval 엔티티를 ApprovalDto로 변환
+	 		    List<ApprovalDto> approvalDtos = approvals.stream()
+	 		        .map(approval -> new ApprovalDto(approval)) // Approval에서 ApprovalDto로 변환
+	 		        .collect(Collectors.toList());
+
+	 		    return approvalDtos;
+	 		}
+
+
+	 	   
+	 	   
+	 	   
+	 	   
+	 	   
+	 	   
+	 	   
 	 	    
 	}
 		

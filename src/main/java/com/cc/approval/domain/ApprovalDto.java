@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.cc.employee.domain.Employee;
 
@@ -107,7 +108,50 @@ public class ApprovalDto {
     }
     
     
-    
+    // Approval 엔티티를 이용한 생성자
+    public ApprovalDto(Approval approval) {
+        this.appr_no = approval.getApprNo();
+        this.appr_title = approval.getApprTitle();
+        this.appr_content = approval.getApprContent();  // 결재 내용 추가
+        this.draft_day = approval.getDraftDay();  // 기안일 추가
+        this.appr_holi_start = approval.getApprHoliStart();  // 휴가 시작일 추가
+        this.appr_holi_end = approval.getApprHoliEnd();  // 휴가 종료일 추가
+        this.appr_holi_use_count = approval.getApprHoliUseCount();  // 휴가 사용 일수 추가
+        this.is_deleted = approval.getIsDeleted();  // 삭제 여부 추가
+        this.docu_no = approval.getDocuNo();  // 문서 번호 추가
+        this.appr_state = approval.getApprState();
+
+        // Employee 정보로부터 작성자의 emp_code와 이름을 설정
+        if (approval.getEmployee() != null) {
+            this.appr_writer_code = approval.getEmployee().getEmpCode();
+            this.appr_writer_name = approval.getEmployee().getEmpName();
+        }
+
+        // ApprForm 정보로부터 결재 양식 번호 설정
+        if (approval.getApprForm() != null) {
+            this.appr_form_no = approval.getApprForm().getApprFormNo();
+        }
+
+        // 결재 양식 이름 설정
+        this.setFormName();
+
+        // 결재라인에서 서명 이미지 경로 설정
+        List<ApprovalLine> approvalLines = approval.getApprovalLines();
+        if (approvalLines != null && !approvalLines.isEmpty()) {
+            if (approvalLines.get(0).getEmployee() != null) {
+                this.signImagePath1 = approvalLines.get(0).getEmployee().getEmpSignatureImagePath();
+            }
+            if (approvalLines.size() > 1 && approvalLines.get(1).getEmployee() != null) {
+                this.signImagePath2 = approvalLines.get(1).getEmployee().getEmpSignatureImagePath();
+            }
+        }
+
+        // 결재선 리스트 설정 (ApprovalLine -> ApprovalLineDto 변환 필요)
+        this.approvalLineList = approvalLines.stream()
+            .map(line -> new ApprovalLineDto(line))
+            .collect(Collectors.toList());
+    }
+
 	
     public Approval toEntity(Employee employee, ApprForm apprForm) {
         return Approval.builder()
