@@ -23,9 +23,6 @@
 	rel="stylesheet">
 
 
-
-
-
 <style>
 .jstree-icon.ri-building-fill { /* 회사 아이콘 */
 	color: #3e4a6e;
@@ -218,10 +215,6 @@
 					<div th:if="${apprFormNo == 1}">
 						<div class="form-group">
 							<label for="leave-type">휴가 종류</label>
-							<!-- <select id="leave-type"name="leave-type">
-							<option>연차</option>
-							<option>경조</option>
-						</select> -->
 							<input type="text" class="leave-type" value="연차" disabled>
 						</div>
 						<div class="form-group">
@@ -229,7 +222,7 @@
 								id="start-date" name="appr_holi_start"> <span>~</span> <input
 								type="date" id="end-date" name="appr_holi_end"> <span>사용일수:</span>
 							<input type="number" id="appr_holi_use_count"
-								name="appr_holi_use_count"> <span> 일</span>
+								name="appr_holi_use_count" placeholder="숫자만 입력" required> <span> 일</span>
 						</div>
 						<div class="form-group">
 							<label for="subject">제목</label> <input type="text"
@@ -239,11 +232,6 @@
 							<label for="content">내용</label>
 							<textarea id="appr_content" name="appr_content"
 								placeholder="내용을 입력해 주세요."></textarea>
-						</div>
-						<div class="form-group">
-							<label for="attachment">첨부 파일</label> <input type="file"
-								id="attachment">
-							<button class="btn-delete">파일 제거</button>
 						</div>
 					</div>
 					<div class="formDiv">
@@ -257,11 +245,6 @@
 								<label for="content">내용</label>
 								<textarea id="appr_content" name="appr_content"
 									placeholder="내용을 입력해 주세요."></textarea>
-							</div>
-							<div class="form-group">
-								<label for="attachment">첨부 파일</label> <input type="file"
-									id="attachment">
-								<button class="btn-delete">파일 제거</button>
 							</div>
 						</div>
 
@@ -277,11 +260,6 @@
 								<label for="content">내용</label>
 								<textarea id="appr_content" name="appr_content"
 									placeholder="내용을 입력해 주세요."></textarea>
-							</div>
-							<div class="form-group">
-								<label for="attachment">첨부 파일</label> <input type="file"
-									id="attachment">
-								<button class="btn-delete">파일 제거</button>
 							</div>
 						</div>
 					</div>
@@ -488,10 +466,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // 기안서 상신 시 결재선 리스트도 함께 전송
     document.getElementById("draftAdd").addEventListener("submit", function(e) {
         e.preventDefault();
+        
 
         let form = this;
         let vali_check = true;
         let vali_text = "";
+        
+        
+     // 결재선이 지정되지 않았을 경우 유효성 검사
+        if (approvalLineList.length === 0) {
+            vali_text = "최소 1명 이상의 결재자를 지정하세요.";
+            vali_check = false;
+        }
 
         if (apprFormNo === 1) {
             if (form.appr_title.value === "") {
@@ -506,6 +492,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 vali_text = '사용일수를 입력하세요';
                 form.appr_holi_use_count.focus();
                 vali_check = false;
+            } else if (isNaN(form.appr_holi_use_count.value) || form.appr_holi_use_count.value <= 0) {
+                // 숫자가 아닌 값이나 0 이하의 값이 입력된 경우 경고
+                vali_text = '사용일수에는 0보다 큰 숫자만 입력하세요';
+                form.appr_holi_use_count.focus();
+                vali_check = false;
+            } else if (form.appr_holi_start.value === ""){
+            	vali_text = "시작날짜를 입력하세요."
+            	form.appr_holi_start.focus();
+            	vali_check = false;
+            } else if (form.appr_holi_end.value === ""){
+            	vali_text = "종료날짜를 입력하세요."
+            	form.appr_holi_end.focus();
+            	vali_check = false;
             }
         }
 

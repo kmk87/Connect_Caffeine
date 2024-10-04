@@ -48,5 +48,8 @@ public class ApprovalLine {
 	@Column(name="appr_state")
 	private String apprState;
 	
+	@Column(name = "signature_path")
+	private String signaturePath;
+	
 
 }

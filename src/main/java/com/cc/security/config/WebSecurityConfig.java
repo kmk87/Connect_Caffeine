@@ -29,12 +29,13 @@ public class WebSecurityConfig {
 				request
 				.requestMatchers("/login","/static/**", "/employee", "/employeeCreate", "/employeeList", "/bootstrap/**", "/employeeUpdate/**", "/employeeUpdate"
 						, "/employeeDelete",  "/employeeDelete/**", "/empGroupList", "/empGroupList/**"
-						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**","/approvalUploadImg/**",
+						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**","/approvalUploadImg/**","/error/**","/upload/**",
 						"/empGroupUpdate", "/empGroupUpdate/**", "/empGroupDelete", "/empGroupDelete/**", "employeeCreate","/approval/**","/createDraft").permitAll()
 
                                
             //.requestMatchers("/**").permitAll()
 //            .requestMatchers("/calendar/**").authenticated()
+			
             .anyRequest().authenticated()
             ) // 루트 URL("/")에 대한 접근을 모든 사용자에게 허용
                   

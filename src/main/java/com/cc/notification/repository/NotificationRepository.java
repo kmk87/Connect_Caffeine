@@ -16,6 +16,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 	// 수신자의 empCode를 통해 알림 목록을 조회하는 메서드
     List<Notification> findByEmployeeEmpCodeOrderBySentTimeDesc(Long empCode);
     
+    
+    List<Notification> findByEmployeeEmpCodeAndIsReadOrderBySentTimeDesc(Long empCode, char isRead);
+    
+    
     // 수신자(employee)와 읽음 여부(isRead)를 기준으로 알림을 조회하는 메서드
     List<Notification> findByEmployeeEmpCodeAndIsRead(Long empCode, char isRead); 
     
