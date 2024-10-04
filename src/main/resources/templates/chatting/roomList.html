@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -6,171 +5,275 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title>Connect Caffeine</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-  <!-- Favicons -->
-  <style>
-        /* 모든 행의 배경색을 변경 */
-        table.dataTable tbody tr {
-            background-color: #fff; /* 원하는 배경색으로 변경 */
-        }
-    </style>
+  <!-- DataTables CSS -->
+  
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  
+  <!-- jsTree CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet">
 
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- jsTree JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  
+  <link
+	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
+	rel="stylesheet" disabled="disabled">
+	<link th:href="@{/css/notice/notice.css}"
+          rel="stylesheet" type="text/css">
 <!-- DataTables JS -->
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Bootstrap 5 JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-  
-  <!-- Vendor CSS Files -->
 
-  
-
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   
 </head>
 <body>
  <th:block layout:fragment="content">
-  <main id="main" class="main">
-    <div class="pagetitle">
-      <h1>채팅방 목록</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">목록</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
+  <main id="main" class="main" >
+    
+    
+    <!-- Modal -->
     <div class="modal fade" id="chatRoomCreateModal" tabindex="-1" aria-labelledby="chatRoomCreateModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="chatRoomCreateModalLabel">채팅방 생성</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- 모달창 내부에 채팅방 정보를 입력하는 폼 -->
-        <form id="chatRoomForm">
-          <div class="mb-3">
-            <label for="roomName" class="form-label">채팅방 이름</label>
-            <input type="text" class="form-control" id="roomName" placeholder="채팅방 이름을 입력하세요">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="chatRoomCreateModalLabel">채팅방 생성</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="mb-3">
-          	<label class="form-label">대화상대 선택</label>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" class="btn btn-primary" id="createRoomBtn">생성</button>
-      </div>
-    </div>
-  </div>
-</div>
-    <div class="col-xxl-4 col-md-6">
-         <div class="card info-card sales-card" style="margin-top: 25px; width: 90vw; height: 90vh;">
-             <div class="card-body">
-             <button type="button" class="btn btn-primary rounded-pill" style="float:left;" data-bs-toggle="modal" data-bs-target="#chatRoomCreateModal">
-  				채팅방 생성
-			</button>
-      			<table id="chatRoom_list" class="table datatable">
-      			
-    <thead>
-        <tr>
-            <th>채팅방 목록</th>
-        </tr>
-    </thead>
-    
-    <tbody>
-        <th:block th:if="${#lists.isEmpty(resultList)}">
-            <tr>
-                <td>참여하고 있는 채팅방이 없습니다.</td>
-            </tr>
-        </th:block>
-        <th:block th:unless="${#lists.isEmpty(resultList)}">
-            <tr th:if="${room.room_status.equals('Y')}"
-            th:each="room : ${resultList}"
-            th:onclick="|location.href='@{/chatDetail/{roomNo}(roomNo=${room.room_no})}'|">
-                <td>
-                    <p th:text="${room.room_name}"></p>
-                    <p th:text="${room.last_msg}"></p>
-                    <p th:text="${#temporals.format(room.last_date, 'yyyy-MM-dd')}"></p>
-                </td>
-            </tr>
-        </th:block>
-    </tbody>
-		</table>
-    	
-
-      				</div>
-                </div>
+          <div class="modal-body">
+            <form id="chatRoomForm">
+              <div class="mb-3">
+                <label for="roomName" class="form-label">채팅방 이름</label>
+                <input type="text" class="form-control" id="roomName" placeholder="채팅방 이름을 입력하세요" th:value="${#authentication.principal.dto.emp_name}">
+              	<input type="hidden" id="emp_code" name="emp_code" th:value="${#authentication.principal.dto.emp_code}">
               </div>
-      
-    <script>
-  
-  		$(document).ready(function() {
-	  	
-	    $('#chatRoom_list').DataTable({
-	        "lengthChange": false,  // Show entries 숨김
-	        "searching": true,      // 검색 활성화
-	        "responsive": true,
-	        "ordering": false,
-	        "language": {
-	            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json'
-	        },
-	    	"pagingType": "full_numbers"
-	    });
-	    
-	});
-  		
-  		document.getElementById('createRoomBtn').addEventListener('click', function() {
-  		    // 모달창 내 입력된 값을 확인하여 처리 (예: AJAX 요청을 통해 서버로 전송)
-  		    const roomName = document.getElementById('roomName').value;
-  		    
-  		    
-  		    if (roomName.trim() === '') {
-  		      alert('채팅방 이름을 입력해주세요.');
-  		      return;
-  		    }
-
-  		    // 여기서 채팅방 정보를 서버로 전송하는 로직을 추가할 수 있습니다.
-  		    console.log('채팅방 이름:', roomName);
-  		    
-
-  		    // 모달창 닫기
-  		    var modal = new bootstrap.Modal(document.getElementById('chatRoomCreateModal'));
-  		    modal.hide();
-  		  });
-</script>
-  </main><!-- End #main -->
-</th:block>
-  <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    
-    <div class="credits">
-      <!-- All the links in the footer should remain intact. -->
-      <!-- You can delete the links only if you purchased the pro version. -->
-      <!-- Licensing information: https://bootstrapmade.com/license/ -->
-      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+              <div class="mb-3">
+                <label class="form-label">대화상대 선택</label>
+                <div id="treeContainer_chat"></div> 
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            <button type="button" class="btn btn-primary" id="createRoomBtn">생성</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </footer><!-- End Footer -->
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-  <!-- Vendor JS Files -->
-  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
-  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
-  <script src="/bootstrap/vendor/quill/quill.js"></script>
-  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
-  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
-  <!-- Template Main JS File -->
-  <script src="/bootstrap/js/main.js"></script>
+
+    <div class="col-xxl-4 col-md-6" style="margin-left: 50px;">
+      <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 830px;">
+        <div class="card-body" > 
+        	<div class="card-body-header">
+					<h2 class="card-title"><b>채팅방 목록</b></h2>
+					<hr>
+				</div>
+          
+          
+          <table id="chatRoom_list" class="table table-bordered rank-table">
+  <thead>
+    <tr>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <th:block th:if="${#lists.isEmpty(resultList)}">
+      <tr>
+        <td colspan="3">참여하고 있는 채팅방이 없습니다.</td>
+      </tr>
+    </th:block>
+    <th:block th:unless="${#lists.isEmpty(resultList)}">
+      <th:block th:each="room : ${resultList}">
+        <tr th:onclick="|location.href='@{/chatDetail/{roomNo}(roomNo=${room.room_no})}'|">
+          <td th:utext="${room.room_name} + '<br>' + 
+          ${room.last_msg != null ? room.last_msg : '채팅 내역이 없습니다.'} + '<br>' + 
+          ${room.last_date != null ? #temporals.format(room.last_date, 'yyyy-MM-dd') : ''}"></td>
+        </tr>
+      </th:block>
+    </th:block>
+  </tbody>
+</table>
+
+        <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#chatRoomCreateModal" style="float:right; margin-top: 10px">채팅방 생성</button>
+        </div>
+      </div>
+    </div>
+    
+<script>
+    let empCode = [];  // 선택한 id를 저장할 배열
+
+    function formatDataForJsTree(nodes) {
+        const formattedNodes = nodes.map(node => {
+            return {
+                id: node.id,
+                text: node.text,
+                parent: node.parent === '1' ? '#' : node.parent,
+                type: node.type,
+                icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill',
+                li_attr: {
+                    'data-emp-code': node.primaryKey  // empCode를 데이터 속성으로 추가
+                }
+            };
+        });
+
+        console.log("Formatted Data for jsTree:", formattedNodes);
+        return formattedNodes;
+    }
+
+    $(document).ready(function() {
+        // CSRF 토큰을 메타 태그에서 가져옴
+        const csrfToken = $('meta[name="_csrf"]').attr('content');
+        const csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+
+        // DataTables 초기화
+        $('#chatRoom_list').DataTable({
+            "paging": true,          // 페이지네이션 활성화
+            "lengthChange": false,   // 보여줄 항목 수 변경 숨김
+            "searching": true,       // 검색 활성화
+            "pageLength": 5,        // 한 페이지에 보여줄 항목 수
+            "ordering": false,       // 정렬 비활성화
+            "info": false,           // 테이블 정보 숨김
+            "autoWidth": false,      // 자동 너비 조정 비활성화
+            "language": {
+                "search": "검색:",   // 검색창 앞 텍스트를 "검색"으로 변경
+                "paginate": {
+                    "previous": "<",  // 이전 버튼을 "<"로 표시
+                    "next": ">"       // 다음 버튼을 ">"로 표시
+                }
+            },
+            "pagingType": "simple_numbers",  // 페이지네이션 스타일
+            "order": []  // 기본 정렬 없음
+        });
+
+        // 검색창 스타일 조정
+        $('#chatRoom_list_filter').css({
+            'float': 'right',
+            'text-align': 'right',
+            'margin-top': '10px',
+            'margin-bottom': '5px'  // 검색창과 테이블 간격 조정
+        });
+
+        // 채팅방 생성 모달 창이 열릴 때 jsTree 데이터 로딩
+        $('#chatRoomCreateModal').on('show.bs.modal', function () {
+            fetch('/getOrgChartChat')
+                .then(response => response.json())
+                .then(data => {
+                    const formattedData = formatDataForJsTree(data);
+
+                    $('#treeContainer_chat').jstree({
+                        'core': {
+                            "animation": 0,
+                            "check_callback": true,
+                            'data': formattedData
+                        },
+                        "plugins": ["types"],
+                        "types": {
+                            "team": { "icon": "ri-team-fill" },
+                            "employee": { "icon": "ri-user-2-fill" }
+                        }
+                    })
+                    .on('select_node.jstree', function (e, data) {
+                        let selectedNodeText = data.node.text;
+                        if (selectedNodeText.includes('(')) {
+                            selectedNodeText = selectedNodeText.split('(')[0].trim(); 
+                        }
+
+                        empCode.push(data.node.id);
+                        
+                        const currentRoomName = $('#roomName').val();
+                        const newRoomName = currentRoomName ? currentRoomName + ', ' + selectedNodeText : selectedNodeText;
+                        $('#roomName').val(newRoomName);
+                    });
+                })
+                .catch(err => {
+                    console.error("Error fetching org chart data:", err);
+                });
+        });
+
+        // 채팅방 생성 버튼 클릭 시
+        document.getElementById('createRoomBtn').addEventListener('click', function() {
+            const roomName = document.getElementById('roomName').value;
+            const loggedInEmpCode = document.getElementById('emp_code').value;
+            if (roomName.trim() === '') {
+                alert('채팅방 이름을 입력해주세요.');
+                return;
+            }
+
+            // JSON 데이터 생성
+            const requestData = {
+                room_name: roomName,
+                emp_code: [...empCode, loggedInEmpCode]
+            };
+
+            // AJAX 요청으로 JSON 데이터 전송, CSRF 토큰 포함
+            $.ajax({
+                url: '/chatRoomCreate',  // 서버의 컨트롤러 URL
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),  // JSON 데이터
+                beforeSend: function(xhr) {
+                    // CSRF 토큰을 요청 헤더에 추가
+                    xhr.setRequestHeader(csrfHeader, csrfToken);
+                },
+                success: function(response) {
+                    // 서버에서 받은 res_code 값을 확인
+                    if (response.res_code === "200") {
+                        Swal.fire({
+                            icon: 'success',            // 성공 아이콘
+                            title: '성공',              // 타이틀
+                            text: response.res_msg,     // 서버에서 받은 성공 메시지
+                            confirmButtonText: "닫기"   // 버튼 텍스트
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();  // 페이지 새로고침
+                            }
+                        });
+                    } else if (response.res_code === "404") {
+                        Swal.fire({
+                            icon: 'error',              // 오류 아이콘
+                            title: '오류 발생',         // 타이틀
+                            text: response.res_msg,     // 서버에서 받은 오류 메시지
+                            confirmButtonText: "닫기"   // 버튼 텍스트
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();  // 페이지 새로고침
+                            }
+                        });
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'AJAX 오류 발생',
+                        text: '채팅방 생성 중 문제가 발생했습니다.',
+                        confirmButtonText: "닫기"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();  // 페이지 새로고침
+                        }
+                    });
+                }
+            });
+
+            // 모달창 닫기
+            const modal = bootstrap.Modal.getInstance(document.getElementById('chatRoomCreateModal'));
+            modal.hide();
+        });
+    });
+
+</script>
+
+  </main>
+</th:block>
 </body>
 </html>
