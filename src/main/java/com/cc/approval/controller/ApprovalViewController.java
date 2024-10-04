@@ -270,14 +270,32 @@ public class ApprovalViewController {
 	        .docu_no(documentNumber) // 문서번호 추가
 	        .draft_day(LocalDate.now()) // 기안일(당일)
 	        .appr_writer_name(apprName) // 기안자(로그인된 사용자 이름)
+	        .appr_holi_start(temporaryStorageDto.getAppr_holi_start()) // 임시저장에서 휴가 시작일 가져옴
+	        .appr_holi_end(temporaryStorageDto.getAppr_holi_end()) 
 	        .build();
 	    
-	    System.out.println("approvalDto 임시저장 상세: "+approvalDto);
+	    // employee 객체를 데이터베이스에서 가져옴
+	    Employee employee = employeeRepository.findByempAccount(username);
+	    model.addAttribute("employee",employee);
+	    
+	    // 기안서의 휴가 시작일과 종료일 가져오기
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    String apprHoliStart = approvalDto.getAppr_holi_start() != null ? approvalDto.getAppr_holi_start().format(formatter) : "";
+	    String apprHoliEnd = approvalDto.getAppr_holi_end() != null ? approvalDto.getAppr_holi_end().format(formatter) : "";
+	    model.addAttribute("apprHoliStart", apprHoliStart);
+	    model.addAttribute("apprHoliEnd", apprHoliEnd);
+	    
+	    System.out.println("임시저장함 정보: "+temporaryStorageDto);
+	    
 	    model.addAttribute("apprDto", approvalDto);
 	    model.addAttribute("tempDto", temporaryStorageDto);
 	    
+	    
+	    
 	    return "approval/tempDetail";
 	}
+
+	
 	
 	// 기안문서함
 	@GetMapping("/draftStorage")

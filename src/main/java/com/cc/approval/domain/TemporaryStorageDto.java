@@ -73,6 +73,8 @@ public class TemporaryStorageDto {
 		        .appr_title(temporaryStorage.getApprTitle())
 		        .appr_content(temporaryStorage.getApprContent())
 		        .appr_holi_use_count(temporaryStorage.getApprHoliUseCount())
+		        .appr_holi_start(temporaryStorage.getApprHoliStart())
+		        .appr_holi_end(temporaryStorage.getApprHoliEnd())
 		        .appr_form_no(temporaryStorage.getApprForm().getApprFormNo()) // appr_form_no 값 설정
 		        .build();
 		    
