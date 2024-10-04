@@ -24,7 +24,7 @@ public class OrgApiController {
 	}
 
 	// 화면 전환
-	@GetMapping("/toTree")
+	@GetMapping("/toOrganization")
 	public String toOrganization(Model model) {
 
 		// 1. 팀 정보
