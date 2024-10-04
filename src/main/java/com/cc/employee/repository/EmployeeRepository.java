@@ -38,6 +38,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 	    List<Employee> findByEmpGroup_GroupParentNo(Long groupParentNo);
 
       
+		
      // 사원 리스트
      @Query("SELECT e FROM Employee e ORDER BY e.empHiredate DESC")
      List<Employee> findAllOrderByHiredateDesc();
@@ -56,7 +57,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		List<EmployeeDto> findAllempList();
 		
 		
-		// 전자서명 
 		@Modifying
 		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")
 		int updateEmployeeSignatureByAccount(@Param("empAccount") String empAccount, @Param("filePath") String filePath);
