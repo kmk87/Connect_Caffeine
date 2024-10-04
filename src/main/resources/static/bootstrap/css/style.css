@@ -43,10 +43,15 @@ h6 {
 --------------------------------------------------------------*/
 #main {
   margin-top: 60px;
+<<<<<<< HEAD
   /* padding: 20px 30px; */
   transition: all 0.3s;  /* Flexbox 활성화 */
   display: flex;
   justify-content: flex-start;  /* 왼쪽 정렬 */
+=======
+  padding: 20px 30px;
+  transition: all 0.3s;
+>>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 }
 
 @media (max-width: 1199px) {
@@ -75,6 +80,7 @@ h6 {
   box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
 }
+
 
 
 .pagetitle {
@@ -372,9 +378,6 @@ h6 {
   border-bottom: 2px solid #4154f1;
 }
 
-/*--------------------------------------------------------------
-# Header
---------------------------------------------------------------*/
 .logo {
   line-height: 1;
 }
@@ -386,7 +389,8 @@ h6 {
 }
 
 .logo img {
-
+  max-height: 26px;
+ 
   margin-right: 6px;
 }
 
@@ -540,7 +544,7 @@ h6 {
 .header-nav .notifications .notification-item p {
   font-size: 13px;
   margin-bottom: 3px;
-  color: #919191;
+ /*  color: #919191; */
 }
 
 .header-nav .notifications .notification-item:hover {
@@ -623,7 +627,7 @@ h6 {
   top: 60px;
   left: 0;
   bottom: 0;
-  width: 250px;
+  width: 300px;
   z-index: 996;
   transition: all 0.3s;
   padding: 20px;
@@ -632,9 +636,7 @@ h6 {
   scrollbar-color: #aab7cf transparent;
   box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
-  position: fixed
 }
-
 
 @media (max-width: 1199px) {
   .sidebar {
@@ -763,12 +765,6 @@ h6 {
   padding: 10px 0 10px 40px;
   transition: 0.3s;
 }
-
-.sidebar-nav .nav-link.collapsed.active {
-  color: #4154f1;
-  background-color: #f6f9ff;
-}
-
 
 .sidebar-nav .nav-content a i {
   font-size: 6px;

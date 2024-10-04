@@ -8,6 +8,7 @@
   <title>Connect Caffeine</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
+<<<<<<< HEAD
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <!-- 조직도 관련 -->
@@ -22,9 +23,23 @@
   	width:350px;
   }
   </style>
+=======
+
+  <!-- 조직도 관련 -->
+	  <!-- Include jQuery -->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	  <!-- Include jsTree CSS and JS -->
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  <!-- 조직도 끝 -->
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
+
+>>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 </head>
 <body>
  <th:block layout:fragment="content">
+<<<<<<< HEAD
   <main id="main" class="main" style="display: block; margin-top: 80px;">
     <div class="pagetitle">
       <h1>메인화면</h1>
@@ -36,6 +51,10 @@
       </nav>
     </div><!-- End Page Title -->
     <section class="section">
+=======
+  <main id="main" class="main">
+    <section class="section dashboard">
+>>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
       <div class="row">
         <!-- Start 왼쪽 columns -->
         <div class="col-lg-11">
@@ -322,16 +341,5 @@
     </div>
   </footer><!-- End Footer -->
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-  <!-- Vendor JS Files -->
-  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
-  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
-  <script src="/bootstrap/vendor/quill/quill.js"></script>
-  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
-  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
-  <!-- Template Main JS File -->
-  <script src="/bootstrap/js/main.js"></script>
 </body>
 </html>

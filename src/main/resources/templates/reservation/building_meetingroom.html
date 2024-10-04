@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.1googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/bootstrap/vendor/simple-datatables/style.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
+  <link href="/css/reservation/nav_sider.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  	<style>
+
+
+
+
+	      /* 건물 및 회의실 탭 버튼 */
+	      .tab-button {
+          display: inline-block;
+          padding: 10px 20px;
+          margin: 0 10px 20px 0; /* 좌우 및 아래 여백 설정 */
+          border: none;
+          background-color: #6c757d;
+          color: white;
+          cursor: pointer;
+          border-radius: 5px;
+      }
+	      .tab-button.active {
+          background-color: #007bff; /* 활성화된 버튼 색상 */
+      }
+	      /* 버튼 스타일 */
+      .btn {
+          padding: 10px 20px;
+          margin: 5px;
+      }
+	     /* 검은색 구분선 */
+      hr {
+          border: 0;
+          height: 1px;
+          background: black;
+          margin: 20px 0;
+      }
+      
+      /* 새로 추가된 meeting-room-section 스타일 */
+#meeting-room-section {
+    text-align: right; /* 버튼을 오른쪽으로 정렬 */
+    padding-top: 10px; /* 상단 여백 추가 */
+    margin-top: 10px;
+}
+
+/* 모달 창 스타일 */
+.modal {
+    display: none; /* 초기에는 숨김 */
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* 배경 어둡게 */
+}
+
+/* 모달 콘텐츠 스타일 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 화면 중앙에 배치 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%; /* 원하는 크기로 조정 */
+    border-radius: 10px; /* 모서리 둥글게 */
+}
+
+/* 닫기 버튼 스타일 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 폼 스타일 */
+#meetingRoomAddForm label {
+    display: block;
+    margin-top: 10px;
+}
+
+#meetingRoomAddFrm input {
+    width: calc(100% - 20px); /* input 너비를 폼에 맞추기 */
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+#meetingRoomAddFrm button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#meetingRoomAddFrm button:hover {
+    background-color: #0056b3;
+}
+
+/* 수정 모달 창 스타일 */
+#editMeetingRoomModal {
+    display: none; /* 초기에는 숨김 */
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* 배경 어둡게 */
+}
+
+/* 수정 모달 콘텐츠 스타일 */
+#editMeetingRoomModal .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 화면 중앙에 배치 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%; /* 원하는 크기로 조정 */
+    border-radius: 10px; /* 모서리 둥글게 */
+}
+
+/* 닫기 버튼 스타일 */
+#editMeetingRoomModal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#editMeetingRoomModal .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 폼 스타일 */
+#editMeetingRoomForm label {
+    display: block;
+    margin-top: 10px;
+}
+
+#editMeetingRoomForm input {
+    width: calc(100% - 20px); /* input 너비를 폼에 맞추기 */
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+#editMeetingRoomForm button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+    .information {
+        margin-left: 10px;
+        width: 100%;
+        padding: 10px;
+    }
+
+    #meeting-room-section {
+        text-align: right;
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+
+    .meeting-table {
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .meeting-table th, .meeting-table td {
+        text-align: center;
+        padding: 10px;
+    }
+
+    .meeting-table th {
+        background-color: #f8f9fa;
+    }
+
+    .meeting-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .meeting-actions button {
+        padding: 5px 10px;
+    }
+
+    /* 회의실 목록 테이블 위치를 적절히 배치 */
+    .meeting-table-container {
+        margin-top: 20px;
+    }
+
+    
+    
+	</style>
+</head>
+<body>
+ <th:block layout:fragment="content">
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>회의실 정보</h1>
+      <aside id="apprSidebar" class="apprSidebar">
+     <div class="reservation-box">
+        <div class="reservation-header">
+            <h3>회의실</h3>
+            </div> 
+          <div th:each="building : ${buildings}">
+          	<h2 th:text="${building.building_name}">Building Name</h2>
+          	   <div class="building-name">
+  			   	<button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|">
+      		   <i class="bi bi-gear"></i>
+  			   </button> 
+			</div>
+          	<ul>
+				<li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}">
+            		<a href="#"><span th:text="${meeting.meeting_name}"></span></a>
+        		</li>
+            </ul>
+			</div>
+        <a th:href="@{/Building}"><button class="building-register-btn"> 건물 등록</button></a>
+    </div>
+    </aside>
+	    </div>
+	<section class="section dashboard" style="width: calc(100% - 250px); margin-left: 250px;">
+    <div class="col-xxl-4 col-md-6" style="width: 100%;">
+        <div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px; background-color: white;">
+            <div class="card-body">
+                <div class="information" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                    <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
+                    <button class="tab-button" th:data-building-no="${dto.building_no}" onclick="showMeetingTab(this)">회의실</button>
+                </div>
+                <hr>
+                <button class="tab-button active" id="meeting-room-section" th:data-building-no="${dto.building_no}" onclick="createMeetingRoom()">회의실 생성</button>
+                <!-- 회의실 목록 테이블 -->
+                <div class="meeting-table" style="margin-top: 20px;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>회의실 이름</th>
+                                <th>위치</th>
+                                <th>최대 수용 인원</th>
+                                <th>수정</th>
+                                <th>삭제</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- meetingRooms 리스트를 순회하며 각 회의실 정보를 테이블에 표시 -->
+                            <tr th:each="meeting : ${meetingRooms}">
+                                <td th:text="${meeting.meeting_name}">회의실 이름</td>
+                                <td th:text="${meeting.meeting_location}">위치</td>
+                                <td th:text="${meeting.max_people}">최대 수용 인원</td>
+                                <!-- 수정 버튼 -->
+                                <td>
+                                    <button class="btn btn-primary" 
+                                        th:attr="data-meeting-no=${meeting.meeting_no}, 
+                                                  data-meeting-name=${meeting.meeting_name}, 
+                                                  data-meeting-location=${meeting.meeting_location}, 
+                                                  data-max-people=${meeting.max_people}"
+                                        onclick="handleEditClick(this)">
+                                        수정
+                                    </button>
+                                </td>
+                                <!-- 삭제 버튼 -->
+                                <td>
+                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                                    <button class="btn btn-danger" th:onclick="|deleteMeetingRoom(${meeting.meeting_no})|">
+                                        삭제
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+			
+<!-- 모달 창 HTML 구조 -->
+<div id="meetingRoomModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>회의실 생성</h2>
+        
+        
+<!-- 회의실 생성 폼 -->
+<form id="meetingRoomAddFrm">
+
+    <input type="hidden" id="buildingNo" name="buildingNo" value="1"> <!-- 빌딩 번호 -->
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"> <!-- CSRF 토큰 -->
+
+    <label for="meetingName">회의실 이름:</label>
+    <input type="text" id="meetingName" name="meetingName" required>
+
+    <label for="meetingLocation">위치:</label>
+    <input type="text" id="meetingLocation" name="meetingLocation" required>
+
+    <label for="maxPeople">최대 수용 인원:</label>
+    <input type="number" id="maxPeople" name="maxPeople" required>
+
+    <button type="submit">회의실 생성</button>
+</form>
+    </div>
+</div>
+
+
+
+      <!-- 회의실 수정 모달 -->
+      <div id="editMeetingRoomModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>회의실 수정</h2>
+          <form id="editMeetingRoomForm">
+           <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+            <input type="hidden" id="editMeetingRoomId" name="meetingRoomId">
+            <label for="editMeetingName">회의실 이름:</label>
+            <input type="text" id="editMeetingName" name="meetingName">
+            <label for="editMeetingLocation">위치:</label>
+            <input type="text" id="editMeetingLocation" name="meetingLocation">
+            <label for="editMaxPeople">최대 수용 인원:</label>
+            <input type="number" id="editMaxPeople" name="maxPeople">
+            <button type="submit">수정</button>
+          </form>
+        </div>
+      </div>
+			<script>
+			
+			// 회의실 정보
+			function showMeetingTab(button){
+			    const buildingNo = button.getAttribute('data-building-no');
+			    const parsedBuildingNo = parseInt(buildingNo); // 'paseInt'를 'parseInt'로 수정
+			    if (isNaN(parsedBuildingNo)) {
+			        return;
+			    }
+			    window.location.href = `/building_meetingroom/${parsedBuildingNo}`;
+			}
+				
+				function showBuildingTab(button) {
+				    const buildingNo = button.getAttribute('data-building-no');
+				    const parsedBuildingNo = parseInt(buildingNo);
+				    if (isNaN(parsedBuildingNo)) {
+				        return;
+				    }
+				    window.location.href = `/building_information/${parsedBuildingNo}`;
+				}
+			
+			
+			
+			
+			
+			document.addEventListener('DOMContentLoaded', function() {
+			    // 모달 관련 요소 가져오기
+			    var modal = document.getElementById("meetingRoomModal");
+			    var btn = document.getElementById("meeting-room-section");
+			    var span = document.getElementsByClassName("close")[0];
+			    var buildingNoInput = document.getElementById("buildingNo"); // buildingNo input 필드
+
+			    // 모달 열기 (버튼 클릭 시 buildingNo 설정)
+			    btn.onclick = function() {
+			        var buildingNo = btn.getAttribute("data-building-no"); // 버튼에 저장된 buildingNo 가져오기
+			        buildingNoInput.value = buildingNo; // hidden input에 buildingNo 설정
+			        modal.style.display = "block";
+			    }
+
+			    // 닫기 버튼 클릭 시 모달 닫기
+			    span.onclick = function() {
+			        modal.style.display = "none";
+			    }
+
+			    // 모달 외부 클릭 시 모달 닫기
+			    window.onclick = function(event) {
+			        if (event.target == modal) {
+			            modal.style.display = "none";
+			        }
+			    }
+			});
+
+			const form = document.getElementById("meetingRoomAddFrm");
+			form.addEventListener('submit', function(e) {
+			    e.preventDefault(); // 폼의 기본 제출 방식을 막습니다.
+			    let vali_check = false;
+			    let vali_text = "";
+
+			    // 입력 값 유효성 검사
+			    if (form.meetingName.value.trim() == "") {
+			        vali_text += "회의실 이름을 입력하세요.";
+			        form.meetingName.focus();
+			    } else if (form.meetingLocation.value.trim() == '') {
+			        vali_text += "위치를 입력하세요";
+			        form.meetingLocation.focus();
+			    } else if (form.maxPeople.value == '' || form.maxPeople.value <= 0) {
+			        vali_text += "최대 수용 인원을 올바르게 입력하세요";
+			        form.maxPeople.focus();
+			    } else {
+			        vali_check = true;
+			    }
+
+			    if (!vali_check) {
+			        alert(vali_text); // 유효성 검사 실패 시 경고 메시지
+			    } else {
+			        // 폼 데이터 수집
+			        const payload = JSON.stringify({
+			            building_no: form.buildingNo.value,
+			            meeting_name: form.meetingName.value,
+			            meeting_location: form.meetingLocation.value,
+			            max_people: form.maxPeople.value
+			        });
+			        console.log(payload)
+			        // CSRF 토큰을 가져옴
+					const csrfToken = form.querySelector('input[name="_csrf"]').value; // CSRF 토큰 가져오기
+			        // 서버로 POST 요청
+			        fetch('/meeting_room', {
+			            method: 'POST',
+			            body: payload,
+			            headers: {
+			                'X-CSRF-TOKEN': csrfToken, // CSRF 토큰 추가
+			                'Content-Type': 'application/json'
+			            }
+			        })
+			        .then(response => response.json()) // 서버에서 JSON 응답 받기
+			        .then(data => {
+			            if (data.res_code === '200') { // 성공 시
+			                Swal.fire({
+			                    icon: 'success',
+			                    title: '등록되었습니다',
+			                    text: data.res_msg,
+			                    confirmButtonText: "닫기"
+			                }).then((result) => {
+			                    location.href = "/building_meetingroom/"+buildingNo; // 성공 후 이동할 경로
+			                });
+			            } else { // 실패 시
+			                Swal.fire({
+			                    icon: 'error',
+			                    title: '등록되지 않았습니다.',
+			                    text: data.res_msg,
+			                    confirmButtonText: "닫기"
+			                });
+			            }
+			        })
+			        .catch(error => {
+			            Swal.fire({
+			                icon: 'error',
+			                title: '오류 발생',
+			                text: '서버와의 통신 중 문제가 발생했습니다. 다시 시도해 주세요.',
+			                confirmButtonText: "닫기"
+			            });
+			            console.error('Error:', error);
+			        });
+			    }
+			});
+
+			
+			 // 회의실 수정 모달 열기
+		   function handleEditClick(button) {
+				 console.log(button)
+  const meetingNo = button.getAttribute('data-meeting-no');
+  const meetingName = button.getAttribute('data-meeting-name');
+  const meetingLocation = button.getAttribute('data-meeting-location');
+  const maxPeople = button.getAttribute('data-max-people');
+
+  // 모달 창 열기
+  document.getElementById("editMeetingRoomModal").style.display = "block";
+
+  // 폼의 input 필드에 해당 회의실 정보를 채워넣음
+  document.getElementById("editMeetingRoomId").value = meetingNo;
+  document.getElementById("editMeetingName").value = meetingName;
+  document.getElementById("editMeetingLocation").value = meetingLocation;
+  document.getElementById("editMaxPeople").value = maxPeople;
+}
+			 
+		    // 회의실 수정 모달 닫기
+		    const editModal = document.getElementById("editMeetingRoomModal");
+		    const closeBtn = document.querySelector("#editMeetingRoomModal .close");
+	
+		    // 닫기 버튼 클릭 시 모달 닫기
+		    closeBtn.onclick = function() {
+		        editModal.style.display = "none";
+		    };
+		 // 모달 외부 클릭 시 모달 닫기
+		    window.addEventListener('click', function(event) {
+		        if (event.target === editModal) {
+		            editModal.style.display = "none";
+		        }
+		    });
+
+
+		    // 회의실 수정 폼 제출
+			    document.getElementById("editMeetingRoomForm").addEventListener('submit', (e) => {
+			      e.preventDefault();
+			      const meetingNo = document.getElementById("editMeetingRoomId").value;
+			      const csrfToken = form.querySelector('input[name="_csrf"]').value; // CSRF 토큰 가져오기
+			      const payload = {
+			        meeting_name: document.getElementById("editMeetingName").value,
+			        meeting_location: document.getElementById("editMeetingLocation").value,
+			        max_people: document.getElementById("editMaxPeople").value
+			      };
+			      fetch(`/meeting_roomUpdate/${meetingNo}`, {
+			        method: 'POST',
+			        headers: {
+			          'Content-Type': 'application/json',
+			          'X-CSRF-TOKEN': csrfToken // CSRF 토큰 추가
+			        },
+			        body: JSON.stringify(payload)
+			      })
+			      .then(response => response.json())
+			      .then(data => {
+			        if (data.success) {
+			          Swal.fire('수정 완료', '회의실 정보가 수정되었습니다.', 'success').then(() => {
+			            location.reload(); // 페이지 새로고침
+			          });
+			        } else {
+			          Swal.fire('수정 실패', '회의실 정보를 수정할 수 없습니다.', 'error');
+			        }
+			      })
+			      .catch(error => console.error('Error updating meeting room:', error));
+			    });
+
+		 // 회의실 삭제 확인
+		  function deleteMeetingRoom(meetingNo) {
+			  const csrfToken = document.querySelector('input[name="_csrf"]').value;
+  Swal.fire({
+    title: '회의실 삭제',
+    text: "정말로 이 회의실을 삭제하시겠습니까?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '삭제',
+    cancelButtonText: '취소'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // 삭제를 확인한 경우 POST 요청 전송
+      fetch(`/deleteMeetingRoom/${meetingNo}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken // CSRF 토큰을 요청 헤더에 추가
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        // 응답의 res_code를 기반으로 처리
+        if (data.res_code === '200') {  // 성공 시
+          Swal.fire(
+            '삭제 완료!',
+            data.res_msg, // 서버에서 받은 메시지 표시
+            'success'
+          ).then(() => {
+            location.reload(); // 페이지 새로고침
+          });
+        } else {  // 실패 시
+          Swal.fire('삭제 실패', data.res_msg, 'error');
+        }
+      })
+      .catch(error => {
+        Swal.fire('오류 발생', '서버와의 통신 중 문제가 발생했습니다.', 'error');
+        console.error('Error deleting meeting room:', error);
+      });
+    }
+  });
+}
+
+
+
+
+			</script>
+    </main>
+    </th:block>
+    </body>
+    </html>

@@ -23,7 +23,7 @@ public class CalendarDto {
 	private String color_code;
 	private String schedule_title;
 	private String schedule_content;
-	private Long schedule_type;
+	private int schedule_type;
 	private String location;
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
@@ -34,7 +34,6 @@ public class CalendarDto {
 	public Calendar toEntity(Employee employee) {
 		return Calendar.builder()
 				.scheduleNo(schedule_no)
-				//.userScheduleColor(userScheduleColor) 
 				.scheduleTitle(schedule_title)
 				.scheduleContent(schedule_content)
 				.scheduleType(schedule_type)
@@ -54,7 +53,6 @@ public class CalendarDto {
 				.location(calendar.getLocation())
 				.start_time(calendar.getStartTime())
 				.end_time(calendar.getEndTime())
-				//.color_code(calendar.getUserScheduleColor().getColor().getColorCode())
 				.dept_no(calendar.getEmployee().getEmpGroup().getGroupParentNo())
 				.team_no(calendar.getEmployee().getEmpGroup().getGroupNo())
 				.build();

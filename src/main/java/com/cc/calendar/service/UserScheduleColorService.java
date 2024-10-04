@@ -35,7 +35,7 @@ private final ColorService colorService;
         if (userScheduleColor != null && userScheduleColor.getColor() != null) {
             return userScheduleColor.getColor().getColorCode();
         }
-        System.out.println(userScheduleColor);
+//        System.out.println(userScheduleColor);
         return "#FFFFBA";  // 기본 색상 반환 (색상이 없을 경우)
     }
     

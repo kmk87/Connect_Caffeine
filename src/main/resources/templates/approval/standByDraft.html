@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{include/layout}">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/approval/tempStorage.css}" rel="stylesheet" type="text/css">
+    <title>결재대기문서</title>
+    <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+	<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+    
+    <!-- DataTables JS -->
+	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <th:block layout:fragment="content">
+    <main id="main" class="main">
+        <!-- 사이드바 -->
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+        <aside id="apprSidebar" class="apprSidebar">
+            <div class="pagetitle">
+      			<h1>전자결재</h1>
+    		</div>
+            <ul class="sidebar-nav" id="sidebar-nav">
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-journals"></i><span>결재</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a th:href="@{/standByDraft}">
+              					<i class="bi bi-circle"></i><span>결재 대기 문서</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/receiveDraft}">
+              					<i class="bi bi-circle"></i><span>결재 수신 문서</span>
+            				</a>
+          				</li>
+        			</ul>
+      		</li>
+      		<li class="nav-item">
+        		<a class="nav-link collapsed" data-bs-target="#components-nav_two" data-bs-toggle="collapse" href="#">
+          			<i class="bi bi-folder2-open"></i><span>개인 문서함</span><i class="bi bi-chevron-down ms-auto"></i>
+        		</a>
+        			<ul id="components-nav_two" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          				<li>
+            				<a th:href="@{/draftStorage}">
+              					<i class="bi bi-circle"></i><span>기안 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/apprStorage}">
+              					<i class="bi bi-circle"></i><span>결재 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/referenceStorage}">
+              					<i class="bi bi-circle"></i><span>참조 문서함</span>
+            				</a>
+          				</li>
+          				<li>
+            				<a th:href="@{/apprTempStorage}">
+              					<i class="bi bi-circle"></i><span>임시 저장함</span>
+            				</a>
+          				</li>
+        			</ul>
+        		<a class="nav-link collapsed" data-bs-target="#components-nav"  th:href="@{/signSetting}">
+          			<i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+        		</a>
+      		</li>
+      	</ul>
+        </aside>
+     </main>
+        <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">결재대기문서</h5>
+              
+
+              <!-- Table with stripped rows -->
+              <table class="table" id="page_list">
+                <thead>
+                  <tr>
+                    	<th >순번</th>
+                    	<th >기안일</th>
+                    	<th >결재양식</th>
+                    	<th >제목</th>
+                    	<th >결재상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+    				<tr th:each="standBy, iterStat : ${standByDtoList}" th:onclick="|location.href='@{/standByStorageDetail/{no}(no=${standBy.appr_no})}'|">
+        				<td th:text="${iterStat.index + 1}"></td>
+        				<td th:text="${#temporals.format(standBy.draft_day, 'yyyy-MM-dd')}">기안일</td>
+        				<td th:text="${standBy.formName}"></td>
+        				<td th:text="${standBy.appr_title}"></td>
+        				<td th:text="${standBy.getApprStateDisplay()}"></td>
+    				</tr>
+				</tbody>
+              </table>
+			
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    	<script>
+        $(document).ready(function() {   
+        	console.log($('#page_list').html());  // 테이블 내용 출력
+	       	$('#page_list').DataTable({
+	       		"lengthChange": false,
+	           "searching": true,      // 검색 활성화
+	           "responsive": true,
+	           "language": {
+	               url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json' // 한국어 번역 적용
+	           },
+	           "initComplete": function() {
+	               // 한국어 번역 로드 후 paginate 옵션 덮어쓰기
+	               var table = this.api();
+	               table.settings()[0].oLanguage.oPaginate.sPrevious = "<<";
+	               table.settings()[0].oLanguage.oPaginate.sNext = ">>";
+	           },
+	           "paging": true,
+	           "pagingType": "simple_numbers",
+	           "pageLength": 10,              // 한 페이지에 보여질 항목 수 설정
+	           "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)
+	           "columnDefs": [
+	               { "orderable": false, "targets": 1 },  // 1번째(결재양식) 컬럼의 정렬 비활성화
+	               { "orderable": false, "targets": 2 },
+	               { "orderable": false, "targets": 3 },
+	               { "orderable": false, "targets": 4 }
+	           ]
+	           
+	       	});
+       
+   		});
+		</script>
+  </th:block>
+</body>
+</html>

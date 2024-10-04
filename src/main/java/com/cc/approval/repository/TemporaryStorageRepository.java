@@ -1,5 +1,9 @@
 package com.cc.approval.repository;
 
+import java.time.LocalDate;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +20,15 @@ public interface TemporaryStorageRepository extends JpaRepository<TemporaryStora
 	
 	TemporaryStorage findByApprContent(String appr_content);
 	
-	@Query("SELECT t FROM TemporaryStorage t WHERE t.approval.apprNo = :apprNo")
-    TemporaryStorage findByApprovalApprNo(@Param("apprNo") Long apprNo);
+//	TemporaryStorage findByApprHoliStart(LocalDate appr_holi_start);
+//
+//	TemporaryStorage findByApprHoliEnd(LocalDate appr_holi_end);
+//	
+//	TemporaryStorage findByApprUseCount(Integer appr_use_count);
+	
+	
+	@Query("SELECT a FROM TemporaryStorage a WHERE a.employee.empAccount = :memId ORDER BY a.temNo DESC")
+	Page<TemporaryStorage> findTop5ByEmployeeEmpAccountOrderByTemNoDesc(@Param("memId") String memId, Pageable pageable);
+	
+	
 }

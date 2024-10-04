@@ -14,7 +14,7 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long>{
 	// 일정 종류에 따라 일정을 조회하는 메서드 추가
     List<Calendar> findByScheduleTypeAndEmployee_EmpCode(Long scheduleType, Long empCode);
     
- // CalendarRepository.java
+
    
     List<Calendar> findAll();
 

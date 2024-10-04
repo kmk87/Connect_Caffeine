@@ -1,3 +1,4 @@
+
 package com.cc.tree.service;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import com.cc.empGroup.domain.EmpGroupDto;
 import com.cc.empGroup.repository.EmpGroupRepository;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
+import com.cc.tree.domain.TreeMenuDto;
 
 @Service
 public class OrgService {
@@ -27,7 +29,26 @@ public class OrgService {
 		this.employeeRepository = employeeRepository;
 		this.empGroupRepository = empGroupRepository;
 	}
+	
+	// 전체 조직도(팀 + 사원) 데이터를 반환
+	public List<Map<String, Object>> getOrgTree() {
+	    List<Map<String, Object>> orgTree = new ArrayList<>();
 
+	    // 1. 팀 데이터 가져오기
+	    List<Map<String, Object>> teamList = getOrgTeamTree();
+	    orgTree.addAll(teamList);
+
+	    // 2. 사원 데이터 가져오기
+	    List<Map<String, Object>> empList = getOrgEmpTree();
+	    orgTree.addAll(empList);
+	    
+	    System.out.println("조직도 사원 정보: "+orgTree);
+
+	    return orgTree;
+	}
+
+    
+    
 	List<Map<String, Object>> teamList = null;
 
 	// 1. 팀 노드 추가
