@@ -18,7 +18,10 @@
     padding: 20px;
 }
 .register_board_form {
-    margin-left: 150px; /* 메인 콘텐츠와 동일하게 설정하여 일관성 유지 */
+    margin-left: 25px; /* 메인 콘텐츠와 동일하게 설정하여 일관성 유지 */
     padding: 20px;
 }
-
+.icon-transparent {
+    color: transparent;
+    background-color: transparent;
+}

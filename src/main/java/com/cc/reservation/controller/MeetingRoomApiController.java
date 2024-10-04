@@ -28,7 +28,8 @@ public class MeetingRoomApiController {
 	
 	@ResponseBody
 	@PostMapping("/meeting_room")
-	public Map<String, String> createMeetingRoom(MeetingRoomDto dto){
+	public Map<String, String> createMeetingRoom(@RequestBody MeetingRoomDto dto){
+		System.out.println("확인");
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "회의실 등록 중 오류가 발생했습니다.");
@@ -39,33 +40,36 @@ public class MeetingRoomApiController {
 		return resultMap;
 	}
 	
+	
+	
+	
 	@ResponseBody
 	@PostMapping("/meeting_roomUpdate/{meetingNo}")
-	public Map<String ,String> updateMeetingRoom(@PathVariable("meetingNo") Long meeting_no){
+	public Map<String ,String> updateMeetingRoom(@PathVariable("meetingNo") Long meeting_no,@RequestBody MeetingRoomDto updatedDto){
 	    Map<String, String> resultMap = new HashMap<>();
 	    resultMap.put("res_code", "404");
-	    resultMap.put("res_msg", "회의실 등록 중 오류가 발생했습니다.");
+	    resultMap.put("res_msg", "회의실 수정 중 오류가 발생했습니다.");
 
-	    if(meetingRoomService.updateMeetingRoom(meeting_no) != null) {
+	    if(meetingRoomService.updateMeetingRoom(meeting_no,updatedDto) != null) {
 	        resultMap.put("res_code", "200");
-	        resultMap.put("res_msg", "회의실이 성공적으로 등록되었습니다.");
+	        resultMap.put("res_msg", "회의실이 성공적으로 수정되었습니다.");
 	    }
 
 	    return resultMap;
 	}
 	
 	@ResponseBody
-	@PostMapping("deleteMeetingRoom/{meetingNo}")
-	public ResponseEntity<Map<String, String>> deleteMeetingRoom(@PathVariable("meetingNo") Long meeting_no){
+	@PostMapping("/deleteMeetingRoom/{meetingNo}")
+	public ResponseEntity<Map<String, String>> deleteMeetingRoom(@PathVariable("meetingNo") Long meetingNo){
 		Map<String, String> resultMap = new HashMap<String, String>();
 		 try {
-	            boolean isDeleted = meetingRoomService.deleteMeetingRoom(meeting_no);
+	            boolean isDeleted = meetingRoomService.deleteMeetingRoom(meetingNo);
 	            if (isDeleted) {
 	                resultMap.put("res_code", "200");
-	                resultMap.put("res_msg", "건물이 성공적으로 삭제되었습니다.");
+	                resultMap.put("res_msg", "회의실이 성공적으로 삭제되었습니다.");
 	            } else {
 	                resultMap.put("res_code", "500");
-	                resultMap.put("res_msg", "건물 삭제에 실패했습니다.");
+	                resultMap.put("res_msg", "회의실 삭제에 실패했습니다.");
 	            }
 	        } catch (Exception e) {
 	            resultMap.put("res_code", "500");

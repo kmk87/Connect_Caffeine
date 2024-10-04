@@ -21,9 +21,9 @@ public class MeetingRoomService {
 		this.buildingRepository = buildingRepository;
 	}
 	
-	public boolean deleteMeetingRoom (Long meeting_no) {
+	public boolean deleteMeetingRoom (Long meetingNo) {
 		try {
-			meetingRoomRepository.deleteById(meeting_no);
+			meetingRoomRepository.deleteById(meetingNo);
 			return true;
 		} catch(Exception e) {
 			return false;
@@ -33,21 +33,29 @@ public class MeetingRoomService {
 	
 	
 	
-	public MeetingRoomDto updateMeetingRoom(Long meeting_no) {
+	public MeetingRoomDto updateMeetingRoom(Long meeting_no, MeetingRoomDto updatedDto) {
 		MeetingRoom meetingroom = meetingRoomRepository.findBymeetingNo(meeting_no);
-		MeetingRoomDto dto = MeetingRoomDto.builder()
-				.meeting_no(meetingroom.getMeetingNo())
-				.meeting_name(meetingroom.getMeetingName())
-				.meeting_location(meetingroom.getMeetingLocation())
-				.building_no(meetingroom.getBuilding().getBuildingNo())
-				.build();
-		return dto;
-	}
+		  meetingroom.setMeetingName(updatedDto.getMeeting_name());
+		    meetingroom.setMeetingLocation(updatedDto.getMeeting_location());
+		    meetingroom.setMaxPeople(updatedDto.getMax_people());
+
+		    // 업데이트된 정보를 데이터베이스에 저장
+		    meetingRoomRepository.save(meetingroom);
+
+		    // 업데이트된 DTO 반환
+		    return MeetingRoomDto.builder()
+		            .meeting_no(meetingroom.getMeetingNo())
+		            .meeting_name(meetingroom.getMeetingName())
+		            .meeting_location(meetingroom.getMeetingLocation())
+		            .max_people(meetingroom.getMaxPeople())
+		            .building_no(meetingroom.getBuilding().getBuildingNo())
+		            .build();
+	    }
 	
 	
 	//회의실을 생성하는 메서드
 	public MeetingRoom createMeetingRoom(MeetingRoomDto dto){
-		
+		System.out.println(dto.getBuilding_no());
 		Building building = buildingRepository.findBybuildingNo(dto.getBuilding_no());
 		MeetingRoom meetingroom = MeetingRoom.builder()
 				.meetingName(dto.getMeeting_name())

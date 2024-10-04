@@ -28,21 +28,9 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   	<style>
-.information {
-    margin-left: 230px;
-    width: 100%; /* width를 조정하여 내부 콘텐츠가 제대로 표시되도록 함 */
-    padding: 10px;
-    position: relative; /* 자식 요소의 absolute 포지션을 기준으로 함 */
-}
 
-.register_board_form {
-    position: absolute; /* absolute로 위치 조정 */
-    top: 200px; /* information 영역 아래로 떨어뜨림 */
-    left: 500px; /* 왼쪽 정렬 */
-    width: 400px; /* 원하는 너비로 설정 */
-    padding: 10px;
-    border-radius: 5px; /* 모서리 둥글게 */
-}
+
+
 
 	      /* 건물 및 회의실 탭 버튼 */
 	      .tab-button {
@@ -200,7 +188,7 @@
 }
 
     .information {
-        margin-left: 230px;
+        margin-left: 10px;
         width: 100%;
         padding: 10px;
     }
@@ -252,7 +240,7 @@
       <aside id="apprSidebar" class="apprSidebar">
      <div class="reservation-box">
         <div class="reservation-header">
-            <h3>예약 목록</h3>
+            <h3>회의실</h3>
             </div> 
           <div th:each="building : ${buildings}">
           	<h2 th:text="${building.building_name}">Building Name</h2>
@@ -267,47 +255,65 @@
         		</li>
             </ul>
 			</div>
-        <a th:href="@{/Building}"><button class="building-register-btn"> `건물 등록</button></a>
+        <a th:href="@{/Building}"><button class="building-register-btn"> 건물 등록</button></a>
     </div>
     </aside>
 	    </div>
-			<div class="information">
-			  <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
-   			  <button class="tab-button" th:data-building-no="${dto.building_no}" onclick="showMeetingTab(this)">회의실</button>
-			<hr>
-			  <button class="tab-button active" id="meeting-room-section" th:data-building-no="${dto.building_no}" onclick="createMeetingRoom()" >회의실 생성</button>
-			        <!-- 회의실 목록 테이블 -->
-      <div class="meeting-table">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>회의실 이름</th>
-              <th>위치</th>
-              <th>최대 수용 인원</th>
-              <th>수정</th>
-              <th>삭제</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- meetingRooms 리스트를 순회하며 각 회의실 정보를 테이블에 표시 -->
-            <tr th:each="meeting : ${meetingRooms}">
-              <td th:text="${meeting.meeting_name}">회의실 이름</td>
-              <td th:text="${meeting.meeting_location}">위치</td>
-              <td th:text="${meeting.max_people}">최대 수용 인원</td>
-                <!-- 수정 버튼 -->
-                <td><button class="btn btn-primary" th:onclick="|editMeetingRoom(${meeting.meeting_no})|">
-                  수정
-                </button></td>
-                <!-- 삭제 버튼 -->
-				<!-- 삭제 버튼 클릭 시 SweetAlert을 통해 삭제 확인 -->
-				<td><button class="btn btn-danger" th:onclick="|deleteMeetingRoom(${meeting.meeting_no})|">
-				삭제
-				</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-			</div>
+	<section class="section dashboard" style="width: calc(100% - 250px); margin-left: 250px;">
+    <div class="col-xxl-4 col-md-6" style="width: 100%;">
+        <div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px; background-color: white;">
+            <div class="card-body">
+                <div class="information" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                    <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
+                    <button class="tab-button" th:data-building-no="${dto.building_no}" onclick="showMeetingTab(this)">회의실</button>
+                </div>
+                <hr>
+                <button class="tab-button active" id="meeting-room-section" th:data-building-no="${dto.building_no}" onclick="createMeetingRoom()">회의실 생성</button>
+                <!-- 회의실 목록 테이블 -->
+                <div class="meeting-table" style="margin-top: 20px;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>회의실 이름</th>
+                                <th>위치</th>
+                                <th>최대 수용 인원</th>
+                                <th>수정</th>
+                                <th>삭제</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- meetingRooms 리스트를 순회하며 각 회의실 정보를 테이블에 표시 -->
+                            <tr th:each="meeting : ${meetingRooms}">
+                                <td th:text="${meeting.meeting_name}">회의실 이름</td>
+                                <td th:text="${meeting.meeting_location}">위치</td>
+                                <td th:text="${meeting.max_people}">최대 수용 인원</td>
+                                <!-- 수정 버튼 -->
+                                <td>
+                                    <button class="btn btn-primary" 
+                                        th:attr="data-meeting-no=${meeting.meeting_no}, 
+                                                  data-meeting-name=${meeting.meeting_name}, 
+                                                  data-meeting-location=${meeting.meeting_location}, 
+                                                  data-max-people=${meeting.max_people}"
+                                        onclick="handleEditClick(this)">
+                                        수정
+                                    </button>
+                                </td>
+                                <!-- 삭제 버튼 -->
+                                <td>
+                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                                    <button class="btn btn-danger" th:onclick="|deleteMeetingRoom(${meeting.meeting_no})|">
+                                        삭제
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 			
 <!-- 모달 창 HTML 구조 -->
 <div id="meetingRoomModal" class="modal">
@@ -344,13 +350,14 @@
           <span class="close">&times;</span>
           <h2>회의실 수정</h2>
           <form id="editMeetingRoomForm">
+           <input type="hidden" name="_csrf" th:value="${_csrf.token}">
             <input type="hidden" id="editMeetingRoomId" name="meetingRoomId">
             <label for="editMeetingName">회의실 이름:</label>
-            <input type="text" id="editMeetingName" name="meetingName" value="${meeting.meeting_name}">
+            <input type="text" id="editMeetingName" name="meetingName">
             <label for="editMeetingLocation">위치:</label>
-            <input type="text" id="editMeetingLocation" name="meetingLocation" value="${meeting.meeting_location}">
+            <input type="text" id="editMeetingLocation" name="meetingLocation">
             <label for="editMaxPeople">최대 수용 인원:</label>
-            <input type="number" id="editMaxPeople" name="maxPeople" value="${meeting.meeting_maxpeople}">
+            <input type="number" id="editMaxPeople" name="maxPeople">
             <button type="submit">수정</button>
           </form>
         </div>
@@ -431,23 +438,22 @@
 			        alert(vali_text); // 유효성 검사 실패 시 경고 메시지
 			    } else {
 			        // 폼 데이터 수집
-			        const payload = {
-			            buildingNo: form.buildingNo.value,
-			            meetingName: form.meetingName.value,
-			            meetingLocation: form.meetingLocation.value,
-			            maxPeople: form.maxPeople.value
-			        };
+			        const payload = JSON.stringify({
+			            building_no: form.buildingNo.value,
+			            meeting_name: form.meetingName.value,
+			            meeting_location: form.meetingLocation.value,
+			            max_people: form.maxPeople.value
+			        });
 			        console.log(payload)
 			        // CSRF 토큰을 가져옴
 					const csrfToken = form.querySelector('input[name="_csrf"]').value; // CSRF 토큰 가져오기
-					console.log(csrfToken)
-					console.log(1)
 			        // 서버로 POST 요청
 			        fetch('/meeting_room', {
 			            method: 'POST',
 			            body: payload,
 			            headers: {
-			                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 추가
+			                'X-CSRF-TOKEN': csrfToken, // CSRF 토큰 추가
+			                'Content-Type': 'application/json'
 			            }
 			        })
 			        .then(response => response.json()) // 서버에서 JSON 응답 받기
@@ -459,7 +465,7 @@
 			                    text: data.res_msg,
 			                    confirmButtonText: "닫기"
 			                }).then((result) => {
-			                    location.href = "/meeting_rooms"; // 성공 후 이동할 경로
+			                    location.href = "/building_meetingroom/"+buildingNo; // 성공 후 이동할 경로
 			                });
 			            } else { // 실패 시
 			                Swal.fire({
@@ -484,23 +490,27 @@
 
 			
 			 // 회의실 수정 모달 열기
-		    function editMeetingRoom(meetingNo) {
-		      fetch(`/meeting_room/${meetingNo}`)
-		        .then(response => response.json())
-		        .then(data => {
-		          document.getElementById("editMeetingRoomId").value = data.meetingNo;
-		          document.getElementById("editMeetingName").value = data.meetingName;
-		          document.getElementById("editMeetingLocation").value = data.meetingLocation;
-		          document.getElementById("editMaxPeople").value = data.maxPeople;
-		          document.getElementById("editMeetingRoomModal").style.display = "block";
-		        })
-		        .catch(error => console.error('Error fetching meeting room:', error));
-		    }
+		   function handleEditClick(button) {
+				 console.log(button)
+  const meetingNo = button.getAttribute('data-meeting-no');
+  const meetingName = button.getAttribute('data-meeting-name');
+  const meetingLocation = button.getAttribute('data-meeting-location');
+  const maxPeople = button.getAttribute('data-max-people');
+
+  // 모달 창 열기
+  document.getElementById("editMeetingRoomModal").style.display = "block";
+
+  // 폼의 input 필드에 해당 회의실 정보를 채워넣음
+  document.getElementById("editMeetingRoomId").value = meetingNo;
+  document.getElementById("editMeetingName").value = meetingName;
+  document.getElementById("editMeetingLocation").value = meetingLocation;
+  document.getElementById("editMaxPeople").value = maxPeople;
+}
 			 
 		    // 회의실 수정 모달 닫기
 		    const editModal = document.getElementById("editMeetingRoomModal");
 		    const closeBtn = document.querySelector("#editMeetingRoomModal .close");
-
+	
 		    // 닫기 버튼 클릭 시 모달 닫기
 		    closeBtn.onclick = function() {
 		        editModal.style.display = "none";
@@ -517,16 +527,17 @@
 			    document.getElementById("editMeetingRoomForm").addEventListener('submit', (e) => {
 			      e.preventDefault();
 			      const meetingNo = document.getElementById("editMeetingRoomId").value;
+			      const csrfToken = form.querySelector('input[name="_csrf"]').value; // CSRF 토큰 가져오기
 			      const payload = {
-			        meetingName: document.getElementById("editMeetingName").value,
-			        meetingLocation: document.getElementById("editMeetingLocation").value,
-			        maxPeople: document.getElementById("editMaxPeople").value
+			        meeting_name: document.getElementById("editMeetingName").value,
+			        meeting_location: document.getElementById("editMeetingLocation").value,
+			        max_people: document.getElementById("editMaxPeople").value
 			      };
-	
 			      fetch(`/meeting_roomUpdate/${meetingNo}`, {
 			        method: 'POST',
 			        headers: {
-			          'Content-Type': 'application/json'
+			          'Content-Type': 'application/json',
+			          'X-CSRF-TOKEN': csrfToken // CSRF 토큰 추가
 			        },
 			        body: JSON.stringify(payload)
 			      })
@@ -544,43 +555,50 @@
 			    });
 
 		 // 회의실 삭제 확인
-		    function deleteMeetingRoom(meetingNo) {
-		      Swal.fire({
-		        title: '회의실 삭제',
-		        text: "정말로 이 회의실을 삭제하시겠습니까?",
-		        icon: 'warning',
-		        showCancelButton: true,
-		        confirmButtonColor: '#3085d6',
-		        cancelButtonColor: '#d33',
-		        confirmButtonText: '삭제',
-		        cancelButtonText: '취소'
-		      }).then((result) => {
-		        if (result.isConfirmed) {
-		          // 삭제를 확인한 경우 DELETE 요청 전송
-		          fetch(`deleteMeetingRoom/${meetingNo}`, {
-		            method: 'POST'
-		          })
-		          .then(response => response.json())
-		          .then(data => {
-		            if (data.success) {
-		              Swal.fire(
-		                '삭제 완료!',
-		                '회의실 정보가 삭제되었습니다.',
-		                'success'
-		              ).then(() => {
-		                location.reload(); // 페이지 새로고침
-		              });
-		            } else {
-		              Swal.fire('삭제 실패', '회의실 정보를 삭제할 수 없습니다.', 'error');
-		            }
-		          })
-		          .catch(error => {
-		            Swal.fire('오류 발생', '서버와의 통신 중 문제가 발생했습니다.', 'error');
-		            console.error('Error deleting meeting room:', error);
-		          });
-		        }
-		      });
-		    }
+		  function deleteMeetingRoom(meetingNo) {
+			  const csrfToken = document.querySelector('input[name="_csrf"]').value;
+  Swal.fire({
+    title: '회의실 삭제',
+    text: "정말로 이 회의실을 삭제하시겠습니까?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '삭제',
+    cancelButtonText: '취소'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // 삭제를 확인한 경우 POST 요청 전송
+      fetch(`/deleteMeetingRoom/${meetingNo}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken // CSRF 토큰을 요청 헤더에 추가
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        // 응답의 res_code를 기반으로 처리
+        if (data.res_code === '200') {  // 성공 시
+          Swal.fire(
+            '삭제 완료!',
+            data.res_msg, // 서버에서 받은 메시지 표시
+            'success'
+          ).then(() => {
+            location.reload(); // 페이지 새로고침
+          });
+        } else {  // 실패 시
+          Swal.fire('삭제 실패', data.res_msg, 'error');
+        }
+      })
+      .catch(error => {
+        Swal.fire('오류 발생', '서버와의 통신 중 문제가 발생했습니다.', 'error');
+        console.error('Error deleting meeting room:', error);
+      });
+    }
+  });
+}
+
 
 
 
