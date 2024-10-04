@@ -59,17 +59,13 @@
 			                      		</tr>
 			                      		<tr>
 			                      			<th>사용 연차</th>
-			                      			 <td th:each="month, iterStat : ${#numbers.sequence(1, 12)}">
-										        <span th:text="${iterStat.count}"></span>
-										    </td>
-										    <td>계산값</td>
+			                      			 <td th:each="leave : ${monthlyLeaveUsage}" th:text="${leave.usedLeave}" class="used-leave"></td>
+										    <td id="totalUsedLeave"></td>
 			                      		</tr>
 			                      		<tr>
 			                      			<th>남은 연차</th>
-			                      			 <td th:each="month, iterStat : ${#numbers.sequence(1, 12)}">
-										        <span th:text="${iterStat.count}"></span>
-										    </td>
-										    <td>계산값</td>
+			                      			 <td th:each="leave : ${monthlyLeaveUsage}" th:text="${leave.remainingLeave}" class="remaining-leave"></td>
+										    <td id="remainingLeave"></td>
 			                      		</tr>
 			                      	</thead>
 			                      	<tbody>
@@ -86,16 +82,20 @@
 		</main>
 	<script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
+    	// 1. 출결 현황
         var calendarEl = document.getElementById('calendar');
         
         // 서버에서 전달된 JSON 데이터를 JavaScript로 파싱
         var attendanceData = /*[[${attnList}]]*/ [];
-        console.log(attendanceData); 
       
         
      	// 날짜와 시간을 포맷팅하는 함수
         function formatTime(dateString) {
             
+        	if (!dateString) {
+                return ''; // 날짜가 없을 때 처리
+            }
+     		
      		var date = new Date(dateString);
 
             var hours = ('0' + date.getHours()).slice(-2);      
@@ -109,7 +109,7 @@
             return {
             	title: '출근: ' + formatTime(attendance.attn_start) + ' \n 퇴근: ' + formatTime(attendance.attn_end),  // 시:분 형식으로 변환된 시간 표시
                 start: new Date(attendance.attn_start),
-                end: new Date(attendance.attn_start), 
+                end: new Date(attendance.attn_end), 
                 allDay: true  // 하루 단위 이벤트로 표시
             };
         });
@@ -137,7 +137,33 @@
         });
 
         calendar.render();
+        
+        
+        // 2. 연차 현황
+        let totalUsedLeave = 0;
+        let smallestRemainingLeave = Infinity; // 가장 작은 값을 찾기 위해 큰 값으로 초기화
+
+        // 사용 연차 계산 (1월부터 12월까지의 총 사용 연차 합계)
+        document.querySelectorAll('.used-leave').forEach(function(cell) {
+            let value = cell.textContent.trim();
+            totalUsedLeave += parseFloat(value) || 0;
+        });
+
+        // 남은 연차 중 가장 작은 값 찾기
+        document.querySelectorAll('.remaining-leave').forEach(function(cell) {
+            let value = parseFloat(cell.textContent.trim()) || Infinity; // 값이 없을 경우 Infinity로 처리
+            if (value < smallestRemainingLeave) {
+                smallestRemainingLeave = value; // 가장 작은 값 업데이트
+            }
+        });
+
+        // 총계 셀에 결과 표시
+        document.getElementById('totalUsedLeave').textContent = totalUsedLeave;
+        document.getElementById('remainingLeave').textContent = smallestRemainingLeave;
+        
     });
+    
+    
 	</script>
 	</th:block>
 	<!-- ======= Footer ======= -->

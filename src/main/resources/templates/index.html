@@ -51,8 +51,8 @@
                     <div id="userDate" style="text-align:center;"></div>
                     <div id="userWorktime" style="text-align:center;"><h3>00시간 00분</h3></div>
                     <div id="timestamp">
-	                    <div id="startTime" style="text-align:center;">출근: 00시 00분</div>
-	                    <div id="finishTime" style="text-align:center;">퇴근: 00시 00분</div>
+	                    <div id="startTimeDisplay" style="text-align:center;">출근: <span th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : ''}"></span></div>
+	                    <div id="endTimeDisplay" style="text-align:center;">퇴근: <span th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : ''}"></span></div>
                     </div>
                     <hr>
                     <div class="button-box" style="text-align:center; margin-top: 10px;">
@@ -78,7 +78,7 @@
                	  document.getElementById('userDate').innerHTML = formattedDate;
                	  
 				  // (2) 사용자 정보
-                  var userInfo = /*[[${dto}]]*/ {};
+                  var userInfo = /*[[${userDto}]]*/ {};
                   console.log('사용자 정보: ' + userInfo); 
 				  
                   document.getElementById('userInfo').innerHTML = userInfo.group_name + ' ' + userInfo.emp_name 
@@ -86,46 +86,70 @@
 				  
 				  
                	  // 2. 출퇴근 시간 전송
-               	  	// (1) 출근 시간 전송
+               	  	
                   $(document).ready(function() {
                 	  var token = $("meta[name='_csrf']").attr("content");
                 	  var header = $("meta[name='_csrf_header']").attr("content");
-				    $('#workStart').click(function() {
-				        $.ajax({
-				            url: '/attendanceRecord',
-				            type: 'POST',
-				            beforeSend: function(xhr) {
-				                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
-				            },
-				            data: { action: 'start' },
-				            success: function(response) {
-				                $('#startTimeDisplay').text('출근 시간: ' + response.attnStart);
-				            },
-				            error: function() {
-				                alert('출근 기록에 실패했습니다.');
-				            }
-				        });
-				    });
-				 		// (2) 퇴근 시간 전송
-				    $('#workFinish').click(function() {
-				        $.ajax({
-				            url: '/attendanceRecord',
-				            type: 'POST',
-				            beforeSend: function(xhr) {
-				                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
-				            },
-				            data: { action: 'end' },
-				            success: function(response) {
-				                $('#endTimeDisplay').text('퇴근 시간: ' + response.attnEnd);
-				            },
-				            error: function() {
-				                alert('퇴근 기록에 실패했습니다.');
-				            }
-				        });
-				    });
-				});
+                	  
+                	  
+	                	// (1) 출근 시간 전송
+					    $('#workStart').click(function() {
+					        $.ajax({
+					            url: '/attendanceRecord',
+					            type: 'POST',
+					            beforeSend: function(xhr) {
+					                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+					            },
+					            data: { action: 'start' },
+					            success: function(response) {
+					            	// 서버에서 받은 시간을 Date 객체로 변환
+					                var attnStart = new Date(response.attnStart);
+					                
+					                // 시간을 원하는 형식으로 변환 (시:분)
+					                var hours1 = attnStart.getHours();
+					                var minutes1 = attnStart.getMinutes();
+	
+					                // 분을 두 자리로 맞춤
+					                minutes1 = minutes1 < 10 ? '0' + minutes1 : minutes1;
+					            	
+					             	// 형식에 맞게 화면에 표시
+					                $('#startTimeDisplay').text('출근: ' + hours1 + '시 ' + minutes1 + '분');
+					            },
+					            error: function() {
+					                alert('출근 기록에 실패했습니다.');
+					            }
+					        });
+					    });
+					 	
+	                	
+	                	// (2) 퇴근 시간 전송
+					    $('#workFinish').click(function() {
+					        $.ajax({
+					            url: '/attendanceRecord',
+					            type: 'POST',
+					            beforeSend: function(xhr) {
+					                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+					            },
+					            data: { action: 'end' },
+					            success: function(response) {
+					                var attnEnd = new Date(response.attnEnd);
+	
+					                var hours2 = attnEnd.getHours();
+					                var minutes2 = attnEnd.getMinutes();
+	
+					                minutes2 = minutes2 < 10 ? '0' + minutes2 : minutes2;
+					            	
+					             // 형식에 맞게 화면에 표시
+					                $('#endTimeDisplay').text('퇴근: ' + hours2 + '시 ' + minutes2 + '분');
+					            },
+					            error: function() {
+					                alert('퇴근 기록에 실패했습니다.');
+					            }
+					        });
+					    });
+					});
     	  
-               	  // 3. 출퇴근 시간 표기
+               	  
                	  
                   </script>
                 </div>

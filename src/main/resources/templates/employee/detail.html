@@ -12,13 +12,37 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-.sub-sidebar {
+.apprSidebar {
+    position: fixed;
+    top: 60px;
+    left: 250px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    bottom: 0;
+    width: 250px; /* 추가 사이드바의 너비 */
+    z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+}
+/* .sub-sidebar {
 	width: 250px;
 	background-color: #fff;
 	padding: 20px;
 	font-size: 15px;
 	font-weight: 600;
 	color: #012970;
+} */
+
+.content-area {
+    margin-left: 250px; /* 사이드바 너비 + 여백 */
+    padding: 20px; /* 내부 여백 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 각 섹션 간의 간격 */
+    margin-top: -110px;
 }
 
 .subside_title {
@@ -70,15 +94,20 @@ table td, table th {
 <body>
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
-			<div class="sub-sidebar" id="sub-sidebar">
-				<span class="subside_title">인사 관리</span><br> <br>
-				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
-				<h5><a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a></h5>
-			</div>
-			<section class="section dashboard" style="width: calc(100% - 250px);">
-				<div class="col-xxl-4 col-md-6" style="width: 100%;">
+			<aside id="apprSidebar" class="apprSidebar">
+				<div class="pagetitle">
+      				<h1>인사 관리</h1>
+    			</div>
+    			<ul class="sidebar-nav" id="sidebar-nav">
+    				<li class="nav-item"><h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5></li>
+    				<li class="nav-item"><h5><a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a></h5></li>
+				</ul>
+			</aside>
+			<section class="section dashboard" style="width: 100%">
+				<div class="content-area">
+				<div class="col-xxl-4 col-md-6" style="width: 100%; margin-top:100px;">
 					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
-						<div class="card-body">
+						<div class="card-body" style="height:100%">
 							<div class="card-body-header">
 								<h2 class="card-title"><b>사원 정보</b></h2>
 							</div>
@@ -94,7 +123,15 @@ table td, table th {
 			                <div class="tab-pane fade show active profile-overview" id="profile-overview">
 							<div class="basic-info">
 								<div class="basic-info-left">
-									<img th:src="@{'/uploadImg/'+${dto.emp_img_file_path}}" alt="Profile" id="emp_profile_img" class="rounded-circle"/>
+									<!-- emp_img_file_path 값이 있을 때 -->
+								<img th:if="${dto.emp_img_file_path != null}" 
+								     th:src="@{'/uploadImg/' + ${dto.emp_img_file_path}}" 
+								     alt="Profile" id="emp_profile_img" class="rounded-circle"/>
+								
+								<!-- emp_img_file_path 값이 없을 때 기본 이미지 사용 -->
+								<img th:unless="${dto.emp_img_file_path != null}" 
+								     th:src="@{'/bootstrap/img/basic_profile.png'}" 
+								     alt="Default Profile" id="emp_profile_img" class="rounded-circle"/>
 								</div>
 								<div class="basic-info-right">
 									<table class="table table-bordered">
@@ -155,12 +192,8 @@ table td, table th {
 										</tr>
 										<tr th:if="${dto.emp_resign.toUpperCase() == 'Y'}">
 											<th>퇴사일</th>
-											<td
-												th:text="${dto.emp_resigndate}"></td>
+											<td th:text="${dto.emp_resigndate}"></td>
 										</tr>
-										<tbody>
-											
-										</tbody>
 									</table>
 								</div>
 							</div>
@@ -174,34 +207,36 @@ table td, table th {
 							</div>
 						</div>
 					</div>
+
+					
+					
 					<div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-					<table class="table datatable">
-						<colgroup>
-						</colgroup>
-						<thead>
-							<tr>
-								<th>연도</th>
-								<th>월</th>
-								<th>일</th>
-								<th>출근 시간</th>
-								<th>퇴근 시간</th>
-								<th>근무 시간</th>
-								<th>근무 상태</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="dto:${attnDtoList}">
-								<td th:text="${#temporals.format(dto.attn_start, 'yyyy')}"></td>
-								<td th:text="${#temporals.format(dto.attn_start, 'MM')}"></td>
-								<td th:text="${#temporals.format(dto.attn_start, 'dd')}"></td>
-								<td th:text="${#temporals.format(dto.attn_start, 'HH:mm')}"></td>
-								<td th:text="${#temporals.format(dto.attn_end, 'HH:mm')}"></td>
-								<td th:text="${dto.calc_worktime}"></td>
-								<td th:text="${dto.attn_status}"></td>
-							</tr>
-						</tbody>
-					</table>
+						<table class="table datatable">
+							<thead>
+								<tr>
+									<th>연도</th>
+									<th>월</th>
+									<th>일</th>
+									<th>출근 시간</th>
+									<th>퇴근 시간</th>
+									<th>근무 시간</th>
+									<th>근무 상태</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="dto:${attnDtoList}">
+									<td th:text="${#temporals.format(dto.attn_start, 'yyyy')}"></td>
+									<td th:text="${#temporals.format(dto.attn_start, 'MM')}"></td>
+									<td th:text="${#temporals.format(dto.attn_start, 'dd')}"></td>
+									<td th:text="${#temporals.format(dto.attn_start, 'HH:mm')}"></td>
+									<td th:text="${#temporals.format(dto.attn_end, 'HH:mm')}"></td>
+									<td th:text="${dto.calc_worktime}"></td>
+									<td th:text="${dto.attn_status}"></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+				</div>
 				</div>
 				</div>
 				</div>

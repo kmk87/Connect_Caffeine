@@ -50,7 +50,7 @@ textarea {
 			<div class="sub-sidebar" id="sub-sidebar">
 				<span class="subside_title">인사 관리</span><br> <br>
 				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
-				<h5><a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a></h5>
+				<h5><a th:href="@{/empGroupList}" style="color: inherit;">부서/팀 정보</a></h5>
 			</div>
 			<section class="section dashboard" style="width: calc(100% - 250px);">
 				<div class="col-xxl-4 col-md-6" style="width: 100%;">
@@ -63,7 +63,7 @@ textarea {
 								</h2>
 							</div>
 							<hr>
-							<form id="groupAddFrm" method="POST" action="/empGroup">
+							<form id="teamAddFrm" method="POST">
 								<input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}" />
 								<div class="basic-info">
 									<table class="table table-bordered">
@@ -97,7 +97,7 @@ textarea {
 												id="group_location" name="group_location"></td>
 										</tr>
 										<tr>
-											<th>그룹 설명</th>
+											<th>팀 설명</th>
 											<td><textarea class="form-control" id="group_explain" name="group_explain"></textarea></td>
 										</tr>
 										<tr>
@@ -147,7 +147,7 @@ textarea {
 		
 		
 		// 2. 등록 처리
-		const form = document.getElementById("groupAddFrm");
+		const form = document.getElementById("teamAddFrm");
 		
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
@@ -216,7 +216,7 @@ textarea {
 			
 			const csrfToken = document.getElementById("_csrf").value;
 
-	        fetch('/empGroup', {
+	        fetch('/teamCreate', {
 	            method: 'POST',
 	            headers: {
 	                'Content-Type': 'application/json;charset=utf-8',

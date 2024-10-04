@@ -30,7 +30,7 @@ public class WebSecurityConfig {
 						, "/employeeDelete",  "/employeeDelete/**", "/empGroupList", "/empGroupList/**"
 						, "/empGroupCreate", "/empGroupCreate/**", "/css/**", "/draft", "/uploadImg/**",
 						"/empGroupUpdate", "/empGroupUpdate/**", "/empGroupDelete", "/empGroupDelete/**", "employeeCreate"
-						,"/toAttendance", "/attendanceRecord").permitAll()
+						,"/toAttendance", "/attendanceRecord", "/profileUpdate").permitAll()
                                
 				//.requestMatchers("/**").permitAll()
 //				.requestMatchers("/calendar/**").authenticated()

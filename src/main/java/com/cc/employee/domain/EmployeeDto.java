@@ -1,4 +1,5 @@
 package com.cc.employee.domain;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -78,12 +79,20 @@ public class EmployeeDto {
 					.build();
 			
 
-			  // DateTimeFormatter를 이용해 문자열을 파싱할 형식 지정
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			// DateTimeFormatter를 이용해 문자열을 파싱할 형식 지정
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	        // 문자열을 LocalDateTime으로 변환
-	        LocalDateTime emp_hiredate_iso = LocalDateTime.parse(emp_hiredate, formatter);
-	        LocalDateTime emp_resigndate_iso = LocalDateTime.parse(emp_resigndate, formatter);
+			// emp_hiredate 문자열을 LocalDate로 변환, null 체크
+			LocalDate emp_hiredate_iso = null;
+			if (this.getEmp_hiredate() != null && !this.getEmp_hiredate().isEmpty()) {
+			    emp_hiredate_iso = LocalDate.parse(this.getEmp_hiredate(), formatter);
+			}
+
+			// emp_resigndate 문자열도 같은 방식으로 처리
+			LocalDate emp_resigndate_iso = null;
+			if (this.getEmp_resigndate() != null && !this.getEmp_resigndate().isEmpty()) {
+			    emp_resigndate_iso = LocalDate.parse(this.getEmp_resigndate(), formatter);
+			}
 			
 
 			return Employee.builder()
@@ -118,16 +127,18 @@ public class EmployeeDto {
 			
 			
 			// DateTimeFormatter를 이용해 원하는 형식 지정
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	        // LocalDateTime을 String으로 변환
-	        String empHiredateStr = null;
-	        if(employee.getEmpHiredate() != null)
-	        	empHiredateStr = employee.getEmpHiredate().format(formatter);
-	        
-	        String empResigndateStr = null;
-	        if(employee.getEmpResigndate() != null)
-	        	empResigndateStr = employee.getEmpResigndate().format(formatter);
+			// LocalDate를 String으로 변환
+			String empHiredateStr = null;
+			if (employee.getEmpHiredate() != null) {
+			    empHiredateStr = employee.getEmpHiredate().format(formatter);
+			}
+
+			String empResigndateStr = null;
+			if (employee.getEmpResigndate() != null) {
+			    empResigndateStr = employee.getEmpResigndate().format(formatter);
+			}
 			
 			return EmployeeDto.builder()
 					.emp_code(employee.getEmpCode())

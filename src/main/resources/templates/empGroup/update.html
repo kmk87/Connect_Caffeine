@@ -197,7 +197,22 @@ textarea {
 		</main>
 		<!-- End #main -->
 		<script>
-		// 1. 부서 정보 수정
+		// 1. 리더 연락처 자동 완성&수정
+		document.addEventListener("DOMContentLoaded", function() {
+			  // 페이지 로딩 시 초기 연락처 설정
+			  const initialContact = document.querySelector('#group_leader option:checked').getAttribute('data-phone');
+			  document.getElementById('group_leader_desk_phone').value = initialContact || '';
+
+			  // 책임자 선택 변경 시 연락처 업데이트
+			  window.updateLeaderContact = function() {
+			    const selectedPhone = document.querySelector('#group_leader option:checked').getAttribute('data-phone');
+			    document.getElementById('group_leader_desk_phone').value = selectedPhone || '';
+			  }
+			});
+		
+		
+		
+		// 2. 부서 정보 수정
 		const form1 = document.getElementById("deptUpdateFrm");
 		
 		form1.addEventListener('submit', (e) => {
@@ -281,18 +296,7 @@ textarea {
 	        });
 		});
 		
-		// 2. 리더 연락처 자동 완성&수정
-		document.addEventListener("DOMContentLoaded", function() {
-			  // 페이지 로딩 시 초기 연락처 설정
-			  const initialContact = document.querySelector('#group_leader option:checked').getAttribute('data-phone');
-			  document.getElementById('group_leader_desk_phone').value = initialContact || '';
 
-			  // 책임자 선택 변경 시 연락처 업데이트
-			  window.updateLeaderContact = function() {
-			    const selectedPhone = document.querySelector('#group_leader option:checked').getAttribute('data-phone');
-			    document.getElementById('group_leader_desk_phone').value = selectedPhone || '';
-			  }
-			});
 		
 		
 		// 3. 팀 정보 수정

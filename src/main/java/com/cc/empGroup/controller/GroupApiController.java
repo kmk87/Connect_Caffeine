@@ -23,10 +23,28 @@ public class GroupApiController {
 		this.empGroupService = empGroupService;
 	}
 	
-	// 1. 등록
+	// 1-1. 부서 등록
+	@ResponseBody
+	@PostMapping("/deptCreate")
+	public Map<String, String> createDept(@RequestBody EmpGroupDto dto){
+		
+		
+		Map<String, String> resultMap = new HashMap<String, String>();
+		resultMap.put("res_code", "404");
+		resultMap.put("res_msg", "부서 정보 등록 중 오류가 발생하였습니다.");
+		
+		if(empGroupService.createGroup(dto) != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "부서 정보가 성공적으로 등록되었습니다.");
+		}
+		
+		return resultMap;
+	}
+	
+	// 1-2. 팀 등록
 		@ResponseBody
-		@PostMapping("/empGroup")
-		public Map<String, String> createGroup(@RequestBody EmpGroupDto dto){
+		@PostMapping("/teamCreate")
+		public Map<String, String> createTeam(@RequestBody EmpGroupDto dto){
 			
 			
 			Map<String, String> resultMap = new HashMap<String, String>();
@@ -78,7 +96,7 @@ public class GroupApiController {
 		
 		
 		
-		// 4-1. 팀 삭제
+		// 4-1. 부서 삭제
 		@ResponseBody
 		@PostMapping("/empDeptDelete/{group_no}")
 		public Map<String, String> deleteDept(@RequestBody EmpGroupDto dto){

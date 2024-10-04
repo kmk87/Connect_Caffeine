@@ -1,8 +1,8 @@
 package com.cc.employee.domain;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
-import com.cc.annualLeave.domain.AnnualLeave;
+import com.cc.attendance.domain.AnnualLeave;
 import com.cc.attendance.domain.Attendance;
 import com.cc.empGroup.domain.EmpGroup;
 
@@ -75,13 +75,13 @@ public class Employee {
    private String empDeskPhone;
    
    @Column(name="emp_hiredate")
-   private LocalDateTime empHiredate;
+   private LocalDate empHiredate;
    
    @Column(name="emp_resign")
    private String empResign;
    
    @Column(name="emp_resigndate")
-   private LocalDateTime empResigndate;
+   private LocalDate empResigndate;
    
    @Column(name="emp_memo")
    private String empMemo;

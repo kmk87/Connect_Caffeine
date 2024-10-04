@@ -1,12 +1,9 @@
-package com.cc.annualLeave.domain;
+package com.cc.attendance.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-
-import com.cc.attendance.domain.Attendance;
-import com.cc.attendance.domain.AttendanceDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

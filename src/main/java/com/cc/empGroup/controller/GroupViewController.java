@@ -6,6 +6,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +32,9 @@ public class GroupViewController {
 		this.empGroupService = empGroupService;
 	}
 	
-	// 1. 팀 등록(create)
-	@GetMapping("/empGroupCreate")
-	public String createGroupPage(Model model) {
+	// 1-1. 부서 등록(create)
+	@GetMapping("/empDeptCreate")
+	public String createDeptPage(Model model) {
 		
 		List<EmployeeDto> empList = employeeService.selectEmployeeList();
 		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
@@ -39,7 +42,21 @@ public class GroupViewController {
 		model.addAttribute("empList", empList);
 		model.addAttribute("groupList", groupList);
 		
-		return "empGroup/create";
+		return "empGroup/deptCreate";
+	}
+	
+	
+	// 1-2. 팀 등록(create)
+	@GetMapping("/empTeamCreate")
+	public String createTeamPage(Model model) {
+		
+		List<EmployeeDto> empList = employeeService.selectEmployeeList();
+		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
+		
+		model.addAttribute("empList", empList);
+		model.addAttribute("groupList", groupList);
+
+		return "empGroup/teamCreate";
 	}
 	
 	
@@ -48,8 +65,6 @@ public class GroupViewController {
 	public String selectEmpGroupList(Model model) {
 		
 		List<EmpGroupDto> empGroupDtoList = empGroupService.selectGroupList();	
-		
-//		List<EmpGroupDto>
 		
 		model.addAttribute("empGroupDtoList", empGroupDtoList);
 		

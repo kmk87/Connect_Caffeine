@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.attendance.domain.AttendanceDto;
+import com.cc.attendance.domain.MonthlyLeaveDto;
+import com.cc.attendance.service.AnnualLeaveService;
 import com.cc.attendance.service.AttendanceService;
 import com.cc.empGroup.service.EmpGroupService;
+import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 
 
@@ -27,16 +30,18 @@ public class AttendanceController {
 	private final EmployeeService employeeService;
 	private final EmpGroupService empGroupService;
 	private final AttendanceService attendanceService;
+	private final AnnualLeaveService annualLeaveService;
 	
 	@Autowired
 	public AttendanceController(EmployeeService employeeService, EmpGroupService empGroupService
-			, AttendanceService attendanceService) {
+			, AttendanceService attendanceService, AnnualLeaveService annualLeaveService) {
 		this.employeeService = employeeService;
 		this.empGroupService = empGroupService;
 		this.attendanceService = attendanceService;
+		this.annualLeaveService = annualLeaveService;
 	}
 	
-	// 출퇴근 정보 기록
+	// 출퇴근 정보 기록 -> 홈컨트롤러로 이동?
 	@PostMapping("/attendanceRecord")
 	@ResponseBody
 	public Map<String, String> recordAttendance(@RequestParam("action") String action){
@@ -47,15 +52,15 @@ public class AttendanceController {
         Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
         
         AttendanceDto attendanceDto = attendanceService.recordAttendance(empCode, action);
-   
+//        System.out.println("한번 갔다온, 컨트롤러의 attendanceDto : "+ attendanceDto); 성공
         
+
         Map<String, String> response = new HashMap<>();
         if ("start".equals(action)) {
             response.put("attnStart", attendanceDto.getAttn_start().toString());
         } else if ("end".equals(action)) {
             response.put("attnEnd", attendanceDto.getAttn_end().toString());
         }
-        System.out.println("response가 무엇이니? : "+response);
         
         return response;
     }
@@ -63,8 +68,8 @@ public class AttendanceController {
 	
 	
 	
-	// 2. 근태 관리 페이지
-	@GetMapping("/toAttendance")
+	// 2. 근태 관리
+	@GetMapping("toAttendance")
 	public String attendancePage(Model model) {
 		
 		// 사용자 정보(pk) 가져오기
@@ -73,13 +78,26 @@ public class AttendanceController {
 	    String empAccount = user.getUsername();
 	    Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
 	    
-	    // 출퇴근 기록 가져오기
+	    // (1) 출결 현황
 	    List<AttendanceDto> attnList = attendanceService.getAttendancesByEmpCode(empCode);
-	    System.out.println("컨트롤러의 출퇴근 기록: " + attnList);
 	    
 	    model.addAttribute("attnList", attnList);
 	    
+	    
+	    // (2) 연차 현황
+	    List<MonthlyLeaveDto> monthlyLeaveUsage = annualLeaveService.getMonthlyLeaveUsage(empCode);
+        model.addAttribute("monthlyLeaveUsage", monthlyLeaveUsage);
+        
+        
+		// 로그인, 사용자 정보
+		
+		EmployeeDto userDto = employeeService.selectEmployeeOne(empCode);
+		model.addAttribute("userDto", userDto);
+        
 		return "employee/attendance";
 	}
 
+	
+	
+	
 }

@@ -139,20 +139,24 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
           </ul><!-- End Messages Dropdown Items -->
         </li><!-- End Messages Nav -->
         <li class="nav-item dropdown pe-3">
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="/bootstrap/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
-          </a><!-- End Profile Iamge Icon -->
+			<a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+			    <!-- 한 번의 <img> 태그로 처리 -->
+			    <img th:src="${userDto != null && userDto.emp_img_file_path != null ? '/uploadImg/' + userDto.emp_img_file_path : '/bootstrap/img/basic_profile.png'}" 
+			         alt="Profile" class="rounded-circle"/>
+			    
+			    <!-- 사용자 이름 표시 -->
+			    <span class="d-none d-md-block dropdown-toggle ps-2" th:text="${userDto?.emp_name != null ? userDto.emp_name : 'Guest'}"></span>
+			</a><!-- End Profile Image Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
-            </li>
+			<li class="dropdown-header">
+			    <h6 th:text="${userDto?.emp_name != null ? userDto.emp_name : '이름 없음'}"></h6>
+			    <span th:text="${userDto?.emp_job_name != null ? userDto.emp_job_name : '직함 없음'}"></span>
+			</li>
             <li>
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+              <a class="dropdown-item d-flex align-items-center" th:href="@{/employeeProfile}">
                 <i class="bi bi-person"></i>
                 <span>내 프로필</span>
               </a>

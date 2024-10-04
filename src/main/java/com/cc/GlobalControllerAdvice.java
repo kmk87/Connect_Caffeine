@@ -4,10 +4,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 import com.cc.tree.service.OrgService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -85,6 +90,18 @@ public class GlobalControllerAdvice {
 		model.addAttribute("empObj", empObj);
 		
 		
+//		// 헤더
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		User user = (User) authentication.getPrincipal();
+//		String empAccount = user.getUsername();
+//		Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
+//		EmployeeDto headerDto = employeeService.selectEmployeeOne(empCode);
+//		
+//		String empDeptName = employeeService.getDeptNameByEmpCode(empCode);
+//		
+//		model.addAttribute("headerDto", headerDto);
+//		model.addAttribute("empDeptName", empDeptName);
+
         }
 //    @ModelAttribute
 //    public void addUnreadNotificationsToModel(Model model) {
@@ -99,7 +116,6 @@ public class GlobalControllerAdvice {
 //            model.addAttribute("unreadNotifications", unreadNotifications);
 //        }
 //    }
-    
     
     }
     

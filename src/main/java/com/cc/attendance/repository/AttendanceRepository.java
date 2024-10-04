@@ -19,11 +19,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long>{
 		       "FROM Attendance a WHERE a.employees.empCode = :empCode ORDER BY a.attnStart DESC")
 	List<AttendanceDto> findAttendancesByEmpCode(@Param("empCode") Long empCode);
 	
-//	// 오늘의 출퇴근 기록 가져오기
-//	@Query("SELECT a FROM Attendance a WHERE a.employees.empCode = :empCode AND a.attnStart = :today")
-	Attendance findByEmployees_EmpCodeAndAttnStart(Long empCode, LocalDateTime attnStart);
+	
+	// 오늘의 출퇴근 기록 저장
+	@Query("SELECT a FROM Attendance a WHERE a.employees = :employee AND a.attnStart BETWEEN :startOfDay AND :endOfDay")
+	Optional<Attendance> findTodayAttendanceByEmployee(@Param("employee") Employee employee, @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
-	Optional<Attendance> findByEmployeesAndAttnStart(Employee employee, LocalDate localDate);
-
-	Optional<Attendance> findByEmployees(Employee employee);
+	// 오늘의 출퇴근 기록 조회
+	@Query("SELECT a FROM Attendance a WHERE a.employees.empCode = :empCode AND a.attnStart BETWEEN :startOfDay AND :endOfDay")
+	Optional<Attendance> findTodayAttendanceByEmpCode(@Param("empCode") Long empCode, @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 }

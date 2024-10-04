@@ -52,10 +52,20 @@ public class EmployeeService {
 		
 		if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) == false){	
 			
-			// 문자열을 LocalDateTime으로 변환
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	        LocalDateTime emp_hiredate_iso = LocalDateTime.parse(dto.getEmp_hiredate() + " 00:00:00", formatter);
-//	        LocalDateTime emp_resigndate_iso = LocalDateTime.parse(dto.getEmp_resigndate(), formatter);
+			// DateTimeFormatter를 이용해 문자열을 LocalDate로 변환할 형식 지정 (시간 없이 날짜만 처리)
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+			// emp_hiredate 문자열을 LocalDate로 변환
+			LocalDate emp_hiredate_iso = null;
+			if (dto.getEmp_hiredate() != null && !dto.getEmp_hiredate().isEmpty()) {
+			    emp_hiredate_iso = LocalDate.parse(dto.getEmp_hiredate(), formatter);
+			}
+
+			// emp_resigndate 문자열도 같은 방식으로 처리
+			LocalDate emp_resigndate_iso = null;
+			if (dto.getEmp_resigndate() != null && !dto.getEmp_resigndate().isEmpty()) {
+			    emp_resigndate_iso = LocalDate.parse(dto.getEmp_resigndate(), formatter);
+			}
 			
 		emp = Employee.builder()
 				.empCode(dto.getEmp_code())
@@ -244,6 +254,30 @@ public class EmployeeService {
 		
 		return result;
 	}
+	
+	// 5. 프로필 업데이트
+    // (1) 사용자 정보 조회 (DTO로 변환)
+    public EmployeeDto findEmployeeDtoByEmpCode(Long empCode) {
+        Employee employee = employeeRepository.findByempCode(empCode);
+        
+        EmployeeDto dto = new EmployeeDto();
+        return dto.toDto(employee);
+		
+    }
+
+    // (2) 프로필 업데이트 처리
+    public void updateEmployeeProfile(EmployeeDto dto) {
+        // 기존 employee 조회
+        Employee employee = employeeRepository.findByempCode(dto.getEmp_code());
+
+        // 빌더 패턴으로 새로운 employee 객체 생성 (변경된 값 반영)
+        Employee updatedEmployee = employee.builder()
+                .empImgFileName(dto.getEmp_img_file_name())  
+                .empImgFilePath(dto.getEmp_img_file_path())  
+                .build();
+        employeeRepository.save(updatedEmployee);
+    }
+	
 	
 	
 	// 주민번호 문자열 데이터를 생년월일로 변환하는 메소드

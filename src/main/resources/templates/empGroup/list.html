@@ -51,11 +51,16 @@ table td, table th {
 						<div class="card-body">
 							<div class="card-body-header">
 								<h2 class="card-title"><b>부서/팀 목록</b></h2>
-								<div>
-									<button class="btn btn-primary rounded-pill"
-										style="margin-top: 20px;"
-										th:onclick="|location.href='@{/empGroupCreate}'|">등록</button>
-								</div>
+								<div class="filter">
+				                  <a class="icon" href="#" data-bs-toggle="dropdown">
+				                  	<button class="btn btn-primary rounded-pill"style="margin-top: 20px;">등록</button>
+				                  </a>
+				                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+				                    <li><a class="dropdown-item" th:onclick="|location.href='@{/empDeptCreate}'|">부서</a></li>
+				                    <li><a class="dropdown-item" th:onclick="|location.href='@{/empTeamCreate}'|">팀</a></li>
+				                  </ul>
+				                </div>
+								
 							</div>
 							<hr>
 							<div class="empGroup_list">

@@ -30,15 +30,11 @@
     scrollbar-color: #aab7cf transparent;
     box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
     background-color: #fff;
-}
-/* .sub-sidebar {
-	width: 250px;
-	background-color: #fff;
-	padding: 20px;
-	font-size: 15px;
+    font-size: 15px;
 	font-weight: 600;
 	color: #012970;
-} */
+}
+
 .content-area {
     margin-left: 250px; /* 사이드바 너비 + 여백 */
     padding: 20px; /* 내부 여백 */
@@ -63,8 +59,8 @@
 #treeContainer {
     max-height: 500px;
     overflow-y: auto;
-    display: block;  /* display 속성을 block으로 설정 */
-    border: 1px solid black;  /* 시각적으로 확인 가능하도록 */
+    display: block;  
+    border: 1px solid black; 
 }
 </style>
 </head>
@@ -125,45 +121,7 @@
 			</section>
 		</main>
  <script>
-	$(document).ready(function() {   
-        $('#page_list').DataTable({
-           "lengthChange": false,
-         "searching": true,      // 검색 활성화
-         "responsive": true,
-         "language": {
-             url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json' // 한국어 번역 적용
-         },
-         "initComplete": function() {
-             // 한국어 번역 로드 후 paginate 옵션 덮어쓰기
-             var table = this.api();
-             table.settings()[0].oLanguage.oPaginate.sPrevious = "<<";
-             table.settings()[0].oLanguage.oPaginate.sNext = ">>";
-         },
-         "pagingType": "simple_numbers",
-         "pageLength": 10,              // 한 페이지에 보여질 항목 수 설정
-         "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)
-         "columnDefs": [
-             { "orderable": false, "targets": 1 },  // 1번째(결재양식) 컬럼의 정렬 비활성화
-             { "orderable": false, "targets": 2 }
-         ]
-         
-        });
-  
-    });
 	
-	 document.addEventListener("DOMContentLoaded", function () {
-        const message = /*[[${message}]]*/ '';  // 서버에서 전달된 메시지
-        const alertType = /*[[${alertType}]]*/ '';  // 성공 또는 오류 타입
-
-        if (message && alertType) {
-            Swal.fire({
-                icon: alertType,  // 성공 시 'success', 실패 시 'error'
-                title: alertType === 'success' ? '성공' : '실패',
-                text: message,
-                confirmButtonText: '확인'
-            });
-        }
-    });
 	</script>
 	</th:block>
 	<!-- ======= Footer ======= -->
