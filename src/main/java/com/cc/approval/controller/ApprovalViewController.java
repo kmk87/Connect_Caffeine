@@ -3,6 +3,7 @@ package com.cc.approval.controller;
 
 import java.awt.print.Pageable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import java.util.List;
@@ -203,6 +204,14 @@ public class ApprovalViewController {
 	    String documentNumber = approvalDto.getDocu_no();  // docu_no를 직접 가져옴
 	    model.addAttribute("documentNumber", documentNumber);
 	    
+	    // 기안서의 휴가 시작일과 종료일 가져오기
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    String apprHoliStart = approvalDto.getAppr_holi_start() != null ? approvalDto.getAppr_holi_start().format(formatter) : "";
+	    String apprHoliEnd = approvalDto.getAppr_holi_end() != null ? approvalDto.getAppr_holi_end().format(formatter) : "";
+	    
+	    model.addAttribute("apprHoliStart", apprHoliStart);
+	    model.addAttribute("apprHoliEnd", apprHoliEnd);
+	    
 	    // 결재선 및 참조선 정보 가져오기
 	    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
 	    model.addAttribute("approvers", approvalLines.get("approvers"));
@@ -282,12 +291,15 @@ public class ApprovalViewController {
 	// 기안문서함
 	@GetMapping("/draftStorage")
 	public String showDraftStorage(Model model) {
-	    
-	    // 페이지별로 size 만큼의 기안서를 가져오는 로직
-	    List<ApprovalDto> allApprovals = approvalService.getDraftList();
+		// 현재 로그인한 사용자 정보 가져오기
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    String empAccount = authentication.getName();  // emp_account (로그인한 사용자 정보)
+
+	    // emp_account로 기안서 목록 조회
+	    List<ApprovalDto> userDrafts = approvalService.getDraftListByEmpAccount(empAccount);
 
 	    // 모델에 리스트 추가
-	    model.addAttribute("apprDraftDtoList", allApprovals);
+	    model.addAttribute("apprDraftDtoList", userDrafts);
 
 	    return "approval/draftStorage"; 
 	}
@@ -301,12 +313,22 @@ public class ApprovalViewController {
 		    String username = user.getUsername();
 		    String groupName = employeeService.getUserTeamName(username);
 		    model.addAttribute("groupNames", groupName);
+		    
 		    // 기안서 상세 정보 가져오기
 			ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
 			model.addAttribute("dto",approvalDto);
+			
 			// 문서번호 가져오기
 			String documentNumber = approvalDto.getDocu_no();  // docu_no를 직접 가져옴
 		    model.addAttribute("documentNumber", documentNumber);
+		    
+		    // 기안서의 휴가 시작일과 종료일 가져오기
+		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		    String apprHoliStart = approvalDto.getAppr_holi_start() != null ? approvalDto.getAppr_holi_start().format(formatter) : "";
+		    String apprHoliEnd = approvalDto.getAppr_holi_end() != null ? approvalDto.getAppr_holi_end().format(formatter) : "";
+		    model.addAttribute("apprHoliStart", apprHoliStart);
+		    model.addAttribute("apprHoliEnd", apprHoliEnd);
+		    
 			// 결재선 및 참조선 정보 가져오기
 		    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
 		
@@ -346,6 +368,9 @@ public class ApprovalViewController {
 					    
 					    // 결재문서 상세 정보 가져오기
 					    ApprovalDto approvalDto = approvalService.selectapprovalOne(apprNo);
+					    
+					    // apprNo 확인용 로그
+					    System.out.println("Approval Number (appr_no): " + approvalDto.getAppr_no());
 					    System.out.println("approval : " + approvalDto);
 					    model.addAttribute("approval", approvalDto);
 					    
@@ -355,6 +380,14 @@ public class ApprovalViewController {
 					    // 작성자의 팀명 가져오기
 					    String writerTeamName = employeeService.getTeamNameByEmpCode(apprWriterNo); // 작성자의 팀명을 가져옴
 					    model.addAttribute("groupNames", writerTeamName);
+					    
+					    // 기안서의 휴가 시작일과 종료일 가져오기
+					    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					    String apprHoliStart = approvalDto.getAppr_holi_start() != null ? approvalDto.getAppr_holi_start().format(formatter) : "";
+					    String apprHoliEnd = approvalDto.getAppr_holi_end() != null ? approvalDto.getAppr_holi_end().format(formatter) : "";
+					    model.addAttribute("apprHoliStart", apprHoliStart);
+					    model.addAttribute("apprHoliEnd", apprHoliEnd);
+
 					    
 					    // 결재선 및 참조선 정보 가져오기
 					    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());

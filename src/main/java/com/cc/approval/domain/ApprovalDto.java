@@ -109,30 +109,28 @@ public class ApprovalDto {
     
     
 	
-	public Approval toEntity(Employee employee, ApprForm apprForm) {
-		
-		
-		return Approval.builder()
-				.apprNo(appr_no)
-				.apprState(appr_state)
-				.apprTitle(appr_title)
-				.apprContent(appr_content)
-				.draftDay(draft_day)
-				.apprHoliStart(appr_holi_start) 
-	            .apprHoliEnd(appr_holi_end)     
-	            .apprHoliUseCount(appr_holi_use_count)
-				.isDeleted(is_deleted)
-				.docuNo(docu_no)
-				.employee(employee) 
-                .apprForm(apprForm)
-				.build();
-	}
+    public Approval toEntity(Employee employee, ApprForm apprForm) {
+        return Approval.builder()
+                .apprNo(appr_no)
+                .apprState(appr_state)
+                .apprTitle(appr_title)
+                .apprContent(appr_content)
+                .draftDay(draft_day != null ? draft_day : LocalDate.now())  // draft_day가 null일 경우 현재 날짜로 설정
+                .apprHoliStart(appr_holi_start) 
+                .apprHoliEnd(appr_holi_end)     
+                .apprHoliUseCount(appr_holi_use_count)
+                .isDeleted(is_deleted)
+                .docuNo(docu_no)
+                .employee(employee)  // 외부에서 전달된 Employee
+                .apprForm(apprForm)   // 외부에서 전달된 ApprForm
+                .build();
+    }
 	
 	
 	public ApprovalDto toDto(Approval approval) {
-	    ApprovalDto dto = ApprovalDto.builder()
+		ApprovalDto dto = ApprovalDto.builder()
 	            .appr_no(approval.getApprNo())
-	            .appr_state(approval.getApprState() != null ? approval.getApprState() : "S")
+	            .appr_state(approval.getApprState() != null ? approval.getApprState() : "S")  // 기본 상태 'S'
 	            .appr_title(approval.getApprTitle())
 	            .appr_content(approval.getApprContent())
 	            .draft_day(approval.getDraftDay())
@@ -153,14 +151,15 @@ public class ApprovalDto {
 	    List<ApprovalLine> approvalLines = approval.getApprovalLines();
 	    if (approvalLines != null && !approvalLines.isEmpty()) {
 	        // 1차 결재자의 서명 경로 추가
-	        dto.setSignImagePath1(approvalLines.get(0).getEmployee().getEmpSignatureImagePath());
+	        if (approvalLines.get(0).getEmployee() != null) {
+	            dto.setSignImagePath1(approvalLines.get(0).getEmployee().getEmpSignatureImagePath());
+	        }
 
 	        // 2차 결재자가 있는 경우 서명 경로 추가
-	        if (approvalLines.size() > 1) {
+	        if (approvalLines.size() > 1 && approvalLines.get(1).getEmployee() != null) {
 	            dto.setSignImagePath2(approvalLines.get(1).getEmployee().getEmpSignatureImagePath());
 	        }
 	    }
-	    
 
 	    return dto;
 	}

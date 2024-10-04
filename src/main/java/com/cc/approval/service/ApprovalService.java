@@ -75,37 +75,40 @@ public class ApprovalService {
 		
 	    String groupName = employeeService.getUserTeamName(loggedInUserAccount);
 	    
+	    // DTO에 작성자 정보 설정
 	    dto.setAppr_writer_code(employee.getEmpCode());
 	    dto.setAppr_writer_name(employee.getEmpName());
 	    
-		// 기안서 등록
-		Long apprWriter = dto.getAppr_writer_code();
-		
-		Employee emp = employeeRepository.findByempCode(apprWriter);
-		
-		
-		ApprForm apprFo = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
-		
-		String documentNumber = generateDocumentNumber(groupName);
-		
-		Approval approval = Approval.builder()
-				.apprNo(dto.getAppr_no())
-				.apprTitle(dto.getAppr_title())
-				.apprContent(dto.getAppr_content())
-				.apprWriterName(emp.getEmpName())
-				.apprHoliStart(dto.getAppr_holi_start())
-				.apprHoliEnd(dto.getAppr_holi_end())
-				.apprHoliUseCount(dto.getAppr_holi_use_count())
-				.apprForm(apprFo)
-				.employee(emp)
-				.docuNo(documentNumber)
-				.apprState(dto.getAppr_state() != null ? dto.getAppr_state() : "S")
-				.isDeleted(dto.getIs_deleted() != null ? dto.getIs_deleted() : "N")
-				.build();
-		
-		
-		return approval;
-		
+	    
+	    // 기안서 등록
+	 		Long apprWriter = dto.getAppr_writer_code();
+	 		
+	 		Employee emp = employeeRepository.findByempCode(apprWriter);
+	 		
+	 		
+	 		ApprForm apprFo = apprFormRepository.findByapprFormNo(dto.getAppr_form_no());
+	 		
+	 		String documentNumber = generateDocumentNumber(groupName);
+	 		
+	 		Approval approval = Approval.builder()
+	 				.apprNo(dto.getAppr_no())
+	 				.apprTitle(dto.getAppr_title())
+	 				.apprContent(dto.getAppr_content())
+	 				.apprWriterName(emp.getEmpName())
+	 				.apprHoliStart(dto.getAppr_holi_start())
+	 				.apprHoliEnd(dto.getAppr_holi_end())
+	 				.apprHoliUseCount(dto.getAppr_holi_use_count())
+	 				.apprForm(apprFo)
+	 				.employee(emp)
+	 				.docuNo(documentNumber)
+	 				.apprState(dto.getAppr_state() != null ? dto.getAppr_state() : "S")
+	 				.isDeleted(dto.getIs_deleted() != null ? dto.getIs_deleted() : "N")
+	 				.build();
+	 		
+	 		
+	 		return approval;
+	 		
+	 		
 		
 	}
 	
@@ -238,34 +241,32 @@ public class ApprovalService {
     }
 	
 	// 기안문서함 리스트 조회
-	public List<ApprovalDto> getDraftList() {
-	    // Approval 테이블의 데이터를 apprNo 기준으로 내림차순 정렬하여 가져오기
-	    List<Approval> approvals = approvalRepository.findAllByOrderByApprNoDesc();  // appr_no로 정렬된 데이터 조회
-	    
-	    // ApprovalDto 리스트 생성
+	public List<ApprovalDto> getDraftListByUser(String empAccount) {
+		// empAccount로 기안서 목록 조회
+	    List<Approval> approvals = approvalRepository.findApprovalsByEmpAccount(empAccount);
+
+	    // Approval 엔티티를 ApprovalDto로 변환
 	    List<ApprovalDto> approvalDtoList = new ArrayList<>();
-	    
 	    for (Approval approval : approvals) {
-	        // Approval 엔티티를 ApprovalDto로 변환
 	        ApprovalDto dto = new ApprovalDto().toDto(approval);
 	        
-	        // approval_line에서 최신 결재 상태 가져오기
+	        // 결재 상태 변환 로직 추가 (필요 시)
 	        List<String> latestApprStates = approvalLineRepository.findLatestApprStateByDocuNo(approval.getDocuNo());
-	        
 	        if (!latestApprStates.isEmpty()) {
 	            dto.setAppr_state(latestApprStates.get(0));  // 첫 번째 결재 상태 설정
 	        }
 
-	        // 결재 상태를 사용자 친화적으로 변환
-	        String apprStateDisplay = dto.getApprStateDisplay();  // 결재 상태 문자열 변환
-	        dto.setAppr_state(apprStateDisplay);  // 변환된 상태 설정
-
 	        approvalDtoList.add(dto);
 	    }
-
-	    return approvalDtoList;  // appr_no 기준으로 정렬된 데이터를 반환
+	    return approvalDtoList;
 	}
 
+	public List<ApprovalDto> getDraftListByEmpAccount(String empAccount) {
+	    return approvalRepository.findApprovalsByEmpAccount(empAccount)
+	            .stream()
+	            .map(approval -> new ApprovalDto().toDto(approval))  // Approval 엔티티를 ApprovalDto로 변환
+	            .collect(Collectors.toList());
+	}
     
 	
 	
