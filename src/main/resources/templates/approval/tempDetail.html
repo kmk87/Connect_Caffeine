@@ -4,12 +4,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{include/layout}">
 <head>
-<script th:inline="javascript">
-    /* Thymeleaf 변수를 JavaScript 변수로 전달 */
-    const apprFormNo = /*[[${apprFormNo}]]*/ 0;  
-    const temNo = /*[[${tempDto.tem_no}]]*/ 0;
-    console.log("temNo:", temNo);
-</script>
+
 <meta charset="UTF-8">
 <link th:href="@{/css/approval/create.css}" rel="stylesheet"
 	type="text/css">
@@ -611,5 +606,5 @@
     </script>
 	</th:block>
 </body>
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
+
 </html>

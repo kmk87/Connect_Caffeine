@@ -73,14 +73,17 @@
 					th:href="@{/calendar}"><i class="ri-calendar-2-line"></i><span>일정관리</span>
 				</a>
 				</li>
-				<li class="nav-item"><a class="nav-link collapsed"
+				<li class="nav-item">
+				<a class="nav-link collapsed"
 					data-bs-toggle="collapse" href="#"> <i
 						class="bx bxs-folder-open"></i><span>문서 관리</span>
 				</a></li>
-				<li class="nav-item"><a class="nav-link collapsed"
-					data-bs-toggle="collapse" href="#"> <i class="bi bi-shop"></i><span>점포
-							관리</span>
-				</a></li>
+				<li class="nav-item">
+				<a class="nav-link"
+				   th:classappend="${currentUri == '/salesByProduct' ? '' : 'collapsed'}"
+				   th:href="@{/salesByProduct}"><i class="bi bi-shop"></i><span>점포관리</span>
+				</a>
+				</li>
 				<li class="nav-item">
 				<a class="nav-link"
 					th:classappend="${currentUri == '/noticeList' ? '' : 'collapsed'}"

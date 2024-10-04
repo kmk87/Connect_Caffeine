@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{include/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>매출 보고서</title>
+    <link rel="stylesheet" disabled="disabled"
+          href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link th:href="@{/css/storeManagement/storeManagement.css}"
+          rel="stylesheet" type="text/css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+        src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+</head>
+<body>
+
+    <th:block layout:fragment="content">
+        <main id="main" class="main">
+            <div class="sub-sidebar" id="sub-sidebar">
+                <div class="pagetitle">
+                    <h1>점포관리</h1>
+                </div>
+                <ul class="sidebar-nav" id="sidebar-nav">
+                    <li class="nav-item"><a class="nav-link collapsed"
+                        data-bs-target="#components-nav" data-bs-toggle="collapse"
+                        href="#"> <span>가맹점관리</span> <i
+                            class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                        <ul id="components-nav" class="nav-content collapse "
+                            data-bs-parent="#sidebar-nav">
+                            <li><a href="components-alerts.html"> <span>Alerts</span>
+                            </a></li>
+                        </ul></li>
+                    <li class="nav-item">
+                    	<a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#"> 
+	                    	<span>매출관리</span> 
+	                    	<i class="bi bi-chevron-down ms-auto"></i>
+                    	</a>
+                        <ul id="components-nav" class="nav-content collapse "
+                            data-bs-parent="#sidebar-nav">
+                            <li>
+                            	<a th:href="@{/salesByStore}" id="store-sales"> 
+                            		<span>점포별 매출</span>
+                            	</a>
+                            </li>
+                            <li>
+                            	<a th:href="@{/salesByProduct}" id="store-sales"> 
+                            		<span>상품별 매출</span>
+                            	</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sales-list">
+                <div class="sales-title">
+                    <span>상품별 매출</span>
+                </div>
+
+                <!-- 필터 섹션 -->
+                <div class="filter-section">
+                    <div>
+                        <select id="rankType" class="form-select d-inline-block"
+                                style="width: 100px;">
+                            <option value="daily" th:selected="${rankType == 'daily'}">일별</option>
+                            <option value="weekly" th:selected="${rankType == 'weekly'}">주별</option>
+                            <option value="monthly" th:selected="${rankType == 'monthly'}">월별</option>
+                        </select>
+                        <select id="year" class="form-select d-inline-block"
+                                style="width: 100px;">
+                            <option value="2024" th:selected="${year == 2024}">2024</option>
+                            <option value="2023" th:selected="${year == 2023}">2023</option>
+                        </select>
+                        <select id="month" class="form-select d-inline-block" style="width: 100px;">
+                            <option value="1" th:selected="${month == 1}">1월</option>
+                            <option value="2" th:selected="${month == 2}">2월</option>
+                            <option value="3" th:selected="${month == 3}">3월</option>
+                            <option value="4" th:selected="${month == 4}">4월</option>
+                            <option value="5" th:selected="${month == 5}">5월</option>
+                            <option value="6" th:selected="${month == 6}">6월</option>
+                            <option value="7" th:selected="${month == 7}">7월</option>
+                            <option value="8" th:selected="${month == 8}">8월</option>
+                            <option value="9" th:selected="${month == 9}">9월</option>
+                            <option value="10" th:selected="${month == 10}">10월</option>
+                            <option value="11" th:selected="${month == 11}">11월</option>
+                            <option value="12" th:selected="${month == 12}">12월</option>
+                        </select>
+						<button id="showGraph" type="button" class="btn btn-outline-primary btn-sm">그래프보기</button>
+                        <table class="table table-bordered rank-table">
+						    <thead class="table-light">
+						        <tr id="dynamic-header">
+						            <th>순위</th>
+						            <th>메뉴명</th>
+						            <th>주문건수</th>
+						            <th>매출액</th>
+						        </tr>
+						    </thead>
+						    <tbody>
+						        <tr th:each="sale, iterStat : ${productSales}">
+						            <td th:text="${iterStat.index + 1}"></td> <!-- 순위 -->
+						            <td th:text="${sale.productName}"></td> <!-- 메뉴명 -->
+						            <td th:text="${sale.orderCount}"></td> <!-- 주문건수 -->
+						            <td th:text="${sale.totalPrice}"></td> <!-- 매출액 -->
+						        </tr>
+						    </tbody>
+						</table>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+		<!-- 그래프 모달 -->
+        <div id="graphModal" class="modal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">매출 그래프</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        $(document).ready(function() {
+            var table = $('.rank-table').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "pageLength": 15,
+                "ordering": false,
+                "info": false,
+                "autoWidth": false,
+                "language": {
+                    "paginate": {
+                        "previous": "<",
+                        "next": ">"
+                    },
+                },
+                "pagingType": "simple_numbers"
+            });
+
+            function loadSalesData() {
+                var rankType = $('#rankType').val();
+                var year = $('#year').val();
+                var month = $('#month').val();
+
+                console.log(`Loading sales data for RankType: ${rankType}, Year: ${year}, Month: ${month}`);
+                
+                fetch(`/sales/product?rankType=${rankType}&year=${year}&month=${month}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    table.clear();
+                    let productNames = [];
+                    let salesAmounts = [];
+                    data.forEach((rank, index) => {
+                        var newRow = [];
+                        newRow.push(index + 1); 
+                        newRow.push(rank.productName); // 상품명 가져오기
+                        newRow.push(rank.orderCount); // 주문건수
+                        newRow.push(rank.totalPrice); // 매출액
+                        table.row.add(newRow).draw(false);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+            }
+
+           // 페이지 로드 시 기본으로 월별 데이터를 표시
+            $('#rankType').val('monthly').trigger('change');
+
+            $('#rankType, #year, #month').on('change', function() {
+                loadSalesData(); // 데이터 로드
+            });
+
+         // 그래프보기 버튼 클릭 이벤트
+            $('#showGraph').on('click', function() {
+                var rankType = $('#rankType').val();
+                var year = $('#year').val();
+                var month = $('#month').val();
+
+                // 그래프 데이터 로드
+                loadGraphData(rankType, year, month); 
+                $('#graphModal').modal('show'); // 모달 표시
+            });
+
+            function loadGraphData(rankType, year, month) {
+                var graphData = getTableDataForGraph(); // 데이터 테이블에서 데이터 추출
+                console.log(graphData); // 수집된 데이터를 콘솔에서 확인
+
+                drawGraph(graphData); // 그래프 그리기
+            }
+
+
+            function drawGraph(graphData) {
+                var ctx = document.getElementById('salesChart').getContext('2d');
+
+                // 기존 차트가 있으면 삭제
+                if (window.salesChart && typeof window.salesChart.destroy === 'function') {
+                    window.salesChart.destroy();
+                }
+
+                // 차트 생성
+                window.salesChart = new Chart(ctx, {
+                    type: 'pie', // 그래프 타입 (예: 'bar', 'line', 'pie' 등)
+                    data: {
+                        labels: graphData.labels,
+                        datasets: [{
+                            label: '매출액',
+                            data: graphData.data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // 비율을 유지하지 않음
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        var value = tooltipItem.raw;
+                                        return `${value.toLocaleString()}원`; // ₩ 대신 원을 붙여서 표시
+                                    }
+                                }
+                            }
+                        },
+                        // 차트 완성 시 데이터 값과 상품명 추가
+                        animation: {
+                            onComplete: function() {
+                                var chartInstance = this; // onComplete 내부에서 this는 chartInstance를 가리킴
+                                var ctx = chartInstance.ctx; // chartInstance의 ctx를 참조
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.font = '12px Arial';
+
+                                chartInstance.data.datasets.forEach(function(dataset, i) {
+                                    var meta = chartInstance.getDatasetMeta(i);
+                                    meta.data.forEach(function(element, index) {
+                                        // 데이터 값 및 상품명 가져오기
+                                        var data = dataset.data[index];
+                                        var label = chartInstance.data.labels[index]; // 상품명 가져오기
+
+                                        // 데이터 값 위치에 텍스트 그리기 (상품명과 매출액 모두)
+                                        var position = element.tooltipPosition();
+                                        ctx.fillText(label, position.x, position.y - 10); // 상품명
+                                        ctx.fillText(`${data.toLocaleString()}원`, position.x, position.y + 10); // 매출액 뒤에 '원' 추가
+                                    });
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+            function getTableDataForGraph() {
+                var labels = [];
+                var data = [];
+
+                // 각 테이블 행을 순회하며 데이터 수집
+                table.rows().every(function() {
+                    var row = this.data();
+                    labels.push(row[1]); // 가맹점명 (메뉴명 또는 상품명)
+
+                    // 매출액 처리 (문자열인지 확인 후 처리)
+                    var totalPrice = row[3]; // 매출액이 4번째 열 (index 3)에 있다고 가정
+                    if (typeof totalPrice === 'string') {
+                        totalPrice = totalPrice.replace('원', '').replace(/,/g, ''); // '원'과 콤마 제거
+                    }
+                    data.push(parseFloat(totalPrice)); // 매출액을 숫자로 변환
+                });
+
+                return { labels: labels, data: data };
+            }
+
+
+        });
+
+</script>
+
+    </th:block>
+
+</body>
+</html>
