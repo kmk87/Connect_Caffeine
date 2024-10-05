@@ -97,7 +97,7 @@
                   </tr>
                 </thead>
                 <tbody>
-    				<tr th:each="standBy, iterStat : ${standByDtoList}" th:onclick="|location.href='@{/standByStorageDetail/{no}(no=${standBy.appr_no})}'|">
+    				<tr th:each="standBy, iterStat : ${standByDtoList}" th:onclick="|location.href='@{/standByDraftDetail/{no}(no=${standBy.appr_no})}'|">
         				<td th:text="${iterStat.index + 1}"></td>
         				<td th:text="${#temporals.format(standBy.draft_day, 'yyyy-MM-dd')}">기안일</td>
         				<td th:text="${standBy.formName}"></td>

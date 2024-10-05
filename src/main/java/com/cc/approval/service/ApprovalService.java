@@ -656,18 +656,21 @@ public class ApprovalService {
 	 		}
 
 	 	// 결재대기 문서함
-	 	 public List<ApprovalDto> getStandByDraftListByEmpAccount(String empAccount) {
-	 	    // 현재 사용자의 empCode 가져오기
-	 	    Employee currentUser = employeeRepository.findByempAccount(empAccount);
-	 	    
-	 	    // 결재 대기 상태(S)인 문서들 조회
-	 	    List<Approval> approvals = approvalRepository.findStandByDraftsByEmpAccount(currentUser.getEmpCode());
+	 	// 내가 기안자인 결재대기 문서 조회
+	 	    public List<ApprovalDto> getStandByDraftListByEmpAccount(String empAccount) {
+	 	        // 현재 사용자의 empCode 가져오기
+	 	        Employee currentUser = employeeRepository.findByempAccount(empAccount);
+	 	        
+	 	        // 결재 대기 상태(S)인 문서들 조회
+	 	        List<Approval> approvals = approvalRepository.findStandByDraftsByEmpAccount(currentUser.getEmpCode());
 
-	 	    // Approval 엔티티를 ApprovalDto로 변환
-	 	    return approvals.stream()
-	 	        .map(approval -> new ApprovalDto(approval))
-	 	        .collect(Collectors.toList());
-	 	}
+	 	        // Approval 엔티티를 ApprovalDto로 변환
+	 	        return approvals.stream()
+	 	            .map(approval -> new ApprovalDto(approval))
+	 	            .collect(Collectors.toList());
+	 	    }
+	 	 
+	 	 
 	 	   
 	 	   
 	 	// 결재자로 등록된 모든 문서를 조회(결재문서함)

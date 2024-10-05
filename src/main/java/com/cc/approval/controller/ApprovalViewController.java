@@ -527,18 +527,61 @@ public class ApprovalViewController {
 		
 	// 결재대기문서
 	@GetMapping("/standByDraft")
-	public String showStandByDraftStorage(Model model) {
-	    // 현재 로그인한 사용자 정보 가져오기
-	    String empAccount = SecurityContextHolder.getContext().getAuthentication().getName();  // 로그인한 사용자
+	public String getStandByDrafts(Model model) {
+        // 현재 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
-	    // 결재대기 상태인 문서들 조회
-	    List<ApprovalDto> standByDrafts = approvalService.getStandByDraftListByEmpAccount(empAccount);
+        // 결재 대기 문서 리스트 가져오기
+        List<ApprovalDto> standByDrafts = approvalService.getStandByDraftListByEmpAccount(username);
+        model.addAttribute("standByDtoList", standByDrafts);
 
-	    // 모델에 추가
-	    model.addAttribute("apprDraftDtoList", standByDrafts);
-
-	    return "approval/standByDraft"; 
+        return "approval/standByDraft"; 
+    
 	}
+	
+	// 결재대기문서 상세조회
+	@GetMapping("/standByDraftDetail/{appr_no}")
+	public String selectStandByDraftStorageOne(Model model,
+			@PathVariable("appr_no") Long appr_no) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User user = (User) authentication.getPrincipal();
+	    String username = user.getUsername();
+	    String groupName = employeeService.getUserTeamName(username);
+	    model.addAttribute("groupNames", groupName);
+	    
+	    // 기안서 상세 정보 가져오기
+		ApprovalDto approvalDto = approvalService.selectapprovalOne(appr_no);
+		model.addAttribute("dto",approvalDto);
+		
+		// 결재문서를 작성한 사람의 emp_code를 통해 작성자 정보 가져오기
+	    Long apprWriterNo = approvalDto.getAppr_writer_code();
+	    
+	    // 작성자의 팀명 가져오기
+	    String writerTeamName = employeeService.getTeamNameByEmpCode(apprWriterNo); // 작성자의 팀명을 가져옴
+	    model.addAttribute("groupNames", writerTeamName);
+	    
+		
+		// 문서번호 가져오기
+		String documentNumber = approvalDto.getDocu_no();  // docu_no를 직접 가져옴
+	    model.addAttribute("documentNumber", documentNumber);
+	    
+	    // 기안서의 휴가 시작일과 종료일 가져오기
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    String apprHoliStart = approvalDto.getAppr_holi_start() != null ? approvalDto.getAppr_holi_start().format(formatter) : "";
+	    String apprHoliEnd = approvalDto.getAppr_holi_end() != null ? approvalDto.getAppr_holi_end().format(formatter) : "";
+	    model.addAttribute("apprHoliStart", apprHoliStart);
+	    model.addAttribute("apprHoliEnd", apprHoliEnd);
+	    
+		// 결재선 및 참조선 정보 가져오기
+	    Map<String, List<ApprovalLine>> approvalLines = approvalService.getApprovalLines(approvalDto.getDocu_no());
+	
+	    model.addAttribute("approvers", approvalLines.get("approvers"));
+	    model.addAttribute("referers", approvalLines.get("referers"));
+		return "approval/standByDraftDetail";
+	}
+	
 	
 	
 
@@ -606,10 +649,7 @@ public class ApprovalViewController {
 	    return "approval/apprStorageDetail";
 	}
 	
-	
-	
-	
-	//////////////////////////////
+
 	// 전자결재 환경설정
 	@GetMapping("/signSetting")
 	public String showsignSetting(Model model) {
