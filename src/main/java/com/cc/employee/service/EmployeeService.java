@@ -52,12 +52,22 @@ public class EmployeeService {
 		Job jobTemp = jobRepository.findByjobCode(dto.getEmp_job_code());
 		
 		
-		if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) == false){	
+if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) == false){	
 			
-			// 문자열을 LocalDateTime으로 변환
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	        LocalDateTime emp_hiredate_iso = LocalDateTime.parse(dto.getEmp_hiredate() + " 00:00:00", formatter);
-//	        LocalDateTime emp_resigndate_iso = LocalDateTime.parse(dto.getEmp_resigndate(), formatter);
+			// DateTimeFormatter를 이용해 문자열을 LocalDate로 변환할 형식 지정 (시간 없이 날짜만 처리)
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+			// emp_hiredate 문자열을 LocalDate로 변환
+			LocalDate emp_hiredate_iso = null;
+			if (dto.getEmp_hiredate() != null && !dto.getEmp_hiredate().isEmpty()) {
+			    emp_hiredate_iso = LocalDate.parse(dto.getEmp_hiredate(), formatter);
+			}
+
+			// emp_resigndate 문자열도 같은 방식으로 처리
+			LocalDate emp_resigndate_iso = null;
+			if (dto.getEmp_resigndate() != null && !dto.getEmp_resigndate().isEmpty()) {
+			    emp_resigndate_iso = LocalDate.parse(dto.getEmp_resigndate(), formatter);
+			}
 			
 		emp = Employee.builder()
 				.empCode(dto.getEmp_code())
@@ -306,7 +316,8 @@ public class EmployeeService {
         return null; // 팀명이 없을 경우 null 반환
     }
     
-    // 로그인 한 사용자의 이름 가져오기
+
+    // 로그인한 사용자의 이름 가져오기
     public String getUserEmpName(String username) {
     	// username을 이용해 empName을 가져옴
         return employeeRepository.findEmpNameByEmpAccount(username);
@@ -316,5 +327,4 @@ public class EmployeeService {
     public Long getEmpCodeByEmpAccount(String empAccount) {
         return employeeRepository.findEmpCodeByEmpAccount(empAccount);
     }
-    
 }

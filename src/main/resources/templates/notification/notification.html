@@ -21,8 +21,6 @@
 <body>
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
-
-			<!-- 사이드바 (이미 있으므로 생략 가능) -->
 			<div class="sub-sidebar" id="sub-sidebar">
 				<div class="pagetitle">
 					<h1>알림</h1>
@@ -130,6 +128,7 @@
 	            },
 	            "pagingType": "simple_numbers"
 	        });
+	    });
 
 	        // 알림 목록 필터링 기능
 	        $('.notification-select select').on('change', function() {
@@ -218,36 +217,38 @@
 	                });
 	            }
 	        });
-	    });
+	
 	    
 	    $(document).ready(function() {
-		    // 알림 클릭 시 읽음 처리
-		    $('.notification-link').on('click', function(event) {
-		        event.preventDefault(); // 기본 클릭 동작을 막음
-		        const notificationLink = $(this).attr('href'); // 이동할 링크 주소
-		        const notificationId = $(this).closest('tr').data('id'); // 알림 ID 가져오기
+	        // 알림 클릭 시 읽음 처리 (이벤트 위임 사용)
+	        $(document).on('click', '.notification-link', function(event) {
+	           
+	        	
+	            const notificationLink = $(this).attr('href'); // 이동할 링크 주소
+	            const notificationId = $(this).closest('tr').data('id'); // 알림 ID 가져오기
 
-		        // 읽음 처리 요청
-		        fetch('/updateReadStatus', {
-		            method: 'POST',
-		            headers: {
-		                'Content-Type': 'application/x-www-form-urlencoded',
-		                'X-CSRF-TOKEN': document.getElementById('csrf_token').value
-		            },
-		            body: `notificationId=${notificationId}`
-		        }).then(response => {
-		            if (response.ok) {
-		                // 성공 시 알림 스타일 변경
-		                $(this).closest('tr').addClass('read-notification'); // 읽음 처리 스타일 추가
-		                
-		                // 알림 처리 후 페이지로 이동
-		                window.location.href = notificationLink;
-		            } else {
-		                console.error('Failed to update notification read status.');
-		            }
-		        }).catch(error => console.error('Error:', error));
-		    });
-		});
+	            // 읽음 처리 요청
+	            fetch('/updateReadStatus', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/x-www-form-urlencoded',
+	                    'X-CSRF-TOKEN': document.getElementById('csrf_token').value
+	                },
+	                body: `notificationId=${notificationId}`
+	            }).then(response => {
+	                if (response.ok) {
+	                    // 성공 시 알림 스타일 변경
+	                    $(this).closest('tr').addClass('read-notification'); // 읽음 처리 스타일 추가
+
+	                    // 알림 처리 후 페이지로 이동
+	                    window.location.href = notificationLink;
+	                } else {
+	                    console.error('Failed to update notification read status.');
+	                }
+	            }).catch(error => console.error('Error:', error));
+	        });
+	    });
+
 	</script>
 	</th:block>
 </body>

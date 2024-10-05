@@ -1,6 +1,7 @@
 package com.cc.chatting.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,8 @@ public class ChatRoomDto {
 	private String room_status;
 	private String room_name;
 	private String room_type;
+	
+	private List<Long> emp_code;
 	
 	public ChatRoom toEntity() {
 		return ChatRoom.builder()

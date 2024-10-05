@@ -8,19 +8,42 @@
 <title>Connect Caffeine</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+
 <style>
-.sub-sidebar {
-	width: 250px;
-	background-color: #fff;
-	padding: 20px;
-	font-size: 15px;
+.empSidebar {
+    position: fixed;
+    top: 60px;
+    left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    bottom: 0;
+    width: 250px; /* 추가 사이드바의 너비 */
+    z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+    font-size: 15px;
 	font-weight: 600;
 	color: #012970;
 }
 
+.content-area {
+    margin-left: 250px; /* 사이드바 너비 + 여백 */
+    padding: 20px; /* 내부 여백 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 각 섹션 간의 간격 */
+    margin-top: -110px;
+}
 .subside_title {
 	font-size: 25px;
 }
@@ -34,18 +57,37 @@
 	display: flex;
 	width: 100%;
 }
+#treeContainer {
+    max-height: 500px;
+    overflow-y: auto;
+    display: block;  
+    border: 1px solid black; 
+}
 </style>
 </head>
 <body>
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
-			<div class="sub-sidebar" id="sub-sidebar">
-				<span class="subside_title">인사 관리</span><br> <br>
-				<h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5>
-				<h5><a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a></h5>
-			</div>
-			<section class="section dashboard" style="width: calc(100% - 250px);">
-				<div class="col-xxl-4 col-md-6" style="width: 100%;">
+			<aside id="empSidebar" class="empSidebar">
+				<div class="pagetitle">
+      				<h1>인사 관리</h1>
+    			</div>
+    			<ul class="sidebar-nav" id="sidebar-nav">
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/employeeList}" style="margin-top:15px;">
+		          			<i class="bi bi-person-fill"></i><span>사원 정보</span>
+		        		</a>
+		      		</li>
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/empGroupList}">
+		          			<i class="bi bi-people-fill"></i><span>부서/팀 정보</span>
+		        		</a>
+		      		</li>
+	      		</ul>
+			</aside>
+			<section class="section dashboard" style="width: 100%">
+			<div class="content-area">
+				<div class="col-xxl-4 col-md-6" style="width: 100%; margin-top:100px;">
 					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
 						<div class="card-body">
 							<div class="card-body-header">
@@ -58,7 +100,7 @@
 							</div>
 							<hr>
 							<div class="emp_list">
-								<table class="table datatable">
+								<table id="emp_list" class="table datatable">
 									<thead>
 										<tr>
 											<th>팀</th>
@@ -84,8 +126,25 @@
 						</div>
 					</div>
 				</div>
+			</div>
 			</section>
+			<script>
+			  $(document).ready(function() {
+				  	
+				    $('#emp_list').DataTable({
+				        "lengthChange": false,  // Show entries 숨김
+				        "searching": true,      // 검색 활성화
+				        "responsive": true,
+				        "language": {
+				            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json'
+				        },
+				    	"pagingType": "full_numbers"
+				    });
+				    
+				});
+			</script>
 		</main>
+		
 	</th:block>
 	<!-- ======= Footer ======= -->
 	<footer id="footer" class="footer">
@@ -105,21 +164,16 @@
 	<a href="#"
 		class="back-to-top d-flex align-items-center justify-content-center"><i
 		class="bi bi-arrow-up-short"></i></a>
-	<!-- Vendor JS Files -->
-	<script>
-	 document.addEventListener("DOMContentLoaded", function () {
-        const message = /*[[${message}]]*/ '';  // 서버에서 전달된 메시지
-        const alertType = /*[[${alertType}]]*/ '';  // 성공 또는 오류 타입
+	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+	<script src="/bootstrap/vendor/quill/quill.js"></script>
+	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+	<!-- Template Main JS File -->
+	<script src="/bootstrap/js/main.js"></script>
 
-        if (message && alertType) {
-            Swal.fire({
-                icon: alertType,  // 성공 시 'success', 실패 시 'error'
-                title: alertType === 'success' ? '성공' : '실패',
-                text: message,
-                confirmButtonText: '확인'
-            });
-        }
-    });
-	 </script>
+
 </body>
 </html>

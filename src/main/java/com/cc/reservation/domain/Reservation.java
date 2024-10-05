@@ -17,12 +17,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="reservation")
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Builder
 public class Reservation {
 
@@ -30,10 +32,6 @@ public class Reservation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="reservation_no")
 	private Long reservationNo;
-	
-	@ManyToOne()
-	@JoinColumn(name = "emp_code")
-	private Employee employee;
 	
 	@ManyToOne()
 	@JoinColumn(name = "meeting_no")

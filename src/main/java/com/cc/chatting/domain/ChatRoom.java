@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "chat_room")
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access=AccessLevel.PROTECTED)
 @Getter
 @Builder
+@ToString
 public class ChatRoom {
 
     @Id

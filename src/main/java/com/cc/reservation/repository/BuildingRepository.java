@@ -7,4 +7,5 @@ import com.cc.reservation.domain.Building;
 public interface BuildingRepository extends JpaRepository<Building, Long>{
 
 	Building findBybuildingNo(Long buildingNo);
+
 }

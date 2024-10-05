@@ -12,20 +12,13 @@
 
  <th:block layout:fragment="content">
   <main id="main" class="main">
-    <div class="pagetitle">
-      <h1>공지사항</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">목록</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
-    
-    <div class="col-xxl-4 col-md-6">
-         <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 800px;">
+    <div class="col-xxl-4 col-md-6" style="margin-left: 50px;">
+         <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 830px;">
              <div class="card-body">
-             
+             	<div class="card-body-header">
+					<h2 class="card-title"><b>게시판 등록</b></h2>
+					<hr>
+				</div>
                 <form id="noticeAddFrm">
                 <div class="form-floating mb-3">
                       <input type="text" class="form-control" id="notice_title" name="notice_title" placeholder="제목">
@@ -112,7 +105,7 @@
               text : data.res_msg,
               confirmButtonText: "닫기"
             }).then((result) => {
-              location.href = "/notice";
+              location.href = "/noticeList";
             });
           } else {
             Swal.fire({

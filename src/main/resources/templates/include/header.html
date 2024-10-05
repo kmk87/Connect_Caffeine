@@ -9,6 +9,12 @@
 <meta content="" name="keywords">
 
 
+<!-- Toastr CSS -->
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+	rel="stylesheet" />
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
 	<th:block th:fragment="headerLayout">
@@ -48,8 +54,10 @@
 									class="bi bi-check-circle text-success"></i>
 									<div>
 										<a th:href="${notification.relatedLink}">
+
 											<p th:text="${notification.notificationContent}"
 												class="notification-link" style="color: #333;"></p>
+											<p th:text="${notification.notificationContent}" class="notification-link" style="color:#333;"></p>
 										</a>
 										<p th:text="${notification.relativeTime}"></p>
 										<input type="hidden" id="csrf_token"
@@ -65,6 +73,7 @@
 						</ul></li>
 
 					<!-- End Notification Nav -->
+
 				<li class="nav-item dropdown pe-3">
     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
         <img th:src="${userDto != null && userDto.emp_img_file_path != null ? '/uploadImg/' + userDto.emp_img_file_path : '/bootstrap/img/basic_profile.png'}"
@@ -95,6 +104,35 @@
 </li>
 				
 					<!-- End Profile Nav -->
+
+					<!-- 프로필 이미지 및 로그아웃 -->
+					<li class="nav-item dropdown pe-3"><a
+						class="nav-link nav-profile d-flex align-items-center pe-0"
+						href="#" data-bs-toggle="dropdown"> <img
+							src="/bootstrap/img/profile-img.jpg" alt="Profile"
+							class="rounded-circle"> <span
+							class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+					</a>
+						<ul
+							class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+							<li class="dropdown-header">
+								<h6>Kevin Anderson</h6> <span>Web Designer</span>
+							</li>
+							<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item d-flex align-items-center"
+								href="users-profile.html"> <i class="bi bi-person"></i><span>내
+										프로필</span></a></li>
+							<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item d-flex align-items-center"
+								href="#" onclick="confirmLogout(event);"> <i
+									class="bi bi-box-arrow-right"></i><span>로그아웃</span></a></li>
+							<form id="logoutForm" method="post" th:action="@{/logout}"
+								style="display: none;">
+								<input type="hidden" th:name="${_csrf.parameterName}"
+									th:value="${_csrf.token}">
+							</form>
+						</ul></li>
+
 				</ul>
 			</nav>
 			<!-- End Icons Navigation -->
@@ -109,5 +147,9 @@
 			}
 		</script>
 	</th:block>
+
+	<!-- WebSocket JS 연결 -->
+	<script src="/js/websocket.js"></script>
+
 </body>
 </html>

@@ -96,6 +96,31 @@ public class NotificationService {
     	}
     }
     
+ // 결재 요청 알림 전송
+    public void sendApprovalRequestNotification(Long approverEmpCode, String message, Long approvalId) throws Exception {
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setReceiver_no(approverEmpCode); // 결재자 empCode 설정
+        notificationDto.setNotificationContent(message);
+        notificationDto.setNotificationType("APPROVAL"); // 결재 알림 타입
+        notificationDto.setIsRead('N');
+        notificationDto.setRelatedLink("/receiveDraftDetail/" + approvalId); // 관련 링크 설정 (결재 상세 페이지)
+
+        notificationHandler.saveAndSendNotification(notificationDto);
+    }
+    
+    // 결재 승인 완료 알림을 보내는 메서드
+    public void sendApprovalCompletionNotification(Long empCode, String message, Long apprNo) throws Exception {
+     
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setReceiver_no(empCode);  // 수신자 empCode
+        notificationDto.setNotificationContent(message);  // 알림 메시지
+        notificationDto.setNotificationType("APPROVAL_COMPLETION");  // 알림 유형: 결재 완료
+        notificationDto.setRelatedLink("/approval/detail/" + apprNo);  // 관련 결재 링크
+
+        notificationHandler.saveAndSendNotification(notificationDto);
+    }
+
+    
     // 상대 시간을 계산하는 메서드
     public String calculateRelativeTime(LocalDateTime sentTime) {
         LocalDateTime now = LocalDateTime.now();
@@ -144,26 +169,28 @@ public class NotificationService {
         return notificationDtoList;
     }
     
-    //안읽은 알림 조회
+ // Service.java
     public List<NotificationDto> getUnreadNotifications(Long empCode) {
-        List<Notification> unreadNotifications = notificationRepository.findByEmployeeEmpCodeAndIsRead(empCode, 'N');
-        List<NotificationDto> notificationDtoList = new ArrayList<NotificationDto>();
+        // 최신순으로 정렬하여 알림 조회
+        List<Notification> unreadNotifications = notificationRepository.findByEmployeeEmpCodeAndIsReadOrderBySentTimeDesc(empCode, 'N');
+        List<NotificationDto> notificationDtoList = new ArrayList<>();
 
-        // 3. 각 Notification 객체를 NotificationDto로 변환하고 리스트에 추가
+        // 각 Notification 객체를 NotificationDto로 변환하고 리스트에 추가
         for (Notification notification : unreadNotifications) {
-        	NotificationDto dto = new NotificationDto().toDto(notification);
-            
-        	// 상대 시간 계산 후 DTO에 추가
+            NotificationDto dto = new NotificationDto().toDto(notification);
+
+            // 상대 시간 계산 후 DTO에 추가
             String relativeTime = calculateRelativeTime(notification.getSentTime());
             dto.setRelativeTime(relativeTime);
-            
-        	// 4. 리스트에 변환된 DTO 추가
+
+            // 리스트에 변환된 DTO 추가
             notificationDtoList.add(dto);
         }
-      
-        // 5. DTO 리스트 반환
+
+        // DTO 리스트 반환
         return notificationDtoList;
     }
+
     
    // 알림 삭제
     public int deleteNotificationsByIds(List<Long> notificationIds) {
@@ -218,4 +245,3 @@ public class NotificationService {
 
 
   
-

@@ -19,15 +19,65 @@ toastr.options = {
 
 
 	
-const notificationSocket = new WebSocket('ws://localhost:8100/ws/notifications');
+let notificationSocket = new WebSocket('ws://localhost:8100/ws/notifications');
 
 notificationSocket.onopen = function() {
     console.log('알림 WebSocket 연결 성공');
 };
 
+function timeSince(date) {
+    const now = new Date();
+    const seconds = Math.floor((now - new Date(date)) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return `${interval} 년 전`;
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return `${interval} 달 전`;
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return `${interval} 일 전`;
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return `${interval} 시간 전`;
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return `${interval} 분 전`;
+    }
+    return "방금 전";
+}
+
+
+// WebSocket 메시지를 받았을 때 상대 시간 계산
 notificationSocket.onmessage = function(event) {
-    const data = JSON.parse(event.data);  // 수신된 JSON 데이터를 파싱
-    console.log('수신한 알림 데이터:', data);
+    const data = JSON.parse(event.data);
+    const timeAgo = timeSince(data.notificationTime);  // 서버에서 받은 타임스탬프를 사용
+
+    const newNotification = `
+        <li class="notification-item" data-id="${data.notificationId}">
+            <i class="bi bi-check-circle text-success"></i>
+            <div>
+                <a th:href="${data.relatedLink}">
+                    <p class="notification-link" style="color:#333;">${data.notificationContent}</p>
+                </a>
+                <p>${timeAgo}</p>
+            </div>
+        </li>
+    `;
+    
+ // 알림 목록에 새로운 알림 추가
+   $('#notification-list').append(newNotification);  
+	
+
+ 
+    // 읽지 않은 알림 카운트 텍스트도 업데이트
+    const unreadCountText = document.querySelector('.dropdown-header span');
+    unreadCountText.textContent = parseInt(unreadCountText.textContent) + 1;
 
     const Toast = Swal.mixin({
         toast: true,
@@ -50,13 +100,25 @@ notificationSocket.onmessage = function(event) {
             });
             
             break;
+            
         case "APPROVAL":
             Toast.fire({
-                icon: 'info',
+                icon: 'success',
                 title: '결재 알림',
                 text: data.notificationContent
             });
+            
             break;
+            
+        case "APPROVAL_COMPLETION":
+            Toast.fire({
+                icon: 'success',
+                title: '결재 승인 알림',
+                text: data.notificationContent
+            });
+            
+            break;
+            
         case "NOTICE":
             Toast.fire({
                 icon: 'success',
@@ -68,6 +130,21 @@ notificationSocket.onmessage = function(event) {
         default:
             console.log("알 수 없는 알림 유형:", data.notificationType);
     }
+     // 알림 목록에 새로운 알림 추가 (헤더에 실시간 반영)
+    const notificationList = document.getElementById('notification-list');
+   /* const newNotification = `
+        <li class="notification-item" data-id="${data.id}">
+            <i class="bi bi-check-circle text-success"></i>
+            <div>
+                <a href="${data.relatedLink}" class="notification-link" style="color:#333;">${data.notificationContent}</a>
+                <p>${data.relativeTime}</p>
+            </div>
+        </li>`;
+    notificationList.insertAdjacentHTML('afterbegin', newNotification);  // 새 알림 추가*/
+
+    // 읽지 않은 알림 개수 업데이트
+    const badge = document.querySelector('.badge-number');
+    badge.textContent = parseInt(badge.textContent) + 1;
 };
 
 

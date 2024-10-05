@@ -29,7 +29,6 @@ import com.cc.approval.repository.ApprovalLineRepository;
 import com.cc.approval.repository.ApprovalRepository;
 import com.cc.approval.repository.TemporaryStorageRepository;
 import com.cc.employee.domain.Employee;
-import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.employee.service.EmployeeService;
 
@@ -686,10 +685,24 @@ public class ApprovalService {
 	 	            .map(approvalLine -> new ApprovalDto(approvalLine.getApproval()))  // ApprovalLine에서 Approval을 추출하여 DTO로 변환
 	 	            .collect(Collectors.toList());
 	 	}
+	 	
+	 	 // appr_no로 Approval을 조회하고 결재 작성자의 emp_code를 반환하는 메서드
+	    public Long getApprWriterCode(Long apprNo) {
+	        // Optional로 반환된 결과에서 Approval 객체가 없으면 예외 발생
+	        Approval approval = approvalRepository.findDistinctByApprNo(apprNo)
+	                .orElseThrow(() -> new RuntimeException("Approval not found with apprNo: " + apprNo));
 
-	 	   
-	 	   
-	 	   
+	        // 결재 작성자의 emp_code 반환
+	        return approval.getEmployee().getEmpCode();  // Employee 객체의 empCode 반환
+	    }
+	    
+	    public Long getSecondApproverCode(Long apprNo) {
+	        ApprovalLine secondApproverLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, 2);
+	        if (secondApproverLine != null) {
+	            return secondApproverLine.getEmployee().getEmpCode();  // 2차 승인자의 empCode 반환
+	        }
+	        return null;
+	    }
 	 	    
 	}
 		

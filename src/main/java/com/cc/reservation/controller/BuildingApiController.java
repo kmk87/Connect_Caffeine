@@ -1,4 +1,3 @@
-
 package com.cc.reservation.controller;
 
 import java.util.HashMap;
@@ -7,8 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,11 +43,11 @@ public class BuildingApiController {
 	public Map<String, String> updateBuilding(BuildingDto dto){
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "건물등록중 오류가 발생했습니다.");
+		resultMap.put("res_msg", "건물수정중 오류가 발생했습니다.");
 		
 		if(buildingService.updateBuilding(dto) != null) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "건물이 성공적으로 등록되었습니다.");
+			resultMap.put("res_msg", "건물이 성공적으로 수정되었습니다.");
 		}
 		
 		return resultMap;
@@ -60,7 +57,6 @@ public class BuildingApiController {
 	@PostMapping("/building_delete/{buildingNo}")
 	public ResponseEntity<Map<String, String>> deleteBuilding(@PathVariable("buildingNo") Long buildingNo){
 		Map<String, String> resultMap = new HashMap<String, String>();
-		System.out.println("확인");
 		 try {
 	            boolean isDeleted = buildingService.deleteBuilding(buildingNo);
 	            if (isDeleted) {
