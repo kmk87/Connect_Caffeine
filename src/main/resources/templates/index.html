@@ -8,7 +8,7 @@
   <title>Connect Caffeine</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-<<<<<<< HEAD
+
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <!-- 조직도 관련 -->
@@ -23,7 +23,6 @@
   	width:350px;
   }
   </style>
-=======
 
   <!-- 조직도 관련 -->
 	  <!-- Include jQuery -->
@@ -35,12 +34,11 @@
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
 
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 </head>
 <body>
  <th:block layout:fragment="content">
-<<<<<<< HEAD
-  <main id="main" class="main" style="display: block; margin-top: 80px;">
+
+<!--   <main id="main" class="main" style="display: block; margin-top: 80px;">
     <div class="pagetitle">
       <h1>메인화면</h1>
       <nav>
@@ -49,12 +47,10 @@
           <li class="breadcrumb-item active">메인화면</li>
         </ol>
       </nav>
-    </div><!-- End Page Title -->
-    <section class="section">
-=======
+    </div>End Page Title -->
+
   <main id="main" class="main">
-    <section class="section dashboard">
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
+    <section class="section dashboard" style="margin-top: 20px; margin-left: 30px;">
       <div class="row">
         <!-- Start 왼쪽 columns -->
         <div class="col-lg-11">
@@ -65,21 +61,43 @@
                 <div class="card-body">
                   <h5 class="card-title"><b>근무 시간</b></h5>
                   <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    <div id="userInfo" style="text-align:center; font-size:20px;"></div>
-                    <div id="userDate" style="text-align:center;"></div>
-                    <div id="userWorktime" style="text-align:center;"><h3>00시간 00분</h3></div>
-                    <div id="timestamp">
-	                    <div id="startTimeDisplay" style="text-align:center;">출근: <span th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : ''}"></span></div>
-	                    <div id="endTimeDisplay" style="text-align:center;">퇴근: <span th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : ''}"></span></div>
-                    </div>
-                    <hr>
-                    <div class="button-box" style="text-align:center; margin-top: 10px;">
-	                    <form id="attendanceForm">
-		                    <button type="button" class="btn btn-danger" id="workStart" style="margin-right:20px;"><b>출근</b></button>
-		                    <button type="button" class="btn btn-info" id="workFinish"><b>퇴근</b></button>
-	                    </form>
-                    </div>
+                    <div class="ps-3" style="width: 400px;">
+                     <!-- 사용자 정보 카드 -->
+				    <div class="card" style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
+				        <div class="d-flex justify-content-between align-items-center">
+				            <div class="d-flex align-items-center">
+				                <div>
+				                	<div id="userGroup" style="font-size: 16px; color: gray;"></div>
+				                    <div id="userInfo" style="font-size: 20px; font-weight: bold;"></div>
+				                </div>
+				            </div>
+				    	  <div id="userDate" style="text-align:center; font-size: 14px; color: gray;"></div>
+				        </div>
+				    </div>
+                    <!-- 출근/퇴근 시간 -->
+			        <div id="timestamp" class="mt-3" style="display: flex; justify-content: space-between; align-items: center;">
+			            <div id="startTimeDisplay" style="text-align: center; font-size: 20px;">
+			            	<span style="font-size: 16px; color: gray;">출근 시간</span><br>
+			                <span style="font-size: 18px; font-weight: bold;" th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
+			            </div>
+			            <div id="endTimeDisplay" style="text-align: center; font-size: 20px;">
+			                <span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
+			                <span style="font-size: 18px; font-weight: bold;" th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
+			            </div>
+			        </div>
+			
+			        <hr>
+			        <!-- 출근/퇴근 버튼 -->
+			        <div class="button-box" style="text-align: center; margin-top: 10px;">
+			            <form id="attendanceForm">
+			                <button type="button" class="btn btn-outline-info" id="workStart" style="width: 120px; margin-right: 50px; margin-top: 10px;">
+			                    <b>출근하기</b>
+			                </button>
+			                <button type="button" class="btn btn-outline-danger" id="workFinish" style="width: 120px; margin-top: 10px;">
+			                    <b>퇴근하기</b>
+			                </button>
+			            </form>
+			        </div>
                     </div>
                   </div>
                   <script th:inline="javascript">
@@ -100,8 +118,8 @@
                   var userInfo = /*[[${userDto}]]*/ {};
                   console.log('사용자 정보: ' + userInfo); 
 				  
-                  document.getElementById('userInfo').innerHTML = userInfo.group_name + ' ' + userInfo.emp_name 
-                  												+ '(' + userInfo.emp_job_name + ')';
+                  document.getElementById('userGroup').innerHTML = userInfo.group_name; 
+                  document.getElementById('userInfo').innerHTML = userInfo.emp_name + '(' + userInfo.emp_job_name + ')';
 				  
 				  
                	  // 2. 출퇴근 시간 전송

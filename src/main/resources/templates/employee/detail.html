@@ -12,10 +12,10 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-.apprSidebar {
+.empSidebar {
     position: fixed;
     top: 60px;
-    left: 250px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
     bottom: 0;
     width: 250px; /* 추가 사이드바의 너비 */
     z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
@@ -26,15 +26,10 @@
     scrollbar-color: #aab7cf transparent;
     box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
     background-color: #fff;
-}
-/* .sub-sidebar {
-	width: 250px;
-	background-color: #fff;
-	padding: 20px;
-	font-size: 15px;
+    font-size: 15px;
 	font-weight: 600;
 	color: #012970;
-} */
+}
 
 .content-area {
     margin-left: 250px; /* 사이드바 너비 + 여백 */
@@ -43,10 +38,6 @@
     flex-direction: column;
     gap: 20px; /* 각 섹션 간의 간격 */
     margin-top: -110px;
-}
-
-.subside_title {
-	font-size: 25px;
 }
 
 .card-body-header {
@@ -94,14 +85,22 @@ table td, table th {
 <body>
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
-			<aside id="apprSidebar" class="apprSidebar">
+			<aside id="empSidebar" class="empSidebar">
 				<div class="pagetitle">
       				<h1>인사 관리</h1>
     			</div>
     			<ul class="sidebar-nav" id="sidebar-nav">
-    				<li class="nav-item"><h5><a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a></h5></li>
-    				<li class="nav-item"><h5><a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a></h5></li>
-				</ul>
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/employeeList}" style="margin-top:15px;">
+		          			<i class="bi bi-person-fill"></i><span>사원 정보</span>
+		        		</a>
+		      		</li>
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/empGroupList}">
+		          			<i class="bi bi-people-fill"></i><span>부서/팀 정보</span>
+		        		</a>
+		      		</li>
+	      		</ul>
 			</aside>
 			<section class="section dashboard" style="width: 100%">
 				<div class="content-area">

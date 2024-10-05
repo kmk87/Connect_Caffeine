@@ -9,6 +9,34 @@
 <meta content="" name="description">
 <meta content="" name="keywords">
 <style>
+.empSidebar {
+    position: fixed;
+    top: 60px;
+    left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    bottom: 0;
+    width: 250px; /* 추가 사이드바의 너비 */
+    z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+    font-size: 15px;
+	font-weight: 600;
+	color: #012970;
+}
+
+.content-area {
+    margin-left: 250px; /* 사이드바 너비 + 여백 */
+    padding: 20px; /* 내부 여백 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 각 섹션 간의 간격 */
+    margin-top: -110px;
+}
+
 .card-body-header {
 	display: flex;
 	justify-content: space-between;
@@ -19,19 +47,6 @@
 	width: 100%;
 }
 
-.sub-sidebar {
-	width: 250px;
-	background-color: #fff;
-	padding: 20px;
-	font-size: 15px;
-	font-weight: 600;
-	color: #012970;
-}
-
-.subside_title {
-	font-size: 25px;
-}
-
 table td, table th {
 	vertical-align: middle;
 }
@@ -40,20 +55,28 @@ table td, table th {
 <body>
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
-			<div class="sub-sidebar" id="sub-sidebar">
-				<span class="subside_title">인사 관리</span><br> <br>
-				<h5>
-					<a th:href="@{/employeeList}" style="color: inherit;">사원 정보</a>
-				</h5>
-				<h5>
-					<a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a>
-				</h5>
-			</div>
-			<section class="section dashboard" style="width: calc(100% - 250px);">
-				<div class="col-xxl-4 col-md-6" style="width: 100%;">
-					<div class="card info-card sales-card"
-						style="margin-top: 25px; margin-left: 25px;">
-						<div class="card-body">
+			<aside id="empSidebar" class="empSidebar">
+				<div class="pagetitle">
+      				<h1>인사 관리</h1>
+    			</div>
+    			<ul class="sidebar-nav" id="sidebar-nav">
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/employeeList}" style="margin-top:15px;">
+		          			<i class="bi bi-person-fill"></i><span>사원 정보</span>
+		        		</a>
+		      		</li>
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/empGroupList}">
+		          			<i class="bi bi-people-fill"></i><span>부서/팀 정보</span>
+		        		</a>
+		      		</li>
+	      		</ul>
+			</aside>
+			<section class="section dashboard" style="width: 100%">
+				<div class="content-area">
+				<div class="col-xxl-4 col-md-6" style="width: 100%; margin-top:100px;">
+					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
+						<div class="card-body" style="height:100%">
 							<div class="card-body-header">
 								<h2 class="card-title">
 									<b th:text="${egDto.group_level == 'G1' ? '부서 정보' : '팀 정보'}"></b>
@@ -178,6 +201,7 @@ table td, table th {
 							</form>
 						</div>
 					</div>
+				</div>
 				</div>
 			</section>
 		</main>

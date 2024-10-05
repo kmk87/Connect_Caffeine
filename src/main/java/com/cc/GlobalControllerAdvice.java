@@ -9,11 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
+import com.cc.notification.domain.NotificationDto;
+import com.cc.notification.service.NotificationService;
 import com.cc.tree.service.OrgService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,17 +21,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-	private final EmployeeService employeeService;
-	private final OrgService orgService;
-//    private final NotificationService notificationService;
+    private final EmployeeService employeeService;
+    private final OrgService orgService;
+    private final NotificationService notificationService;
 
-    public GlobalControllerAdvice(EmployeeService employeeService, OrgService orgService) {
+    public GlobalControllerAdvice(EmployeeService employeeService, OrgService orgService,
+    		NotificationService notificationService) {
         this.employeeService = employeeService;
         this.orgService = orgService;
-//        this.notificationService = notificationService;
+        this.notificationService = notificationService;
     }
-    
-    // 트리 조직도 만들기
+
+ // 트리 조직도 만들기
     @ModelAttribute
     public void treeToModel(Model model) {
     	// 1. 팀 정보
@@ -90,37 +91,17 @@ public class GlobalControllerAdvice {
 		model.addAttribute("empObj", empObj);
 		
 		
-//		// 헤더
-//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//		User user = (User) authentication.getPrincipal();
-//		String empAccount = user.getUsername();
-//		Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
-//		EmployeeDto headerDto = employeeService.selectEmployeeOne(empCode);
-//		
-//		String empDeptName = employeeService.getDeptNameByEmpCode(empCode);
-//		
-//		model.addAttribute("headerDto", headerDto);
-//		model.addAttribute("empDeptName", empDeptName);
-
-        }
-//    @ModelAttribute
-//    public void addUnreadNotificationsToModel(Model model) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && authentication.getPrincipal() instanceof User) {
-//            User user = (User) authentication.getPrincipal();
-//            String empAccount = user.getUsername();
-//            Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
-//
-//            // 읽지 않은 알림을 가져와서 모델에 추가
-//            List<NotificationDto> unreadNotifications = notificationService.getUnreadNotifications(empCode);
-//            model.addAttribute("unreadNotifications", unreadNotifications);
-//        }
-//    }
-    
+		// 알림
+		 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        if (authentication != null && authentication.getPrincipal() instanceof User) {
+	            User user = (User) authentication.getPrincipal();
+	            String empAccount = user.getUsername();
+	            Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
+		// 읽지 않은 알림을 가져와서 모델에 추가
+        List<NotificationDto> unreadNotifications = notificationService.getUnreadNotifications(empCode);
+        model.addAttribute("unreadNotifications", unreadNotifications);
+    }
+    }
     }
     
     
-    
-    
-
-

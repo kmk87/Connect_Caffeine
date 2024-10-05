@@ -6,29 +6,6 @@
   <title>Navigation</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-<<<<<<< HEAD
-  
-<style>
-
-#left-info {
-    display: flex;
-    flex-direction: column; /* 세로로 배치 (행) */
-    gap: 10px; /* 각 행 사이의 간격 설정 */
-}
-
-#left1, #left2, #left3 {
-    display: flex; 
-    justify-content: space-between; /* 각 행 내에서의 요소 정렬 (필요 시) */
-    align-items: center;
-    height: 100px; /* 각 행의 높이 설정 */
-    background-color: #f0f0f0; /* 배경색 (선택 사항) */
-    padding: 10px; /* 내부 여백 (선택 사항) */
-}
-
-
-</style>
-<!-- 조직도 끝 -->
-=======
   <!-- 조직도 관련 -->
 	  <!-- Include jQuery -->
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -36,7 +13,6 @@
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
 <style>
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 
 #left-info {
     display: flex;
@@ -56,9 +32,7 @@
 
 </style>
 </head>
-
 <body>
-
 <th:block th:fragment="navLayout">
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
@@ -71,14 +45,15 @@
 			</a>
 		</li>
         <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/toAttendance}">
-            <i class="ri-briefcase-line"></i><span>근태 관리</span>
+          <a class="nav-link"
+          	th:classappend="${currentUri == '/toAttendance' ? '' : 'collapsed'}"
+          	th:href="@{/toAttendance}"><i class="ri-briefcase-line"></i><span>근태 관리</span>
           </a>
         </li>
-<<<<<<< HEAD
         <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/employeeList}">
-            <i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
+          <a class="nav-link" 
+          	th:classappend="${currentUri == '/employeeList' ? '' : 'collapsed'}"
+          	th:href="@{/employeeList}"><i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
           </a>
         </li>
           <li class="nav-item">
@@ -91,37 +66,10 @@
             <i class="ri-calendar-2-line"></i><span>일정 관리</span>
           </a>
         </li>
-=======
-       	<li class="nav-item">
-			<a class="nav-link"
-				th:classappend="${currentUri == '/employeeList' ? '' : 'collapsed'}"
-				th:href="@{/employeeList}"> 
-			<i class="bi bi-person-plus-fill"></i><span>인사관리</span>
-			</a>
-			</li>
-			<li class="nav-item">
-			<a class="nav-link"
-				th:classappend="${currentUri == '/reservation' ? '' : 'collapsed'}"
-				th:href="@{/reservation}"> 
-			<i class="ri-time-line"></i><span>예약관리</span>
-			</a>
-			</li>
-			<li class="nav-item">
-			<a class="nav-link"
-				th:classappend="${currentUri == '/calendar' ? '' : 'collapsed'}"
-				th:href="@{/calendar}"><i class="ri-calendar-2-line"></i><span>일정관리</span>
-			</a>
-		</li>
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
-        <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
-            <i class="bx bxs-folder-open"></i><span>문서 관리</span>
-          </a>
-        </li>
       	<li class="nav-item">
 			<a class="nav-link"
 			   th:classappend="${currentUri == '/salesByProduct' ? '' : 'collapsed'}"
-			   th:href="@{/salesByProduct}"><i class="bi bi-shop"></i><span>점포관리</span>
+			   th:href="@{/salesByProduct}"><i class="bi bi-shop"></i><span>점포 관리</span>
 			</a>
 		</li>
         <li class="nav-item">
@@ -133,7 +81,7 @@
         <li class="nav-item">
 			<a class="nav-link"
 				th:classappend="${currentUri == '/approvalHome' ? '' : 'collapsed'}"
-				th:href="@{/approvalHome}"><i class="ri-file-edit-line"></i><span>전자결재</span>
+				th:href="@{/approvalHome}"><i class="ri-file-edit-line"></i><span>전자 결재</span>
 			</a>
 		</li>
 	     <li class="nav-item"
@@ -143,21 +91,6 @@
 		    <i class="bx bx-chat"></i><span>채팅</span>
 		  </a>
 		</li>
-
-
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/toTree}">
-            <i class="bx bx-chat"></i><span>조직도 샘플</span>
-          </a>
-        </li>
-<<<<<<< HEAD
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/toTree}">
-            <i class="bx bx-chat"></i><span>조직도 샘플</span>
-          </a>
-        </li>
-=======
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
         <!-- Other nav items omitted for brevity -->
       </ul>
       <!-- 조직도 모달창1 -->
@@ -207,18 +140,11 @@
     </aside><!-- End Sidebar-->
 <!-- 조직도 js -->
 <script th:inline="javascript">
-<<<<<<< HEAD
-document.addEventListener('DOMContentLoaded', function () {
-    var modal = document.getElementById('disablebackdrop');
-=======
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
 
-<<<<<<< HEAD
-=======
 document.addEventListener('DOMContentLoaded', function () {
     var modal = document.getElementById('disablebackdrop');
 
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
+
     
     // 첫 번째 모달이 열릴 때 실행되는 코드
     modal.addEventListener('show.bs.modal', function (event) {
