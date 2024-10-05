@@ -56,11 +56,12 @@
           	th:href="@{/employeeList}"><i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
           </a>
         </li>
-          <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
-            <i class="ri-time-line"></i><span>예약 관리</span>
-          </a>
-        </li>
+        <li class="nav-item">
+			<a class="nav-link"
+			th:classappend="${currentUri == '/reservation' ? '' : 'collapsed'}"
+			th:href="@{/reservation}"><i class="ri-time-line"></i><span>예약 관리</span>
+		</a>
+		</li>
           <li class="nav-item">
           <a class="nav-link collapsed"  th:href="@{/calendar}">
             <i class="ri-calendar-2-line"></i><span>일정 관리</span>

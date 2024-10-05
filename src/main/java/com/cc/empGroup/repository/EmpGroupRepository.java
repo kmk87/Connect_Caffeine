@@ -16,6 +16,8 @@ public interface EmpGroupRepository extends JpaRepository<EmpGroup,Long>{
 	@Query("SELECT SUM(g.groupHeadcount) FROM EmpGroup g WHERE g.groupParentNo = :group_no")
     Long deptHeadcountByGroupNo(@Param("group_no") Long group_no);
 	
+	// 부서 번호로 직원 목록을 조회하는 메서드
+    List<EmpGroup> findByGroupParentNo(Long groupNo);
 	
 	// 목록에서 부서 인원 구하기
 	@Query("SELECT g1 FROM EmpGroup g1 " +

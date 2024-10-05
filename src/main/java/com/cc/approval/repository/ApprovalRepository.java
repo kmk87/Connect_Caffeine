@@ -59,15 +59,17 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     Optional<Approval> findByApprStateAndApprNo(String apprState, Long apprNo);
 	
     // emp_account를 이용해 로그인한 사용자의 리스트 가져오기
-    @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :empAccount ORDER BY a.apprNo DESC")
+    @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :empAccount ORDER BY a.draftDay DESC, a.apprNo DESC")
     List<Approval> findApprovalsByEmpAccount(@Param("empAccount") String empAccount);
 
     // 참조자로 등록된 리스트 가져오기
     @Query("SELECT a FROM Approval a " +
     	       "JOIN ApprovalLine al ON a.apprNo = al.approval.apprNo " +
     	       "JOIN Employee e ON al.employee.empCode = e.empCode " +
-    	       "WHERE al.apprRole = 2 AND e.empAccount = :empAccount")
+    	       "WHERE al.apprRole = 2 AND e.empAccount = :empAccount " +
+    	       "ORDER BY a.draftDay DESC, a.apprNo DESC")
     	List<Approval> findReferenceDraftsByEmpAccount(@Param("empAccount") String empAccount);
+
 
    
     
@@ -76,7 +78,7 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     List<Approval> findStandByDraftsByEmpAccount(@Param("empCode") Long empCode);
 
 
-
+    
     
 
 

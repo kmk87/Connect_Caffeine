@@ -48,7 +48,7 @@ public class EmployeeDto {
 		private Long emp_holiday;
 
 		private Long group_parent_no;
-		
+		private String empSignatureImagePath;
 		
 		// 검색
 		private int search_type = 1;
@@ -116,7 +116,9 @@ public class EmployeeDto {
 					.empResigndate(emp_resigndate_iso)
 					.empImgFileName(emp_img_file_name)
 					.empImgFilePath(emp_img_file_path)
-
+					
+					.empSignatureImagePath(empSignatureImagePath)
+					
 					.empMemo(emp_memo)
 					.empHoliday(emp_holiday)
 					.build();
@@ -164,6 +166,7 @@ public class EmployeeDto {
 					.emp_holiday(employee.getEmpHoliday())
 					.group_name(employee.getEmpGroup().getGroupName())
 					.group_parent_no(employee.getEmpGroup().getGroupParentNo())
+					.empSignatureImagePath(employee.getEmpSignatureImagePath())
 					.build();
 		}
 }

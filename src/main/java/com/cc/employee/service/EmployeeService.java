@@ -317,7 +317,7 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
     }
     
 
-    // 로그인 한 사용자의 이름 가져오기
+    // 로그인한 사용자의 이름 가져오기
     public String getUserEmpName(String username) {
     	// username을 이용해 empName을 가져옴
         return employeeRepository.findEmpNameByEmpAccount(username);

@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
 
 @Configuration
 public class WebSecurityConfig {
@@ -49,8 +53,22 @@ public class WebSecurityConfig {
                    .failureHandler(new MyLoginFailureHandler())
                    .successHandler(new MyLoginSuccessHandler()))
                   
-         .logout(logout -> logout.permitAll()); // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
+         .logout(logout -> logout.permitAll()) // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
+	      .rememberMe(rememberMe -> 
+	      rememberMe.rememberMeParameter("remember-me")
+	      .tokenValiditySeconds(86400*7)
+	      .alwaysRemember(false)
+	      .tokenRepository(tokenRepository()))
+	   .httpBasic(Customizer.withDefaults());
       return http.build(); // 설정된 HttpSecurity 객체를 빌드하여 securityFilterChain을 반환
+   }
+   
+// 자동로그인
+   @Bean
+   public PersistentTokenRepository tokenRepository() {
+      JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+      jdbcTokenRepository.setDataSource(dataSource);
+      return jdbcTokenRepository;
    }
    
    @Bean
