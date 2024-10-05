@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- sidebar.html -->
+<aside id="apprSidebar" class="apprSidebar">
+    <div class="pagetitle">
+        <h1>전자결재</h1>
+    </div>
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-journals"></i><span>결재</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components-nav_one" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a th:href="@{/standByDraft}">
+                        <i class="bi bi-circle"></i><span>결재 대기 문서</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/receiveDraft}">
+                        <i class="bi bi-circle"></i><span>결재 수신 문서</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components-nav_two" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-folder2-open"></i><span>개인 문서함</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components-nav_two" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                <li>
+                    <a th:href="@{/draftStorage}">
+                        <i class="bi bi-circle"></i><span>기안 문서함</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/apprStorage}">
+                        <i class="bi bi-circle"></i><span>결재 문서함</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/referenceStorage}">
+                        <i class="bi bi-circle"></i><span>참조 문서함</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/apprTempStorage}">
+                        <i class="bi bi-circle"></i><span>임시 저장함</span>
+                    </a>
+                </li>
+            </ul>
+            <a class="nav-link collapsed" th:href="@{/signSetting}">
+                <i class="bi bi-gear"></i><span>전자 결재 환경 설정</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+</html>

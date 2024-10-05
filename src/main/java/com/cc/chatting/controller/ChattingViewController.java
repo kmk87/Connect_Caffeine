@@ -8,11 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.cc.chatting.domain.ChatInviteDto;
 import com.cc.chatting.domain.ChatMessageDto;
 import com.cc.chatting.domain.ChatRoomDto;
 import com.cc.chatting.domain.ChatRoomVo;
 import com.cc.chatting.service.ChattingService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ChattingViewController {
@@ -25,11 +26,15 @@ public class ChattingViewController {
 	}
 	
 	@GetMapping("/chatRoomList/{emp_code}")
-	public String chatRoomList(Model model,
+	public String chatRoomList(HttpServletRequest request,
+Model model,
 			@PathVariable("emp_code") Long emp_code) {
 		List<ChatRoomVo> roomList = chattingService.selectChatRoomList(emp_code);
 //		List<ChatInviteDto> inviteList = chattingService.selectChatInviteList(emp_code);
-		
+		String currentUri = request.getRequestURI();
+		model.addAttribute("currentUri", currentUri);
+		System.out.println("Current URI: " + request.getRequestURI());
+
 		model.addAttribute("resultList", roomList);
 //		model.addAttribute("inviteList", inviteList);
 		

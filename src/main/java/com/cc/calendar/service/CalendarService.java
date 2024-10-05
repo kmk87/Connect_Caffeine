@@ -129,6 +129,19 @@ public class CalendarService {
 		}
 		return result;
 	}
+	
+	public void updateEvent(CalendarDto updatedEvent) {
+	    Calendar event = calendarRepository.findById(updatedEvent.getSchedule_no())
+	                          .orElseThrow(() -> new RuntimeException("이벤트를 찾을 수 없습니다."));
+	    
+	    // 새 시간으로 업데이트
+	    event.setStartTime(updatedEvent.getStart_time());
+	    event.setEndTime(updatedEvent.getEnd_time());
+
+	    // 변경 사항 저장
+	    calendarRepository.save(event);
+	}
+
 
 	
 

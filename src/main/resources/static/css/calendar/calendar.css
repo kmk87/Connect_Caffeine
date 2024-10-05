@@ -45,6 +45,11 @@
     padding: 20px;
     background-color: #fff;
     z-index: 1; 
+    right:10px;
+}
+
+.fc-daygrid-day {
+    table-layout: fixed;
 }
 
 .fc-daygrid-day-number {

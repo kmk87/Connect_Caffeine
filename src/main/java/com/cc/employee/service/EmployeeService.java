@@ -307,5 +307,14 @@ public class EmployeeService {
     }
     
 
+    // 로그인 한 사용자의 이름 가져오기
+    public String getUserEmpName(String username) {
+    	// username을 이용해 empName을 가져옴
+        return employeeRepository.findEmpNameByEmpAccount(username);
+    }
     
+    // emp_account 사용해서 emo_code 가져오기
+    public Long getEmpCodeByEmpAccount(String empAccount) {
+        return employeeRepository.findEmpCodeByEmpAccount(empAccount);
+    }
 }
