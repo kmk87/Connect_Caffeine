@@ -24,7 +24,7 @@ public class NoticeService {
 	
 	
 	public List<NoticeDto> selectNoticeList(){
-		List<Notice> noticeList = noticeRepository.findAll();
+		List<Notice> noticeList = noticeRepository.findAllByOrderByNoticeRegDateDesc();
 		
 		List<NoticeDto> noticeDtoList = new ArrayList<NoticeDto>();
 		for(Notice n : noticeList) {
