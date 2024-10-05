@@ -29,11 +29,11 @@ public class ReservationApiController {
 	public Map<String, Object> createSchedule(@RequestBody ReservationDto dto) {
 	    Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("res_code", "404");
-		resultMap.put("res_msg", "건물등록중 오류가 발생했습니다.");
+		resultMap.put("res_msg", "회의실등록중 오류가 발생했습니다.");
 		
 		if(reservationService.createReservation(dto) != null) {
 			resultMap.put("res_code", "200");
-			resultMap.put("res_msg", "건물이 성공적으로 등록되었습니다.");
+			resultMap.put("res_msg", "회의실이 성공적으로 등록되었습니다.");
 		}
 		
 		return resultMap;
@@ -43,11 +43,11 @@ public class ReservationApiController {
 	@ResponseBody
 	public Map<String, Object> updateReservation(@RequestBody ReservationDto dto) {
 	    Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("res_code", "404");
+		resultMap.put("res_code", "200");
 		resultMap.put("res_msg", "회의실 예약중 오류가 발생했습니다.");
 		
 		if(reservationService.updateReservationOne(dto) != null) {
-			resultMap.put("res_code", "200");
+			resultMap.put("res_code", "404");
 			resultMap.put("res_msg", "회의실 예약이 성공적으로 등록되었습니다.");
 		}
 		

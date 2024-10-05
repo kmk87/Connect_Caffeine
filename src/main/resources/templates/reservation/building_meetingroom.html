@@ -227,7 +227,9 @@
     .meeting-table-container {
         margin-top: 20px;
     }
-
+	.subtitle{
+	font:25px;
+	}
     
     
 	</style>
@@ -238,32 +240,45 @@
     <div class="pagetitle">
       <h1>회의실 정보</h1>
       <aside id="apprSidebar" class="apprSidebar">
-     <div class="reservation-box">
-        <div class="reservation-header">
-            <h3>회의실</h3>
-            </div> 
-          <div th:each="building : ${buildings}">
-          	<h2 th:text="${building.building_name}">Building Name</h2>
-          	   <div class="building-name">
-  			   	<button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|">
-      		   <i class="bi bi-gear"></i>
-  			   </button> 
-			</div>
-          	<ul>
-				<li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}">
-            		<a href="#"><span th:text="${meeting.meeting_name}"></span></a>
-        		</li>
-            </ul>
-			</div>
-        <a th:href="@{/Building}"><button class="building-register-btn"> 건물 등록</button></a>
+<div class="reservation-box">
+    <div class="reservation-header" style="text-align: left; margin-bottom: 20px;">
+        <b><span class="subside_title">예약 관리</span></b>
     </div>
-    </aside>
+    
+    <div th:each="building : ${buildings}" style="margin-bottom: 30px;">
+        <div class="building-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 th:text="${building.building_name}" style="margin: 0; color: #555;">Building Name</h3>
+            <button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|"
+                style="background: none; border: none; cursor: pointer; color: #007bff;">
+                <i class="bi bi-gear" style="font-size: 1.5rem;"></i>
+            </button>
+        </div>
+
+        <ul style="list-style-type: none; padding: 0; margin-top: 10px;">
+            <li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}" style="margin-bottom: 8px;">
+                <a href="#" style="text-decoration: none; color: #007bff; font-size: 1.1rem;" th:text="${meeting.meeting_name}"></a>
+            </li>
+        </ul>
+        <hr style="border-top: 5px solid #e0e0e0; margin: 20px 0;">
+    </div>
+
+    <div style="text-align: center;">
+        <a th:href="@{/Building}">
+            <button class="building-register-btn" style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+                + 건물 등록
+            </button>
+        </a>
+    </div>
+</div>
+
+	    </aside>
 	    </div>
 	<section class="section dashboard" style="width: calc(100% - 250px); margin-left: 250px;">
     <div class="col-xxl-4 col-md-6" style="width: 100%;">
         <div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px; background-color: white;">
             <div class="card-body">
-                <div class="information" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+             <h4 style="margin-top:15px;">회의실 정보</h4>
+                <div class="information" style="display: flex; align-items: center; margin-top: 15px;">
                     <button class="tab-button active" th:data-building-no="${dto.building_no}" onclick="showBuildingTab(this)">건물</button>
                     <button class="tab-button" th:data-building-no="${dto.building_no}" onclick="showMeetingTab(this)">회의실</button>
                 </div>
@@ -343,25 +358,118 @@
 </div>
 
 
-
-      <!-- 회의실 수정 모달 -->
-      <div id="editMeetingRoomModal" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h2>회의실 수정</h2>
-          <form id="editMeetingRoomForm">
-           <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+<!-- 회의실 수정 모달 -->
+<div id="editMeetingRoomModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>회의실 수정</h2>
+        <form id="editMeetingRoomForm">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
             <input type="hidden" id="editMeetingRoomId" name="meetingRoomId">
+
             <label for="editMeetingName">회의실 이름:</label>
-            <input type="text" id="editMeetingName" name="meetingName">
+            <input type="text" id="editMeetingName" name="meetingName" disabled> <!-- 비활성화 -->
+
             <label for="editMeetingLocation">위치:</label>
-            <input type="text" id="editMeetingLocation" name="meetingLocation">
+            <input type="text" id="editMeetingLocation" name="meetingLocation" disabled> <!-- 비활성화 -->
+
             <label for="editMaxPeople">최대 수용 인원:</label>
-            <input type="number" id="editMaxPeople" name="maxPeople">
-            <button type="submit">수정</button>
-          </form>
-        </div>
-      </div>
+            <input type="number" id="editMaxPeople" name="maxPeople" disabled> <!-- 비활성화 -->
+
+            <button type="button" id="editBtn">수정</button> <!-- 수정 버튼 -->
+        </form>
+    </div>
+</div>
+      
+      
+<script>
+let isEditing = false; // 수정 모드 플래그
+
+//수정 버튼 클릭 시 입력 필드 활성화 및 저장 처리
+document.getElementById('editBtn').addEventListener('click', function() {
+ if (!isEditing) {
+     // 비활성화된 필드를 활성화
+     document.getElementById('editMeetingName').disabled = false;
+     document.getElementById('editMeetingLocation').disabled = false;
+     document.getElementById('editMaxPeople').disabled = false;
+
+     isEditing = true; // 수정 모드로 전환
+     this.textContent = '저장'; // 버튼 텍스트 변경
+ } else {
+     // 수정 모드일 때 폼을 제출
+     const meetingNo = document.getElementById("editMeetingRoomId").value;
+     const csrfToken = document.querySelector('input[name="_csrf"]').value; // CSRF 토큰 가져오기
+     const payload = {
+         meeting_name: document.getElementById("editMeetingName").value,
+         meeting_location: document.getElementById("editMeetingLocation").value,
+         max_people: document.getElementById("editMaxPeople").value
+     };
+
+     fetch(`/meeting_roomUpdate/${meetingNo}`, {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json',
+             'X-CSRF-TOKEN': csrfToken // CSRF 토큰 추가
+         },
+         body: JSON.stringify(payload)
+     })
+     .then(response => response.json())
+     .then(data => {
+         if (!data.success) {
+             Swal.fire('수정 완료', '회의실 정보가 수정되었습니다.', 'success').then(() => {
+                 location.reload(); // 페이지 새로고침
+             });
+         } else {
+             Swal.fire('수정 실패', '회의실 정보를 수정할 수 없습니다.', 'error').then(() => {
+                 location.reload(); // 페이지 새로고침
+             });
+         }
+     })
+     .catch(error => console.error('Error updating meeting room:', error));
+ }
+});
+
+
+    // 회의실 수정 모달 열기
+    function handleEditClick(button) {
+        const meetingNo = button.getAttribute('data-meeting-no');
+        const meetingName = button.getAttribute('data-meeting-name');
+        const meetingLocation = button.getAttribute('data-meeting-location');
+        const maxPeople = button.getAttribute('data-max-people');
+
+        // 모달 창 열기
+        document.getElementById("editMeetingRoomModal").style.display = "block";
+
+        // 폼의 input 필드에 해당 회의실 정보를 채워넣음
+        document.getElementById("editMeetingRoomId").value = meetingNo;
+        document.getElementById("editMeetingName").value = meetingName;
+        document.getElementById("editMeetingLocation").value = meetingLocation;
+        document.getElementById("editMaxPeople").value = maxPeople;
+
+        // 입력 필드는 비활성화 상태로 유지
+        document.getElementById("editMeetingName").disabled = true;
+        document.getElementById("editMeetingLocation").disabled = true;
+        document.getElementById("editMaxPeople").disabled = true;
+
+        isEditing = false; // 수정 모드 플래그 초기화
+        document.getElementById('editBtn').textContent = '수정'; // 버튼 텍스트 초기화
+    }
+
+    // 모달 닫기
+    const editModal = document.getElementById("editMeetingRoomModal");
+    const closeBtn = document.querySelector("#editMeetingRoomModal .close");
+
+    closeBtn.onclick = function() {
+        editModal.style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target === editModal) {
+            editModal.style.display = "none";
+        }
+    };
+</script>    
+      
 			<script>
 			
 			// 회의실 정보
@@ -465,7 +573,7 @@
 			                    text: data.res_msg,
 			                    confirmButtonText: "닫기"
 			                }).then((result) => {
-			                    location.href = "/building_meetingroom/"+buildingNo; // 성공 후 이동할 경로
+			                	 window.location.reload();
 			                });
 			            } else { // 실패 시
 			                Swal.fire({
@@ -489,71 +597,7 @@
 			});
 
 			
-			 // 회의실 수정 모달 열기
-		   function handleEditClick(button) {
-				 console.log(button)
-  const meetingNo = button.getAttribute('data-meeting-no');
-  const meetingName = button.getAttribute('data-meeting-name');
-  const meetingLocation = button.getAttribute('data-meeting-location');
-  const maxPeople = button.getAttribute('data-max-people');
-
-  // 모달 창 열기
-  document.getElementById("editMeetingRoomModal").style.display = "block";
-
-  // 폼의 input 필드에 해당 회의실 정보를 채워넣음
-  document.getElementById("editMeetingRoomId").value = meetingNo;
-  document.getElementById("editMeetingName").value = meetingName;
-  document.getElementById("editMeetingLocation").value = meetingLocation;
-  document.getElementById("editMaxPeople").value = maxPeople;
-}
-			 
-		    // 회의실 수정 모달 닫기
-		    const editModal = document.getElementById("editMeetingRoomModal");
-		    const closeBtn = document.querySelector("#editMeetingRoomModal .close");
-	
-		    // 닫기 버튼 클릭 시 모달 닫기
-		    closeBtn.onclick = function() {
-		        editModal.style.display = "none";
-		    };
-		 // 모달 외부 클릭 시 모달 닫기
-		    window.addEventListener('click', function(event) {
-		        if (event.target === editModal) {
-		            editModal.style.display = "none";
-		        }
-		    });
-
-
-		    // 회의실 수정 폼 제출
-			    document.getElementById("editMeetingRoomForm").addEventListener('submit', (e) => {
-			      e.preventDefault();
-			      const meetingNo = document.getElementById("editMeetingRoomId").value;
-			      const csrfToken = form.querySelector('input[name="_csrf"]').value; // CSRF 토큰 가져오기
-			      const payload = {
-			        meeting_name: document.getElementById("editMeetingName").value,
-			        meeting_location: document.getElementById("editMeetingLocation").value,
-			        max_people: document.getElementById("editMaxPeople").value
-			      };
-			      fetch(`/meeting_roomUpdate/${meetingNo}`, {
-			        method: 'POST',
-			        headers: {
-			          'Content-Type': 'application/json',
-			          'X-CSRF-TOKEN': csrfToken // CSRF 토큰 추가
-			        },
-			        body: JSON.stringify(payload)
-			      })
-			      .then(response => response.json())
-			      .then(data => {
-			        if (data.success) {
-			          Swal.fire('수정 완료', '회의실 정보가 수정되었습니다.', 'success').then(() => {
-			            location.reload(); // 페이지 새로고침
-			          });
-			        } else {
-			          Swal.fire('수정 실패', '회의실 정보를 수정할 수 없습니다.', 'error');
-			        }
-			      })
-			      .catch(error => console.error('Error updating meeting room:', error));
-			    });
-
+		
 		 // 회의실 삭제 확인
 		  function deleteMeetingRoom(meetingNo) {
 			  const csrfToken = document.querySelector('input[name="_csrf"]').value;

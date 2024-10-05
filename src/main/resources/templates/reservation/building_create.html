@@ -42,29 +42,41 @@
   <main id="main" class="main">
     <div class="pagetitle">
       <h1>건물 등록</h1>
-      <aside id="apprSidebar" class="apprSidebar">
-     <div class="reservation-box">
-        <div class="reservation-header">
-            <h3>건물 등록</h3>
-            </div> 
-          <div th:each="building : ${buildings}">
-          	<h2 th:text="${building.building_name}">Building Name</h2>
-          	   <div class="building-name">
-  			   	<button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|">
-      		   <i class="bi bi-gear"></i>
-  			   </button> 
-			</div>
-          	<ul>
-				<li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}">
-            		<a href="#"><span th:text="${meeting.meeting_name}"></span></a>
-        		</li>
-            </ul>
-			</div>
-        <a th:href="@{/Building}"><button class="building-register-btn">+ 건물 등록</button></a>
+<aside id="apprSidebar" class="apprSidebar">
+<div class="reservation-box">
+    <div class="reservation-header" style="text-align: left; margin-bottom: 20px;">
+        <b><span class="subside_title">예약 관리</span></b>
     </div>
-    </aside>
+    
+    <div th:each="building : ${buildings}" style="margin-bottom: 30px;">
+        <div class="building-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 th:text="${building.building_name}" style="margin: 0; color: #555;">Building Name</h3>
+            <button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|"
+                style="background: none; border: none; cursor: pointer; color: #007bff;">
+                <i class="bi bi-gear" style="font-size: 1.5rem;"></i>
+            </button>
+        </div>
+
+        <ul style="list-style-type: none; padding: 0; margin-top: 10px;">
+            <li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}" style="margin-bottom: 8px;">
+                <a href="#" style="text-decoration: none; color: #007bff; font-size: 1.1rem;" th:text="${meeting.meeting_name}"></a>
+            </li>
+        </ul>
+        <hr style="border-top: 5px solid #e0e0e0; margin: 20px 0;">
+    </div>
+
+    <div style="text-align: center;">
+        <a th:href="@{/Building}">
+            <button class="building-register-btn" style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+                + 건물 등록
+            </button>
+        </a>
+    </div>
 </div>
-<section class="section dashboard" style="width: calc(100% - 1000px); margin-left: 250px;">
+
+	    </aside>
+</div>
+<section class="section dashboard" style="width: calc(100% - 250px); margin-left: 250px;">
     <div class="col-xxl-4 col-md-6" style="width: 100%;">
         <div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px; background-color: white;">
             <div class="card-body">
