@@ -263,7 +263,14 @@
       
     	const rejectContentBtn = document.getElementById("rejectContentBtn");
         const csrfToken = document.getElementById("csrf_token").value;
-       	
+       	const apprNoElement = document.querySelector("input[name='apprNo']");
+        
+     	// 값이 제대로 들어오는지 콘솔에 출력
+        if (apprNoElement) {
+            console.log("apprNo 값:", apprNoElement.value);
+        } else {
+            console.error("apprNo 요소를 찾을 수 없습니다.");
+        }
 
         if (rejectContentBtn) {
             rejectContentBtn.addEventListener("click", function () {

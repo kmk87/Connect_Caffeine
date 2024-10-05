@@ -19,7 +19,7 @@ toastr.options = {
 
 
 	
-const notificationSocket = new WebSocket('ws://localhost:8100/ws/notifications');
+let notificationSocket = new WebSocket('ws://localhost:8100/ws/notifications');
 
 notificationSocket.onopen = function() {
     console.log('알림 WebSocket 연결 성공');
@@ -69,9 +69,9 @@ notificationSocket.onmessage = function(event) {
             </div>
         </li>
     `;
+    
  // 알림 목록에 새로운 알림 추가
-   $('#notification-list').append(newNotification);  // 새로운 알림이 하단에 추가되도록 변경
-
+   $('#notification-list').append(newNotification);  
 	
 
  
@@ -100,13 +100,25 @@ notificationSocket.onmessage = function(event) {
             });
             
             break;
+            
         case "APPROVAL":
             Toast.fire({
-                icon: 'info',
+                icon: 'success',
                 title: '결재 알림',
                 text: data.notificationContent
             });
+            
             break;
+            
+        case "APPROVAL_COMPLETION":
+            Toast.fire({
+                icon: 'success',
+                title: '결재 승인 알림',
+                text: data.notificationContent
+            });
+            
+            break;
+            
         case "NOTICE":
             Toast.fire({
                 icon: 'success',

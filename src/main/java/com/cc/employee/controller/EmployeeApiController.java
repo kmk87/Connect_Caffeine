@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
@@ -76,7 +76,6 @@ public class EmployeeApiController {
 		resultMap.put("res_code", "404");
 		resultMap.put("res_msg", "퇴사 처리 중 오류가 발생하였습니다.");
 
-		System.out.println("컨트롤러로 넘어온 객체: " + dto);
 
 		if (employeeService.deleteEmployee(dto) != null) {
 			resultMap.put("res_code", "200");
@@ -85,4 +84,23 @@ public class EmployeeApiController {
 		return resultMap;
 
 	}
+	
+	
+	// 5. 프로필 수정
+	 @PostMapping("/profileUpdate")
+	 public String profileUpdate(EmployeeDto dto, @RequestPart(name = "emp_img_file_name") MultipartFile file) {
+		System.out.println("컨트롤러로 넘어온 dto 객체: " + dto);
+		 
+		 
+		String savedFileName = fileService.upload(file);
+        
+        dto.setEmp_img_file_name(file.getOriginalFilename()); 
+        dto.setEmp_img_file_path(savedFileName);
+
+	    // 프로필 업데이트
+	    employeeService.updateEmployee(dto);
+
+	    return "redirect:/employeeProfile"; 
+	}
+	
 }
