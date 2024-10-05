@@ -70,10 +70,9 @@
     <div th:each="building : ${buildings}" style="margin-bottom: 30px;">
       <div class="building-header" style="display: flex; justify-content: space-between; align-items: center;">
         <!-- 빌딩 이름을 클릭할 수 있도록 수정 -->
-        <h4 th:text="${building.building_name}" style="margin: 0; color: #555; cursor: pointer;"
-            th:onclick="'toggleMeetingRooms(' + ${building.building_no} + ')'">
-          <!-- 빌딩 이름 표시 -->
-        </h4>
+        <a class="nav-link collapsed" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${building.building_no}" href="#" aria-expanded="false" aria-controls="collapse">
+          <h4 th:text="${building.building_name}" style="margin: 0; color: #555; cursor: pointer;"></h4>
+        </a>
         <button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|"
           style="background: none; border: none; cursor: pointer; color: rgb(0, 0, 0);">
           <i class="bi bi-gear" style="font-size: 1rem;"></i>
@@ -81,11 +80,14 @@
       </div>
 
       <!-- 회의실 목록을 숨김 상태로 설정, 각 빌딩에 해당하는 회의실 목록을 연결 -->
-      <ul id="meetingRooms" th:id="'meetingRooms' + ${building.building_no}" style="list-style-type: none; padding: 0; margin-top: 10px; display: none;">
-        <li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}" style="margin-bottom: 8px;">
-          <a href="#" style="text-decoration: none; color: rgb(0, 0, 0); font-size: 1rem;" th:text="${meeting.meeting_name}"></a>
-        </li>
-      </ul>
+      <div id="collapse" th:id="'collapse' + ${building.building_no}" class="collapse" data-bs-parent="#apprSidebar">
+        <ul style="list-style-type: none; padding: 0; margin-top: 10px;">
+          <li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}" style="margin-bottom: 8px;">
+            <a href="#" style="text-decoration: none; color: rgb(0, 0, 0); font-size: 1rem;" th:text="${meeting.meeting_name}"></a>
+          </li>
+        </ul>
+      </div>
+
       <hr style="border-top: 5px solid #e0e0e0; margin: 20px 0;">
     </div>
 
@@ -195,26 +197,7 @@
 
 
 
-<script>
-// 회의실 목록을 슬라이드 토글하는 함수
-function toggleMeetingRooms(buildingNo) {
-  var element = document.getElementById('meetingRooms' + buildingNo);
 
-  if (element.style.display === "none" || element.style.display === "") {
-    element.style.display = "block";
-    element.style.height = "0px"; // 높이 0에서 시작
-    setTimeout(function() {
-      element.style.height = element.scrollHeight + "px"; // 실제 높이로 변경
-      element.style.transition = "height 0.5s ease"; // 트랜지션 효과 추가
-    }, 10);
-  } else {
-    element.style.height = "0px"; // 높이를 0으로 설정하여 슬라이드 업
-    element.addEventListener('transitionend', function() {
-      element.style.display = "none"; // 애니메이션 끝난 후 display를 none으로 설정
-    }, { once: true });
-  }
-}
-</script>
 <script th:inline="javascript">
   // Thymeleaf로 받은 예약 데이터 JavaScript로 변환
   var reservations = /*[[${reservations}]]*/ [];
