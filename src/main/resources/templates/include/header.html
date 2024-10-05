@@ -4,17 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>header</title>
+<title>Insert title here</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
 
-<!-- Toastr CSS -->
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
-	rel="stylesheet" />
+
 </head>
 <body>
 	<th:block th:fragment="headerLayout">
+		<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<!-- ======= Header ======= -->
 		<header id="header" class="header fixed-top d-flex align-items-center">
 			<div class="d-flex align-items-center justify-content-between">
@@ -24,7 +22,6 @@
 				</a>
 			</div>
 			<!-- End Logo -->
-
 			<nav class="header-nav ms-auto">
 				<ul class="d-flex align-items-center">
 					<!-- 알림 아이콘 및 알림 목록 -->
@@ -47,12 +44,12 @@
 							<th:block th:if="${!#lists.isEmpty(unreadNotifications)}">
 								<li class="notification-item"
 									th:each="notification : ${unreadNotifications}"
-									th:data-id="${notification.notification_no}">
-									<i class="bi bi-check-circle text-success"></i>
+									th:data-id="${notification.notification_no}"><i
+									class="bi bi-check-circle text-success"></i>
 									<div>
 										<a th:href="${notification.relatedLink}">
 											<p th:text="${notification.notificationContent}"
-												class="notification-link" style="color:#333;"></p>
+												class="notification-link" style="color: #333;"></p>
 										</a>
 										<p th:text="${notification.relativeTime}"></p>
 										<input type="hidden" id="csrf_token"
@@ -68,109 +65,49 @@
 						</ul></li>
 
 					<!-- End Notification Nav -->
-
-					<!-- 메시지 아이콘 및 메시지 목록 -->
-					<li class="nav-item dropdown"><a class="nav-link nav-icon"
-						href="#" data-bs-toggle="dropdown"> <i
-							class="bi bi-chat-left-text"></i> <span
-							class="badge bg-success badge-number">3</span>
-					</a>
-						<ul
-							class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-							<li class="dropdown-header">You have 3 new messages <a
-								href="#"><span
-									class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-							</li>
-							<li><hr class="dropdown-divider"></li>
-							<li class="message-item"><a href="#">
-									<div>
-										<h4>Message title</h4>
-										<p>Message content</p>
-										<p>Time</p>
-									</div>
-							</a></li>
-							<li><hr class="dropdown-divider"></li>
-							<li class="dropdown-footer"><a href="#">Show all
-									messages</a></li>
-						</ul></li>
-					<!-- End Messages Nav -->
-
-					<!-- 프로필 이미지 및 로그아웃 -->
-					<li class="nav-item dropdown pe-3"><a
-						class="nav-link nav-profile d-flex align-items-center pe-0"
-						href="#" data-bs-toggle="dropdown"> <img
-							src="/bootstrap/img/profile-img.jpg" alt="Profile"
-							class="rounded-circle"> <span
-							class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
-					</a>
-						<ul
-							class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-							<li class="dropdown-header">
-								<h6>Kevin Anderson</h6> <span>Web Designer</span>
-							</li>
-							<li><hr class="dropdown-divider"></li>
-							<li><a class="dropdown-item d-flex align-items-center"
-								href="users-profile.html"> <i class="bi bi-person"></i><span>내
-										프로필</span></a></li>
-							<li><hr class="dropdown-divider"></li>
-							<li><a class="dropdown-item d-flex align-items-center"
-								href="#" onclick="confirmLogout(event);"> <i
-									class="bi bi-box-arrow-right"></i><span>로그아웃</span></a></li>
-							<form id="logoutForm" method="post" th:action="@{/logout}"
-								style="display: none;">
-								<input type="hidden" th:name="${_csrf.parameterName}"
-									th:value="${_csrf.token}">
-							</form>
-						</ul></li>
+				<li class="nav-item dropdown pe-3">
+    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+        <img th:src="${userDto != null && userDto.emp_img_file_path != null ? '/uploadImg/' + userDto.emp_img_file_path : '/bootstrap/img/basic_profile.png'}"
+            alt="Profile" class="rounded-circle" />
+        <!-- 사용자 이름 표시 -->
+        <span class="d-none d-md-block dropdown-toggle ps-2"
+            th:text="${userDto != null && userDto.emp_name != null ? userDto.emp_name : 'Guest'}"></span>
+    </a> <!-- End Profile Image Icon -->
+    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+        <li class="dropdown-header">
+            <h6 th:text="${userDto != null && userDto.emp_name != null ? userDto.emp_name : '이름 없음'}"></h6>
+            <span th:text="${userDto != null && userDto.emp_job_name != null ? userDto.emp_job_name : '직함 없음'}"></span>
+        </li>
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item d-flex align-items-center" th:href="@{/employeeProfile}">
+            <i class="bi bi-person"></i> <span>내 프로필</span></a></li>
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item d-flex align-items-center" href="#" onclick="confirmLogout(event);">
+            <i class="bi bi-box-arrow-right"></i> <span>로그아웃</span></a></li>
+        <form id="logoutForm" method="post" th:action="@{/logout}" style="display: none;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        </form>
+    </ul> <!-- End Profile Dropdown Items -->
+</li>
+				
+					<!-- End Profile Nav -->
 				</ul>
 			</nav>
+			<!-- End Icons Navigation -->
 		</header>
-	<script>
-		function confirmLogout(event) {
-			event.preventDefault(); // a 태그의 기본 동작 막기
-			if (confirm("정말 로그아웃하시겠습니까?")) {
-				document.getElementById('logoutForm').submit(); // 확인을 누르면 로그아웃 폼 제출
+		<!-- End Header -->
+		<script>
+			function confirmLogout(event) {
+				event.preventDefault(); // a 태그의 기본 동작 막기
+				if (confirm("정말 로그아웃하시겠습니까?")) {
+					document.getElementById('logoutForm').submit(); // 확인을 누르면 로그아웃 폼 제출
+				}
 			}
-		}
-		
-	
-		$(document).ready(function() {
-		    // 알림 클릭 시 읽음 처리
-		    $('.notification-link').on('click', function(event) {
-		        
-		        const notificationLink = $(this).attr('href'); // 이동할 링크 주소
-		        const notificationId = $(this).closest('li').data('id'); // 알림 ID 가져오기
-
-		        // 읽음 처리 요청
-		        fetch('/updateReadStatus', {
-		            method: 'POST',
-		            headers: {
-		                'Content-Type': 'application/x-www-form-urlencoded',
-		                'X-CSRF-TOKEN': document.getElementById('csrf_token').value
-		            },
-		            body: `notificationId=${notificationId}`
-		        }).then(response => {
-		            if (response.ok) {
-		              
-		                
-		                // 알림 처리 후 페이지로 이동
-		                window.location.href = notificationLink;
-		            } else {
-		                console.error('Failed to update notification read status.');
-		            }
-		        }).catch(error => console.error('Error:', error));
-		    });
-		});
-
-	</script>
+		</script>
 	</th:block>
-
-
-	<!-- Toastr JS -->
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-	<!-- WebSocket JS 연결 -->
-	<script src="/js/websocket.js"></script>
 </body>
 </html>

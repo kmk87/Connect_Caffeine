@@ -5,9 +5,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.cc.empGroup.domain.EmpGroupDto;
@@ -135,19 +140,34 @@ public class EmployeeViewController {
 			return "employee/delete";
 		}
 		
-		// 5. 개인 프로필
-		@GetMapping("employeeProfile")
-		public String profilePage() {
-//			EmployeeDto dto = employeeService.selectEmployeeOne(emp_code);
-//			
-//			String formattedRegNo = employeeService.formatEmpRegNo(emp_code);
-//			
-//			String empDeptName = employeeService.getDeptNameByEmpCode(emp_code);
-//			
-//			model.addAttribute("dto", dto);
-//			model.addAttribute("formattedRegNo",formattedRegNo);
-//			model.addAttribute("empDeptName", empDeptName);
+		// 개인 프로필
+	    @GetMapping("/employeeProfile")
+		public String profilePage(Model model) {
+			// 사용자 정보 가져오기
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			User user = (User) authentication.getPrincipal();
+			String empAccount = user.getUsername();
+			Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
+			
+			
+			EmployeeDto userDto = employeeService.selectEmployeeOne(empCode);
+			model.addAttribute("userDto", userDto);
+			
+			String formattedRegNo = employeeService.formatEmpRegNo(empCode);
+			
+			String empDeptName = employeeService.getDeptNameByEmpCode(empCode);
+			
+			model.addAttribute("userDto", userDto);
+			model.addAttribute("formattedRegNo",formattedRegNo);
+			model.addAttribute("empDeptName", empDeptName);
+			
+			
+			
+			
 			
 			return "employee/profile";
 		}
+	    
+	   
+	    
 }
