@@ -1,5 +1,8 @@
 package com.cc.websocket.notification;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,7 +26,8 @@ public class NotificationHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final NotificationRepository notificationRepository;
     private final EmployeeService employeeService;
-    private Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
+    // empAccount 당 여러 개의 WebSocketSession을 관리할 수 있도록 변경
+    private Map<String, List<WebSocketSession>> sessionMap = new ConcurrentHashMap<>();
 
     @Autowired
     public NotificationHandler(NotificationRepository notificationRepository, EmployeeService employeeService) {
@@ -33,85 +37,70 @@ public class NotificationHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // empCode는 문자열로 저장 (Long 타입 대신 String)
-        String empCode = session.getPrincipal().getName();  
-        
-        sessionMap.put(empCode, session);  // empCode를 문자열로 저장
-        System.out.println("WebSocket session added for empCode: " + empCode);
-    }
+        String empAccount = session.getPrincipal().getName();
 
+        // 해당 empAccount에 대한 세션 리스트 가져오기
+        sessionMap.computeIfAbsent(empAccount, k -> new ArrayList<>()).add(session);
+        System.out.println("WebSocket session added for empAccount: " + empAccount);
+    }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        String empCode = session.getPrincipal().getName();
-        sessionMap.remove(empCode);
-        System.out.println("WebSocket connection closed for empCode: " + empCode);
-    }
-
-
-    @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-       String payload = message.getPayload();
-        System.out.println("수신한 메시지: " + payload);
-
-        // 수신한 메시지를 모든 연결된 클라이언트에게 전송 (Broadcast)
-        for (WebSocketSession webSocketSession : sessionMap.values()) {
-            if (webSocketSession.isOpen() && !webSocketSession.equals(session)) {
-                webSocketSession.sendMessage(new TextMessage("Broadcast: " + payload));
+        String empAccount = session.getPrincipal().getName();
+        
+        // 해당 empAccount에 연결된 세션 리스트에서 제거
+        List<WebSocketSession> sessions = sessionMap.get(empAccount);
+        if (sessions != null) {
+            sessions.remove(session);
+            if (sessions.isEmpty()) {
+                sessionMap.remove(empAccount);
             }
         }
+        System.out.println("WebSocket connection closed for empAccount: " + empAccount);
     }
-
-    /*WebSocket으로 알림 전송만 처리하는 메서드 */
     public void sendNotification(NotificationDto notificationDto) throws Exception {
-        // receiver_no는 사원 코드, 이를 통해 직원의 아이디를 조회
-        Employee receiver = employeeService.findByEmpCode(notificationDto.getReceiver_no());  // 사원 코드로 직원 정보 조회
-        
+        Employee receiver = employeeService.findByEmpCode(notificationDto.getReceiver_no());
+
         if (receiver != null) {
-            String empAccount = receiver.getEmpAccount();  // 직원의 아이디 값 조회
-            WebSocketSession session = sessionMap.get(empAccount);  // 아이디 값을 사용해 세션 조회
-            
-            if (session != null && session.isOpen()) {
-                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(notificationDto)));
-                System.out.println("Notification sent to empId: " + empAccount);
+            String empAccount = receiver.getEmpAccount();
+            List<WebSocketSession> sessions = sessionMap.get(empAccount);
+
+            if (sessions != null && !sessions.isEmpty()) {
+                for (WebSocketSession session : sessions) {
+                    if (session.isOpen()) {
+                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(notificationDto)));
+                        System.out.println("Notification sent to empAccount: " + empAccount);
+                    }
+                }
             } else {
-                System.out.println("No WebSocket session found for empId: " + empAccount);
+                System.out.println("No WebSocket session found for empAccount: " + empAccount);
             }
         } else {
             System.out.println("No employee found with empCode: " + notificationDto.getReceiver_no());
         }
     }
 
-
-
-    /* 알림을 저장하고 WebSocket으로 전송하는 메서드*/
+    /* 알림 저장 후 WebSocket으로 전송 */
     public void saveAndSendNotification(NotificationDto notificationDto) throws Exception {
-        // Employee 객체 가져오기
         Employee receiver = employeeService.findByEmpCode(notificationDto.getReceiver_no());
 
         if (receiver == null) {
             System.out.println("Receiver is null for empCode: " + notificationDto.getReceiver_no());
-            return; // 수신자가 없으면 알림을 저장하지 않음
+            return;
         }
 
-        // Notification 엔티티 생성
         Notification notification = Notification.builder()
-            .employee(receiver)  // 수신자 설정
+            .employee(receiver)
             .notificationContent(notificationDto.getNotificationContent())
             .notificationType(notificationDto.getNotificationType())
-            .sentTime(LocalDateTime.now())  // 발송 시간 설정
+            .sentTime(LocalDateTime.now())
             .isRead('N')
             .relatedLink(notificationDto.getRelatedLink())
             .build();
 
-        // 알림 데이터 저장 (여기서 값 확인)
-        System.out.println("Notification: " + notification);
-        System.out.println("Notification saved for receiver: " + receiver.getEmpCode());
-        System.out.println("Notification message: " + notification.getNotificationContent());
-        notificationRepository.save(notification);    
+        notificationRepository.save(notification);
 
         // WebSocket으로 실시간 알림 전송
         sendNotification(notificationDto);
     }
-
 }

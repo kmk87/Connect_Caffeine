@@ -96,6 +96,31 @@ public class NotificationService {
     	}
     }
     
+ // 결재 요청 알림 전송
+    public void sendApprovalRequestNotification(Long approverEmpCode, String message, Long approvalId) throws Exception {
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setReceiver_no(approverEmpCode); // 결재자 empCode 설정
+        notificationDto.setNotificationContent(message);
+        notificationDto.setNotificationType("APPROVAL"); // 결재 알림 타입
+        notificationDto.setIsRead('N');
+        notificationDto.setRelatedLink("/receiveDraftDetail/" + approvalId); // 관련 링크 설정 (결재 상세 페이지)
+
+        notificationHandler.saveAndSendNotification(notificationDto);
+    }
+    
+    // 결재 승인 완료 알림을 보내는 메서드
+    public void sendApprovalCompletionNotification(Long empCode, String message, Long apprNo) throws Exception {
+     
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setReceiver_no(empCode);  // 수신자 empCode
+        notificationDto.setNotificationContent(message);  // 알림 메시지
+        notificationDto.setNotificationType("APPROVAL_COMPLETION");  // 알림 유형: 결재 완료
+        notificationDto.setRelatedLink("/approval/detail/" + apprNo);  // 관련 결재 링크
+
+        notificationHandler.saveAndSendNotification(notificationDto);
+    }
+
+    
     // 상대 시간을 계산하는 메서드
     public String calculateRelativeTime(LocalDateTime sentTime) {
         LocalDateTime now = LocalDateTime.now();
