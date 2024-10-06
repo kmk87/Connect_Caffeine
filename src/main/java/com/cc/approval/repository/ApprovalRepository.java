@@ -78,7 +78,7 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
    
     
     // 내가 기안자인 결재대기건들만 가져오기
-    @Query("SELECT a FROM Approval a WHERE a.employee.empCode = :empCode AND a.apprState = 'S'")
+    @Query("SELECT a FROM Approval a WHERE a.employee.empCode = :empCode AND a.apprState = 'S' ORDER BY a.draftDay DESC, a.apprNo DESC")
     List<Approval> findStandByDraftsByEmpAccount(@Param("empCode") Long empCode);
 
 

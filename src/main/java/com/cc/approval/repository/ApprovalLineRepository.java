@@ -39,7 +39,8 @@ public interface ApprovalLineRepository extends JpaRepository<ApprovalLine, Long
 		       "            WHERE al1.approval.apprNo = al.approval.apprNo " +
 		       "            AND al1.apprOrder = 1 " +
 		       "            AND al1.apprState = 'C'))" +  // 2차 결재자인 경우, 1차 결재가 완료되었는지 확인
-		       ")")
+		       ")"+
+		       "ORDER BY al.approval.apprNo DESC, al.approval.draftDay DESC")
 	Page<Approval> findPendingApprovalsForCurrentUser(@Param("empCode") Long empCode, Pageable pageable);
 
 	
