@@ -1,43 +1,107 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Connect Caffeine</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Connect Caffeine</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
 
-  <meta name="_csrf" th:content="${_csrf.token}"/>
-  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-  <!-- 조직도 관련 -->
-	  <!-- Include jQuery -->
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	  <!-- Include jsTree CSS and JS -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-  <!-- 조직도 끝 -->
-  <style>
-  .ps-3{
-  	width:350px;
-  }
-  </style>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<!-- 조직도 관련 -->
+<!-- Include jQuery -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Include jsTree CSS and JS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+<!-- 조직도 끝 -->
+<style>
+.ps-3 {
+	width: 350px;
+}
+/* 결재현황 관련 스타일 */
+.approval-card {
+    width: 100%;
+    height: 350px; /* 카드 높이 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    margin-top: 5px; /* 상단 마진을 더 크게 설정하여 전체적으로 아래로 내림 */
+}
 
-  <!-- 조직도 관련 -->
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	  <!-- Include jsTree CSS and JS -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-  <!-- 조직도 끝 -->
-  <!-- Template Main CSS File -->
-  <link href="/bootstrap/css/style.css" rel="stylesheet">
+.approval-status-row {
+    border-left: none;
+    border-right: none;
+    justify-content: center;
+}
+
+.separator {
+    border-left: 3px solid #eaeaea; /* 가운데 구분선 */
+    height: 120px; /* 구분선의 높이를 카드 높이에 맞게 설정 */
+    margin: 0 30px; /* 구분선 좌우 간격 */
+    margin-top: 20px; /* 구분선을 더 아래로 내림 */
+}
+
+.status-title {
+    font-size: 1.3rem; /* 텍스트 크기 */
+    color: #666;
+    display: block;
+    margin-bottom: 15px; /* 타이틀과 숫자 간의 간격 */
+    text-align: center; /* 텍스트를 가운데 정렬 */
+    margin-top: 20px; /* 텍스트와 숫자를 더 아래로 내림 */
+}
+
+.status-count {
+    font-size: 4rem; /* 숫자의 크기 */
+    color: #333;
+    text-align: center; /* 숫자도 가운데 정렬 */
+    margin-top: 20px; /* 숫자를 더 아래로 내림 */
+    font-weight: 200; /* 숫자를 얇게 설정 */
+}
+
+.card-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* 중앙에서 간격 조정 */
+.status-container {
+    display: flex;
+    justify-content: space-around; /* 아이템들이 양 끝에서 균등하게 배치되도록 설정 */
+    align-items: center;
+    width: 100%;
+    margin-top: 20px; /* 전체 컨테이너를 더 아래로 내림 */
+}
+
+/* 여기까지 */
+</style>
+
+<!-- 조직도 관련 -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Include jsTree CSS and JS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+<!-- 조직도 끝 -->
+<!-- Template Main CSS File -->
+<link href="/bootstrap/css/style.css" rel="stylesheet">
 
 </head>
 <body>
- <th:block layout:fragment="content">
+	<th:block layout:fragment="content">
 
-<!--   <main id="main" class="main" style="display: block; margin-top: 80px;">
+		<!--   <main id="main" class="main" style="display: block; margin-top: 80px;">
     <div class="pagetitle">
       <h1>메인화면</h1>
       <nav>
@@ -48,58 +112,75 @@
       </nav>
     </div>End Page Title -->
 
-  <main id="main" class="main">
-    <section class="section dashboard" style="margin-top: 20px; margin-left: 30px;">
-      <div class="row">
-        <!-- Start 왼쪽 columns -->
-        <div class="col-lg-11">
-          <div class="row">
-            <!-- Start 근무 시간 -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>근무 시간</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3" style="width: 400px;">
-                     <!-- 사용자 정보 카드 -->
-				    <div class="card" style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
-				        <div class="d-flex justify-content-between align-items-center">
-				            <div class="d-flex align-items-center">
-				                <div>
-				                	<div id="userGroup" style="font-size: 16px; color: gray;"></div>
-				                    <div id="userInfo" style="font-size: 20px; font-weight: bold;"></div>
-				                </div>
-				            </div>
-				    	  <div id="userDate" style="text-align:center; font-size: 14px; color: gray;"></div>
-				        </div>
-				    </div>
-                    <!-- 출근/퇴근 시간 -->
-			        <div id="timestamp" class="mt-3" style="display: flex; justify-content: space-between; align-items: center;">
-			            <div style="text-align: center;">
-			            	<span style="font-size: 16px; color: gray;">출근 시간</span><br>
-			                <span id="startTimeDisplay" style="text-align: center; font-size: 20px; font-weight: bold;" th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
-			            </div>
-			            <div style="text-align: center;">
-			                <span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
-			                <span id="endTimeDisplay" style="text-align: center; font-size: 20px; font-weight: bold;" th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
-			            </div>
-			        </div>
-			
-			        <hr>
-			        <!-- 출근/퇴근 버튼 -->
-			        <div class="button-box" style="text-align: center; margin-top: 10px;">
-			            <form id="attendanceForm">
-			                <button type="button" class="btn btn-outline-info" id="workStart" style="width: 120px; margin-right: 50px; margin-top: 10px;">
-			                    <b>출근하기</b>
-			                </button>
-			                <button type="button" class="btn btn-outline-danger" id="workFinish" style="width: 120px; margin-top: 10px;">
-			                    <b>퇴근하기</b>
-			                </button>
-			            </form>
-			        </div>
-                    </div>
-                  </div>
-                  <script th:inline="javascript">
+		<main id="main" class="main">
+			<section class="section dashboard"
+				style="margin-top: 20px; margin-left: 30px;">
+				<div class="row">
+					<!-- Start 왼쪽 columns -->
+					<div class="col-lg-11">
+						<div class="row">
+							<!-- Start 근무 시간 -->
+							<div class="col-xxl-4 col-md-6">
+								<div class="card info-card sales-card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>근무 시간</b>
+										</h5>
+										<div class="d-flex align-items-center">
+											<div class="ps-3" style="width: 400px;">
+												<!-- 사용자 정보 카드 -->
+												<div class="card"
+													style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
+													<div
+														class="d-flex justify-content-between align-items-center">
+														<div class="d-flex align-items-center">
+															<div>
+																<div id="userGroup"
+																	style="font-size: 16px; color: gray;"></div>
+																<div id="userInfo"
+																	style="font-size: 20px; font-weight: bold;"></div>
+															</div>
+														</div>
+														<div id="userDate"
+															style="text-align: center; font-size: 14px; color: gray;"></div>
+													</div>
+												</div>
+												<!-- 출근/퇴근 시간 -->
+												<div id="timestamp" class="mt-3"
+													style="display: flex; justify-content: space-between; align-items: center;">
+													<div style="text-align: center;">
+														<span style="font-size: 16px; color: gray;">출근 시간</span><br>
+														<span id="startTimeDisplay"
+															style="text-align: center; font-size: 20px; font-weight: bold;"
+															th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
+													</div>
+													<div style="text-align: center;">
+														<span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
+														<span id="endTimeDisplay"
+															style="text-align: center; font-size: 20px; font-weight: bold;"
+															th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
+													</div>
+												</div>
+
+												<hr>
+												<!-- 출근/퇴근 버튼 -->
+												<div class="button-box"
+													style="text-align: center; margin-top: 10px;">
+													<form id="attendanceForm">
+														<button type="button" class="btn btn-outline-info"
+															id="workStart"
+															style="width: 120px; margin-right: 50px; margin-top: 10px;">
+															<b>출근하기</b>
+														</button>
+														<button type="button" class="btn btn-outline-danger"
+															id="workFinish" style="width: 120px; margin-top: 10px;">
+															<b>퇴근하기</b>
+														</button>
+													</form>
+												</div>
+											</div>
+										</div>
+										<script th:inline="javascript">
                   // 1. 기본 정보 표기
                	  // (1) 일자
                   const today = new Date(); // 오늘 날짜
@@ -188,45 +269,63 @@
                	  
                	  
                   </script>
-                </div>
-              </div>
-            </div><!-- End 근무 시간 -->
-            <!-- Start 예약 현황 -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>예약 현황</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    </div>
-                  </div>
-                  <script>/* 예약 현황 자바스크립트 */
+									</div>
+								</div>
+							</div>
+							<!-- End 근무 시간 -->
+							<!-- Start 예약 현황 -->
+							<div class="col-xxl-4 col-md-6">
+								<div class="card info-card revenue-card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>예약 현황</b>
+										</h5>
+										<div class="d-flex align-items-center">
+											<div class="ps-3"></div>
+										</div>
+										<script>/* 예약 현황 자바스크립트 */
                   </script>
-                </div>
-              </div>
-            </div><!-- End 예약 현황 -->
-            <!-- Start 결재 현황 -->
-            <div class="col-xxl-4 col-xl-12">
-              <div class="card info-card customers-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>결재 현황</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    </div>
-                  </div>
-                  <script>/* 결재 현황 자바스크립트 */
-                  </script>
-                </div>
-              </div>
-            </div><!-- End 결재 현황 -->
-            <!-- Start 공지사항 -->
-            <div class="col-lg-6">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>공지사항</b></h5>
-                  <!-- Line Chart -->
-                  <div id="reportsChart"></div>
-                  <script>
+									</div>
+								</div>
+							</div>
+							<!-- End 예약 현황 -->
+							<!-- Start 결재 현황 -->
+							<div class="col-xxl-4 col-xl-12">
+								<div class="card info-card approval-card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>결재 현황</b>
+										</h5>
+										<div class="row align-items-center approval-status-row">
+											<div class="col text-center">
+												<span class="status-title">결재 대기</span>
+												<h1 class="status-count">
+													<span th:text="${waitingCount}"></span>
+												</h1>
+											</div>
+											<div class="col-1 separator"></div>
+											<div class="col text-center">
+												<span class="status-title">결재 완료</span>
+												<h1 class="status-count">
+													<span th:text="${completedCount}"></span>
+												</h1>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End 결재 현황 -->
+
+							<!-- Start 공지사항 -->
+							<div class="col-lg-6">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>공지사항</b>
+										</h5>
+										<!-- Line Chart -->
+										<div id="reportsChart"></div>
+										<script>
                     document.addEventListener("DOMContentLoaded", () => {
                       new ApexCharts(document.querySelector("#reportsChart"), {
                         series: [{
@@ -278,42 +377,48 @@
                       }).render();
                     });
                   </script>
-                </div>
-              </div>
-            </div><!-- End 공지사항 -->
-            <!-- Start 매출 현황 -->
-            <div class="col-lg-6">
-              <div class="card recent-sales overflow-auto">
-                <div class="card-body">
-                  <h5 class="card-title"><b>매출 현황</b></h5>
-                  <table class="table table-borderless datatable">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Customer</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Brandon Jacob</td>
-                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                        <td>$64</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- End 매출 현황 -->
-          </div>
-        </div><!-- End Left side columns -->
-        <!-- End 왼쪽 컬럼 -->
-        <!-- Start 오른쪽 컬럼 -->
-<!--         <div class="col-lg-4">
+									</div>
+								</div>
+							</div>
+							<!-- End 공지사항 -->
+							<!-- Start 매출 현황 -->
+							<div class="col-lg-6">
+								<div class="card recent-sales overflow-auto">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>매출 현황</b>
+										</h5>
+										<table class="table table-borderless datatable">
+											<thead>
+												<tr>
+													<th scope="col">#</th>
+													<th scope="col">Customer</th>
+													<th scope="col">Product</th>
+													<th scope="col">Price</th>
+													<th scope="col">Status</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<th scope="row"><a href="#">#2457</a></th>
+													<td>Brandon Jacob</td>
+													<td><a href="#" class="text-primary">At
+															praesentium minu</a></td>
+													<td>$64</td>
+													<td><span class="badge bg-success">Approved</span></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<!-- End 매출 현황 -->
+						</div>
+					</div>
+					<!-- End Left side columns -->
+					<!-- End 왼쪽 컬럼 -->
+					<!-- Start 오른쪽 컬럼 -->
+					<!--         <div class="col-lg-4">
         	Start 오늘의 날씨
             <div class="col-12">
               <div class="card recent-sales overflow-auto">
@@ -339,24 +444,29 @@
               </div>
             </div>End 오늘의 날씨
         </div> -->
-        <!-- End 오른쪽 컬럼 -->
-      </div>
-    </section>
-  </main><!-- End #main -->
-</th:block>
-  <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
-    </div>
-    <div class="credits">
-      <!-- All the links in the footer should remain intact. -->
-      <!-- You can delete the links only if you purchased the pro version. -->
-      <!-- Licensing information: https://bootstrapmade.com/license/ -->
-      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-    </div>
-  </footer><!-- End Footer -->
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+					<!-- End 오른쪽 컬럼 -->
+				</div>
+			</section>
+		</main>
+		<!-- End #main -->
+	</th:block>
+	<!-- ======= Footer ======= -->
+	<footer id="footer" class="footer">
+		<div class="copyright">
+			&copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights
+			Reserved
+		</div>
+		<div class="credits">
+			<!-- All the links in the footer should remain intact. -->
+			<!-- You can delete the links only if you purchased the pro version. -->
+			<!-- Licensing information: https://bootstrapmade.com/license/ -->
+			<!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+			Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+		</div>
+	</footer>
+	<!-- End Footer -->
+	<a href="#"
+		class="back-to-top d-flex align-items-center justify-content-center"><i
+		class="bi bi-arrow-up-short"></i></a>
 </body>
 </html>

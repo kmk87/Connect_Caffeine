@@ -63,6 +63,12 @@ public class ApprovalService {
 		this.approvalLineRepository = approvalLineRepository;
 	}
 	
+	// 메인 홈에서 결재현황 건수 가져오기
+    public long countByStatus(String status) {
+        return approvalRepository.countByApprState(status);
+    }
+	
+	
 	
 	public Approval getDraftInfoOne(ApprovalDto dto) {
 		
