@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -5,43 +6,42 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-  <title>Connect Caffeine</title>
-  <!-- DataTables CSS -->
-  
-  
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  
-  <!-- jsTree CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet">
+  <!-- Favicons -->
+  <style>
+        /* 모든 행의 배경색을 변경 */
+        table.dataTable tbody tr {
+            background-color: #fff; /* 원하는 배경색으로 변경 */
+        }
+    </style>
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
-  <!-- jsTree JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-  
+<!-- DataTables CSS -->
   <link
 	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
 	rel="stylesheet" disabled="disabled">
 	<link th:href="@{/css/notice/notice.css}"
           rel="stylesheet" type="text/css">
+
+
 <!-- DataTables JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-
-  <!-- Bootstrap 5 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet">
+<!-- jsTree JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+ 
 </head>
 <body>
  <th:block layout:fragment="content">
   <main id="main" class="main" >
-    
-    
+     
+
     <!-- Modal -->
     <div class="modal fade" id="chatRoomCreateModal" tabindex="-1" aria-labelledby="chatRoomCreateModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -95,9 +95,9 @@
     <th:block th:unless="${#lists.isEmpty(resultList)}">
       <th:block th:each="room : ${resultList}">
         <tr th:onclick="|location.href='@{/chatDetail/{roomNo}(roomNo=${room.room_no})}'|">
-          <td th:utext="${room.room_name} + '<br>' + 
+          <td th:utext="'<h5><b>'+${room.room_name} +'</b></h5>'+ 
           ${room.last_msg != null ? room.last_msg : '채팅 내역이 없습니다.'} + '<br>' + 
-          ${room.last_date != null ? #temporals.format(room.last_date, 'yyyy-MM-dd') : ''}"></td>
+          '<small>'+${room.last_date != null ? #temporals.format(room.last_date, 'yyyy-MM-dd') : ''} + '</small>'"></td>
         </tr>
       </th:block>
     </th:block>
