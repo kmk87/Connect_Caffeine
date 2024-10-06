@@ -24,7 +24,7 @@ public class OrgApiController {
 	}
 
 	// 화면 전환
-	@GetMapping("/toOrganization")
+	@GetMapping("/toTree")
 	public String toOrganization(Model model) {
 
 		// 1. 팀 정보
@@ -62,6 +62,16 @@ public class OrgApiController {
 
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
+		}
+
+		model.addAttribute("teamObj", teamObj);
+		model.addAttribute("empObj", empObj);
+
+		return "tree/tree";
+	}
+
+}
+
 		}
 
 		model.addAttribute("teamObj", teamObj);

@@ -21,21 +21,20 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ChattingViewController {
-	
+
 	private final ChattingService chattingService;
+
 	private final OrgService orgService;
-	
+
 	@Autowired
 	public ChattingViewController(ChattingService chattingService,
 			OrgService orgService) {
 		this.chattingService = chattingService;
 		this.orgService = orgService;
 	}
-	
+
 	@GetMapping("/chatRoomList/{emp_code}")
-	public String chatRoomList(HttpServletRequest request,
-Model model,
-			@PathVariable("emp_code") Long emp_code) {
+	public String chatRoomList(HttpServletRequest request, Model model, @PathVariable("emp_code") Long emp_code) {
 		List<ChatRoomVo> roomList = chattingService.selectChatRoomList(emp_code);
 //		List<ChatInviteDto> inviteList = chattingService.selectChatInviteList(emp_code);
 		String currentUri = request.getRequestURI();
@@ -44,10 +43,10 @@ Model model,
 
 		model.addAttribute("resultList", roomList);
 //		model.addAttribute("inviteList", inviteList);
-		
+
 		return "chatting/roomList";
 	}
-	
+
 	@ResponseBody
 	@GetMapping("/getOrgChartChat")
 	public ResponseEntity<List<Map<String, Object>>> getOrgChart() {
@@ -55,17 +54,17 @@ Model model,
 	    return ResponseEntity.ok(orgNodes);  // JSON 형태로 반환
 	}
 	
+
 	@GetMapping("/chatDetail/{room_no}")
-	public String chatRoomDetail(Model model,
-			@PathVariable("room_no") Long room_no) {
+	public String chatRoomDetail(Model model, @PathVariable("room_no") Long room_no) {
 		ChatRoomDto roomResult = chattingService.selectRoomDetail(room_no);
 		List<ChatMessageDto> msgResult = chattingService.selectMsgList(room_no);
 		System.out.println(roomResult);
 		System.out.println(msgResult);
-		
+
 		model.addAttribute("roomResult", roomResult);
 		model.addAttribute("msgResult", msgResult);
-		
+
 		return "chatting/chatDetail";
 	}
 }

@@ -18,7 +18,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 		
 		EmployeeDto findDtoByempCode(Long emp_code);
 		
-		
 		Employee findByempAccount(String emp_account);
 
 		Employee findByempName(String emp_name);
@@ -31,17 +30,17 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 	    @Query("SELECT e.empName FROM Employee e WHERE e.empAccount = :empAccount")
 	    String findEmpNameByEmpAccount(@Param("empAccount") String empAccount);
 	    
-	 // EmpGroup의 groupNo로 직원 목록을 조회하는 메서드
+	    // EmpGroup의 groupNo로 직원 목록을 조회하는 메서드
 	    List<Employee> findByEmpGroup_GroupNo(Long groupNo);
 	    
-	 // EmpGroup의 parent_no를 통해 직원 목록을 조회하는 메서드
+	    // EmpGroup의 parent_no를 통해 직원 목록을 조회하는 메서드
 	    List<Employee> findByEmpGroup_GroupParentNo(Long groupParentNo);
 
       
 		
-     // 사원 리스트
-     @Query("SELECT e FROM Employee e ORDER BY e.empHiredate DESC")
-     List<Employee> findAllOrderByHiredateDesc();
+	     // 사원 리스트
+	     @Query("SELECT e FROM Employee e ORDER BY e.empHiredate DESC")
+	     List<Employee> findAllOrderByHiredateDesc();
   
      
      
@@ -52,12 +51,16 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
 			       "FROM Employee e WHERE YEAR(e.empHiredate) = YEAR(CURRENT_DATE)")
 		String getInputAccount();
 		
+		
 		// 트리-팀원
 		@Query("SELECT new com.cc.employee.domain.EmployeeDto(e.empGroup.groupNo, e.empCode, e.empName, e.empJobCode, e.empJobName, eg.groupParentNo, eg.groupName) " +
 					"FROM Employee e JOIN e.empGroup eg")
 		List<EmployeeDto> findAllempList();
 		
 		
+		
+		
+		// 전자 서명
 		@Modifying
 		@Query("UPDATE Employee e SET e.empSignatureImagePath = :filePath WHERE e.empAccount = :empAccount")
 		int updateEmployeeSignatureByAccount(@Param("empAccount") String empAccount, @Param("filePath") String filePath);

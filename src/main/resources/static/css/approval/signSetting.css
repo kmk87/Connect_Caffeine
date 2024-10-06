@@ -4,7 +4,7 @@
 .apprSidebar {
     position: fixed;
     top: 60px;
-    left: 250px;
+    left: 300px;
     bottom: 0;
     width: 250px;
     z-index: 995;
@@ -41,27 +41,42 @@ body {
     flex-grow: 1;
 }
 
+.sign-form {
+    width: 80%; /* 부모 컨테이너에 맞게 100% 사용 */
+    /* max-width: 700px; 최대 너비 설정 */
+    /* margin: 200px; 가운데 정렬 */
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    margin-left:255px;
+    margin-top: 20px;
+    height: 650px;
+    
+    
+}
+
+
 
 /* form-header 스타일 */
 .form-header {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* 제목을 왼쪽으로 정렬 */
     align-items: center;
-    margin-left: 160px;
-    width: 20%;
-    height: 30px;
-    padding: 15px 20px;
-    color: white;
+    margin-left: 100px; /* 제목이 더 왼쪽으로 가도록 여백 조정 */
+    margin-top: 20px; /* 상단 여백 */
+    width: 100%;
 }
 
+/* form-header h1 스타일 */
 .form-header h1 {
-    font-size: 20px;
+    font-size: 25px; /* 폰트 크기를 25px로 설정 */
     font-weight: bold;
     margin: 0;
     padding: 0;
-    color: black;
+    color: #0c63e4;
+    font-family: 'Noto Sans KR', sans-serif;
 }
-
 /* 서명 패드 컨테이너 */
 .signature-container {
     display: flex;
@@ -72,29 +87,29 @@ body {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    width: 400px;
-    height: auto;
-    margin-top: 200px;
-    /* position: absolute; 절대 위치를 사용하여 화면 중앙으로 배치 */
-    bottom: 20px; /* 아래에서부터 20px 띄움 */
-    left: 50%;
-    transform: translateX(-50%); /* 가로축 중앙 정렬 */
+    width: 100%;
+    max-width: 750px; /* 서명 패드보다 넓게 설정 */
+    margin-top: 50px; /* 서명 패드를 아래로 이동 */
+    margin-left: auto;
+    margin-right: auto;
 }
 
+/* 서명 캔버스 */
 .signature-container canvas {
     border: 2px solid #ccc;
-    width: 400px;
-    height: 200px;
-    margin-bottom: 20px;
+    /* width: 100%; 이 부분을 제거하여 HTML 속성으로 설정된 크기가 반영되도록 합니다. */
+    height: auto; /* 높이는 자동으로 부모 컨테이너에 맞게 설정 */
     background-color: #f9f9f9;
     border-radius: 5px;
 }
+
 
 /* 버튼 스타일 */
 .button-container {
     display: flex;
     justify-content: center;
     width: 100%;
+    margin-top: 20px;
 }
 
 .button-container button {

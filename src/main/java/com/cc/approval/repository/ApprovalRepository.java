@@ -26,6 +26,10 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
 	Approval findByApprContent(String appr_content);
 	
 	Approval findByDraftDay(LocalDateTime draft_day);
+	
+	@Query("SELECT DISTINCT a FROM Approval a WHERE a.apprNo = :apprNo")
+	Optional<Approval> findDistinctByApprNo(@Param("apprNo") Long apprNo);
+
 
 	
 	
