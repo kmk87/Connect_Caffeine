@@ -167,6 +167,12 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
+										<td><button type="button" onclick="setReferOrder(1)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
+										<td><button type="button" onclick="setReferOrder(2)"
+												class="btn btn-outline-primary" data-bs-toggle="modal"
+												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td>
 									</tr>
 									<tr>
 										<td id="referer1" data-emp-code="">1차 참조선</td>
@@ -189,9 +195,9 @@
 						</div>
 						<div class="form-group">
 							<label for="start-date">기간 및 일수</label> 
-							<input type="text" id="apprHoliStart" name="appr_holi_start" th:value="${apprHoliStart}" readonly>
+							<input type="date" id="apprHoliStart" name="appr_holi_start" th:value="${apprHoliStart != null ? apprHoliStart : ''}">
                                 <span>~</span>
-                                <input type="text" id="apprHoliEnd" name="appr_holi_end" th:value="${apprHoliEnd}" readonly> 
+                                <input type="date" id="apprHoliEnd" name="appr_holi_end" th:value="${apprHoliEnd != null ? apprHoliEnd : ''}"> 
                                 <span>사용일수:</span>
 							<input type="number" id="appr_holi_use_count"
 								name="appr_holi_use_count"
