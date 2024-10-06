@@ -53,8 +53,8 @@
           <div class="modal-body">
             <form id="chatRoomForm">
               <div class="mb-3">
-                <label for="roomName" class="form-label">채팅방 이름</label>
-                <input type="text" class="form-control" id="roomName" placeholder="채팅방 이름을 입력하세요" th:value="${#authentication.principal.dto.emp_name}">
+                <label for="roomName" class="form-label">채팅방 참여자</label>
+                <input type="text" class="form-control" id="roomName" placeholder="채팅방 이름을 입력하세요" th:value="${#authentication.principal.dto.emp_name}" readonly="readonly">
               	<input type="hidden" id="emp_code" name="emp_code" th:value="${#authentication.principal.dto.emp_code}">
               </div>
               <div class="mb-3">
