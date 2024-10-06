@@ -72,11 +72,3 @@ public class OrgApiController {
 
 }
 
-		}
-
-		model.addAttribute("teamObj", teamObj);
-		model.addAttribute("empObj", empObj);
-
-		return "tree/tree";
-	}
-}
