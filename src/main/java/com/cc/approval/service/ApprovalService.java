@@ -435,7 +435,7 @@ public class ApprovalService {
 	}
 
 	// 1차 결재 후에 2차 결재자에게 결재문서 확인
-	public Page<Approval> findPendingApprovals(Long empCode, int apprOrder, Pageable pageable) {
+	public Page<Approval> findPendingApprovals(Long empCode, Integer apprOrder, Pageable pageable) {
 		System.out.println("empCode: " + empCode + ", apprOrder: " + apprOrder);
 		if (apprOrder == 1) {
 			// 1차 결재자가 대기 중인 문서 조회
@@ -450,7 +450,7 @@ public class ApprovalService {
 
 	// 결재 상태 변경 및 서명 이미지 경로 추가
 	@Transactional
-	public void approveDocument(Long apprNo, int apprOrder) {
+	public void approveDocument(Long apprNo, Integer apprOrder) {
 		// 해당 결재 번호에 해당하는 결재선 정보 가져오기
 		ApprovalLine approvalLine = approvalLineRepository.findByApprovalApprNoAndApprOrder(apprNo, apprOrder);
 		if (approvalLine != null) {
