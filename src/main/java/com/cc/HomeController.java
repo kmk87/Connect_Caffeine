@@ -50,10 +50,11 @@ public class HomeController {
         model.addAttribute("attnDto", attnDto);
         
         // 3. 결재 현황 (결재 대기 건수와 결재 완료 건수)
-        long waitingCount = approvalService.countByStatus("S");
-        long completedCount = approvalService.countByStatus("C");
+        long waitingCount = approvalService.countByStatus("S", empCode);
+        long completedCount = approvalService.countByStatus("C", empCode);
         model.addAttribute("waitingCount", waitingCount);
         model.addAttribute("completedCount", completedCount);
+
 
 		
 		return "index";

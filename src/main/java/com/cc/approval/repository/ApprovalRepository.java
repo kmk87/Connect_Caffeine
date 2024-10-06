@@ -82,8 +82,9 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     List<Approval> findStandByDraftsByEmpAccount(@Param("empCode") Long empCode);
 
 
-    // 메인 홈에서 결재현황 건수 가져오기
-    long countByApprState(String apprState);
+    // 상태와 작성자 코드로 필터링한 결재 건수 조회
+    @Query("SELECT COUNT(a) FROM Approval a WHERE a.apprState = :status AND a.employee.empCode = :empCode")
+    long countByStatusAndEmpCode(@Param("status") String status, @Param("empCode") Long empCode);
     
 
 
