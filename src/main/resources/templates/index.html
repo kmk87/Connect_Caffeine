@@ -32,6 +32,11 @@
   <!-- 조직도 끝 -->
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
+  <link
+	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
+	rel="stylesheet" disabled="disabled">
+	<link th:href="@{/css/notice/notice.css}"
+          rel="stylesheet" type="text/css">
 
 </head>
 <body>
@@ -224,60 +229,41 @@
               <div class="card">
                 <div class="card-body">
                   <h5 class="card-title"><b>공지사항</b></h5>
-                  <!-- Line Chart -->
-                  <div id="reportsChart"></div>
-                  <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                      new ApexCharts(document.querySelector("#reportsChart"), {
-                        series: [{
-                          name: 'Sales',
-                          data: [31, 40, 28, 51, 42, 82, 56],
-                        }, {
-                          name: 'Revenue',
-                          data: [11, 32, 45, 32, 34, 52, 41]
-                        }, {
-                          name: 'Customers',
-                          data: [15, 11, 32, 18, 9, 24, 11]
-                        }],
-                        chart: {
-                          height: 350,
-                          type: 'area',
-                          toolbar: {
-                            show: false
-                          },
-                        },
-                        markers: {
-                          size: 4
-                        },
-                        colors: ['#4154F1', '#2ECA6A', '#FF771D'],
-                        fill: {
-                          type: "gradient",
-                          gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.3,
-                            opacityTo: 0.4,
-                            stops: [0, 90, 100]
-                          }
-                        },
-                        dataLabels: {
-                          enabled: false
-                        },
-                        stroke: {
-                          curve: 'smooth',
-                          width: 2
-                        },
-                        xaxis: {
-                          type: 'datetime',
-                          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-                        },
-                        tooltip: {
-                          x: {
-                            format: 'dd/MM/yy HH:mm'
-                          },
-                        }
-                      }).render();
-                    });
-                  </script>
+                  <table id="notice_list" class="table table-bordered rank-table">
+      				<colgroup>
+      					<col width="5%">
+						<col width="20%">
+						<col width="5%">
+						<col width="5%">
+      				</colgroup>
+      	<thead class="table-light">
+      		<tr id="dynamic-header">
+      			<th>번호</th>
+      			<th>제목</th>
+      			<th>작성일</th>
+      			<th>작성자명</th>
+      		</tr>
+      	</thead>
+      	<tbody>
+      		<th:block th:if="${#lists.isEmpty(noticeList)}">
+      			<tr>
+      				<td colspan="4">해당하는 공지사항이 없습니다.</td> 
+      			</tr>
+      		</th:block>
+      		<th:block th:if="${!#lists.isEmpty(noticeList)}">
+      			<tr th:if="${notice.notice_status.equals('Y')}"
+      			th:each="notice, status : ${noticeList.size() > 5 ? noticeList.subList(0, 5) : noticeList}"
+      			th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
+      					<td th:text="${status.index + 1}"></td>
+      					<td th:text="${notice.notice_title}"></td>
+      					<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+      					<td th:text="${notice.notice_writer_name}"></td>
+      			</tr>
+      		</th:block>
+      	</tbody>
+      	
+      </table>
+                  
                 </div>
               </div>
             </div><!-- End 공지사항 -->

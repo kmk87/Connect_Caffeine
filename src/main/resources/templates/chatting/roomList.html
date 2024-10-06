@@ -87,7 +87,7 @@
     </tr>
   </thead>
   <tbody>
-    <th:block th:if="${#lists.isEmpty(resultList)}">
+    <th:block th:if="${resultList == null || #lists.isEmpty(resultList)}">
       <tr>
         <td colspan="3">참여하고 있는 채팅방이 없습니다.</td>
       </tr>
