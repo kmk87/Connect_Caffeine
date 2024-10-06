@@ -302,6 +302,7 @@
 		</main>
 
 		<script>
+ 
     // 결재선 관련 로직
     let currentApproverOrder = 0;
     let currentReferOrder = 0;
@@ -311,7 +312,7 @@
     function setApproverOrder(order) {
         currentApproverOrder = order;  // 1차 또는 2차 결재선 설정
         currentReferOrder = 0;         // 참조선 순서는 초기화
-        console.log("Current approver order set to: " + order);
+        console.log("Current approver order set to: " + currentApproverOrder);
     }
 
     // 참조선 지정 버튼 클릭 시 호출되는 함수
@@ -320,9 +321,8 @@
         currentApproverOrder = 0;      // 결재선 순서는 초기화
         console.log("Current refer order set to: " + order);
     }
-    
- 
 document.addEventListener('DOMContentLoaded', function() {
+    
 	const drEmpCode = document.getElementById("drEmpCode").value;
 
     function formatDataForJsTree(nodes) {
@@ -418,6 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("approver2에 저장된 empCode: " + approver2.getAttribute('data-emp-code'));
             saveApprovalLine(2, selectedEmpCode, 'approver'); // 2차 결재선 저장
         }
+        console.log("Current approver order: " + currentApproverOrder);
 
         // 참조선 지정 로직
         if (currentReferOrder === 1) {
@@ -444,19 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
             saveApprovalLine(null, selectedEmpCode, 'referer'); // 2차 참조선 저장
         }
     });
-	 // 참조자 선택 시 결재자 선택 확인을 하지 않도록 처리
-    /* function setReferOrder(order) {
-        currentReferOrder = order;     // 참조선 선택
-        currentApproverOrder = 0;      // 결재선 선택은 초기화
-        console.log("Current refer order set to: " + order);
-    } */
-
-    // 결재자 선택 시 참조자 선택 확인을 하지 않도록 처리
-    /* function setApproverOrder(order) {
-        currentApproverOrder = order;  // 1차 또는 2차 결재선 설정
-        currentReferOrder = 0;         // 참조선 선택은 초기화
-        console.log("Current approver order set to: " + order);
-    } */
+	 
     
  	// 저장 버튼 클릭 시 결재자 정보 저장
     document.getElementById("saveDesignation").addEventListener("click", function() {
@@ -482,15 +471,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function saveApprovalLine(order, empCode, type) {
     console.log("saveApprovalLine called with order:", order, "empCode:", empCode, "type:", type);
 
-    let apprOrder = null;
+    let apprOrder = 0;  // 기본 값으로 0 설정
     let apprRole = '1';  // 기본 결재자 역할
 
     if (type === 'approver') {
-        apprOrder = order;  // 결재선인 경우 1차/2차에 따른 order 설정
+        apprOrder = order ? order : 0;  // order가 없으면 0으로 설정
         apprRole = '1';     // 결재자 역할 설정
     } else if (type === 'referer') {
         apprRole = '2';     // 참조자의 경우 역할을 참조로 설정
-        apprOrder = null;   // 참조자의 경우 order는 null로 설정
+        apprOrder = 0;      // 참조자의 경우 order는 0으로 설정
     }
 
     // 기존 결재선을 검사하여 같은 order(차수)에 저장된 결재자/참조자를 제거
@@ -498,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 새로운 결재자/참조자 추가
     approvalLineList.push({
-        appr_order: apprOrder,
+        appr_order: apprOrder,  // null이 아닌 0으로 처리
         emp_code: empCode,
         appr_role: apprRole,
         appr_state: 'S'  // 기본 상태 (대기)
