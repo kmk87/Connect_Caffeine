@@ -7,7 +7,9 @@
 <script th:inline="javascript">
     		/* Thymeleaf 변수를 JavaScript 변수로 전달 */
     		const apprFormNo = /*[[${apprFormNo}]]*/ 0;  
+    		const currentUserEmpCode = /*[[${employee.empCode}]]*/ 0;
     		console.log("apprFormNo from Thymeleaf: " + apprFormNo);
+    		console.log("Current User EmpCode: " + currentUserEmpCode);
 </script>
 <link th:href="@{/css/approval/create.css}" rel="stylesheet"
 	type="text/css">
@@ -21,6 +23,7 @@
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css"
 	rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 
 <style>
@@ -108,8 +111,8 @@
 						th:value="${apprFormNo}"> <input type="hidden"
 						id="docu_no" name="docu_no" th:value="${documentNumber}">
 					<input type="hidden" id="csrf_token" th:value="${_csrf.token}">
-					<input type="hidden" id="empNum" th:value="${username}">
-					<input type="hidden" id="drEmpCode" th:value="${employee.empCode}">
+					<input type="hidden" id="empNum" th:value="${username}"> <input
+						type="hidden" id="drEmpCode" th:value="${employee.empCode}">
 					<button type="button" class="btn btn-outline-success"
 						id="tempSaveBtn">임시 저장</button>
 					<input type="submit" class="btn btn-outline-warning"
@@ -169,9 +172,11 @@
 										<!-- 2차 결재자 이름이 들어갈 부분 -->
 									</tr>
 									<tr>
-										<td id="sign1" style="width: 150px; height: 100px; text-align: center; vertical-align: middle;">서명</td>
+										<td id="sign1"
+											style="width: 150px; height: 100px; text-align: center; vertical-align: middle;">서명</td>
 										<!-- 1차 서명 -->
-										<td id="sign2" style="width: 150px; height: 100px; text-align: center; vertical-align: middle;">서명</td>
+										<td id="sign2"
+											style="width: 150px; height: 100px; text-align: center; vertical-align: middle;">서명</td>
 										<!-- 2차 서명 -->
 									</tr>
 								</thead>
@@ -214,15 +219,19 @@
 					<!-- 휴가신청서 폼 -->
 					<div th:if="${apprFormNo == 1}">
 						<div class="form-group">
-							<label for="leave-type">휴가 종류</label>
-							<input type="text" class="leave-type" value="연차" disabled>
+							<label for="leave-type">휴가 종류</label> <input type="text"
+								class="leave-type" value="연차" disabled>
 						</div>
 						<div class="form-group">
 							<label for="start-date">기간 및 일수</label> <input type="date"
-								id="start-date" name="appr_holi_start"> <span>~</span> <input
-								type="date" id="end-date" name="appr_holi_end"> <span>사용일수:</span>
+								id="apprHoliStart" name="appr_holi_start"
+								th:value="${apprHoliStart != null ? apprHoliStart : ''}">
+							<span>~</span> <input type="date" id="apprHoliEnd"
+								name="appr_holi_end"
+								th:value="${apprHoliEnd != null ? apprHoliEnd : ''}"> <span>사용일수:</span>
 							<input type="number" id="appr_holi_use_count"
-								name="appr_holi_use_count" placeholder="숫자만 입력" required> <span> 일</span>
+								name="appr_holi_use_count" placeholder="숫자만 입력" required>
+							<span> 일</span>
 						</div>
 						<div class="form-group">
 							<label for="subject">제목</label> <input type="text"
@@ -314,6 +323,7 @@
     
  
 document.addEventListener('DOMContentLoaded', function() {
+	const drEmpCode = document.getElementById("drEmpCode").value;
 
     function formatDataForJsTree(nodes) {
         const formattedNodes = nodes.map(node => {
@@ -354,10 +364,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     "plugins": ["types"],  // 아이콘 사용을 위한 플러그인 설정
                     "types": {
                         "team": {
-                            "icon": "ri-team-fill"  // 팀 아이콘
+                            "icon": "fa-solid fa-people-group"  // 팀 아이콘
                         },
                         "employee": {
-                            "icon": "ri-user-2-fill"  // 직원 아이콘
+                            "icon": "fa-solid fa-user"  // 직원 아이콘
                         }
                     }
                 });
@@ -367,6 +377,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
  	
+ 	
+	
  
  	// 결재자 및 참조자 선택 시 처리 로직
     $('#treeContainer_appr').on('select_node.jstree', function(e, data) {
@@ -375,15 +387,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log("선택된 사용자 이름: " + selectedName);
         console.log("선택된 사용자의 empCode: " + selectedEmpCode);
+        
+     	// 현재 로그인한 사용자가 선택되었는지 확인
+        if (selectedEmpCode === currentUserEmpCode) {
+            alert("자신을 결재자 또는 참조자로 선택할 수 없습니다.");
+            return; // 선택 방지
+        }
 
         // 결재선 지정 로직
+        // 1차 결재자 선택
         if (currentApproverOrder === 1) {
             const approver1 = document.getElementById('approver1');
             approver1.innerText = selectedName;
             approver1.setAttribute('data-emp-code', selectedEmpCode);
             console.log("approver1에 저장된 empCode: " + approver1.getAttribute('data-emp-code'));
             saveApprovalLine(1, selectedEmpCode, 'approver'); // 1차 결재선 저장
-        } else if (currentApproverOrder === 2) {
+        } 
+        // 2차 결재자 선택
+        else if (currentApproverOrder === 2) {
+        	
+        	const approver1 = document.getElementById('approver1').getAttribute('data-emp-code');
+            if (!approver1) {
+                alert('1차 결재자를 먼저 선택하세요.');
+                return;  // 1차 결재자가 없을 경우 2차 결재자를 선택하지 못하도록 설정
+            }
+
             const approver2 = document.getElementById('approver2');
             approver2.innerText = selectedName;
             approver2.setAttribute('data-emp-code', selectedEmpCode);
@@ -399,6 +427,16 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("referer1에 저장된 empCode: " + referer1.getAttribute('data-emp-code'));
             saveApprovalLine(null, selectedEmpCode, 'referer'); // 1차 참조선 저장
         } else if (currentReferOrder === 2) {
+        	// 1차 참조선이 없는 경우 2차 참조선 선택 방지
+            const referer1 = document.getElementById('referer1').getAttribute('data-emp-code');
+            const approver1 = document.getElementById('approver1').getAttribute('data-emp-code'); // 1차 결재자
+
+            // 1차 참조선 또는 1차 결재자가 없는 경우
+            if (!referer1 || !approver1) {
+                alert('1차 참조선 또는 1차 결재자를 먼저 선택하세요.');
+                return;  // 1차 참조자 또는 결재자가 없을 경우 2차 참조자를 선택하지 못하도록 설정
+            }
+
             const referer2 = document.getElementById('referer2');
             referer2.innerText = selectedName;
             referer2.setAttribute('data-emp-code', selectedEmpCode);
@@ -406,53 +444,70 @@ document.addEventListener('DOMContentLoaded', function() {
             saveApprovalLine(null, selectedEmpCode, 'referer'); // 2차 참조선 저장
         }
     });
- 
- 
- // 결재선 리스트에 저장하는 함수
-    function saveApprovalLine(order, empCode, type) {
-    	console.log("saveApprovalLine called with order:", order, "empCode:", empCode, "type:", type);
-    	
-        let apprOrder = null;
-        let apprRole = '1';  // 기본 결재자 역할
+	 // 참조자 선택 시 결재자 선택 확인을 하지 않도록 처리
+    /* function setReferOrder(order) {
+        currentReferOrder = order;     // 참조선 선택
+        currentApproverOrder = 0;      // 결재선 선택은 초기화
+        console.log("Current refer order set to: " + order);
+    } */
 
-        if (type === 'approver') {
-            apprOrder = order;  // 결재선인 경우 1차/2차에 따른 order 설정
-            apprRole = '1';     // 결재자 역할 설정
-        } else if (type === 'referer') {
-            apprRole = '2';     // 참조자의 경우 역할을 참조로 설정
-            apprOrder = null;   // 참조자의 경우 order는 null로 설정
-        }
-
-        approvalLineList.push({
-            appr_order: apprOrder,
-            emp_code: empCode,
-            appr_role: apprRole,
-            appr_state: 'S'  // 기본 상태 (대기)
-        });
-
-        console.log("Current approvalLineList:", approvalLineList);
-    }
- 
- 
-    // 저장 버튼 클릭 시 결재자 정보 저장
+    // 결재자 선택 시 참조자 선택 확인을 하지 않도록 처리
+    /* function setApproverOrder(order) {
+        currentApproverOrder = order;  // 1차 또는 2차 결재선 설정
+        currentReferOrder = 0;         // 참조선 선택은 초기화
+        console.log("Current approver order set to: " + order);
+    } */
+    
+ 	// 저장 버튼 클릭 시 결재자 정보 저장
     document.getElementById("saveDesignation").addEventListener("click", function() {
-        const selectedApproverElement = currentApproverOrder === 1 ? document.getElementById('approver1') : document.getElementById('approver2');
-        const selectedEmpCode = selectedApproverElement.dataset.empCode;
-        const selectedApproverName = selectedApproverElement.innerText;
-        
-        console.log("저장 버튼 클릭 시 selectedEmpCode: " + selectedEmpCode);
+        // 결재선의 1차 또는 2차 결재자 선택 여부 확인
+        const approver1EmpCode = document.getElementById('approver1').getAttribute('data-emp-code');
+        const approver2EmpCode = document.getElementById('approver2').getAttribute('data-emp-code');
 
-        // 선택된 결재선에 대한 유효성 검사
-        if (!selectedEmpCode || selectedApproverName === "결재선") {
-            alert('결재자를 선택하세요.');
+        console.log("저장 버튼 클릭 시 1차 결재자: " + approver1EmpCode);
+        console.log("저장 버튼 클릭 시 2차 결재자: " + approver2EmpCode);
+
+        // 1차 결재자가 선택되지 않았을 때 경고
+        if (!approver1EmpCode) {
+            alert('1차 결재자를 선택하세요.');
             return;
         }
 
+        // 결재선 정보가 제대로 저장된 경우에만 모달 닫기
         console.log("Saved designation with current approver order: " + currentApproverOrder);
         $('#apprDesignationModal').modal('hide');  // 모달 닫기
     });
+ 
+ 	// 결재선 리스트에 저장하는 함수
+    function saveApprovalLine(order, empCode, type) {
+    console.log("saveApprovalLine called with order:", order, "empCode:", empCode, "type:", type);
 
-    
+    let apprOrder = null;
+    let apprRole = '1';  // 기본 결재자 역할
+
+    if (type === 'approver') {
+        apprOrder = order;  // 결재선인 경우 1차/2차에 따른 order 설정
+        apprRole = '1';     // 결재자 역할 설정
+    } else if (type === 'referer') {
+        apprRole = '2';     // 참조자의 경우 역할을 참조로 설정
+        apprOrder = null;   // 참조자의 경우 order는 null로 설정
+    }
+
+    // 기존 결재선을 검사하여 같은 order(차수)에 저장된 결재자/참조자를 제거
+    approvalLineList = approvalLineList.filter(item => item.appr_order !== apprOrder || item.appr_role !== apprRole);
+
+    // 새로운 결재자/참조자 추가
+    approvalLineList.push({
+        appr_order: apprOrder,
+        emp_code: empCode,
+        appr_role: apprRole,
+        appr_state: 'S'  // 기본 상태 (대기)
+    });
+
+    console.log("Current approvalLineList:", approvalLineList);
+}
+ 
+
     
     
     // 로그인한 사용자 정보 가져오기
@@ -460,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("로그인한 정보" + empNum);
 
     const documentNumber = document.getElementById("docu_no").value;
-    const drEmpCode = document.getElementById("drEmpCode").value;
+    /* const drEmpCode = document.getElementById("drEmpCode").value; */
     
     // 기안서 등록
     // 기안서 상신 시 결재선 리스트도 함께 전송
@@ -594,8 +649,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrfToken = document.getElementById("csrf_token").value;
         const apprTitle = document.getElementById("appr_title").value;
         const apprContent = document.getElementById("appr_content").value;
-        const apprHoliStart = document.getElementById("start-date") ? document.getElementById("start-date").value : null;
-        const apprHoliEnd = document.getElementById("end-date") ? document.getElementById("end-date").value : null;
+        const apprHoliStart = document.getElementById("apprHoliStart") ? document.getElementById("apprHoliStart").value : null;
+        const apprHoliEnd = document.getElementById("apprHoliEnd") ? document.getElementById("apprHoliEnd").value : null;
         const apprHoliUseCount = document.getElementById("appr_holi_use_count") ? document.getElementById("appr_holi_use_count").value : null;
 
         const obj = {
@@ -646,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-		
+
 
 	</th:block>
 </body>
