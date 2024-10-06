@@ -57,7 +57,6 @@ public class OrgService {
 		teamList = new ArrayList<Map<String, Object>>();
 		
 		List<EmpGroupDto> teams = empGroupRepository.findAllTeamList();
-		
 		for (EmpGroupDto team : teams) {
 
 			Map<String, Object> teamNode = new HashMap<>();
@@ -94,7 +93,6 @@ public class OrgService {
     	List<EmpGroup> group = empGroupRepository.findAll();
     	
     	int num = group.size()+1;
-    	
     	for (EmployeeDto emp : employees) {
     		
     		Map<String, Object> empNode = new HashMap<>();

@@ -18,8 +18,10 @@
     </style>
   <link href="/bootstrap/img/쿼카.png" rel="icon">
   <link href="/bootstrap/img/쿼카.png" rel="쿼카">
-  <!-- DataTables CSS -->
+
+<!-- DataTables CSS -->
 <link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+
 
 <!-- DataTables JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -27,29 +29,27 @@
   
 </head>
 <body>
+
  <th:block layout:fragment="content">
   <main id="main" class="main">
-    <div class="pagetitle">
-      <h1>공지사항</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">목록</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
-    <div class="col-xxl-4 col-md-6">
-         <div class="card info-card sales-card" style="margin-top: 25px; width: 90vw; height: 90vh;">
+  
+    <div class="col-xxl-4 col-md-6" style="margin-left: 50px;">
+    
+         <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 750px;">
              <div class="card-body">
-      <table id="notice_list" class="display">
+             	<div class="card-body-header">
+					<h2 class="card-title"><b>게시판 목록</b></h2>
+					<hr>
+				</div>
+      <table id="notice_list" class="table table-bordered rank-table">
       	<colgroup>
-      		<col width="10%">
+      		<col width="5%">
 			<col width="40%">
-			<col width="30%">
-			<col width="20%">
+			<col width="5%">
+			<col width="5%">
       	</colgroup>
-      	<thead>
-      		<tr>
+      	<thead class="table-light">
+      		<tr id="dynamic-header">
       			<th>번호</th>
       			<th>제목</th>
       			<th>작성일</th>
@@ -88,15 +88,33 @@
   $(document).ready(function() {
 	  	
 	    $('#notice_list').DataTable({
-	        "lengthChange": false,  // Show entries 숨김
-	        "searching": true,      // 검색 활성화
-	        "responsive": true,
-	        "language": {
-	            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json'
-	        },
-	    	"pagingType": "full_numbers"
+	    	"paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "pageLength": 10,
+            "ordering": false,
+            "info": false,
+            "autoWidth": false,
+            "language": {
+            	"search": "검색:",
+                "paginate": {
+                    "previous": "<", // 이전을 <로 표시
+                    "next": ">"      // 다음을 >로 표시
+                },
+            },
+            "pagingType": "simple_numbers",
+	    	"order": [],
+	    	"rowCallback": function(row, data, index) {
+	            // 1~10 순번을 첫 번째 열에 설정
+	            $('td:eq(0)', row).html(index + 1);
+	        }
 	    });
-	    
+	    $('#notice_list_filter').css({
+	        'float': 'right',
+	        'text-align': 'right',
+	        'margin-top': '10px',  // 아래로 내리기 위한 margin-top 추가
+	        'margin-bottom': '5px' // 검색창과 테이블 사이 간격 줄이기
+	    });
 	});
 </script>
   </main><!-- End #main -->

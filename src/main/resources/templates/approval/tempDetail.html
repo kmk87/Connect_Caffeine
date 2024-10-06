@@ -3,8 +3,12 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{include/layout}">
 <head>
-
 <meta charset="UTF-8">
+<script th:inline="javascript">
+    		/* Thymeleaf 변수를 JavaScript 변수로 전달 */
+    		const apprFormNo = /*[[${tempDto.appr_form_no}]]*/ 0;  
+    		console.log("apprFormNo from Thymeleaf: " + apprFormNo);
+</script>
 <link th:href="@{/css/approval/create.css}" rel="stylesheet"
 	type="text/css">
 <title>임시저장문서 상세 조회</title>
@@ -81,9 +85,10 @@
 				</div>
 				<hr>
 				<form id="draftAdd">
-					<!-- <input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${apprFormNo}">  -->
+					<input type="hidden" id="appr_form_no" name="appr_form_no" th:value="${tempDto.appr_form_no}">
 					<input type="hidden" id="csrf_token" th:value="${_csrf.token}"> 
-					<input type="hidden" id="empNum" th:value="${memId ?: ''}">
+					<input type="hidden" id="drEmpCode" th:value="${employee.empCode}">
+					<input type="hidden" id="empNum" th:value="${username}">
 					<input type="hidden"
 						id="docu_no" name="docu_no" th:value="${apprDto.docu_no}">
 					<input type="hidden" id="tem_no" name="tem_no" th:value="${tempDto.tem_no}">
@@ -138,22 +143,21 @@
 										</td>
 									</tr>
 									<tr>
-										<td id="sign1">서명</td>
-										<!-- 1차 서명 -->
-										<td id="sign2">서명</td>
-										<!-- 2차 서명 -->
+										<td id="approver1" data-emp-code="">1차 결재선</td>
+										<!-- 1차 결재자 이름이 들어갈 부분 -->
+										<td id="approver2" data-emp-code="">2차 결재선</td>
+										<!-- 2차 결재자 이름이 들어갈 부분 -->
 									</tr>
 									<tr>
-										<td id="approver1" data-emp-code="">결재선</td>
-										<!-- 1차 결재자 이름이 들어갈 부분 -->
-										<td id="approver2" data-emp-code="">결재선</td>
-										<!-- 2차 결재자 이름이 들어갈 부분 -->
+										<td id="sign1" style="width: 150px; height: 100px; text-align: center; vertical-align: middle;">서명</td>
+										<!-- 1차 서명 -->
+										<td id="sign2" style="width: 150px; height: 100px; text-align: center; vertical-align: middle;">서명</td>
+										<!-- 2차 서명 -->
 									</tr>
 								</thead>
 							</table>
 						</div>
 
-						<!-- </div> -->
 						<!-- 참조선 테이블 -->
 						<div class="right-content">
 							<table class="reference-line-table">
@@ -163,23 +167,16 @@
 								<thead>
 									<tr>
 										<td rowspan="3"><b>참조선</b></td>
-										<td><button type="button" onclick="setReferOrder(1)"
-												class="btn btn-outline-primary" data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal">1차 참조선 지정</button></td>
-										<td><button type="button" onclick="setReferOrder(2)"
-												class="btn btn-outline-primary" data-bs-toggle="modal"
-												data-bs-target="#apprDesignationModal">2차 참조선 지정</button></td>
 									</tr>
 									<tr>
-										<td id="referer1" data-emp-code="">참조선</td>
-										<td id="referer2" data-emp-code="">참조선</td>
+										<td id="referer1" data-emp-code="">1차 참조선</td>
+										<td id="referer2" data-emp-code="">2차 참조선</td>
 									</tr>
 								</thead>
 							</table>
 						</div>
 					</div>
 
-					<!-- </div> -->
 
 
 
@@ -191,9 +188,11 @@
 								<input type="text" class="leave-type" value="연차" disabled>
 						</div>
 						<div class="form-group">
-							<label for="start-date">기간 및 일수</label> <input type="date"
-								id="start-date" name="start-date"> <span>~</span> <input
-								type="date" id="end-date" name="end-date"> <span>사용일수:</span>
+							<label for="start-date">기간 및 일수</label> 
+							<input type="text" id="apprHoliStart" name="appr_holi_start" th:value="${apprHoliStart}" readonly>
+                                <span>~</span>
+                                <input type="text" id="apprHoliEnd" name="appr_holi_end" th:value="${apprHoliEnd}" readonly> 
+                                <span>사용일수:</span>
 							<input type="number" id="appr_holi_use_count"
 								name="appr_holi_use_count"
 								th:value="${tempDto.appr_holi_use_count}"> <span>
@@ -290,7 +289,8 @@
 	    
 	 
 	document.addEventListener('DOMContentLoaded', function() {
-
+		
+	    
 	    function formatDataForJsTree(nodes) {
 	        const formattedNodes = nodes.map(node => {
 	            return {
@@ -441,11 +441,18 @@
 	    // 기안서 등록
 	    // 기안서 상신 시 결재선 리스트도 함께 전송
 	    document.getElementById("draftAdd").addEventListener("submit", function(e) {
-	        e.preventDefault();
+	    	e.preventDefault(); // 기본 폼 제출 동작을 막음
 
-	        let form = this;
+	    	let form = this;
 	        let vali_check = true;
 	        let vali_text = "";
+	        
+	        
+	     // 결재선이 지정되지 않았을 경우 유효성 검사
+	        if (approvalLineList.length === 0) {
+	            vali_text = "최소 1명 이상의 결재자를 지정하세요.";
+	            vali_check = false;
+	        }
 
 	        if (apprFormNo === 1) {
 	            if (form.appr_title.value === "") {
@@ -460,6 +467,19 @@
 	                vali_text = '사용일수를 입력하세요';
 	                form.appr_holi_use_count.focus();
 	                vali_check = false;
+	            } else if (isNaN(form.appr_holi_use_count.value) || form.appr_holi_use_count.value <= 0) {
+	                // 숫자가 아닌 값이나 0 이하의 값이 입력된 경우 경고
+	                vali_text = '사용일수에는 0보다 큰 숫자만 입력하세요';
+	                form.appr_holi_use_count.focus();
+	                vali_check = false;
+	            } else if (form.appr_holi_start.value === ""){
+	            	vali_text = "시작날짜를 입력하세요."
+	            	form.appr_holi_start.focus();
+	            	vali_check = false;
+	            } else if (form.appr_holi_end.value === ""){
+	            	vali_text = "종료날짜를 입력하세요."
+	            	form.appr_holi_end.focus();
+	            	vali_check = false;
 	            }
 	        }
 
@@ -488,6 +508,16 @@
 	                vali_check = false;
 	            }
 	        }
+
+	        // 유효성 검사 실패 시 경고 메시지 표시
+	        /* if (!isValid) {
+	            alert(errorMessage);
+	        } else {
+	            if (confirm("상신하시겠습니까?")) {
+	                form.submit();  // 유효성 검사를 통과했을 때 폼을 제출
+	            }
+	        } */
+	    
 
 	        if (vali_check == false) {
 	            alert(vali_text);
@@ -541,10 +571,10 @@
 	            }
 	        }
 	    });
-		
-		
-		// 삭제 버튼 이벤트 리스너
+	    
+	 // 삭제 버튼 이벤트 리스너
 	    document.getElementById('deleteBtn').onclick = function(){
+	    	const temNo = document.getElementById("tem_no").value;
 	    	console.log("temNo value in tempDelete function:", temNo);
 
 	    	
@@ -591,13 +621,14 @@
                  }
              });
          }
-	     
-	  // 취소 버튼 이벤트 리스너
-	 	document.getElementById("cancelBtn").addEventListener("click", function() {
-	 	    if (confirm("작성을 취소하시겠습니까?")) {
-	 	        location.href = "/apprTempStorage";  // 취소 시 홈으로 이동
-	 	    }
-	 	});
+
+
+	    // 취소 버튼 이벤트 리스너
+	    document.getElementById("cancelBtn").addEventListener("click", function() {
+	        if (confirm("작성을 취소하시겠습니까?")) {
+	            location.href = "/apprTempStorage";
+	        }
+	    });
 	});
     </script>
 	</th:block>

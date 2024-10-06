@@ -16,17 +16,8 @@
   	
 	</style>
     <main id="main" class="main">
-      <div class="pagetitle">
-        <h1>채팅</h1>
-        <nav>
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item active">목록</li>
-          </ol>
-        </nav>
-      </div>
 
-      <section class="section">
+      <section class="section" style="margin-left: 50px; margin-top: 50px">
         <div class="row">
           <div class="col-md-6">
             <div class="card">
@@ -41,32 +32,34 @@
               </div>
 
               <!-- 채팅 메시지 영역 -->
-              <div class="chat-parent">
-              <th:block th:each="chatMessage : ${msgResult}">
-              <div class="card-body pt-4 bg-grey">
+              <input type="hidden" id="room_no" name="room_no" th:value="${roomResult.room_no}">
+<input type="hidden" id="emp_code" name="emp_code" th:value="${#authentication.principal.dto.emp_code}">
+<input type="hidden" id="emp_name" name="emp_name" th:value="${#authentication.principal.dto.emp_name}">
+
+<div class="chat-parent">
+    
+
+    <th:block th:unless="${#lists.isEmpty(msgResult)}">
+        <th:block th:each="chatMessage : ${msgResult}">
+            <div class="card-body pt-4 bg-grey">
                 <div class="chat-content">
-                  <!-- 과거 채팅 기록 (서버 렌더링) -->
-                  
                     <!-- 본인 메시지 -->
                     <div class="chat chat-right" th:if="${chatMessage.emp_code == #authentication.principal.dto.emp_code}">
                         <div class="chat-message" th:text="${chatMessage.message_content}"></div>
                         <div class="chat-date" th:text="${#temporals.format(chatMessage.message_date, 'HH:mm')}"></div>
                     </div>
-                    
+
                     <!-- 상대방 메시지 -->
                     <div class="chat chat-left" th:if="${chatMessage.emp_code != #authentication.principal.dto.emp_code}">
-                      <div class="chat-username" th:text="${chatMessage.emp_name}"></div>
-                      <input type="hidden" id="emp_name" name="emp_name" th:value="${#authentication.principal.dto.emp_name}">
-                      <div class="chat-message" th:text="${chatMessage.message_content}"></div>
-                      <div class="chat-date" th:text="${#temporals.format(chatMessage.message_date, 'HH:mm')}"></div>
+                        <div class="chat-username" th:text="${chatMessage.emp_name}"></div>
+                        <div class="chat-message" th:text="${chatMessage.message_content}"></div>
+                        <div class="chat-date" th:text="${#temporals.format(chatMessage.message_date, 'HH:mm')}"></div>
                     </div>
-                    <!-- 채팅방 정보 -->
-                    <input type="hidden" id="room_no" name="room_no" th:value="${roomResult.room_no}">
-                    <input type="hidden" id="emp_code" name="emp_code" th:value="${#authentication.principal.dto.emp_code}">
                 </div>
-              </div>
-                  </th:block>
-              </div>
+            </div>
+        </th:block>
+    </th:block>
+</div>
 		    </div>
 		    
               <!-- 메시지 입력 및 전송 버튼 -->
@@ -146,7 +139,7 @@
           const empCode = document.getElementById("emp_code").value;
           const roomNo = document.getElementById("room_no").value;
           const senderName = document.getElementById("emp_name").value;
-
+		
           return {
             chat_type: chatType,
             message_content: chatMsg,

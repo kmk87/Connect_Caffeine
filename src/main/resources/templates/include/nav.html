@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
@@ -32,9 +33,7 @@
 
 </style>
 </head>
-
 <body>
-
 <th:block th:fragment="navLayout">
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
@@ -47,8 +46,9 @@
 			</a>
 		</li>
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#" >
-            <i class="ri-briefcase-line"></i><span>근태 관리</span>
+          <a class="nav-link"
+          	th:classappend="${currentUri == '/toAttendance' ? '' : 'collapsed'}"
+          	th:href="@{/toAttendance}"><i class="ri-briefcase-line"></i><span>근태 관리</span>
           </a>
         </li>
        	<li class="nav-item">
@@ -71,15 +71,10 @@
 				th:href="@{/calendar}"><i class="ri-calendar-2-line"></i><span>일정관리</span>
 			</a>
 		</li>
-        <li class="nav-item">
-          <a class="nav-link collapsed"  data-bs-toggle="collapse" th:href="approvalHome">
-            <i class="bx bxs-folder-open"></i><span>문서 관리</span>
-          </a>
-        </li>
       	<li class="nav-item">
 			<a class="nav-link"
 			   th:classappend="${currentUri == '/salesByProduct' ? '' : 'collapsed'}"
-			   th:href="@{/salesByProduct}"><i class="bi bi-shop"></i><span>점포관리</span>
+			   th:href="@{/salesByProduct}"><i class="bi bi-shop"></i><span>점포 관리</span>
 			</a>
 		</li>
         <li class="nav-item">
@@ -91,23 +86,16 @@
         <li class="nav-item">
 			<a class="nav-link"
 				th:classappend="${currentUri == '/approvalHome' ? '' : 'collapsed'}"
-				th:href="@{/approvalHome}"><i class="ri-file-edit-line"></i><span>전자결재</span>
+				th:href="@{/approvalHome}"><i class="ri-file-edit-line"></i><span>전자 결재</span>
 			</a>
 		</li>
 	     <li class="nav-item"
-	    	 th:classappend="${currentUri == '/chatRoomList/{empCode}' ? '' : 'collapsed'}">
+	    		th:classappend="${currentUri == '/chatRoomList/{empCode}' ? '' : 'collapsed'}">
 		  <a class="nav-link collapsed"
 		     th:href="@{/chatRoomList/{empCode}(empCode=${#authentication.principal.dto.emp_code})}">
 		    <i class="bx bx-chat"></i><span>채팅</span>
 		  </a>
 		</li>
-
-
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/toTree}">
-            <i class="bx bx-chat"></i><span>조직도 샘플</span>
-          </a>
-        </li>
         <!-- Other nav items omitted for brevity -->
       </ul>
       <!-- 조직도 모달창1 -->
@@ -160,6 +148,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     var modal = document.getElementById('disablebackdrop');
+
 
     
     // 첫 번째 모달이 열릴 때 실행되는 코드

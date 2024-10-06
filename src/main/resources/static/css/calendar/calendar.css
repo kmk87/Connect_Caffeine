@@ -13,6 +13,12 @@
     box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
 }
 
+.main{
+display: flex;          /* Flexbox 활성화 */
+  justify-content: flex-start;  /* 왼쪽 정렬 */
+}
+
+
 .filter-item {
     display: flex;
     align-items: center; /* 체크박스, 텍스트, 색상 원을 세로 가운데 정렬 */
