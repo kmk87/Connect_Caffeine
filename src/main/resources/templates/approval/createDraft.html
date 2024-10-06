@@ -422,6 +422,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 참조선 지정 로직
         if (currentReferOrder === 1) {
+        	const approver1 = document.getElementById('approver1').getAttribute('data-emp-code');
+            if (!approver1) {
+                alert('1차 결재자를 먼저 선택하세요.');
+                return; // 1차 결재자가 없으면 참조선 추가를 막음
+            }
             const referer1 = document.getElementById('referer1');
             referer1.innerText = selectedName;
             referer1.setAttribute('data-emp-code', selectedEmpCode);
