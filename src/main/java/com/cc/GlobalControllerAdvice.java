@@ -9,7 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.cc.employee.service.EmployeeService;
 import com.cc.notification.domain.NotificationDto;
@@ -102,6 +104,21 @@ public class GlobalControllerAdvice {
         model.addAttribute("unreadNotifications", unreadNotifications);
     }
     }
+
+
+    // 그 외 예외 처리
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public String handleNotFoundException(NoHandlerFoundException ex, Model model) {
+        model.addAttribute("errorMessage", "페이지를 찾을 수 없습니다.");
+        return "error/404"; // error/404.html 페이지로 이동
     }
+
+    // 그 외 일반 예외 처리 (500 오류)
+    @ExceptionHandler(Exception.class)
+    public String handleGeneralException(Exception ex, Model model) {
+        model.addAttribute("errorMessage", "예상치 못한 오류가 발생했습니다.");
+        return "error/500"; // error/500.html 페이지로 이동
+    }
+}
     
     
