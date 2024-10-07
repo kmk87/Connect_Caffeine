@@ -272,6 +272,159 @@
                	  
                	  
                   </script>
+                </div>
+              </div>
+            </div><!-- End 근무 시간 -->
+            <!-- Start 예약 현황 -->
+<div class="col-xxl-4 col-md-6">
+  <div class="card info-card revenue-card">
+    <div class="card-body">
+      <h5 class="card-title"><b>예약 현황</b></h5>
+      <div class="d-flex align-items-center">
+        <div class="ps-3">
+          <ul id="reservationSummary" style="list-style-type: none; padding-left: 0;">
+            <!-- 여기에 오늘 날짜 예약 데이터가 표시될 예정 -->
+          </ul>
+          <button id="showMoreButton" class="btn btn-secondary mt-3" style="display: none;">More</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div class="modal fade" id="moreReservationsModal" tabindex="-1" aria-labelledby="moreReservationsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="moreReservationsLabel">전체 예약 현황</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul id="moreReservationList" style="list-style-type: none; padding-left: 0;">
+          <!-- 모든 예약 데이터가 여기에 표시됩니다 -->
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+    var reservations = /*[[${reservations}]]*/ [];
+    var meetingRooms = /*[[${meetings}]]*/ [];
+    var maxDisplayCount = 1;
+    var reservationSummary = document.getElementById('reservationSummary');
+    var moreReservationList = document.getElementById('moreReservationList');
+    var showMoreButton = document.getElementById('showMoreButton');
+
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var dd = String(today.getDate()).padStart(2, '0');
+    var formattedToday = `${yyyy}-${mm}-${dd}`;
+
+    var todaysReservations = reservations.filter(function (reservation) {
+      return reservation.meeting_start.startsWith(formattedToday);
+    });
+
+    function findMeetingRoomName(meeting_no) {
+      var meetingRoom = meetingRooms.find(function(room) {
+        return room.meeting_no === meeting_no;
+      });
+      return meetingRoom ? meetingRoom.meeting_name : '회의실 이름 없음';
+    }
+
+    if (todaysReservations.length > 0) {
+      todaysReservations.forEach(function (reservation, index) {
+        var listItem = document.createElement('li');
+        var meetingRoomName = findMeetingRoomName(reservation.meeting_no);
+        var startTime = new Date(reservation.meeting_start).toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        var endTime = new Date(reservation.meeting_end).toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        listItem.innerHTML = `
+          <a href="/reservation" style="text-decoration: none; color: black;">
+            <b>${meetingRoomName}</b><br>
+            ${startTime} ~ ${endTime}<br>
+            회의 내용: ${reservation.meeting_content}<br>
+            참석 인원: ${reservation.meeting_people}명
+          </a>
+        `;
+
+        // 메인에 최대 2개의 예약만 표시
+        if (index < maxDisplayCount) {
+          reservationSummary.appendChild(listItem);
+          if (index < todaysReservations.length - 1 && index < maxDisplayCount - 1) {
+            var hr = document.createElement('hr');
+            reservationSummary.appendChild(hr);
+          }
+        }
+
+        // 모든 예약은 모달에 추가
+        moreReservationList.appendChild(listItem.cloneNode(true));
+        if (index < todaysReservations.length - 1) {
+          var hrInModal = document.createElement('hr');
+          moreReservationList.appendChild(hrInModal);
+        }
+      });
+
+      // 예약이 2개 이상일 때만 'More' 버튼 표시
+      if (todaysReservations.length > maxDisplayCount) {
+        showMoreButton.style.display = 'block';
+      }
+    } else {
+      var noDataItem = document.createElement('li');
+      noDataItem.textContent = '오늘 예약된 내용이 없습니다.';
+      reservationSummary.appendChild(noDataItem);
+      moreReservationList.appendChild(noDataItem.cloneNode(true));
+    }
+
+    // 'More' 버튼 클릭 시 모달 창 열기
+    showMoreButton.addEventListener('click', function () {
+      var moreReservationsModal = new bootstrap.Modal(document.getElementById('moreReservationsModal'));
+      moreReservationsModal.show();
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+            <!-- Start 결재 현황 -->
+            <div class="col-xxl-4 col-xl-12">
+              <div class="card info-card customers-card">
+                <div class="card-body">
+                  <h5 class="card-title"><b>결재 현황</b></h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                    </div>
+                  </div>
+                  <script>/* 결재 현황 자바스크립트 */
+                  </script>
+                </div>
+              </div>
+            </div><!-- End 결재 현황 -->
 									</div>
 								</div>
 							</div>
@@ -324,7 +477,6 @@
 					<!-- End 왼쪽 컬럼 -->
 					<!-- Start 오른쪽 컬럼 -->
 					<!--         <div class="col-lg-4">
-=======
                 </div>
               </div>
             </div><!-- End 예약 현황 -->
@@ -377,7 +529,6 @@
         <!-- End 왼쪽 컬럼 -->
         <!-- Start 오른쪽 컬럼 -->
 <!--         <div class="col-lg-4">
->>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
         	Start 오늘의 날씨
             <div class="col-12">
               <div class="card recent-sales overflow-auto">

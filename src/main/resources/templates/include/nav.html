@@ -51,23 +51,26 @@
           	th:href="@{/toAttendance}"><i class="ri-briefcase-line"></i><span>근태 관리</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" 
-          	th:classappend="${currentUri == '/employeeList' ? '' : 'collapsed'}"
-          	th:href="@{/employeeList}"><i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
-          </a>
-        </li>
-        <li class="nav-item">
+       	<li class="nav-item">
 			<a class="nav-link"
-			th:classappend="${currentUri == '/reservation' ? '' : 'collapsed'}"
-			th:href="@{/reservation}"><i class="ri-time-line"></i><span>예약 관리</span>
-		</a>
+				th:classappend="${currentUri == '/employeeList' ? '' : 'collapsed'}"
+				th:href="@{/employeeList}"> 
+			<i class="bi bi-person-plus-fill"></i><span>인사관리</span>
+			</a>
+			</li>
+			<li class="nav-item">
+			<a class="nav-link"
+				th:classappend="${currentUri == '/reservation' ? '' : 'collapsed'}"
+				th:href="@{/reservation}"> 
+			<i class="ri-time-line"></i><span>예약관리</span>
+			</a>
+			</li>
+			<li class="nav-item">
+			<a class="nav-link"
+				th:classappend="${currentUri == '/calendar' ? '' : 'collapsed'}"
+				th:href="@{/calendar}"><i class="ri-calendar-2-line"></i><span>일정관리</span>
+			</a>
 		</li>
-          <li class="nav-item">
-          <a class="nav-link collapsed"  th:href="@{/calendar}">
-            <i class="ri-calendar-2-line"></i><span>일정 관리</span>
-          </a>
-        </li>
       	<li class="nav-item">
 			<a class="nav-link"
 			   th:classappend="${currentUri == '/salesByProduct' ? '' : 'collapsed'}"

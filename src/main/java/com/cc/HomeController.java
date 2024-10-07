@@ -16,6 +16,10 @@ import com.cc.attendance.domain.AttendanceDto;
 import com.cc.attendance.service.AttendanceService;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
+import com.cc.reservation.domain.MeetingRoomDto;
+import com.cc.reservation.domain.ReservationDto;
+import com.cc.reservation.service.MeetingRoomService;
+import com.cc.reservation.service.ReservationService;
 import com.cc.notice.domain.NoticeDto;
 import com.cc.notice.service.NoticeService;
 import com.cc.tree.service.OrgService;
@@ -25,6 +29,10 @@ public class HomeController {
 	private final EmployeeService employeeService;
 	private final OrgService orgService;
 	private final AttendanceService attendanceService;
+	private final ReservationService reservationService;
+	private final MeetingRoomService meetingRoomService;
+	@Autowired
+	public HomeController(EmployeeService employeeService, OrgService orgService, AttendanceService attendanceService, ReservationService reservationService,MeetingRoomService meetingRoomService) {
 	private final ApprovalService approvalService;
 	private final NoticeService noticeService;
 
@@ -36,6 +44,8 @@ public class HomeController {
 		this.employeeService = employeeService;
 		this.orgService = orgService;
 		this.attendanceService = attendanceService;
+		this.reservationService = reservationService;
+		this.meetingRoomService = meetingRoomService;
 		this.approvalService = approvalService;
 	}
 
@@ -55,6 +65,12 @@ public class HomeController {
 		AttendanceDto attnDto = attendanceService.getTodayAttendance(empCode);
         model.addAttribute("attnDto", attnDto);
         
+        // 예약 정보
+        List<ReservationDto> reservations = reservationService.getAllReservations();
+        List<MeetingRoomDto> meeting = meetingRoomService.selectMeetingRoomList();
+        model.addAttribute("meetings",meeting);
+        model.addAttribute("reservations", reservations);  // reservations로 수정
+		
         // 3. 결재 현황 (결재 대기 건수와 결재 완료 건수)
         long waitingCount = approvalService.countByStatus("S", empCode);
         long completedCount = approvalService.countByStatus("C", empCode);
