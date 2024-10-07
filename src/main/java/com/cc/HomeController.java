@@ -31,14 +31,13 @@ public class HomeController {
 	private final AttendanceService attendanceService;
 	private final ReservationService reservationService;
 	private final MeetingRoomService meetingRoomService;
-	@Autowired
-	public HomeController(EmployeeService employeeService, OrgService orgService, AttendanceService attendanceService, ReservationService reservationService,MeetingRoomService meetingRoomService) {
 	private final ApprovalService approvalService;
 	private final NoticeService noticeService;
 
 	@Autowired
 
 	public HomeController(EmployeeService employeeService, OrgService orgService, AttendanceService attendanceService
+			,ReservationService reservationService, MeetingRoomService meetingRoomService
 			,NoticeService noticeService,ApprovalService approvalService) {
 		this.noticeService = noticeService;
 		this.employeeService = employeeService;

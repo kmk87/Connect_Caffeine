@@ -1,20 +1,14 @@
 package com.cc.employee.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.cc.attendance.domain.AttendanceDto;
@@ -82,6 +76,7 @@ public class EmployeeViewController {
 	public String selectEmployeeList(HttpServletRequest request,Model model) {
 		
 		List<EmployeeDto> empDtoList = employeeService.selectEmployeeList();
+		
 		String currentUri = request.getRequestURI();
 		model.addAttribute("currentUri", currentUri);
 
@@ -176,6 +171,7 @@ public class EmployeeViewController {
 			
 			return "employee/delete";
 		}
+		
 
 		// 개인 프로필
 	    @GetMapping("/employeeProfile")
@@ -193,18 +189,11 @@ public class EmployeeViewController {
 			String formattedRegNo = employeeService.formatEmpRegNo(empCode);
 			
 			String empDeptName = employeeService.getDeptNameByEmpCode(empCode);
-			
 			model.addAttribute("userDto", userDto);
 			model.addAttribute("formattedRegNo",formattedRegNo);
 			model.addAttribute("empDeptName", empDeptName);
 			
-			
-			
-			
-			
+
 			return "employee/profile";
 		}
-	    
-	   
-	    
 }

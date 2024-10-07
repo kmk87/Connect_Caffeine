@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
+<title>부서/팀 정보</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
 <style>
@@ -89,13 +89,13 @@ table td, table th {
 									name="group_no" th:value="${egDto.group_no}">
 								<div class="basic-info">
 									<!-- 첫 번째 테이블: 그룹 레벨이 부서(G1)일 때 -->
-									<div id="case1" th:if="${egDto.group_level == 'G1'}">
+									<div id="case1" th:if="${egDto.group_level == 'G1'}" style="width: 100%;">
 										<!-- 상위 부서, 위치 정보 필요 없으므로 hidden 처리 -->
 										<input type="hidden" name="parent_group" id="parent_group"
 													th:value="${egDto.group_parent_no}">
 										<input type="hidden" name="group_location" id="group_location"
 													th:value="${egDto.group_location}">
-										<table class="table table-bordered">
+										<table class="table table-bordered" style="width: 100%;">
 											<colgroup>
 												<col style="width: 40%;">
 												<col style="width: 60%;">
@@ -129,7 +129,7 @@ table td, table th {
 										<div class="d-flex align-items-center"
 											style="display: flex; justify-content: flex-end;">
 											<a
-												th:href="@{/empGroupUpdate/{group_no}(group_no=${egDto.group_no})}">
+												th:href="@{/empDeptUpdate/{group_no}(group_no=${egDto.group_no})}">
 												<button type="button" class="btn btn-primary rounded-pill">수정</button>
 											</a>
 											<button type="button" class="btn btn-secondary rounded-pill"
@@ -137,8 +137,8 @@ table td, table th {
 										</div>
 									</div>
 									<!-- 두 번째 테이블: 그룹 레벨이 팀(G2)일 때 -->
-									<div id="case2" th:if="${egDto.group_level == 'G2'}">
-										<table class="table table-bordered">
+									<div id="case2" th:if="${egDto.group_level == 'G2'}" style="width: 100%;">
+										<table class="table table-bordered" style="width: 100%;">
 											<colgroup>
 												<col style="width: 40%;">
 												<col style="width: 60%;">
@@ -190,7 +190,7 @@ table td, table th {
 										<div class="d-flex align-items-center"
 											style="display: flex; justify-content: flex-end;">
 											<a
-												th:href="@{/empGroupUpdate/{group_no}(group_no=${egDto.group_no})}">
+												th:href="@{/empTeamUpdate/{group_no}(group_no=${egDto.group_no})}">
 												<button type="button" class="btn btn-primary rounded-pill">수정</button>
 											</a>
 											<button type="button" class="btn btn-secondary rounded-pill"
@@ -207,7 +207,7 @@ table td, table th {
 		</main>
 		<!-- End #main -->
 		<script>
-		// 1. 부서 수정
+		// 1. 부서 삭제
 		function confirmDeptDelete() {
 		    if (!confirm("부서 삭제 시 하위 팀 정보도 함께 삭제됩니다. 부서 정보를 정말 삭제하시겠습니까?")) {
 		        return;

@@ -1,31 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{include/layout}">
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
 <head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
-<meta content="" name="description">
-<meta content="" name="keywords">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
 
-<meta name="_csrf" th:content="${_csrf.token}" />
-<meta name="_csrf_header" th:content="${_csrf.headerName}" />
-<!-- 조직도 관련 -->
-<!-- Include jQuery -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Include jsTree CSS and JS -->
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-<!-- 조직도 끝 -->
-<style>
-.ps-3 {
-	width: 350px;
-}
-/* 결재현황 관련 스타일 */
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <!-- 조직도 관련 -->
+	  <!-- Include jQuery -->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	  <!-- Include jsTree CSS and JS -->
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  <!-- 조직도 끝 -->
+    <link
+   href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
+   rel="stylesheet" disabled="disabled">
+   <link th:href="@{/css/notice/notice.css}"
+          rel="stylesheet" type="text/css">
+  <style>
+  .ps-3{
+  	width:350px;
+  }
+  
+  /* 결재현황 관련 스타일 */
 .approval-card {
     width: 100%;
     height: 350px; /* 카드 높이 */
@@ -83,10 +86,12 @@
 }
 
 /* 여기까지 */
-</style>
-
+  </style>
+  
+  
 
   <!-- 조직도 관련 -->
+	  <!-- Include jQuery -->
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	  <!-- Include jsTree CSS and JS -->
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
@@ -94,17 +99,12 @@
   <!-- 조직도 끝 -->
   <!-- Template Main CSS File -->
   <link href="/bootstrap/css/style.css" rel="stylesheet">
-  <link
-	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
-	rel="stylesheet" disabled="disabled">
-	<link th:href="@{/css/notice/notice.css}"
-          rel="stylesheet" type="text/css">
 
 </head>
 <body>
-	<th:block layout:fragment="content">
+ <th:block layout:fragment="content">
 
-		<!--   <main id="main" class="main" style="display: block; margin-top: 80px;">
+<!--   <main id="main" class="main" style="display: block; margin-top: 80px;">
     <div class="pagetitle">
       <h1>메인화면</h1>
       <nav>
@@ -115,75 +115,58 @@
       </nav>
     </div>End Page Title -->
 
-		<main id="main" class="main">
-			<section class="section dashboard"
-				style="margin-top: 20px; margin-left: 30px;">
-				<div class="row">
-					<!-- Start 왼쪽 columns -->
-					<div class="col-lg-11">
-						<div class="row">
-							<!-- Start 근무 시간 -->
-							<div class="col-xxl-4 col-md-6">
-								<div class="card info-card sales-card">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>근무 시간</b>
-										</h5>
-										<div class="d-flex align-items-center">
-											<div class="ps-3" style="width: 400px;">
-												<!-- 사용자 정보 카드 -->
-												<div class="card"
-													style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
-													<div
-														class="d-flex justify-content-between align-items-center">
-														<div class="d-flex align-items-center">
-															<div>
-																<div id="userGroup"
-																	style="font-size: 16px; color: gray;"></div>
-																<div id="userInfo"
-																	style="font-size: 20px; font-weight: bold;"></div>
-															</div>
-														</div>
-														<div id="userDate"
-															style="text-align: center; font-size: 14px; color: gray;"></div>
-													</div>
-												</div>
-												<!-- 출근/퇴근 시간 -->
-												<div id="timestamp" class="mt-3"
-													style="display: flex; justify-content: space-between; align-items: center;">
-													<div style="text-align: center;">
-														<span style="font-size: 16px; color: gray;">출근 시간</span><br>
-														<span id="startTimeDisplay"
-															style="text-align: center; font-size: 20px; font-weight: bold;"
-															th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
-													</div>
-													<div style="text-align: center;">
-														<span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
-														<span id="endTimeDisplay"
-															style="text-align: center; font-size: 20px; font-weight: bold;"
-															th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
-													</div>
-												</div>
-
-												<hr>
-												<!-- 출근/퇴근 버튼 -->
-												<div class="button-box"
-													style="text-align: center; margin-top: 10px;">
-													<form id="attendanceForm">
-														<button type="button" class="btn btn-outline-info"
-															id="workStart"
-															style="width: 120px; margin-right: 50px; margin-top: 10px;">
-															<b>출근하기</b>
-														</button>
-														<button type="button" class="btn btn-outline-danger"
-															id="workFinish" style="width: 120px; margin-top: 10px;">
-															<b>퇴근하기</b>
-														</button>
-													</form>
-												</div>
-											</div>
-										</div>
-										<script th:inline="javascript">
+  <main id="main" class="main">
+    <section class="section dashboard" style="margin-top: 20px; margin-left: 30px;">
+      <div class="row">
+        <!-- Start 왼쪽 columns -->
+        <div class="col-lg-11">
+          <div class="row">
+            <!-- Start 근무 시간 -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title"><b>근태 관리</b></h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3" style="width: 400px;">
+                     <!-- 사용자 정보 카드 -->
+				    <div class="card" style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
+				        <div class="d-flex justify-content-between align-items-center">
+				            <div class="d-flex align-items-center">
+				                <div>
+				                	<div id="userGroup" style="font-size: 16px; color: gray;"></div>
+				                    <div id="userInfo" style="font-size: 20px; font-weight: bold;"></div>
+				                </div>
+				            </div>
+				    	  <div id="userDate" style="text-align:center; font-size: 14px; color: gray;"></div>
+				        </div>
+				    </div>
+                    <!-- 출근/퇴근 시간 -->
+			        <div id="timestamp" class="mt-3" style="display: flex; justify-content: space-between; align-items: center;">
+			            <div style="text-align: center;">
+			            	<span style="font-size: 16px; color: gray;">출근 시간</span><br>
+			                <span id="startTimeDisplay" style="text-align: center; font-size: 20px; font-weight: bold;" th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
+			            </div>
+			            <div style="text-align: center;">
+			                <span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
+			                <span id="endTimeDisplay" style="text-align: center; font-size: 20px; font-weight: bold;" th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
+			            </div>
+			        </div>
+			
+			        <hr>
+			        <!-- 출근/퇴근 버튼 -->
+			        <div class="button-box" style="text-align: center; margin-top: 10px;">
+			            <form id="attendanceForm">
+			                <button type="button" class="btn btn-outline-info" id="workStart" style="width: 120px; margin-right: 50px; margin-top: 10px;">
+			                    <b>출근하기</b>
+			                </button>
+			                <button type="button" class="btn btn-outline-danger" id="workFinish" style="width: 120px; margin-top: 10px;">
+			                    <b>퇴근하기</b>
+			                </button>
+			            </form>
+			        </div>
+                    </div>
+                  </div>
+                  <script th:inline="javascript">
                   // 1. 기본 정보 표기
                	  // (1) 일자
                   const today = new Date(); // 오늘 날짜
@@ -206,40 +189,58 @@
 				  
 				  
                	  // 2. 출퇴근 시간 전송
-               	  	
-                  $(document).ready(function() {
-                	  var token = $("meta[name='_csrf']").attr("content");
-                	  var header = $("meta[name='_csrf_header']").attr("content");
-                	  
-                	  
-	                	// (1) 출근 시간 전송
-					    $('#workStart').click(function() {
-					        $.ajax({
-					            url: '/attendanceRecord',
-					            type: 'POST',
-					            beforeSend: function(xhr) {
-					                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
-					            },
-					            data: { action: 'start' },
-					            success: function(response) {
-					            	// 서버에서 받은 시간을 Date 객체로 변환
-					                var attnStart = new Date(response.attnStart);
-					                
-					                // 시간을 원하는 형식으로 변환 (시:분)
-					                var hours1 = attnStart.getHours();
-					                var minutes1 = attnStart.getMinutes();
-	
-					                // 분을 두 자리로 맞춤
-					                minutes1 = minutes1 < 10 ? '0' + minutes1 : minutes1;
-					            	
-					             	// 형식에 맞게 화면에 표시
-					                $('#startTimeDisplay').text(hours1 + '시 ' + minutes1 + '분');
-					            },
-					            error: function() {
-					                alert('출근 기록에 실패했습니다.');
-					            }
-					        });
-					    });
+				let workStartClicked = false;
+				
+				$(document).ready(function() {
+				    var token = $("meta[name='_csrf']").attr("content");
+				    var header = $("meta[name='_csrf_header']").attr("content");
+				
+				    // (1) 출근 시간 전송
+				    $('#workStart').click(function() {
+				    	// 출근 기록이 이미 있는지 확인 (출근 시간이 비어 있지 않으면 이미 출근 기록이 있는 것)
+				       var startTime = $('#startTimeDisplay').text().trim();
+						if (startTime !== '-') { 
+						    alert("이미 출근 기록이 있습니다.");
+						    return;
+						}
+
+				        // 출근 버튼을 비활성화
+				        $('#workStart').prop('disabled', true);
+				
+				        $.ajax({
+				            url: '/attendanceRecord',
+				            type: 'POST',
+				            beforeSend: function(xhr) {
+				                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+				            },
+				            data: { action: 'start' },
+				            success: function(response) {
+				                // 서버에서 받은 시간을 Date 객체로 변환
+				                var attnStart = new Date(response.attnStart);
+				
+				                // 시간을 원하는 형식으로 변환 (시:분)
+				                var hours1 = attnStart.getHours();
+				                var minutes1 = attnStart.getMinutes();
+				
+				                // 분을 두 자리로 맞춤
+				                minutes1 = minutes1 < 10 ? '0' + minutes1 : minutes1;
+				
+				                // 형식에 맞게 화면에 표시
+				                $('#startTimeDisplay').text(hours1 + '시 ' + minutes1 + '분');
+				
+				                // 출근 버튼이 눌렸음을 기록
+				                workStartClicked = true;
+				                console.log("출근 완료 - workStartClicked 상태: " + workStartClicked);
+				            },
+				            error: function() {
+				                alert('출근 기록에 실패했습니다.');
+				                // 실패하면 다시 버튼을 활성화하고 workStartClicked 상태를 초기화
+				                $('#workStart').prop('disabled', false);
+				                workStartClicked = false;
+				            }
+				        });
+				    });
+
 					 	
 	                	
 	                	// (2) 퇴근 시간 전송
@@ -276,7 +277,7 @@
               </div>
             </div><!-- End 근무 시간 -->
             <!-- Start 예약 현황 -->
-<div class="col-xxl-4 col-md-6">
+            <div class="col-xxl-4 col-md-6">
   <div class="card info-card revenue-card">
     <div class="card-body">
       <h5 class="card-title"><b>예약 현황</b></h5>
@@ -311,7 +312,6 @@
     </div>
   </div>
 </div>
-
 <script th:inline="javascript">
   document.addEventListener('DOMContentLoaded', function () {
     var reservations = /*[[${reservations}]]*/ [];
@@ -402,128 +402,104 @@
   });
 </script>
 
-
-
-
-
-
-
-
-
-
+<!-- End 예약 현황 -->
             <!-- Start 결재 현황 -->
-            <div class="col-xxl-4 col-xl-12">
-              <div class="card info-card customers-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>결재 현황</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    </div>
-                  </div>
-                  <script>/* 결재 현황 자바스크립트 */
-                  </script>
-                </div>
-              </div>
-            </div><!-- End 결재 현황 -->
-									</div>
-								</div>
-							</div>
-							<!-- End 근무 시간 -->
-							<!-- Start 예약 현황 -->
-							<div class="col-xxl-4 col-md-6">
-								<div class="card info-card revenue-card">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>예약 현황</b>
-										</h5>
-										<div class="d-flex align-items-center">
-											<div class="ps-3"></div>
-										</div>
-										<script>/* 예약 현황 자바스크립트 */
-                  </script>
-									</div>
-								</div>
-							</div>
-							<!-- End 예약 현황 -->
-							<!-- Start 결재 현황 -->
-							<div class="col-xxl-4 col-xl-12">
-								<div class="card info-card approval-card">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>결재 현황</b>
-										</h5>
-										<div class="row align-items-center approval-status-row">
-											<div class="col text-center">
-												<span class="status-title">결재 대기</span>
-												<h1 class="status-count">
-													<span th:text="${waitingCount}"></span>
-												</h1>
-											</div>
-											<div class="col-1 separator"></div>
-											<div class="col text-center">
-												<span class="status-title">결재 완료</span>
-												<h1 class="status-count">
-													<span th:text="${completedCount}"></span>
-												</h1>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- End 결재 현황 -->
-						</div>
-					</div>
-					<!-- End Left side columns -->
-					<!-- End 왼쪽 컬럼 -->
-					<!-- Start 오른쪽 컬럼 -->
-					<!--         <div class="col-lg-4">
-                </div>
-              </div>
-            </div><!-- End 예약 현황 -->
-            
-            <!-- Start 공지사항 -->
+                     <div class="col-xxl-4 col-xl-12">
+                        <div class="card info-card approval-card">
+                           <div class="card-body">
+                              <h5 class="card-title">
+                                 <b>결재 현황</b>
+                              </h5>
+                              <div class="row align-items-center approval-status-row">
+                                 <div class="col text-center">
+                                    <span class="status-title">결재 대기</span>
+                                    <h1 class="status-count">
+                                       <span th:text="${waitingCount}"></span>
+                                    </h1>
+                                 </div>
+                                 <div class="col-1 separator"></div>
+                                 <div class="col text-center">
+                                    <span class="status-title">결재 완료</span>
+                                    <h1 class="status-count">
+                                       <span th:text="${completedCount}"></span>
+                                    </h1>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <!-- End 결재 현황 -->
+                        <!-- Start 공지사항 -->
             <div class="col-lg-6">
               <div class="card">
                 <div class="card-body">
                   <h5 class="card-title"><b>공지사항</b></h5>
                   <table id="notice_list" class="table table-bordered rank-table">
-      				<colgroup>
-      					<col width="5%">
-						<col width="20%">
-						<col width="5%">
-						<col width="5%">
-      				</colgroup>
-      	<thead class="table-light">
-      		<tr id="dynamic-header">
-      			<th>번호</th>
-      			<th>제목</th>
-      			<th>작성일</th>
-      			<th>작성자명</th>
-      		</tr>
-      	</thead>
-      	<tbody>
-      		<th:block th:if="${#lists.isEmpty(noticeList)}">
-      			<tr>
-      				<td colspan="4">해당하는 공지사항이 없습니다.</td> 
-      			</tr>
-      		</th:block>
-      		<th:block th:if="${!#lists.isEmpty(noticeList)}">
-      			<tr th:if="${notice.notice_status.equals('Y')}"
-      			th:each="notice, status : ${noticeList.size() > 5 ? noticeList.subList(0, 5) : noticeList}"
-      			th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
-      					<td th:text="${status.index + 1}"></td>
-      					<td th:text="${notice.notice_title}"></td>
-      					<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
-      					<td th:text="${notice.notice_writer_name}"></td>
-      			</tr>
-      		</th:block>
-      	</tbody>
-      	
+                  <colgroup>
+                     <col width="5%">
+                  <col width="20%">
+                  <col width="5%">
+                  <col width="5%">
+                  </colgroup>
+         <thead class="table-light">
+            <tr id="dynamic-header">
+               <th>번호</th>
+               <th>제목</th>
+               <th>작성일</th>
+               <th>작성자명</th>
+            </tr>
+         </thead>
+         <tbody>
+            <th:block th:if="${#lists.isEmpty(noticeList)}">
+               <tr>
+                  <td colspan="4">해당하는 공지사항이 없습니다.</td> 
+               </tr>
+            </th:block>
+            <th:block th:if="${!#lists.isEmpty(noticeList)}">
+               <tr th:if="${notice.notice_status.equals('Y')}"
+               th:each="notice, status : ${noticeList.size() > 5 ? noticeList.subList(0, 5) : noticeList}"
+               th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
+                     <td th:text="${status.index + 1}"></td>
+                     <td th:text="${notice.notice_title}"></td>
+                     <td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+                     <td th:text="${notice.notice_writer_name}"></td>
+               </tr>
+            </th:block>
+         </tbody>
+         
       </table>
                   
                 </div>
               </div>
             </div><!-- End 공지사항 -->
+            <!-- Start 매출 현황 -->
+            <div class="col-lg-6">
+              <div class="card recent-sales overflow-auto">
+                <div class="card-body">
+                  <h5 class="card-title"><b>매출 현황</b></h5>
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row"><a href="#">#2457</a></th>
+                        <td>Brandon Jacob</td>
+                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
+                        <td>$64</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div><!-- End 매출 현황 -->
           </div>
         </div><!-- End Left side columns -->
         <!-- End 왼쪽 컬럼 -->
@@ -554,29 +530,24 @@
               </div>
             </div>End 오늘의 날씨
         </div> -->
-					<!-- End 오른쪽 컬럼 -->
-				</div>
-			</section>
-		</main>
-		<!-- End #main -->
-	</th:block>
-	<!-- ======= Footer ======= -->
-	<footer id="footer" class="footer">
-		<div class="copyright">
-			&copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights
-			Reserved
-		</div>
-		<div class="credits">
-			<!-- All the links in the footer should remain intact. -->
-			<!-- You can delete the links only if you purchased the pro version. -->
-			<!-- Licensing information: https://bootstrapmade.com/license/ -->
-			<!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-			Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-		</div>
-	</footer>
-	<!-- End Footer -->
-	<a href="#"
-		class="back-to-top d-flex align-items-center justify-content-center"><i
-		class="bi bi-arrow-up-short"></i></a>
+        <!-- End 오른쪽 컬럼 -->
+      </div>
+    </section>
+  </main><!-- End #main -->
+</th:block>
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </footer><!-- End Footer -->
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 </body>
 </html>

@@ -5,16 +5,14 @@
 <head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
+<title>사원 목록</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
 <!-- DataTables CSS -->
 <link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
-
 <!-- DataTables JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-
 
 <style>
 .empSidebar {
@@ -100,7 +98,7 @@
 							</div>
 							<hr>
 							<div class="emp_list">
-								<table id="emp_list" class="table datatable">
+								<table id="emp_list" class="table datatable" style="border: lightgray;">
 									<thead>
 										<tr>
 											<th>팀</th>
@@ -128,20 +126,41 @@
 				</div>
 			</div>
 			</section>
-			<script>
-			  $(document).ready(function() {
-				  	
-				    $('#emp_list').DataTable({
-				        "lengthChange": false,  // Show entries 숨김
-				        "searching": true,      // 검색 활성화
-				        "responsive": true,
-				        "language": {
-				            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json'
-				        },
-				    	"pagingType": "full_numbers"
-				    });
-				    
-				});
+			<script th:inline="none">
+			$(document).ready(function() {
+			    var table = $('#emp_list').DataTable({
+			        "lengthChange": false,
+			        "searching": true, // 검색 활성화
+			        "responsive": true,
+			        "language": {
+			            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json', // 한국어 번역 적용
+			            paginate: {
+			                previous: "<<",
+			                next: ">>"
+			            }
+			        },
+			        "paging": true,
+			        "pagingType": "simple_numbers",
+			        "pageLength": 10, // 한 페이지에 보여질 항목 수 설정
+			        "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)
+			        "order": [[3, "desc"]],
+			        "initComplete": function() {
+			            var table = this.api();
+
+			            // 페이지네이션 버튼 텍스트를 덮어쓰기 (초기 페이지)
+			            $('.dataTables_paginate .paginate_button.previous').html("<<");
+			            $('.dataTables_paginate .paginate_button.next').html(">>");
+			        }
+			    });
+
+			    // 페이지 변경 시에도 페이지네이션 버튼 텍스트를 덮어쓰기
+			    $('#emp_list').on('draw.dt', function() {
+			        $('.dataTables_paginate .paginate_button.previous').html("<<");
+			        $('.dataTables_paginate .paginate_button.next').html(">>");
+			    });
+			});
+
+
 			</script>
 		</main>
 		

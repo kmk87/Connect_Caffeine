@@ -5,11 +5,13 @@
 <head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
+<title>근태 관리</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.4/index.global.min.js"></script>
 <link th:href = "@{/css/calendar/calendar.css}" rel="stylesheet" type="text/css">
 <style>
 
@@ -81,63 +83,67 @@
 			</section>
 		</main>
 	<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-    	// 1. 출결 현황
-        var calendarEl = document.getElementById('calendar');
-        
-        // 서버에서 전달된 JSON 데이터를 JavaScript로 파싱
-        var attendanceData = /*[[${attnList}]]*/ [];
-      
-        
-     	// 날짜와 시간을 포맷팅하는 함수
-        function formatTime(dateString) {
-            
-        	if (!dateString) {
-                return ''; // 날짜가 없을 때 처리
-            }
-     		
-     		var date = new Date(dateString);
+	document.addEventListener('DOMContentLoaded', function() {
+	    var calendarEl = document.getElementById('calendar');
 
-            var hours = ('0' + date.getHours()).slice(-2);      
-            var minutes = ('0' + date.getMinutes()).slice(-2); 
-            return hours + ':' + minutes;
-        }
-        
-        
-        // JSON 데이터를 이벤트로 변환
-        var events = attendanceData.map(function (attendance) {
-            return {
-            	title: '출근: ' + formatTime(attendance.attn_start) + ' \n 퇴근: ' + formatTime(attendance.attn_end),  // 시:분 형식으로 변환된 시간 표시
-                start: new Date(attendance.attn_start),
-                end: new Date(attendance.attn_end), 
-                allDay: true  // 하루 단위 이벤트로 표시
-            };
-        });
+	    var attendanceData = /*[[${attnList}]]*/ [];
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            headerToolbar : {
-                left: '',
-                center : 'title'
-            },
-            titleFormat : function(date) {
-                return date.date.year + '년 ' + (parseInt(date.date.month) + 1) + '월';
-            },
-            selectable : true,
-            droppable : true,
-            editable : false,
-            nowIndicator: true,
-            locale: 'ko',
-            events: events,
-            eventContent: function(arg) {
-                return {
-                    html: arg.event.title.replace(/\n/g, '<br/>')  // 줄바꿈 적용
-                };
-            }
-        });
 
-        calendar.render();
-        
+	    function formatTime(dateString) {
+	        if (!dateString) {
+	            return '';
+	        }
+	        var date = new Date(dateString);
+	        var hours = ('0' + date.getHours()).slice(-2);
+	        var minutes = ('0' + date.getMinutes()).slice(-2);
+	        return hours + ':' + minutes;
+	    }
+
+	    var events = [];
+
+	    if (Array.isArray(attendanceData)) {
+	        attendanceData.forEach(function(attendance) {
+	            events.push({
+	                title: '출근: ' + formatTime(attendance.attn_start) + ' \n 퇴근: ' + formatTime(attendance.attn_end),
+	                start: new Date(attendance.attn_start),
+	                end: new Date(attendance.attn_end),
+	                allDay: true
+	            });
+	        });
+	    }
+
+
+	    var calendar = new FullCalendar.Calendar(calendarEl, {
+	        initialView: 'dayGridMonth',
+	        headerToolbar: {
+	            left: '',
+	            center: 'title'
+	        },
+	        titleFormat: function(date) {
+	            return date.date.year + '년 ' + (parseInt(date.date.month) + 1) + '월';
+	        },
+	        selectable: true,
+	        editable: false,
+	        nowIndicator: true,
+	        locale: 'ko',
+	        events: events,
+	        eventContent: function(arg) {
+	            return {
+	                html: arg.event.title.replace(/\n/g, '<br/>')
+	            };
+	        },
+	        googleCalendarApiKey: 'AIzaSyCyMXCtC9ZpyC_9vel1jbiK4rT8gb5vo0c',
+	        eventSources: [
+	            {
+	                googleCalendarId: 'ko.south_korea#holiday@group.v.calendar.google.com',
+	                color: 'white',
+	                textColor: 'red'
+	            }
+	        ]
+	    });
+
+	    calendar.render();
+
         
         // 2. 연차 현황
         let totalUsedLeave = 0;
