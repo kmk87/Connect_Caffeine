@@ -97,19 +97,25 @@ public class ApprovalApiController {
         		    //System.out.println("결재선 정보: 결재자 emp_code - " + lineDto.getEmp_code() + ", 결재 순서 - " + lineDto.getAppr_order());
         		    
         		 // 결재자일 경우에만 결재 순서를 확인
-        	        if ("1".equals(lineDto.getAppr_role())) {  // 결재자일 때만 appr_order 확인
-        	            if (lineDto.getAppr_order() == null) {
-        	                System.out.println("Error: 결재 순서(appr_order)가 설정되지 않았습니다.");
-        	            } else {
-        	                System.out.println("결재선 정보: 결재자 emp_code - " + lineDto.getEmp_code() + ", 결재 순서 - " + lineDto.getAppr_order());
-        	            }
-        	        } else if ("2".equals(lineDto.getAppr_role())) {  // 참조자의 경우 appr_order는 확인하지 않음
-        	            System.out.println("참조자 정보: emp_code - " + lineDto.getEmp_code());
-        	        }
+                    if (lineDto.getAppr_role() == 1) {  // 결재자일 때만 appr_order 확인
+                        if (lineDto.getAppr_order() == null) {
+                            System.out.println("Error: 결재 순서(appr_order)가 설정되지 않았습니다.");
+                        } else {
+                            System.out.println("결재선 정보: 결재자 emp_code - " + lineDto.getEmp_code() + ", 결재 순서 - " + lineDto.getAppr_order());
+                        }
+                    } else if (lineDto.getAppr_role() == 2) {  // 참조자의 경우 appr_order는 3으로 설정
+                    	// 참조 순서에 따라 1차는 3, 2차는 4로 설정
+                        if (lineDto.getAppr_order() == null) {
+                            lineDto.setAppr_order(3);  // 기본값으로 1차 참조자
+                        } else if (lineDto.getAppr_order() == 4) {
+                            lineDto.setAppr_order(4);  // 2차 참조자
+                        }
+                        System.out.println("참조자 정보: emp_code - " + lineDto.getEmp_code() + ", 참조 순서 설정: " + lineDto.getAppr_order());
+                    }
 
-        	        approvalService.saveApprovalLine(lineDto);  // 결재선 저장
-        	        System.out.println("ApprovalLine saved for Approval No: " + apprNo + " with emp_code: " + lineDto.getEmp_code());
-        	        
+                    approvalService.saveApprovalLine(lineDto);  // 결재선 저장
+                    System.out.println("ApprovalLine saved for Approval No: " + apprNo + " with emp_code: " + lineDto.getEmp_code());
+
         		    // 1차 승인자에게만 알림 전송
         		    if (lineDto.getAppr_order() == 1) {
         		        try {

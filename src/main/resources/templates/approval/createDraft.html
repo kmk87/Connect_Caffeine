@@ -431,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
             referer1.innerText = selectedName;
             referer1.setAttribute('data-emp-code', selectedEmpCode);
             console.log("referer1에 저장된 empCode: " + referer1.getAttribute('data-emp-code'));
-            saveApprovalLine(null, selectedEmpCode, 'referer'); // 1차 참조선 저장
+            saveApprovalLine(1, selectedEmpCode, 'referer'); // 1차 참조선 저장
         } else if (currentReferOrder === 2) {
         	// 1차 참조선이 없는 경우 2차 참조선 선택 방지
             const referer1 = document.getElementById('referer1').getAttribute('data-emp-code');
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
             referer2.innerText = selectedName;
             referer2.setAttribute('data-emp-code', selectedEmpCode);
             console.log("referer2에 저장된 empCode: " + referer2.getAttribute('data-emp-code'));
-            saveApprovalLine(null, selectedEmpCode, 'referer'); // 2차 참조선 저장
+            saveApprovalLine(2, selectedEmpCode, 'referer'); // 2차 참조선 저장
         }
     });
 	 
@@ -476,23 +476,22 @@ document.addEventListener('DOMContentLoaded', function() {
     function saveApprovalLine(order, empCode, type) {
     console.log("saveApprovalLine called with order:", order, "empCode:", empCode, "type:", type);
 
-    let apprOrder = 0;  // 기본 값으로 0 설정
-    let apprRole = '1';  // 기본 결재자 역할
+    let apprOrder = order;  // 기본적으로 전달된 order 값을 사용
+    let apprRole = 1;  // 기본 결재자 역할
 
     if (type === 'approver') {
-        apprOrder = order ? order : 0;  // order가 없으면 0으로 설정
-        apprRole = '1';     // 결재자 역할 설정
+        apprRole = 1;  // 결재자 역할
     } else if (type === 'referer') {
-        apprRole = '2';     // 참조자의 경우 역할을 참조로 설정
-        apprOrder = 0;      // 참조자의 경우 order는 0으로 설정
+        apprRole = 2;  // 참조자 역할
+        apprOrder = apprOrder === 1 ? 3 : 4;  // 1차 참조선은 3, 2차 참조선은 4로 설정
     }
 
-    // 기존 결재선을 검사하여 같은 order(차수)에 저장된 결재자/참조자를 제거
-    approvalLineList = approvalLineList.filter(item => item.appr_order !== apprOrder || item.appr_role !== apprRole);
+    // 기존 결재선을 검사하여 같은 order(차수)와 role(역할)에 저장된 결재자/참조자를 제거
+    approvalLineList = approvalLineList.filter(item => !(item.emp_code === empCode && item.appr_role === apprRole));
 
     // 새로운 결재자/참조자 추가
     approvalLineList.push({
-        appr_order: apprOrder,  // null이 아닌 0으로 처리
+        appr_order: apprOrder,  // 빈 문자열로 처리
         emp_code: empCode,
         appr_role: apprRole,
         appr_state: 'S'  // 기본 상태 (대기)
@@ -500,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log("Current approvalLineList:", approvalLineList);
 }
- 
+
 
     
     
