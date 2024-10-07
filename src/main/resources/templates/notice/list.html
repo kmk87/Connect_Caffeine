@@ -6,7 +6,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Connect Caffeine</title>
+  <title>공지사항 목록</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
   <!-- Favicons -->
@@ -20,7 +20,13 @@
   <link href="/bootstrap/img/쿼카.png" rel="쿼카">
 
 <!-- DataTables CSS -->
-<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+
+  <link
+	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
+	rel="stylesheet" disabled="disabled">
+	<link th:href="@{/css/notice/notice.css}"
+          rel="stylesheet" type="text/css">
+
 
 
 <!-- DataTables JS -->
@@ -38,7 +44,7 @@
          <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 750px;">
              <div class="card-body">
              	<div class="card-body-header">
-					<h2 class="card-title"><b>게시판 목록</b></h2>
+					<h2 class="card-title"><b>공지사항 게시판</b></h2>
 					<hr>
 				</div>
       <table id="notice_list" class="table table-bordered rank-table">

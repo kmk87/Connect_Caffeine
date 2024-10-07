@@ -85,17 +85,20 @@
 /* 여기까지 */
 </style>
 
-<!-- 조직도 관련 -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Include jsTree CSS and JS -->
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-<!-- 조직도 끝 -->
-<!-- Template Main CSS File -->
-<link href="/bootstrap/css/style.css" rel="stylesheet">
+
+  <!-- 조직도 관련 -->
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	  <!-- Include jsTree CSS and JS -->
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  <!-- 조직도 끝 -->
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
+  <link
+	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
+	rel="stylesheet" disabled="disabled">
+	<link th:href="@{/css/notice/notice.css}"
+          rel="stylesheet" type="text/css">
 
 </head>
 <body>
@@ -285,6 +288,7 @@
 										</div>
 										<script>/* 예약 현황 자바스크립트 */
                   </script>
+<<<<<<< HEAD
 									</div>
 								</div>
 							</div>
@@ -419,6 +423,101 @@
 					<!-- End 왼쪽 컬럼 -->
 					<!-- Start 오른쪽 컬럼 -->
 					<!--         <div class="col-lg-4">
+=======
+                </div>
+              </div>
+            </div><!-- End 예약 현황 -->
+            <!-- Start 결재 현황 -->
+            <div class="col-xxl-4 col-xl-12">
+              <div class="card info-card customers-card">
+                <div class="card-body">
+                  <h5 class="card-title"><b>결재 현황</b></h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                    </div>
+                  </div>
+                  <script>/* 결재 현황 자바스크립트 */
+                  </script>
+                </div>
+              </div>
+            </div><!-- End 결재 현황 -->
+            <!-- Start 공지사항 -->
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"><b>공지사항</b></h5>
+                  <table id="notice_list" class="table table-bordered rank-table">
+      				<colgroup>
+      					<col width="5%">
+						<col width="20%">
+						<col width="5%">
+						<col width="5%">
+      				</colgroup>
+      	<thead class="table-light">
+      		<tr id="dynamic-header">
+      			<th>번호</th>
+      			<th>제목</th>
+      			<th>작성일</th>
+      			<th>작성자명</th>
+      		</tr>
+      	</thead>
+      	<tbody>
+      		<th:block th:if="${#lists.isEmpty(noticeList)}">
+      			<tr>
+      				<td colspan="4">해당하는 공지사항이 없습니다.</td> 
+      			</tr>
+      		</th:block>
+      		<th:block th:if="${!#lists.isEmpty(noticeList)}">
+      			<tr th:if="${notice.notice_status.equals('Y')}"
+      			th:each="notice, status : ${noticeList.size() > 5 ? noticeList.subList(0, 5) : noticeList}"
+      			th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
+      					<td th:text="${status.index + 1}"></td>
+      					<td th:text="${notice.notice_title}"></td>
+      					<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+      					<td th:text="${notice.notice_writer_name}"></td>
+      			</tr>
+      		</th:block>
+      	</tbody>
+      	
+      </table>
+                  
+                </div>
+              </div>
+            </div><!-- End 공지사항 -->
+            <!-- Start 매출 현황 -->
+            <div class="col-lg-6">
+              <div class="card recent-sales overflow-auto">
+                <div class="card-body">
+                  <h5 class="card-title"><b>매출 현황</b></h5>
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row"><a href="#">#2457</a></th>
+                        <td>Brandon Jacob</td>
+                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
+                        <td>$64</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div><!-- End 매출 현황 -->
+          </div>
+        </div><!-- End Left side columns -->
+        <!-- End 왼쪽 컬럼 -->
+        <!-- Start 오른쪽 컬럼 -->
+<!--         <div class="col-lg-4">
+>>>>>>> branch 'develop' of https://github.com/kmk87/Connect_Caffeine.git
         	Start 오늘의 날씨
             <div class="col-12">
               <div class="card recent-sales overflow-auto">

@@ -1,6 +1,8 @@
 package com.cc;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,8 @@ import com.cc.attendance.domain.AttendanceDto;
 import com.cc.attendance.service.AttendanceService;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
+import com.cc.notice.domain.NoticeDto;
+import com.cc.notice.service.NoticeService;
 import com.cc.tree.service.OrgService;
 @Controller
 public class HomeController {
@@ -22,11 +26,13 @@ public class HomeController {
 	private final OrgService orgService;
 	private final AttendanceService attendanceService;
 	private final ApprovalService approvalService;
+	private final NoticeService noticeService;
 
 	@Autowired
-	public HomeController(EmployeeService employeeService, OrgService orgService, AttendanceService attendanceService,
-			ApprovalService approvalService) {
 
+	public HomeController(EmployeeService employeeService, OrgService orgService, AttendanceService attendanceService
+			,NoticeService noticeService,ApprovalService approvalService) {
+		this.noticeService = noticeService;
 		this.employeeService = employeeService;
 		this.orgService = orgService;
 		this.attendanceService = attendanceService;
@@ -43,7 +49,7 @@ public class HomeController {
 		
 		EmployeeDto userDto = employeeService.selectEmployeeOne(empCode);
 		model.addAttribute("userDto", userDto);
-
+		
 		
 		// 2. 오늘 날짜 출퇴근
 		AttendanceDto attnDto = attendanceService.getTodayAttendance(empCode);
@@ -56,7 +62,9 @@ public class HomeController {
         model.addAttribute("completedCount", completedCount);
 
 
-		
+        List<NoticeDto> noticeList = noticeService.selectNoticeList();
+		model.addAttribute("noticeList", noticeList);
+        
 		return "index";
 	}
 }
