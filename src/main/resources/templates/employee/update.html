@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
+<title>사원 정보 수정</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
 <script
@@ -111,13 +111,21 @@ table td, table th {
 							</div>
 							<hr>
 							<form id="empUpdateFrm" method="POST" th:object="${dto}"
-								action="/employee" enctype="multipart/form-data">
+							 enctype="multipart/form-data">
 								<input type="hidden" id="_csrf" name="_csrf"
-									th:value="${_csrf.token}" /> <input type=hidden
+									th:value="${_csrf.token}" /> <input type=hidden id="emp_code"
 									name="emp_code" th:value="${dto.emp_code}">
 								<div class="basic-info">
 									<div class="basic-info-left">
-										<img th:src="@{'/uploadImg/'+${dto.emp_img_file_path}}" alt="Profile" id="emp_profile_img" class="rounded-circle"/>
+										<!-- emp_img_file_path 값이 있을 때 -->
+								<img th:if="${dto.emp_img_file_path != null}" 
+								     th:src="@{'/uploadImg/' + ${dto.emp_img_file_path}}" 
+								     alt="Profile" id="emp_profile_img" class="rounded-circle"/>
+								
+								<!-- emp_img_file_path 값이 없을 때 기본 이미지 사용 -->
+								<img th:unless="${dto.emp_img_file_path != null}" 
+								     th:src="@{'/bootstrap/img/basic_profile.png'}" 
+								     alt="Default Profile" id="emp_profile_img" class="rounded-circle"/>
 									</div>
 									<div class="basic-info-right">
 										<table class="table table-bordered" id="employeeTable">
@@ -234,13 +242,7 @@ table td, table th {
 		<!-- End #main -->
 		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 		<script>
-	//1. 이미지 업로드
-		/* document.getElementById('emp_profile_img').addEventListener('click', function() {
-			document.getElementById('emp_img_file_name').click();
-			console.log(typeof(document.getElementById('emp_img_file_name').value));
-		}); */
-		
-	
+
 	// 2. 주소 등록
 	function execDaumPostcode() {
 		
@@ -315,7 +317,6 @@ table td, table th {
 	const form = document.getElementById("empUpdateFrm");
 	form.addEventListener('submit', (e) => {
 		e.preventDefault();
-		
 	    // 입력 값 가져오기
 	    const empCode = document.getElementById("emp_code").value;
 	    const empName = document.getElementById("emp_name").value;
@@ -332,6 +333,8 @@ table td, table th {
 	    const empDeskPhone = document.getElementById("emp_desk_phone").value;
 	    const empEmail = document.getElementById("emp_email").value;
 	    const empHiredate = document.getElementById("emp_hiredate").value;
+	    console.log(empCode);
+	    console.log(empName);
 	    
 	    // 유효성 검사
 	    let vali_check = false;

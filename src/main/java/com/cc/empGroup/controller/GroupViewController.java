@@ -3,12 +3,7 @@ package com.cc.empGroup.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,9 +106,9 @@ public class GroupViewController {
 	
 	
 	
-	// 3. 수정(update)
-	@GetMapping("/empGroupUpdate/{group_no}")
-	public String updateEmpGroup(@PathVariable("group_no")Long group_no, Model model) {
+	// 3-1. 부서 수정
+	@GetMapping("/empDeptUpdate/{group_no}")
+	public String updateDept(@PathVariable("group_no")Long group_no, Model model) {
 		
 		EmpGroupDto egDto = empGroupService.selectGroupOne(group_no);
 		List<EmployeeDto> empList = employeeService.selectEmployeeList();
@@ -135,8 +130,36 @@ public class GroupViewController {
 		model.addAttribute("leaderName", leaderName);
 		model.addAttribute("leaderDeskPhone", leaderDeskPhone);
 		
-		return "empGroup/update";
+		return "empGroup/deptUpdate";
 	}
+	
+	
+	// 3-2. 팀 수정
+		@GetMapping("/empTeamUpdate/{group_no}")
+		public String updateTeam(@PathVariable("group_no")Long group_no, Model model) {
+			
+			EmpGroupDto egDto = empGroupService.selectGroupOne(group_no);
+			List<EmployeeDto> empList = employeeService.selectEmployeeList();
+			List<EmpGroupDto> groupList = empGroupService.selectGroupList();
+			
+			// 부서 인원 가져오기
+			Long deptHeadcount = empGroupService.getDeptHeadcountByGroupNo(group_no);
+			
+			// 책임자 정보 가져오기
+			Employee leader = empGroupService.getLeaderInfoByGroupNo(group_no);
+			String leaderName = leader.getEmpName();
+			String leaderDeskPhone = leader.getEmpDeskPhone();
+			
+			
+			model.addAttribute("egDto", egDto);
+			model.addAttribute("empList", empList);
+			model.addAttribute("groupList", groupList);
+			model.addAttribute("deptHeadcount", deptHeadcount);
+			model.addAttribute("leaderName", leaderName);
+			model.addAttribute("leaderDeskPhone", leaderDeskPhone);
+			
+			return "empGroup/teamUpdate";
+		}
 	
 	
 	// 4. 삭제(delete)

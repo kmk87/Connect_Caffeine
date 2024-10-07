@@ -14,11 +14,13 @@ import com.cc.employee.service.EmployeeService;
 
 @ControllerAdvice
 public class GlobalController {
-   @Autowired
+
+	@Autowired
     private EmployeeService employeeService;
 
-   // GlobalController에 로그 추가 예시
-   @ModelAttribute
+	// GlobalController에 로그 추가 예시
+	@ModelAttribute
+
     public void addUserAttributes(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

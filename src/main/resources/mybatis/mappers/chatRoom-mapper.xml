@@ -15,5 +15,3 @@
         last_date DESC
     </select>
 </mapper>
-
-

@@ -1,8 +1,6 @@
 package com.cc.employee.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -78,6 +76,7 @@ public class EmployeeViewController {
 	public String selectEmployeeList(HttpServletRequest request,Model model) {
 		
 		List<EmployeeDto> empDtoList = employeeService.selectEmployeeList();
+		
 		String currentUri = request.getRequestURI();
 		model.addAttribute("currentUri", currentUri);
 
@@ -190,15 +189,11 @@ public class EmployeeViewController {
 			String formattedRegNo = employeeService.formatEmpRegNo(empCode);
 			
 			String empDeptName = employeeService.getDeptNameByEmpCode(empCode);
-			
 			model.addAttribute("userDto", userDto);
 			model.addAttribute("formattedRegNo",formattedRegNo);
 			model.addAttribute("empDeptName", empDeptName);
 			
-			
-			
-			
-			
+
 			return "employee/profile";
 		}
 }

@@ -64,6 +64,18 @@ public class ApprovalApiController {
        Map<String, String> resultMap = new HashMap<>();
 
        try {
+    	   
+    	   // ApprovalDto 수신 확인
+           System.out.println("Received DTO: " + dto);  // DTO 전체 확인
+           if (dto == null) {
+               System.out.println("Error: DTO is null");
+               resultMap.put("res_code", "400");
+               resultMap.put("res_msg", "DTO is null");
+               return resultMap;
+           }
+           
+           System.out.println("ApprovalLineList: " + dto.getApprovalLineList()); // ApprovalLineList 확인
+           
            // 1. 임시 저장된 문서 삭제 또는 상태 변경
            if (dto.getTem_no() != null) {
                approvalService.deleteTempStorage(dto.getTem_no()); // 임시 저장 문서 삭제
@@ -73,17 +85,37 @@ public class ApprovalApiController {
            Approval savedApproval = approvalService.saveApproval(dto);
            Long apprNo = savedApproval.getApprNo();
            dto.setAppr_no(apprNo); // 기안서 번호 설정
+           System.out.println("기안서 저장 완료: " + apprNo);
 
            // 3. 결재선 정보가 있을 경우, 결재선 저장
            if (dto.getApprovalLineList() != null && !dto.getApprovalLineList().isEmpty()) {
         	   for (ApprovalLineDto lineDto : dto.getApprovalLineList()) {
         		    lineDto.setAppr_no(apprNo); // 결재선에 생성된 appr_no 설정
+        		    System.out.println("결재선 정보 설정 완료: " + lineDto.getEmp_code());
 
         		    // 결재자 정보 로그 출력
-        		    System.out.println("결재선 정보: 결재자 emp_code - " + lineDto.getEmp_code() + ", 결재 순서 - " + lineDto.getAppr_order());
+        		    //System.out.println("결재선 정보: 결재자 emp_code - " + lineDto.getEmp_code() + ", 결재 순서 - " + lineDto.getAppr_order());
+        		    
+        		 // 결재자일 경우에만 결재 순서를 확인
+                    if (lineDto.getAppr_role() == 1) {  // 결재자일 때만 appr_order 확인
+                        if (lineDto.getAppr_order() == null) {
+                            System.out.println("Error: 결재 순서(appr_order)가 설정되지 않았습니다.");
+                        } else {
+                            System.out.println("결재선 정보: 결재자 emp_code - " + lineDto.getEmp_code() + ", 결재 순서 - " + lineDto.getAppr_order());
+                        }
+                    } else if (lineDto.getAppr_role() == 2) {  // 참조자의 경우 appr_order는 3으로 설정
+                    	// 참조 순서에 따라 1차는 3, 2차는 4로 설정
+                        if (lineDto.getAppr_order() == null) {
+                            lineDto.setAppr_order(3);  // 기본값으로 1차 참조자
+                        } else if (lineDto.getAppr_order() == 4) {
+                            lineDto.setAppr_order(4);  // 2차 참조자
+                        }
+                        System.out.println("참조자 정보: emp_code - " + lineDto.getEmp_code() + ", 참조 순서 설정: " + lineDto.getAppr_order());
+                    }
 
-        		    approvalService.saveApprovalLine(lineDto);  // 결재선 저장
-        		    System.out.println("lineDto : "+lineDto);
+                    approvalService.saveApprovalLine(lineDto);  // 결재선 저장
+                    System.out.println("ApprovalLine saved for Approval No: " + apprNo + " with emp_code: " + lineDto.getEmp_code());
+
         		    // 1차 승인자에게만 알림 전송
         		    if (lineDto.getAppr_order() == 1) {
         		        try {
@@ -96,11 +128,15 @@ public class ApprovalApiController {
         		        }
         		    }
         		}
+           } else {
+               System.out.println("결재선 정보가 없습니다.");
            }
 
            resultMap.put("res_code", "200");
            resultMap.put("res_msg", "결재요청이 완료되었습니다.");
        } catch (Exception e) {
+    	   System.out.println("오류 발생: " + e.getMessage());  // 예외 메시지 출력
+           e.printStackTrace();  // 스택 트레이스 출력
            resultMap.put("res_code", "404");
            resultMap.put("res_msg", "결재요청 중 오류가 발생했습니다: " + e.getMessage());
        }
@@ -205,7 +241,10 @@ public class ApprovalApiController {
       // 결재 승인
    @ResponseBody
    @PostMapping("/approve")
-   public String approve(@RequestParam("apprNo") Long apprNo, @RequestParam("apprOrder") int apprOrder) throws Exception {
+   public String approve(@RequestParam("apprNo") Long apprNo, @RequestParam("apprOrder") Integer apprOrder) throws Exception {
+	   if (apprOrder == null) {
+	        return "오류: 결재 순서가 지정되지 않았습니다.";
+	    }
        // 결재 상태를 업데이트하는 비즈니스 로직 호출
        approvalService.approveDocument(apprNo, apprOrder);
 

@@ -4,15 +4,17 @@
 <head>
 <meta charset="UTF-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>header</title>
+<title>Insert title here</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <!-- Toastr CSS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 	<th:block th:fragment="headerLayout">
+		<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<!-- ======= Header ======= -->
 		<header id="header" class="header fixed-top d-flex align-items-center">
 			<div class="d-flex align-items-center justify-content-between">
@@ -22,7 +24,6 @@
 				</a>
 			</div>
 			<!-- End Logo -->
-
 			<nav class="header-nav ms-auto">
 				<ul class="d-flex align-items-center">
 					<!-- 알림 아이콘 및 알림 목록 -->
@@ -45,11 +46,13 @@
 							<th:block th:if="${!#lists.isEmpty(unreadNotifications)}">
 								<li class="notification-item"
 									th:each="notification : ${unreadNotifications}"
-									th:data-id="${notification.notification_no}">
-									<i class="bi bi-check-circle text-success"></i>
+									th:data-id="${notification.notification_no}"><i
+									class="bi bi-check-circle text-success"></i>
 									<div>
 										<a th:href="${notification.relatedLink}">
-											<p th:text="${notification.notificationContent}" class="notification-link" style="color:#333;"></p>
+
+											<p th:text="${notification.notificationContent}"
+												class="notification-link" style="color: #333;"></p>
 										</a>
 										<p th:text="${notification.relativeTime}"></p>
 										<input type="hidden" id="csrf_token"
@@ -98,48 +101,18 @@
                   </ul></li>
             </ul>
 			</nav>
+			<!-- End Icons Navigation -->
 		</header>
-	<script>
-		function confirmLogout(event) {
-			event.preventDefault(); // a 태그의 기본 동작 막기
-			if (confirm("정말 로그아웃하시겠습니까?")) {
-				document.getElementById('logoutForm').submit(); // 확인을 누르면 로그아웃 폼 제출
+		<!-- End Header -->
+		<script>
+			function confirmLogout(event) {
+				event.preventDefault(); // a 태그의 기본 동작 막기
+				if (confirm("정말 로그아웃하시겠습니까?")) {
+					document.getElementById('logoutForm').submit(); // 확인을 누르면 로그아웃 폼 제출
+				}
 			}
-		}
-		
-	
-		$(document).ready(function() {
-		    // 알림 클릭 시 읽음 처리
-		    $('.notification-link').on('click', function(event) {
-		        
-		        const notificationLink = $(this).attr('href'); // 이동할 링크 주소
-		        const notificationId = $(this).closest('li').data('id'); // 알림 ID 가져오기
-
-		        // 읽음 처리 요청
-		        fetch('/updateReadStatus', {
-		            method: 'POST',
-		            headers: {
-		                'Content-Type': 'application/x-www-form-urlencoded',
-		                'X-CSRF-TOKEN': document.getElementById('csrf_token').value
-		            },
-		            body: `notificationId=${notificationId}`
-		        }).then(response => {
-		            if (response.ok) {
-		              
-		                
-		                // 알림 처리 후 페이지로 이동
-		                window.location.href = notificationLink;
-		            } else {
-		                console.error('Failed to update notification read status.');
-		            }
-		        }).catch(error => console.error('Error:', error));
-		    });
-		});
-
-	</script>
+		</script>
 	</th:block>
-	<!-- WebSocket JS 연결 -->
-	
 	<script src="/bootstrap/js/websocket.js"></script>
 </body>
 </html>

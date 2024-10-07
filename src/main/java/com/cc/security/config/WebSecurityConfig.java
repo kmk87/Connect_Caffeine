@@ -54,23 +54,26 @@ public class WebSecurityConfig {
                    .successHandler(new MyLoginSuccessHandler()))
                   
          .logout(logout -> logout.permitAll()) // 로그아웃 기능 활성화하고, 로그아웃에 대한 접근을 모든 사용자에게 허용
-	      .rememberMe(rememberMe -> 
+         .rememberMe(rememberMe -> 
 	      rememberMe.rememberMeParameter("remember-me")
 	      .tokenValiditySeconds(86400*7)
 	      .alwaysRemember(false)
 	      .tokenRepository(tokenRepository()))
 	   .httpBasic(Customizer.withDefaults());
+
       return http.build(); // 설정된 HttpSecurity 객체를 빌드하여 securityFilterChain을 반환
    }
    
-// 자동로그인
+
+
+   // 자동로그인
    @Bean
    public PersistentTokenRepository tokenRepository() {
       JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
       jdbcTokenRepository.setDataSource(dataSource);
       return jdbcTokenRepository;
    }
-   
+
    @Bean
    public WebSecurityCustomizer webSecurityCustomizer() {
       return (web ->

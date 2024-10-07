@@ -366,8 +366,11 @@
                     text: '승인처리가 완료되었습니다.',  // 서버에서 받은 응답을 텍스트로 표시
                     confirmButtonText: "확인"
                 }).then(() => {
-                    // 승인 완료 후 버튼 숨기기
-                    firstApprovalBtn.style.display = "none";
+                	// 승인 완료 후 버튼 숨기기 (firstApprovalBtn가 존재할 경우만)
+                    var firstApprovalBtn = document.getElementById("firstApprovalBtn");
+                    if (firstApprovalBtn) {
+                        firstApprovalBtn.style.display = "none";
+                    }
                     // 승인 후 페이지 이동
                     location.href = "/receiveDraft";
                 });

@@ -14,7 +14,8 @@ public class MyLoginFailureHandler implements AuthenticationFailureHandler {
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
-		response.sendRedirect("/login");
+		// 로그인 실패 시 에러 메시지를 URL에 추가
+        response.sendRedirect("/login?error=true");
 		
 	}
 
