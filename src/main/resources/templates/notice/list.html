@@ -81,7 +81,7 @@
       	</tbody>
       	
       </table>
-      <th:block>
+      <th:block th:if="${#authentication.principal.dto.emp_account[0] == 'a'}">
 	  	<button type="button" class="btn btn-primary rounded-pill"
 	  	style="float:right;" th:onclick="|location.href='@{/noticeCreate}'|">등록</button>
       </th:block>
