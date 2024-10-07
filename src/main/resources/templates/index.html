@@ -1,214 +1,437 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{include/layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Connect Caffeine</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Connect Caffeine</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
 
-  <!-- 조직도 관련 -->
-	  <!-- Include jQuery -->
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	  <!-- Include jsTree CSS and JS -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-  <!-- 조직도 끝 -->
-  <!-- Template Main CSS File -->
-  <link href="/bootstrap/css/style.css" rel="stylesheet">
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<!-- 조직도 관련 -->
+<!-- Include jQuery -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Include jsTree CSS and JS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- 조직도 끝 -->
+<style>
+.ps-3 {
+	width: 350px;
+}
+</style>
+
+<!-- 조직도 관련 -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Include jsTree CSS and JS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+<!-- 조직도 끝 -->
+<!-- Template Main CSS File -->
+<link href="/bootstrap/css/style.css" rel="stylesheet">
 
 </head>
 <body>
- <th:block layout:fragment="content">
-  <main id="main" class="main">
-    <section class="section dashboard">
-      <div class="row">
-        <!-- Left side columns -->
-        <div class="col-lg-8">
-          <div class="row">
-            <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>근무 시간</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    <div style="font-size:20px;">개발팀 이후추 대리</div>
-                    <div>2024년 10월 10일</div>
-                    <div>근무 시간: 00시간 00분</div>
-                    <div class="button-box" style="margin-top: 10px;">
-	                    <button type="button" class="btn btn-danger"><b>출근</b></button>
-	                    <button type="button" class="btn btn-info"><b>퇴근</b></button>
-                    </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Sales Card -->
-            <!-- Revenue Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>일정</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Revenue Card -->
-            <!-- Customers Card -->
-            <div class="col-xxl-4 col-xl-12">
-              <div class="card info-card customers-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>결재 현황</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Customers Card -->
-            <!-- Reports -->
-            <div class="col-12">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">값 입력</span></h5>
-                  <!-- Line Chart -->
-                  <div id="reportsChart"></div>
-                  <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                      new ApexCharts(document.querySelector("#reportsChart"), {
-                        series: [{
-                          name: 'Sales',
-                          data: [31, 40, 28, 51, 42, 82, 56],
-                        }, {
-                          name: 'Revenue',
-                          data: [11, 32, 45, 32, 34, 52, 41]
-                        }, {
-                          name: 'Customers',
-                          data: [15, 11, 32, 18, 9, 24, 11]
-                        }],
-                        chart: {
-                          height: 350,
-                          type: 'area',
-                          toolbar: {
-                            show: false
-                          },
-                        },
-                        markers: {
-                          size: 4
-                        },
-                        colors: ['#4154F1', '#2ECA6A', '#FF771D'],
-                        fill: {
-                          type: "gradient",
-                          gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.3,
-                            opacityTo: 0.4,
-                            stops: [0, 90, 100]
-                          }
-                        },
-                        dataLabels: {
-                          enabled: false
-                        },
-                        stroke: {
-                          curve: 'smooth',
-                          width: 2
-                        },
-                        xaxis: {
-                          type: 'datetime',
-                          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-                        },
-                        tooltip: {
-                          x: {
-                            format: 'dd/MM/yy HH:mm'
-                          },
-                        }
-                      }).render();
-                    });
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<section class="section dashboard"
+				style="margin-top: 20px; margin-left: 30px;">
+				<div class="row">
+					<!-- Start 왼쪽 columns -->
+					<div class="col-lg-11">
+						<div class="row">
+							<!-- Start 근무 시간 -->
+							<div class="col-xxl-4 col-md-6">
+								<div class="card info-card sales-card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>근무 시간</b>
+										</h5>
+										<div class="d-flex align-items-center">
+											<div class="ps-3" style="width: 400px;">
+												<!-- 사용자 정보 카드 -->
+												<div class="card"
+													style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
+													<div
+														class="d-flex justify-content-between align-items-center">
+														<div class="d-flex align-items-center">
+															<div>
+																<div id="userGroup"
+																	style="font-size: 16px; color: gray;"></div>
+																<div id="userInfo"
+																	style="font-size: 20px; font-weight: bold;"></div>
+															</div>
+														</div>
+														<div id="userDate"
+															style="text-align: center; font-size: 14px; color: gray;"></div>
+													</div>
+												</div>
+												<!-- 출근/퇴근 시간 -->
+												<div id="timestamp" class="mt-3"
+													style="display: flex; justify-content: space-between; align-items: center;">
+													<div style="text-align: center;">
+														<span style="font-size: 16px; color: gray;">출근 시간</span><br>
+														<span id="startTimeDisplay"
+															style="text-align: center; font-size: 20px; font-weight: bold;"
+															th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
+													</div>
+													<div style="text-align: center;">
+														<span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
+														<span id="endTimeDisplay"
+															style="text-align: center; font-size: 20px; font-weight: bold;"
+															th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
+													</div>
+												</div>
+
+												<hr>
+												<!-- 출근/퇴근 버튼 -->
+												<div class="button-box"
+													style="text-align: center; margin-top: 10px;">
+													<form id="attendanceForm">
+														<button type="button" class="btn btn-outline-info"
+															id="workStart"
+															style="width: 120px; margin-right: 50px; margin-top: 10px;">
+															<b>출근하기</b>
+														</button>
+														<button type="button" class="btn btn-outline-danger"
+															id="workFinish" style="width: 120px; margin-top: 10px;">
+															<b>퇴근하기</b>
+														</button>
+													</form>
+												</div>
+											</div>
+										</div>
+			<script th:inline="javascript">
+                  // 1. 기본 정보 표기
+               	  // (1) 일자
+                  const today = new Date(); // 오늘 날짜
+
+				  // 년, 월, 일 추출
+				  let year = today.getFullYear();    
+				  let month = today.getMonth() + 1; 
+				  let day = today.getDate(); 
+					
+				  let formattedDate = `${year}년 ${month}월 ${day}일`; // 원하는 형식으로 변환 후 넣기
+                  
+               	  document.getElementById('userDate').innerHTML = formattedDate;
+               	  
+				  // (2) 사용자 정보
+                  var userInfo = /*[[${userDto}]]*/ {};
+                  console.log('사용자 정보: ' + userInfo); 
+				  
+                  document.getElementById('userGroup').innerHTML = userInfo.group_name; 
+                  document.getElementById('userInfo').innerHTML = userInfo.emp_name + '(' + userInfo.emp_job_name + ')';
+				  
+				  
+               	  // 2. 출퇴근 시간 전송
+               	  	
+                  $(document).ready(function() {
+                	  var token = $("meta[name='_csrf']").attr("content");
+                	  var header = $("meta[name='_csrf_header']").attr("content");
+                	  
+                	  
+	                	// (1) 출근 시간 전송
+					    $('#workStart').click(function() {
+					        $.ajax({
+					            url: '/attendanceRecord',
+					            type: 'POST',
+					            beforeSend: function(xhr) {
+					                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+					            },
+					            data: { action: 'start' },
+					            success: function(response) {
+					            	// 서버에서 받은 시간을 Date 객체로 변환
+					                var attnStart = new Date(response.attnStart);
+					                
+					                // 시간을 원하는 형식으로 변환 (시:분)
+					                var hours1 = attnStart.getHours();
+					                var minutes1 = attnStart.getMinutes();
+	
+					                // 분을 두 자리로 맞춤
+					                minutes1 = minutes1 < 10 ? '0' + minutes1 : minutes1;
+					            	
+					             	// 형식에 맞게 화면에 표시
+					                $('#startTimeDisplay').text(hours1 + '시 ' + minutes1 + '분');
+					            },
+					            error: function() {
+					                alert('출근 기록에 실패했습니다.');
+					            }
+					        });
+					    });
+					 	
+	                	
+	                	// (2) 퇴근 시간 전송
+					    $('#workFinish').click(function() {
+					        $.ajax({
+					            url: '/attendanceRecord',
+					            type: 'POST',
+					            beforeSend: function(xhr) {
+					                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+					            },
+					            data: { action: 'end' },
+					            success: function(response) {
+					                var attnEnd = new Date(response.attnEnd);
+	
+					                var hours2 = attnEnd.getHours();
+					                var minutes2 = attnEnd.getMinutes();
+	
+					                minutes2 = minutes2 < 10 ? '0' + minutes2 : minutes2;
+					            	
+					             // 형식에 맞게 화면에 표시
+					                $('#endTimeDisplay').text(hours2 + '시 ' + minutes2 + '분');
+					            },
+					            error: function() {
+					                alert('퇴근 기록에 실패했습니다.');
+					            }
+					        });
+					    });
+					});
+    	  
+               	  
+               	  
                   </script>
-                  <!-- End Line Chart -->
-                </div>
-              </div>
-            </div><!-- End Reports -->
-            <!-- Recent Sales -->
-            <div class="col-12">
-              <div class="card recent-sales overflow-auto">
-                <div class="card-body">
-                  <h5 class="card-title">Recent Sales <span>| Today</span></h5>
-                  <table class="table table-borderless datatable">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Customer</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Brandon Jacob</td>
-                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                        <td>$64</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- End Recent Sales -->
-            <!-- Top Selling -->
-            <div class="col-12">
-              <div class="card top-selling overflow-auto">
-                <div class="card-body pb-0">
-                  <h5 class="card-title">Top Selling <span>| Today</span></h5>
-                  <table class="table table-borderless">
-                    <thead>
-                      <tr>
-                        <th scope="col">Preview</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Sold</th>
-                        <th scope="col">Revenue</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row"><a href="#"><img src="bootstrap/img/product-1.jpg" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
-                        <td>$64</td>
-                        <td class="fw-bold">124</td>
-                        <td>$5,828</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- End Top Selling -->
-          </div>
-        </div><!-- End Left side columns -->
-      </div>
-    </section>
-  </main><!-- End #main -->
-</th:block>
-  <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
-    </div>
-    <div class="credits">
-      <!-- All the links in the footer should remain intact. -->
-      <!-- You can delete the links only if you purchased the pro version. -->
-      <!-- Licensing information: https://bootstrapmade.com/license/ -->
-      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-    </div>
-  </footer><!-- End Footer -->
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+									</div>
+								</div>
+							</div>
+							<!-- End 근무 시간 -->
+							<!-- Start 예약 현황 -->
+							<div class="col-xxl-4 col-md-6">
+								<div class="card info-card revenue-card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>예약 현황</b>
+										</h5>
+										<div class="d-flex align-items-center">
+											<div class="ps-3"></div>
+										</div>
+										<script>/* 예약 현황 자바스크립트 */
+                 					 </script>
+									</div>
+								</div>
+							</div>
+							<!-- End 예약 현황 -->
+							<!-- Start 결재 현황 -->
+							<div class="col-xxl-4 col-xl-12">
+								<div class="card info-card customers-card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>결재 현황</b>
+										</h5>
+										<div class="d-flex align-items-center">
+											<div class="ps-3"></div>
+										</div>
+										<script>/* 결재 현황 자바스크립트 */
+                  </script>
+									</div>
+								</div>
+							</div>
+							<!-- End 결재 현황 -->
+							<!-- Start 공지사항 -->
+							<div class="col-lg-6">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>공지사항</b>
+										</h5>
+										<!-- Line Chart -->
+										<div id="reportsChart"></div>
+								
+               
+									</div>
+								</div>
+							</div>
+							<!-- End 공지사항 -->
+							<!-- Start 매출 현황 -->
+							<div class="col-lg-6">
+								<div class="card recent-sales overflow-auto" style="width:700px; height:450px;">
+									<div class="card-body">
+										<h5 class="card-title">
+											<b>오늘매출 현황</b>
+										</h5>
+										<div class="graph-container" style="display: flex; justify-content: space-around;">
+										    <canvas id="main-sales-graph"></canvas>
+										    <canvas id="pie-sales-graph"></canvas>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End 매출 현황 -->
+						</div>
+					</div>
+					<style>
+					
+					#pie-sales-graph {
+					    max-width: 300px;  /* 최대 너비 */
+					    max-height: 300px; /* 최대 높이 */
+					    margin-top: 30px;   
+					    width: 300px; 
+					    height: 300px;
+					}	
+					
+					#main-sales-graph {
+					    max-width: 300px;  /* 최대 너비 */
+					    max-height: 300px; /* 최대 높이 */
+					    margin-top: 30px;
+					    width: 300px; 
+					    height: 300px;
+					}	
+					</style>
+		</main>
+
+		<script>
+$(document).ready(function() {
+    var rankType = 'daily'; 
+    var year = new Date().getFullYear();  
+    var month = new Date().getMonth() + 1;  
+
+    // 각각의 그래프 데이터를 로드
+    loadBarGraphData(rankType, year, month);  // 막대 그래프 로드
+    loadPieGraphData();  // 파이 그래프 로드
+
+    // 막대 그래프 데이터 로드 함수
+    function loadBarGraphData(rankType, year, month) {
+        fetch(`/sales/filter?rankType=${rankType}&year=${year}&month=${month}`)
+            .then(response => response.json())
+            .then(data => {
+                var graphData = processGraphData(data);
+                drawBarGraph(graphData);  // 막대 그래프 그리기
+            })
+            .catch(error => console.error('Error fetching bar graph data:', error));
+    }
+
+    // 파이 그래프 데이터 로드 함수
+    function loadPieGraphData() {
+        fetch(`/sales/product`)
+            .then(response => response.json())
+            .then(data => {
+                var graphData = processGraphData(data);
+                drawPieGraph(graphData);  // 파이 그래프 그리기
+            })
+            .catch(error => console.error('Error fetching pie graph data:', error));
+    }
+
+    // 데이터 처리 함수 (공통으로 사용 가능)
+    // 데이터 처리 함수 (상위 5개만 가져오도록 수정)
+function processGraphData(data) {
+    var labels = data.map(item => item.storeName || item.productName);  // 가맹점명 또는 상품명
+    var salesData = data.map(item => {
+        var totalPrice = item.totalPrice;
+
+        // totalPrice가 문자열일 경우에만 replace 적용
+        if (typeof totalPrice === 'string') {
+            totalPrice = totalPrice.replace('원', '').replace(/,/g, ''); // '원'과 ',' 제거
+        }
+
+        return parseFloat(totalPrice); // 숫자로 변환
+    });
+
+    // 상위 5개의 데이터만 반환
+    labels = labels.slice(0, 5);
+    salesData = salesData.slice(0, 5);
+
+    return {
+        labels: labels,
+        data: salesData
+    };
+}
+
+
+    // 막대 그래프 그리기 함수
+    function drawBarGraph(graphData) {
+        var ctx = document.getElementById('main-sales-graph').getContext('2d');
+
+        // 기존 막대 그래프 삭제
+        if (window.salesChart && typeof window.salesChart.destroy === 'function') {
+            window.salesChart.destroy();
+        }
+
+        // 새로운 막대 그래프 생성
+        window.salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: graphData.labels,
+                datasets: [{
+                    label: '매출액',
+                    data: graphData.data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true, // 비율 유지 설정
+                aspectRatio: 1.5,          // 비율 설정 (1.5로 설정하여 너비 대비 높이 조절)
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // 파이 그래프 그리기 함수
+    function drawPieGraph(graphData) {
+        var ctx = document.getElementById('pie-sales-graph').getContext('2d');
+
+        // 기존 파이 그래프 삭제
+        if (window.pieSalesChart && typeof window.pieSalesChart.destroy === 'function') {
+            window.pieSalesChart.destroy();
+        }
+
+        // 새로운 파이 그래프 생성
+        window.pieSalesChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: graphData.labels,
+                datasets: [{
+                    label: '상품별 매출액',
+                    data: graphData.data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true, // 비율 유지 설정
+                aspectRatio: 1.5,          // 그래프의 비율 조정 (1.5로 설정하면 가로와 세로 비율이 줄어듦)
+            }
+        });
+    }
+});
+</script>
+
+	</th:block>
+
+	<a href="#"
+		class="back-to-top d-flex align-items-center justify-content-center"><i
+		class="bi bi-arrow-up-short"></i></a>
 </body>
 </html>

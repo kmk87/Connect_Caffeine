@@ -4,7 +4,7 @@
       layout:decorate="~{include/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>매출 보고서</title>
+    <title>상품별 매출 관리</title>
     <link rel="stylesheet" disabled="disabled"
           href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link th:href="@{/css/storeManagement/storeManagement.css}"
@@ -24,35 +24,23 @@
                     <h1>점포관리</h1>
                 </div>
                 <ul class="sidebar-nav" id="sidebar-nav">
-                    <li class="nav-item"><a class="nav-link collapsed"
-                        data-bs-target="#components-nav" data-bs-toggle="collapse"
-                        href="#"> <span>가맹점관리</span> <i
-                            class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                        <ul id="components-nav" class="nav-content collapse "
-                            data-bs-parent="#sidebar-nav">
-                            <li><a href="components-alerts.html"> <span>Alerts</span>
-                            </a></li>
-                        </ul></li>
                     <li class="nav-item">
-                    	<a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#"> 
-	                    	<span>매출관리</span> 
-	                    	<i class="bi bi-chevron-down ms-auto"></i>
-                    	</a>
-                        <ul id="components-nav" class="nav-content collapse "
-                            data-bs-parent="#sidebar-nav">
-                            <li>
-                            	<a th:href="@{/salesByStore}" id="store-sales"> 
-                            		<span>점포별 매출</span>
-                            	</a>
-                            </li>
-                            <li>
-                            	<a th:href="@{/salesByProduct}" id="store-sales"> 
-                            		<span>상품별 매출</span>
-                            	</a>
-                            </li>
-                        </ul>
-                    </li>
+		        		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
+		          			<span>매출관리</span><i class="bi bi-chevron-down ms-auto"></i>
+		        		</a>
+	        			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+	          				<li>
+	            				<a th:href="@{/salesByStore}">
+	              					<i class="bi bi-circle"></i><span>점포별 매출관리</span>
+	            				</a>
+	          				</li>
+	          				<li>
+	            				<a th:href="@{/salesByProduct}">
+	              					<i class="bi bi-circle"></i><span>상품별 매출 관리</span>
+	            				</a>
+	          				</li>
+	        			</ul>
+		      		</li>
                 </ul>
             </div>
 
@@ -118,7 +106,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">매출 그래프</h5>
+                        <h5 class="modal-title">상품별 매출 그래프</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -291,21 +279,24 @@
                 var labels = [];
                 var data = [];
 
-                // 각 테이블 행을 순회하며 데이터 수집
-                table.rows().every(function() {
-                    var row = this.data();
-                    labels.push(row[1]); // 가맹점명 (메뉴명 또는 상품명)
+                // 각 테이블 행을 순회하며 상위 5개의 데이터만 수집
+                table.rows({ order: 'applied' }).every(function(index) {
+                    if (index < 5) { // 상위 5개 행만 처리
+                        var row = this.data();
+                        labels.push(row[1]); // 가맹점명 (메뉴명 또는 상품명)
 
-                    // 매출액 처리 (문자열인지 확인 후 처리)
-                    var totalPrice = row[3]; // 매출액이 4번째 열 (index 3)에 있다고 가정
-                    if (typeof totalPrice === 'string') {
-                        totalPrice = totalPrice.replace('원', '').replace(/,/g, ''); // '원'과 콤마 제거
+                        // 매출액 처리 (문자열인지 확인 후 처리)
+                        var totalPrice = row[3]; // 매출액이 4번째 열 (index 3)에 있다고 가정
+                        if (typeof totalPrice === 'string') {
+                            totalPrice = totalPrice.replace('원', '').replace(/,/g, ''); // '원'과 콤마 제거
+                        }
+                        data.push(parseFloat(totalPrice)); // 매출액을 숫자로 변환
                     }
-                    data.push(parseFloat(totalPrice)); // 매출액을 숫자로 변환
                 });
 
                 return { labels: labels, data: data };
             }
+
 
 
         });

@@ -17,6 +17,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script
 	src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 	<th:block layout:fragment="content">
@@ -92,11 +93,9 @@
         								class="notification-link"></a></td>
 								<td class="notify-time" th:text="${unreadNotification.relativeTime}"></td> <!-- 상대 시간 출력 -->
 							</tr>
-								<input type="hidden" id="csrf_token"
-									   th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 						</th:block>
-
 					</tbody>
+					<input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 				</table>
 				<!-- 페이지네이션 -->
 				<div class="pagination-container">
@@ -118,20 +117,21 @@
 	    
 			$(document).ready(function() {
 				$('#notification_list').DataTable({
-					"paging" : true,
-					"lengthChange" : false,
-					"searching" : false,
-					"pageLength" : 15,
-					"ordering" : false,
-					"info" : false,
-					"autoWidth" : false,
-					"language" : {
-						"paginate" : {
-							"previous" : "<", // 이전을 <로 표시
-							"next": ">"      // 다음을 >로 표시
-						},
-					},
-					"pagingType" : "simple_numbers"
+				    "paging": true,
+				    "lengthChange": false,
+				    "searching": false,
+				    "pageLength": 15,
+				    "ordering": false,
+				    "info": false,
+				    "autoWidth": false,
+				    "language": {
+				        "paginate": {
+				            "previous": "<",
+				            "next": ">"
+				        },
+				        "emptyTable": "표시할 알림이 없습니다."
+				    },
+				    "pagingType": "simple_numbers"
 				});
 			});
 			
@@ -161,10 +161,11 @@
 	        }
 	        
 			 // 전체 선택 기능 추가
-		    $('#select-all').on('click', function() {
-		        let isChecked = $(this).prop('checked');
-		        $('input[type="checkbox"]').prop('checked', isChecked);
-		    });
+		   $(document).on('click', '#select-all', function() {
+			    let isChecked = $(this).prop('checked');
+			    $('input[type="checkbox"]').prop('checked', isChecked);
+			});
+
 			 
 			  // 삭제 버튼 클릭 시 선택된 알림 삭제
 		   $('#delete-button').on('click', function() {
@@ -189,7 +190,13 @@
             },
             body: JSON.stringify({ notificationIds: selectedNotifications })
         })
-        .then(response => response.json())
+        .then(response => {
+        	  if (response.ok) {
+        	        return response.json(); // 응답을 JSON으로 파싱
+        	    } else {
+        	        throw new Error('Failed to delete notifications');
+        	    }
+        })
         .then(data => {
             if (data.res_code === "200") {
                 // 삭제 성공 시 페이지 새로고침

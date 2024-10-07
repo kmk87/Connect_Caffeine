@@ -60,6 +60,9 @@ public class CalendarViewController {
 		  System.out.println("teamNo : "+teamNo);
 		  Long deptNo = empGroupService.getGroupNoByEmpCode(teamNo);
 		  System.out.println("deptNo : "+deptNo);
+		  // 관리자인지 여부 판단
+		    boolean isAdmin = empAccount.startsWith("a");
+		    model.addAttribute("isAdmin", isAdmin);
 		  String currentUri = request.getRequestURI();
 		  model.addAttribute("currentUri", currentUri);
 		  

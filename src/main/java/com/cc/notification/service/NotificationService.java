@@ -37,64 +37,77 @@ public class NotificationService {
 	}
 
     // 전사일정 알림 전송
-    public void sendCompanyWideNotification(String message) throws Exception {
-        List<Employee> allEmployees = employeeService.getAllEmployees();
-        for (Employee employee : allEmployees) {
-            NotificationDto notificationDto = new NotificationDto();
-            notificationDto.setReceiver_no(employee.getEmpCode());
-            notificationDto.setNotificationContent(message);
-            notificationDto.setNotificationType("SCHEDULE");
-            notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calendar");
-            
-            notificationHandler.saveAndSendNotification(notificationDto);
-        }
-    }
+	public void sendCompanyWideNotification(String message, Long writerId) throws Exception {
+	    List<Employee> allEmployees = employeeService.getAllEmployees();
+	    for (Employee employee : allEmployees) {
+	        if (!employee.getEmpCode().equals(writerId)) { // 작성자를 제외한 나머지에게만 알림 전송
+	            NotificationDto notificationDto = new NotificationDto();
+	            notificationDto.setReceiver_no(employee.getEmpCode());
+	            notificationDto.setNotificationContent(message);
+	            notificationDto.setNotificationType("SCHEDULE");
+	            notificationDto.setIsRead('N');
+	            notificationDto.setRelatedLink("/calendar");
+	            
+	            notificationHandler.saveAndSendNotification(notificationDto);
+	        }
+	    }
+	}
 
     // 부서일정 알림 전송
-    public void sendDepartmentNotification(Long deptNo, String message) throws Exception {
-        List<Employee> departmentEmployees = employeeService.getEmployeesByDeptNo(deptNo);
-        for (Employee employee : departmentEmployees) {
-            NotificationDto notificationDto = new NotificationDto();
-            notificationDto.setReceiver_no(employee.getEmpCode());
-            notificationDto.setNotificationContent(message);
-            notificationDto.setNotificationType("SCHEDULE");
-            notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("/calendar");
+	public void sendDepartmentNotification(Long deptNo, String message, Long writerId) throws Exception {
+	    List<Employee> departmentEmployees = employeeService.getEmployeesByDeptNo(deptNo);
+	    System.out.println("부서 번호: " + deptNo);
+	    for (Employee employee : departmentEmployees) {
+	        if (!employee.getEmpCode().equals(writerId)) { // 작성자를 제외
+	            NotificationDto notificationDto = new NotificationDto();
+	            notificationDto.setReceiver_no(employee.getEmpCode());
+	            notificationDto.setNotificationContent(message);
+	            notificationDto.setNotificationType("SCHEDULE");
+	            notificationDto.setIsRead('N');
+	            notificationDto.setRelatedLink("/calendar");
+	            
+	            notificationHandler.saveAndSendNotification(notificationDto);
+	           
 
-            notificationHandler.saveAndSendNotification(notificationDto);
-        }
-    }
+	        }
+	    }
+	}
 
     // 팀일정 알림 전송
-    public void sendTeamNotification(Long teamNo, String message) throws Exception {
-        List<Employee> teamEmployees = employeeService.getEmployeesByTeamNo(teamNo);
-        for (Employee employee : teamEmployees) {
-            NotificationDto notificationDto = new NotificationDto();
-            notificationDto.setReceiver_no(employee.getEmpCode());
-            notificationDto.setNotificationContent(message);
-            notificationDto.setNotificationType("SCHEDULE");
-            notificationDto.setIsRead('N');
-            notificationDto.setRelatedLink("//calendar");
-            
-            notificationHandler.saveAndSendNotification(notificationDto);
-        }
-    }
+	public void sendTeamNotification(Long teamNo, String message, Long writerId) throws Exception {
+	    List<Employee> teamEmployees = employeeService.getEmployeesByTeamNo(teamNo);
+	    for (Employee employee : teamEmployees) {
+	        if (!employee.getEmpCode().equals(writerId)) { // 작성자를 제외
+	            NotificationDto notificationDto = new NotificationDto();
+	            notificationDto.setReceiver_no(employee.getEmpCode());
+	            notificationDto.setNotificationContent(message);
+	            notificationDto.setNotificationType("SCHEDULE");
+	            notificationDto.setIsRead('N');
+	            notificationDto.setRelatedLink("/calendar");
+	            
+	            notificationHandler.saveAndSendNotification(notificationDto);
+	        }
+	    }
+	}
+
     
-    // 공지사항 알림 발송
-    public void sendNoticeNotification(String message, Long noticeId) throws Exception {
-    	List<Employee> allEmployees = employeeService.getAllEmployees();
-    	for (Employee employee : allEmployees) {
-    		NotificationDto notificationDto = new NotificationDto();
-    		notificationDto.setReceiver_no(employee.getEmpCode());
-    		notificationDto.setNotificationContent(message);
-    		notificationDto.setNotificationType("NOTICE");
-    		notificationDto.setIsRead('N');
-    		notificationDto.setRelatedLink("noticeDetail/"+noticeId);
-    		
-    		notificationHandler.saveAndSendNotification(notificationDto);
-    	}
-    }
+//    // 공지사항 알림 발송
+//	public void sendNoticeNotification(String message, Long noticeId, Long writerId) throws Exception {
+//	    List<Employee> allEmployees = employeeService.getAllEmployees();
+//	    for (Employee employee : allEmployees) {
+//	        if (!employee.getEmpCode().equals(writerId)) { // 작성자를 제외
+//	            NotificationDto notificationDto = new NotificationDto();
+//	            notificationDto.setReceiver_no(employee.getEmpCode());
+//	            notificationDto.setNotificationContent(message);
+//	            notificationDto.setNotificationType("NOTICE");
+//	            notificationDto.setIsRead('N');
+//	            notificationDto.setRelatedLink("/noticeDetail/" + noticeId);
+//	            
+//	            notificationHandler.saveAndSendNotification(notificationDto);
+//	        }
+//	    }
+//	}
+
     
  // 결재 요청 알림 전송
     public void sendApprovalRequestNotification(Long approverEmpCode, String message, Long approvalId) throws Exception {

@@ -6,12 +6,13 @@
 <meta charset='utf-8' />
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-<title>Connect Caffeine</title>
+<title>일정 관리</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
 <link th:href="@{/css/calendar/calendar.css}" rel="stylesheet"type="text/css">
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.5/index.global.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </head>
@@ -46,13 +47,10 @@
 									<input type="hidden" id="calendar_writer_no"
 										name="calendar_writer_no"
 										th:value="${#authentication.principal.dto.emp_code}">
-									<!-- 숨겨진 부서번호 -->
-									<input type="hidden" id="dept_no" name="dept_no"
-										th:value="${deptNo}">
-
-									<!-- 숨겨진 팀번호 -->
-									<input type="hidden" id="team_no" name="team_no"
-										th:value="${teamNo}">
+									
+									<input type="hidden" id="dept_no" name="dept_no" th:value="${deptNo}">
+									<input type="hidden" id="team_no" name="team_no" th:value="${teamNo}">
+									
 									<div class="row mb-3">
 										<label class="col-sm-2 col-form-label">일정 종류</label>
 										<div class="col-sm-10">
@@ -61,7 +59,7 @@
 												name="schedule_type">
 												<option selected>선택하기</option>
 												<option value="1">내일정</option>
-												<option value="2">전사일정</option>
+												<option th:if="${isAdmin}" value="2">전사일정</option>
 												<option value="3">부서일정</option>
 												<option value="4">팀일정</option>
 											</select>
@@ -224,6 +222,23 @@
 		</main>
 		<script th:inline="javascript">
 	 document.addEventListener('DOMContentLoaded', function() {
+		 
+		 var isAdmin = /*[[${isAdmin}]]*/ false;  // 서버에서 전달된 관리자 여부
+
+		    if (!isAdmin) {
+		        var option = document.querySelector("option[value='2']");
+		        if (option) {
+		            option.disabled = true;  // 전사일정 선택 차단
+		        }
+		    }
+		 
+		    // 모달이 닫힐 때 form 초기화
+		    var scheduleForm = document.getElementById('scheduleForm');
+		    
+		    $('#verticalycentered').on('hidden.bs.modal', function () {
+		        scheduleForm.reset();  // form 내 모든 입력 필드 초기화
+		    });
+		 
 		  var userColors = /*[[${userColors}]]*/ {};
 		    console.log("User Colors: ", userColors);  // userColors 확인
 		    
@@ -254,6 +269,7 @@
 	        	dayMaxEventRows: 3,  // 일정 수 제한 (필요에 따라 조정)
 	            moreLinkClick: 'popover', // '더보기' 클릭 시 팝업으로 표시
 	            googleCalendarApiKey: 'AIzaSyBnFicQa_NsmVXGu5REI_9K6GMELpwgLRc', // 구글 API 키
+	       
 	            headerToolbar: {
 	                left: 'prev,next today',
 	                center: 'title',
@@ -263,6 +279,11 @@
 	            navLinks: true, // 날짜 클릭 시 이동
 	            editable: true, // 드래그로 일정 변경 가능
 	            dayMaxEvents: true, // "더보기" 링크 표시
+	            dayHeaderFormat: { weekday: 'short' }, // 요일 형식을 "월", "화" 형식으로 표시
+	            // 날짜 형식을 변경하여 '일' 제거
+	            dayCellContent: function(info) {
+	                return info.dayNumberText.replace('일', '');  // '일' 문구 제거
+	            },
 	            events: events, // 사용자 일정 이벤트
 	            eventDrop: function(info) {
 	            	const updatedEvent = {
@@ -550,7 +571,55 @@
 		        var empCode = document.getElementById('calendar_writer_no').value;
 		        var deptNo = document.getElementById('dept_no').value;
 		        var teamNo = document.getElementById('team_no').value;
+		        console.log("Dept No: " + deptNo); // 값 확인
+		        console.log("Team No: " + teamNo); // 값 확인
+		        // 유효성 검사
+		        if (eventType === '선택하기') {
+		            Swal.fire({
+		                icon: 'error',
+		                title: '일정 종류 선택',
+		                text: '일정 종류를 선택해주세요.'
+		            });
+		            return; // 등록 중단
+		        }
 
+		        if (!eventTitle.trim()) {
+		            Swal.fire({
+		                icon: 'error',
+		                title: '제목 입력',
+		                text: '일정 제목을 입력해주세요.'
+		            });
+		            return; // 등록 중단
+		        }
+
+		        if (!startDate) {
+		            Swal.fire({
+		                icon: 'error',
+		                title: '시작 시간 설정',
+		                text: '시작 시간을 입력해주세요.'
+		            });
+		            return; // 등록 중단
+		        }
+
+		        if (!endDate) {
+		            Swal.fire({
+		                icon: 'error',
+		                title: '종료 시간 설정',
+		                text: '종료 시간을 입력해주세요.'
+		            });
+		            return; // 등록 중단
+		        }
+
+		        if (new Date(startDate) > new Date(endDate)) {
+		            Swal.fire({
+		                icon: 'error',
+		                title: '시간 오류',
+		                text: '종료 시간이 시작 시간보다 빠를 수 없습니다.'
+		            });
+		            return; // 등록 중단
+		        }
+
+		        
 		        var scheduleData = {
 		            schedule_type: eventType,
 		            schedule_title: eventTitle,
@@ -563,6 +632,7 @@
 		            team_no : teamNo
 		        };
 
+		        console.log(scheduleData);  // 콘솔로 데이터 확인
 		        const csrfToken = document.getElementById('csrf_token').value;
 		        fetch('/calendar', {
 		            method: 'POST',
@@ -725,7 +795,7 @@
 		        return `${year}-${month}-${day} ${hours}:${minutes}`;
 		    }
 
-		    
+		
 		 
 		});
 		</script>

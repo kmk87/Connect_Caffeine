@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cc.storeManagement.domain.SaleDto;
 import com.cc.storeManagement.service.SalesService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class SalesViewController {
 
@@ -27,9 +29,10 @@ public class SalesViewController {
     public String getSales(
             @RequestParam(name = "rankType", defaultValue = "monthly") String rankType,
             @RequestParam(name = "year", defaultValue = "0") int year,
-            @RequestParam(name = "month", defaultValue = "0") int month,
+            @RequestParam(name = "month", defaultValue = "0") int month, HttpServletRequest request,
             Model model) {
-
+    	String currentUri = request.getRequestURI();
+    	model.addAttribute("currentUri", currentUri);
         // 현재 연도 및 월이 지정되지 않은 경우, 현재 날짜 기준으로 설정
         year = resolveYear(year);
         month = resolveMonth(month);

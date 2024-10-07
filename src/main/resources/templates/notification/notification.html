@@ -17,6 +17,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script
 	src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 	<th:block layout:fragment="content">
@@ -63,35 +64,36 @@
 				<hr style="margin: 0;">
 				<!-- 알림 목록을 테이블로 표시 -->
 				<table id="notification_list" class="display">
-					<thead>
-						<tr>
-							<th>선택</th>
-							<th>내용</th>
-							<th>시간</th>
-						</tr>
-					</thead>
-					<tbody>
-						<th:block th:if="${#lists.isEmpty(notifications)}">
-							<tr>
-								<td colspan="3">알림이 존재하지 않습니다.</td>
-							</tr>
-						</th:block>
-						<th:block th:if="${!#lists.isEmpty(notifications)}">
-							<tr th:each="notification : ${notifications}"
-								th:data-id="${notification.notification_no}"
-								th:data-type="${notification.notificationType}"
-								th:classappend="${notification.isRead.toString().toUpperCase() == 'Y'} ? 'read-notification' : ''">
-								<td class="checkbox-column"><input type="checkbox"></td>
-								<td><a th:href="${notification.relatedLink}"
-									th:utext="${notification.notificationContent}"
-									class="notification-link"></a></td>
-								<td class="notify-time" th:text="${notification.relativeTime}"></td>
-							</tr>
-								<input type="hidden" id="csrf_token"
-									th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-						</th:block>
-					</tbody>
+				    <thead>
+				        <tr>
+				            <th>선택</th>
+				            <th>내용</th>
+				            <th>시간</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				        <th:block th:if="${#lists.isEmpty(notifications)}">
+				            <tr>
+				                <td colspan="3">알림이 존재하지 않습니다.</td>
+				            </tr>
+				        </th:block>
+				        <th:block th:if="${!#lists.isEmpty(notifications)}">
+				            <tr th:each="notification : ${notifications}"
+				                th:data-id="${notification.notification_no}"
+				                th:data-type="${notification.notificationType}"
+				                th:classappend="${notification.isRead.toString().toUpperCase() == 'Y'} ? 'read-notification' : ''">
+				                <td class="checkbox-column"><input type="checkbox"></td>
+				                <td><a th:href="${notification.relatedLink}"
+				                    th:utext="${notification.notificationContent}"
+				                    class="notification-link"></a></td>
+				                <td class="notify-time" th:text="${notification.relativeTime}"></td>
+				            </tr>
+				        </th:block>
+				    </tbody>
+				    <!-- CSRF 토큰 -->
+					<input type="hidden" id="csrf_token" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 				</table>
+
 				<!-- 페이지네이션 -->
 				<div class="pagination-container">
 					<div id="notification_pagination"></div>
@@ -99,6 +101,7 @@
 			</div>
 		</main>
 		<script>
+	    $(document).ready(function() {
 		
 		 // 현재 URL 가져오기
 	    const currentUrl = window.location.pathname;
@@ -110,7 +113,6 @@
 	        document.getElementById('unread-notifications-link').classList.add('active');
 	    } 
 	    
-	    $(document).ready(function() {
 	        // DataTable 초기화
 	        $('#notification_list').DataTable({
 	            "paging": true,
@@ -125,10 +127,11 @@
 	                    "previous": "<", // 이전을 <로 표시
 	                    "next": ">"      // 다음을 >로 표시
 	                },
+	                "emptyTable": "표시할 알림이 없습니다." // 빈 테이블에 대한 메시지
 	            },
 	            "pagingType": "simple_numbers"
 	        });
-	    });
+	   
 
 	        // 알림 목록 필터링 기능
 	        $('.notification-select select').on('change', function() {
@@ -162,7 +165,7 @@
 	        });
 	        
 	        // 삭제 버튼 클릭 시 선택된 알림 삭제
-	        $('#delete-button').on('click', function() {
+	       $(document).on('click', '#delete-button', function() {
 	            let selectedNotifications = [];
 	            $('input[type="checkbox"]:checked').each(function() {
 	                let notificationId = $(this).closest('tr').data('id');
@@ -219,7 +222,7 @@
 	        });
 	
 	    
-	    $(document).ready(function() {
+	   
 	        // 알림 클릭 시 읽음 처리 (이벤트 위임 사용)
 	        $(document).on('click', '.notification-link', function(event) {
 	           

@@ -8,32 +8,35 @@
 <title>Connect Caffeine</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
-<!-- Favicons -->
-<link href="bootstrap/img/쿼카.png" rel="icon">
-<link href="bootstrap/img/쿼카.png" rel="쿼카">
-<!-- Google Fonts -->
-<link href="https://fonts.gstatic.com" rel="preconnect">
-<link
-	href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-	rel="stylesheet">
-<!-- Vendor CSS Files -->
-<link href="/bootstrap/vendor/bootstrap/css/bootstrap.min.css"
-	rel="stylesheet">
-<link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css"
-	rel="stylesheet">
-<link href="/bootstrap/vendor/boxicons/css/boxicons.min.css"
-	rel="stylesheet">
-<link href="/bootstrap/vendor/quill/quill.snow.css" rel="stylesheet">
-<link href="/bootstrap/vendor/quill/quill.bubble.css" rel="stylesheet">
-<link href="/bootstrap/vendor/remixicon/remixicon.css" rel="stylesheet">
-<link href="/bootstrap/vendor/simple-datatables/style.css"
-	rel="stylesheet">
-<!-- Template Main CSS File -->
-<link href="/bootstrap/css/style.css" rel="stylesheet">
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
+.empSidebar {
+    position: fixed;
+    top: 60px;
+    left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    bottom: 0;
+    width: 250px; /* 추가 사이드바의 너비 */
+    z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+    font-size: 15px;
+	font-weight: 600;
+	color: #012970;
+}
+
+.content-area {
+    margin-left: 250px; /* 사이드바 너비 + 여백 */
+    padding: 20px; /* 내부 여백 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 각 섹션 간의 간격 */
+    margin-top: -110px;
+}
+
 .card-body-header {
 	display: flex;
 	justify-content: space-between;
@@ -44,223 +47,317 @@
 	width: 100%;
 }
 
-.sub-sidebar {
-    width: 250px;          
-    background-color: #fff;
-    padding: 20px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #012970;
-}
-
-.subside_title {
-    font-size: 25px;
+table td, table th {
+	vertical-align: middle;
 }
 </style>
 </head>
 <body>
 	<th:block layout:fragment="content">
 		<main id="main" class="main">
-			<div class="sub-sidebar" id="sub-sidebar">
-				<span class="subside_title">인사 관리</span><br> <br>
-				<h5>사원 정보</h5>
-				<h5>
-					<a th:href="@{/empGroupList}" style="color: inherit;">팀 정보</a>
-				</h5>
-			</div>
-			<section class="section dashboard" style="width: calc(100% - 250px);">
-				<div class="col-xxl-4 col-md-6" style="width: 100%;">
+			<aside id="empSidebar" class="empSidebar">
+				<div class="pagetitle">
+      				<h1>인사 관리</h1>
+    			</div>
+    			<ul class="sidebar-nav" id="sidebar-nav">
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/employeeList}" style="margin-top:15px;">
+		          			<i class="bi bi-person-fill"></i><span>사원 정보</span>
+		        		</a>
+		      		</li>
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/empGroupList}">
+		          			<i class="bi bi-people-fill"></i><span>부서/팀 정보</span>
+		        		</a>
+		      		</li>
+	      		</ul>
+			</aside>
+			<section class="section dashboard" style="width: 100%">
+				<div class="content-area">
+				<div class="col-xxl-4 col-md-6" style="width: 100%; margin-top:100px;">
 					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
-						<div class="card-body">
+						<div class="card-body" style="height:100%">
 							<div class="card-body-header">
-								<h2 class="card-title"><b>팀 정보</b></h2>
+								<h2 class="card-title">
+									<b th:text="${egDto.group_level == 'G1' ? '부서 정보' : '팀 정보'}"></b>
+								</h2>
 							</div>
 							<hr>
-							<form id="groupDeleteFrm" method="POST" action="/empGroup">
-								<input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}" />
-								<input type=hidden id="group_no" name="group_no" th:value="${egDto.group_no}">
-							<div class="basic-info">
-								<!-- 첫 번째 테이블: 그룹 레벨이 부서(G1)일 때 -->
-								<table class="table table-bordered" th:if="${egDto.group_level == 'G1'}">
-									<colgroup>
-										<col style="width: 40%;">
-										<col style="width: 60%;">
-									</colgroup>
-									<tr>
-										<th>부서명</th>
-										<td th:text="${deptOri}" id="group_name" th:value="${deptOri}"></td>
-									</tr>
-									<tr>
-										<th>인원</th>
-										<td th:text="${deptHeadcount}" id="group_headcount" th:value="${deptHeadcount}"></td>
-									</tr>
-									<tr>
-										<th>상위 부서</th>
-										<td th:text="본사"></td>
-									</tr>
-									<tr>
-										<th>그룹 설명</th>
-										<td th:text="${egDto.group_explain}" id="group_explain" th:value="${egDto.group_explain}"></td>
-									</tr>
-									<tr>
-										<th>책임자</th>
-										<td th:text="${leaderName}" id="group_leader" th:value="${egDto.group_leader_code}"></td>
-									</tr>
-									<tr>
-										<th>책임자 연락처</th>
-										<td th:text="${leaderDeskPhone}" id="group_leader_desk_phone"></td>
-									</tr>
-								</table>
-								<!-- 두 번째 테이블: 그룹 레벨이 팀(G2)일 때 -->
-								<table class="table table-bordered" th:if="${egDto.group_level == 'G2'}">
-									<colgroup>
-										<col style="width: 40%;">
-										<col style="width: 60%;">
-									</colgroup>
-									<tr>
-										<th>팀명</th>
-										<td>
-											<span th:text="${egDto.group_name}"></span>
-											<input type="hidden" name="group_name" id="group_name" th:value="${egDto.group_name}">
-										</td>
-									</tr>
-									<tr>
-										<th>인원</th>
-										<td>
-											<span th:text="${egDto.group_headcount}"></span>
-											<input type="hidden" name="group_headcount" id="group_headcount" th:value="${egDto.group_headcount}">
-										</td>
-									</tr>
-									<tr>
-										<th>상위 부서</th>
-										<td>
-										 	<span th:text="${parentDeptName}"></span> 
-										 	<input type="hidden" name="parent_group" id="parent_group" th:value="${egDto.group_parent_no}">
-										 </td>
-									</tr>
-									<tr>
-										<th>위치</th>
-										<td>  
-											<span th:text="${egDto.group_location}"></span>
-											<input type="hidden" name="group_location" id="group_location" th:field="*{egDto.group_location}">
-										</td>
-									</tr>
-									<tr>
-										<th>그룹 설명</th>
-										<td>  
-											<span th:text="${egDto.group_explain}"></span>
-											<input type="hidden" name="group_explain" id="group_explain" th:value="${egDto.group_explain}">
-										</td>
-									</tr>
-									<tr>
-										<th>책임자</th>
-										<td>  
-											<span th:text="${leaderName}"></span>
-											<input type="hidden" name="group_leader" id="group_leader" th:value="${egDto.group_leader_code}">
-										</td>
-									</tr>
-									<tr>
-										<th>책임자 연락처</th>
-										<td>  
-											<span th:text="${leaderDeskPhone}"></span>
-											<input type="hidden" name="group_leader_desk_phone" id="group_leader_desk_phone" th:value="${leaderDeskPhone}">
-										</td>
-									</tr>
-								</table>
-							</div>
-							<div class="d-flex align-items-center" style="display: flex; justify-content: flex-end;">
-								<a th:href="@{/empGroupUpdate/{group_no}(group_no=${egDto.group_no})}">
-									<button type="button" class="btn btn-primary rounded-pill">수정</button>
-								</a>
-								<button type="button" class="btn btn-primary rounded-pill" onclick="confirmDelete()" style="margin-left: 10px;">삭제</button>
-							</div>
+							<form id="groupDeleteFrm" method="POST">
+								<input type="hidden" id="_csrf" name="_csrf"
+									th:value="${_csrf.token}" /> <input type=hidden id="group_no"
+									name="group_no" th:value="${egDto.group_no}">
+								<div class="basic-info">
+									<!-- 첫 번째 테이블: 그룹 레벨이 부서(G1)일 때 -->
+									<div id="case1" th:if="${egDto.group_level == 'G1'}">
+										<!-- 상위 부서, 위치 정보 필요 없으므로 hidden 처리 -->
+										<input type="hidden" name="parent_group" id="parent_group"
+													th:value="${egDto.group_parent_no}">
+										<input type="hidden" name="group_location" id="group_location"
+													th:value="${egDto.group_location}">
+										<table class="table table-bordered">
+											<colgroup>
+												<col style="width: 40%;">
+												<col style="width: 60%;">
+											</colgroup>
+											<tr>
+												<th>부서명</th>
+												<td th:text="${deptOri}" id="group_name"
+													th:value="${deptOri}"></td>
+											</tr>
+											<tr>
+												<th>인원</th>
+												<td th:text="${deptHeadcount}" id="group_headcount"
+													th:value="${deptHeadcount}"></td>
+											</tr>
+											<tr>
+												<th>그룹 설명</th>
+												<td th:text="${egDto.group_explain}" id="group_explain"
+													th:value="${egDto.group_explain}"></td>
+											</tr>
+											<tr>
+												<th>책임자</th>
+												<td th:text="${leaderName}" id="group_leader"
+													th:value="${egDto.group_leader_code}"></td>
+											</tr>
+											<tr>
+												<th>책임자 연락처</th>
+												<td th:text="${leaderDeskPhone}"
+													id="group_leader_desk_phone"></td>
+											</tr>
+										</table>
+										<div class="d-flex align-items-center"
+											style="display: flex; justify-content: flex-end;">
+											<a
+												th:href="@{/empGroupUpdate/{group_no}(group_no=${egDto.group_no})}">
+												<button type="button" class="btn btn-primary rounded-pill">수정</button>
+											</a>
+											<button type="button" class="btn btn-secondary rounded-pill"
+												onclick="confirmDeptDelete()" style="margin-left: 10px;">삭제</button>
+										</div>
+									</div>
+									<!-- 두 번째 테이블: 그룹 레벨이 팀(G2)일 때 -->
+									<div id="case2" th:if="${egDto.group_level == 'G2'}">
+										<table class="table table-bordered">
+											<colgroup>
+												<col style="width: 40%;">
+												<col style="width: 60%;">
+											</colgroup>
+											<tr>
+												<th>팀명</th>
+												<td><span th:text="${egDto.group_name}"></span> <input
+													type="hidden" name="group_name" id="group_name"
+													th:value="${egDto.group_name}"></td>
+											</tr>
+											<tr>
+												<th>인원</th>
+												<td><span th:text="${egDto.group_headcount}"></span> <input
+													type="hidden" name="group_headcount" id="group_headcount"
+													th:value="${egDto.group_headcount}"></td>
+											</tr>
+											<tr>
+												<th>상위 부서</th>
+												<td><span th:text="${parentDeptName}"></span> <input
+													type="hidden" name="parent_group" id="parent_group"
+													th:value="${egDto.group_parent_no}"></td>
+											</tr>
+											<tr>
+												<th>위치</th>
+												<td><span th:text="${egDto.group_location}"></span> <input
+													type="hidden" name="group_location" id="group_location"
+													th:field="*{egDto.group_location}"></td>
+											</tr>
+											<tr>
+												<th>그룹 설명</th>
+												<td><span th:text="${egDto.group_explain}"></span> <input
+													type="hidden" name="group_explain" id="group_explain"
+													th:value="${egDto.group_explain}"></td>
+											</tr>
+											<tr>
+												<th>책임자</th>
+												<td><span th:text="${leaderName}"></span> <input
+													type="hidden" name="group_leader" id="group_leader"
+													th:value="${egDto.group_leader_code}"></td>
+											</tr>
+											<tr>
+												<th>책임자 연락처</th>
+												<td><span th:text="${leaderDeskPhone}"></span> <input
+													type="hidden" name="group_leader_desk_phone"
+													id="group_leader_desk_phone" th:value="${leaderDeskPhone}">
+												</td>
+											</tr>
+										</table>
+										<div class="d-flex align-items-center"
+											style="display: flex; justify-content: flex-end;">
+											<a
+												th:href="@{/empGroupUpdate/{group_no}(group_no=${egDto.group_no})}">
+												<button type="button" class="btn btn-primary rounded-pill">수정</button>
+											</a>
+											<button type="button" class="btn btn-secondary rounded-pill"
+												onclick="confirmTeamDelete()" style="margin-left: 10px;">삭제</button>
+										</div>
+									</div>
+								</div>
 							</form>
 						</div>
 					</div>
 				</div>
+				</div>
 			</section>
 		</main>
 		<!-- End #main -->
-	<script>
-	function confirmDelete() {
-	    if (!confirm("팀 정보를 정말 삭제하시겠습니까?")) {
-	        return;
-	    }
-	    
-		const form = document.getElementById("groupDeleteFrm");
-
-		
-		// 입력 값 가져오기
-		const groupNo = document.getElementById("group_no").value;
-		const groupName = document.getElementById("group_name").value;
-		const groupHeadcount = document.getElementById("group_headcount").value;
-		const parentGroup = document.getElementById("parent_group").value;
-		const groupLocation = document.getElementById("group_location").value;
-		const groupExplain = document.getElementById("group_explain").value;
-		const groupLeaderCode = document.getElementById("group_leader").value;
+		<script>
+		// 1. 부서 수정
+		function confirmDeptDelete() {
+		    if (!confirm("부서 삭제 시 하위 팀 정보도 함께 삭제됩니다. 부서 정보를 정말 삭제하시겠습니까?")) {
+		        return;
+		    }
+		    
+			const form = document.getElementById("groupDeleteFrm");
 	
+			
+			// 입력 값 가져오기
+			const groupNo = document.getElementById("group_no").value;
+			const groupName = document.getElementById("group_name").value;
+			const groupHeadcount = document.getElementById("group_headcount").value;
+			const parentGroup = document.getElementById("parent_group").value;
+			const groupLocation = document.getElementById("group_location").value;
+			const groupExplain = document.getElementById("group_explain").value;
+			const groupLeaderCode = document.getElementById("group_leader").value;
 		
-		// 객체에 담아 보내기
-		const obj = {
-				group_no : groupNo,
-				group_name : groupName,
-				group_headcount : groupHeadcount,
-				group_parent_no : parentGroup,
-				group_location : groupLocation,
-				group_explain : groupExplain,
-				group_leader_code : groupLeaderCode,
-				group_status : 'N',
-				group_level : 'G2'
-		};
-		
-		const csrfToken = document.getElementById("_csrf").value;
-
-	        fetch('/empGroupDelete/'+ groupNo, {
-	            method: 'POST',
-	            headers: {
-	                'Content-Type': 'application/json;charset=utf-8',
-	                "Accept": "application/json",
-	                'X-CSRF-TOKEN': csrfToken
-	                
-	            },
-	            body: JSON.stringify(obj)
-	        })
-	        .then(response => response.json())
-	        .then(data => {
-	            if (data.res_code === '200') {
-	                Swal.fire({
-	                    icon: 'success',
-	                    title: '성공',
-	                    text: data.res_msg,
-	                    confirmButtonText: "닫기"
-	                }).then((result) => {
-	                    location.href = "/empGroupList";
-	                });
-	            } else {
-	                Swal.fire({
-	                    icon: 'error',
-	                    title: '실패',
-	                    text: data.res_msg,
-	                    confirmButtonText: "닫기"
-	                });
-	            }
-	        });
+			
+			// 객체에 담아 보내기
+			const obj = {
+					group_no : groupNo,
+					group_name : groupName,
+					group_headcount : groupHeadcount,
+					group_parent_no : parentGroup,
+					group_location : groupLocation,
+					group_explain : groupExplain,
+					group_leader_code : groupLeaderCode,
+					group_status : 'N',
+					group_level : 'G2'
+			};
+			
+			const csrfToken = document.getElementById("_csrf").value;
+	
+		        fetch('/empDeptDelete/'+ groupNo, {
+		            method: 'POST',
+		            headers: {
+		                'Content-Type': 'application/json;charset=utf-8',
+		                "Accept": "application/json",
+		                'X-CSRF-TOKEN': csrfToken
+		                
+		            },
+		            body: JSON.stringify(obj)
+		        })
+		        .then(response => response.json())
+		        .then(data => {
+		            if (data.res_code === '200') {
+		                Swal.fire({
+		                    icon: 'success',
+		                    title: '성공',
+		                    text: data.res_msg,
+		                    confirmButtonText: "닫기"
+		                }).then((result) => {
+		                    location.href = "/empGroupList";
+		                });
+		            } else {
+		                Swal.fire({
+		                    icon: 'error',
+		                    title: '실패',
+		                    text: data.res_msg,
+		                    confirmButtonText: "닫기"
+		                });
+		            }
+		        });
+	        
 		}
+		
+		
+		// 2. 팀 수정
+		function confirmTeamDelete() {
+		    if (!confirm("팀 삭제 시 소속 사원 정보도 함께 삭제됩니다. 팀 정보를 정말 삭제하시겠습니까?")) {
+		        return;
+		    }
+		    
+			const form = document.getElementById("groupDeleteFrm");
+	
+			
+			// 입력 값 가져오기
+			const groupNo = document.getElementById("group_no").value;
+			const groupName = document.getElementById("group_name").value;
+			const groupHeadcount = document.getElementById("group_headcount").value;
+			const parentGroup = document.getElementById("parent_group").value;
+			const groupLocation = document.getElementById("group_location").value;
+			const groupExplain = document.getElementById("group_explain").value;
+			const groupLeaderCode = document.getElementById("group_leader").value;
+		
+			
+			// 객체에 담아 보내기
+			const obj = {
+					group_no : groupNo,
+					group_name : groupName,
+					group_headcount : groupHeadcount,
+					group_parent_no : parentGroup,
+					group_location : groupLocation,
+					group_explain : groupExplain,
+					group_leader_code : groupLeaderCode,
+					group_status : 'N',
+					group_level : 'G2'
+			};
+			
+			const csrfToken = document.getElementById("_csrf").value;
+	
+		        fetch('/empTeamDelete/'+ groupNo, {
+		            method: 'POST',
+		            headers: {
+		                'Content-Type': 'application/json;charset=utf-8',
+		                "Accept": "application/json",
+		                'X-CSRF-TOKEN': csrfToken
+		                
+		            },
+		            body: JSON.stringify(obj)
+		        })
+		        .then(response => response.json())
+		        .then(data => {
+		            if (data.res_code === '200') {
+		                Swal.fire({
+		                    icon: 'success',
+		                    title: '성공',
+		                    text: data.res_msg,
+		                    confirmButtonText: "닫기"
+		                }).then((result) => {
+		                    location.href = "/empGroupList";
+		                });
+		            } else {
+		                Swal.fire({
+		                    icon: 'error',
+		                    title: '실패',
+		                    text: data.res_msg,
+		                    confirmButtonText: "닫기"
+		                });
+		            }
+		        });
+			}
 		
 	</script>
 	</th:block>
 	<!-- ======= Footer ======= -->
 	<footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
-    </div>
-	<div class="credits">
-      All the links in the footer should remain intact.
-      You can delete the links only if you purchased the pro version.
-      Licensing information: https://bootstrapmade.com/license/
-      Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-    </div> -->
+		<div class="copyright">
+			&copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights
+			Reserved
+		</div>
+		<div class="credits">
+			All the links in the footer should remain intact. You can delete the
+			links only if you purchased the pro version. Licensing information:
+			https://bootstrapmade.com/license/ Purchase the pro version with
+			working PHP/AJAX contact form:
+			https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+			Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+		</div>
+		-->
 	</footer>
 	<!-- End Footer -->
 	<a href="#"

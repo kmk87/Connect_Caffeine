@@ -4,7 +4,7 @@
       layout:decorate="~{include/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>매출 보고서</title>
+    <title>보고서</title>
     <link rel="stylesheet" disabled="disabled"
           href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link th:href="@{/css/storeManagement/storeManagement.css}"
@@ -13,6 +13,7 @@
     <script
         src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
 </head>
 <body>
 
@@ -23,35 +24,23 @@
                     <h1>점포관리</h1>
                 </div>
                 <ul class="sidebar-nav" id="sidebar-nav">
-                    <li class="nav-item"><a class="nav-link collapsed"
-                        data-bs-target="#components-nav" data-bs-toggle="collapse"
-                        href="#"> <span>가맹점관리</span> <i
-                            class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                        <ul id="components-nav" class="nav-content collapse "
-                            data-bs-parent="#sidebar-nav">
-                            <li><a href="components-alerts.html"> <span>Alerts</span>
-                            </a></li>
-                        </ul></li>
                     <li class="nav-item">
-                    	<a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#"> 
-	                    	<span>매출관리</span> 
-	                    	<i class="bi bi-chevron-down ms-auto"></i>
-                    	</a>
-                        <ul id="components-nav" class="nav-content collapse "
-                            data-bs-parent="#sidebar-nav">
-                            <li>
-                            	<a th:href="@{/salesByStore}" id="store-sales"> 
-                            		<span>점포별 매출</span>
-                            	</a>
-                            </li>
-                            <li>
-                            	<a th:href="@{/salesByProduct}" id="store-sales"> 
-                            		<span>상품별 매출</span>
-                            	</a>
-                            </li>
-                        </ul>
-                    </li>
+		        		<a class="nav-link collapsed" data-bs-target="#components-nav_one" data-bs-toggle="collapse" href="#">
+		          			<span>매출관리</span><i class="bi bi-chevron-down ms-auto"></i>
+		        		</a>
+	        			<ul id="components-nav_one" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+	          				<li>
+	            				<a th:href="@{/salesByStore}">
+	              					<i class="bi bi-circle"></i><span>점포별 매출관리</span>
+	            				</a>
+	          				</li>
+	          				<li>
+	            				<a th:href="@{/salesByProduct}">
+	              					<i class="bi bi-circle"></i><span>상품별 매출 관리</span>
+	            				</a>
+	          				</li>
+	        			</ul>
+		      		</li>
                 </ul>
             </div>
 
@@ -119,7 +108,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">매출 그래프</h5>
+                        <h5 class="modal-title">점포별 매출 그래프</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -228,7 +217,7 @@
 
                 // Create new chart
                 window.salesChart = new Chart(ctx, {
-                    type: 'line', // 그래프 타입 (예: bar, line 등)
+                    type: 'bar', // 그래프 타입 (예: bar, line 등)
                     data: {
                         labels: graphData.labels,
                         datasets: [{

@@ -6,6 +6,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +25,6 @@ public class GroupViewController {
 	
 	private final EmployeeService employeeService;
 	private final EmpGroupService empGroupService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(GroupViewController.class);
 	
 	@Autowired
 	public GroupViewController(EmployeeService employeeService, EmpGroupService empGroupService) {
@@ -30,9 +32,9 @@ public class GroupViewController {
 		this.empGroupService = empGroupService;
 	}
 	
-	// 1. 팀 등록(create)
-	@GetMapping("/empGroupCreate")
-	public String createGroupPage(Model model) {
+	// 1-1. 부서 등록(create)
+	@GetMapping("/empDeptCreate")
+	public String createDeptPage(Model model) {
 		
 		List<EmployeeDto> empList = employeeService.selectEmployeeList();
 		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
@@ -40,7 +42,21 @@ public class GroupViewController {
 		model.addAttribute("empList", empList);
 		model.addAttribute("groupList", groupList);
 		
-		return "empGroup/create";
+		return "empGroup/deptCreate";
+	}
+	
+	
+	// 1-2. 팀 등록(create)
+	@GetMapping("/empTeamCreate")
+	public String createTeamPage(Model model) {
+		
+		List<EmployeeDto> empList = employeeService.selectEmployeeList();
+		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
+		
+		model.addAttribute("empList", empList);
+		model.addAttribute("groupList", groupList);
+
+		return "empGroup/teamCreate";
 	}
 	
 	
@@ -103,12 +119,21 @@ public class GroupViewController {
 		List<EmployeeDto> empList = employeeService.selectEmployeeList();
 		List<EmpGroupDto> groupList = empGroupService.selectGroupList();
 		
-		System.out.println("뷰컨트롤러의 egdto: " + egDto);
+		// 부서 인원 가져오기
+		Long deptHeadcount = empGroupService.getDeptHeadcountByGroupNo(group_no);
+		
+		// 책임자 정보 가져오기
+		Employee leader = empGroupService.getLeaderInfoByGroupNo(group_no);
+		String leaderName = leader.getEmpName();
+		String leaderDeskPhone = leader.getEmpDeskPhone();
 		
 		
 		model.addAttribute("egDto", egDto);
 		model.addAttribute("empList", empList);
 		model.addAttribute("groupList", groupList);
+		model.addAttribute("deptHeadcount", deptHeadcount);
+		model.addAttribute("leaderName", leaderName);
+		model.addAttribute("leaderDeskPhone", leaderDeskPhone);
 		
 		return "empGroup/update";
 	}

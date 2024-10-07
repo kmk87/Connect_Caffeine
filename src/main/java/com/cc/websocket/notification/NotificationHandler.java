@@ -103,4 +103,5 @@ public class NotificationHandler extends TextWebSocketHandler {
         // WebSocket으로 실시간 알림 전송
         sendNotification(notificationDto);
     }
+
 }

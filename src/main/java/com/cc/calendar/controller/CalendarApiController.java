@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cc.calendar.domain.CalendarDto;
 import com.cc.calendar.service.CalendarService;
+import com.cc.employee.service.EmployeeService;
 import com.cc.notification.service.NotificationService;
 
 @Controller
@@ -22,11 +23,13 @@ public class CalendarApiController {
 	
 	private final CalendarService calendarService;
 	private final NotificationService notificationService;
+	private final EmployeeService employeeService;
 	
 	@Autowired
-	public CalendarApiController(CalendarService calendarService,NotificationService notificationService) {
+	public CalendarApiController(CalendarService calendarService,NotificationService notificationService,EmployeeService employeeService) {
 		this.calendarService = calendarService;
 		this.notificationService = notificationService;
+		this.employeeService = employeeService;
 	}
 	
 	
@@ -49,17 +52,25 @@ public class CalendarApiController {
 	            
 	            // 알림 전송 로직
 	            int scheduleType = dto.getSchedule_type();
-	            String message = "[일정] " + dto.getSchedule_title() + "이(가) 등록되었습니다.";
+	            Long writerId = dto.getCalendar_writer_no();  // 작성자의 ID
+	            String message = "";
+	            // 작성자의 팀번호 및 부서번호 가져오기
+	            Long teamNo = employeeService.getGroupNoByEmpCode(writerId);
+	            Long deptNo = employeeService.getDeptNoByTeamNo(teamNo);
 
+	            System.out.println("writerId: " + writerId + ", deptNo: " + deptNo + ", teamNo: " + teamNo);
 	            switch (scheduleType) {
 	                case 2:  // 전사일정
-	                    notificationService.sendCompanyWideNotification(message);
+	                	message += "[전사일정] " + dto.getSchedule_title() + "이(가) 등록되었습니다.";
+	                    notificationService.sendCompanyWideNotification(message,writerId);
 	                    break;
 	                case 3:  // 부서일정
-	                    notificationService.sendDepartmentNotification(dto.getDept_no(), message);
+	                	message += "[부서일정] " + dto.getSchedule_title() + "이(가) 등록되었습니다.";
+	                    notificationService.sendDepartmentNotification(deptNo, message,writerId);
 	                    break;
 	                case 4:  // 팀일정
-	                    notificationService.sendTeamNotification(dto.getTeam_no(), message);
+	                	message += "[팀일정] " + dto.getSchedule_title() + "이(가) 등록되었습니다.";
+	                    notificationService.sendTeamNotification(teamNo, message,writerId);
 	                    break;
 	                case 1:  // 내일정은 알림 없음
 	                    break;
@@ -75,7 +86,6 @@ public class CalendarApiController {
 	        resultMap.put("res_msg", "서버에서 일정 등록 중 오류가 발생했습니다.");
 	        e.printStackTrace();  // 로그로 오류 기록
 	    }
-//	    System.out.println("deptNo : "+dto.getDept_no());
 	    return resultMap;
 	}
 
@@ -100,12 +110,12 @@ public class CalendarApiController {
 	public Map<String,String> deleteSchedule(@PathVariable("schedule_no") Long schedule_no){
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("res_code", "404");
-		map.put("res_msg", "게시글 삭제중 오류가 발생했습니다.");
+		map.put("res_msg", "일정 삭제중 오류가 발생했습니다.");
 		
 		
 		if(calendarService.deleteSchedule(schedule_no) > 0) {
 			map.put("res_code", "200");
-			map.put("res_msg", "정상적으로 게시글이 삭제되었습니다.");
+			map.put("res_msg", "정상적으로 일정이 삭제되었습니다.");
 			
 		}
 		return map;

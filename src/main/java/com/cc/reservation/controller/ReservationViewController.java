@@ -1,19 +1,13 @@
 package com.cc.reservation.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.cc.calendar.domain.CalendarDto;
 import com.cc.calendar.service.CalendarService;
 import com.cc.calendar.service.ColorService;
 import com.cc.calendar.service.UserScheduleColorService;
@@ -23,10 +17,11 @@ import com.cc.employee.service.EmployeeService;
 import com.cc.reservation.domain.BuildingDto;
 import com.cc.reservation.domain.MeetingRoomDto;
 import com.cc.reservation.domain.ReservationDto;
-import com.cc.reservation.repository.MeetingRoomRepository;
 import com.cc.reservation.service.BuildingService;
 import com.cc.reservation.service.MeetingRoomService;
 import com.cc.reservation.service.ReservationService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ReservationViewController {
@@ -57,12 +52,14 @@ public class ReservationViewController {
 	
 	
 	@GetMapping("/reservation")
-	public String Reservation(Model model) {
+	public String Reservation(HttpServletRequest request,Model model) {
 
 			 
 			List<BuildingDto> building = buildingService.selectBuildingList();
 			List<MeetingRoomDto> meeting = meetingRoomService.selectMeetingRoomList();
-			
+			String currentUri = request.getRequestURI();
+			model.addAttribute("currentUri", currentUri);
+
 			model.addAttribute("buildings", building);
 			model.addAttribute("meetings",meeting);
 			

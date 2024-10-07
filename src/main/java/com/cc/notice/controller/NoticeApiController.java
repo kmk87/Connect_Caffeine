@@ -48,7 +48,7 @@ public class NoticeApiController {
 	        String message = "[공지사항] " + savedNotice.getNoticeTitle() + "이(가) 등록되었습니다.";
 	        
 	        // 알림 발송 시 링크에 공지사항 ID 포함
-	        notificationService.sendNoticeNotification(message, noticeId);
+//	        notificationService.sendNoticeNotification(message, noticeId);
 	    }
 	    
 	    return resultMap;
