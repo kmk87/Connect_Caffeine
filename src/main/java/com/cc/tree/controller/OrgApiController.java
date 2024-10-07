@@ -1,3 +1,4 @@
+
 package com.cc.tree.controller;
 
 import java.util.HashMap;
@@ -69,4 +70,13 @@ public class OrgApiController {
 		return "tree/tree";
 	}
 
+}
+
+		}
+
+		model.addAttribute("teamObj", teamObj);
+		model.addAttribute("empObj", empObj);
+
+		return "tree/tree";
+	}
 }

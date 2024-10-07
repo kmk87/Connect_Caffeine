@@ -52,6 +52,8 @@ public class ChattingService {
 		this.employeeRepository = employeeRepository;
 	}
 	
+	
+	
 	public List<ChatRoomVo> selectChatRoomList(Long emp_code){
 		List<ChatInvite> inviteList = chatInviteRepository.findByEmployeeEmpCode(emp_code);
 		
@@ -91,8 +93,42 @@ public class ChattingService {
 		return msgdtoList;
 	}
 	
+	public Long createChatRoom(String room_name) {
+		ChatRoom chatRoom = ChatRoom.builder()
+				.roomName(room_name)
+				.roomStatus("Y")
+				.build();
+		ChatRoom saveRoom = chatRoomRepository.save(chatRoom);
+		return saveRoom.getRoomNo();
+	}
 
+	public int inviteChatRoom(Long roomNo, List<Long> emp_code) {
+		int result = 0;
+		System.out.println(emp_code);
+		System.out.println(roomNo);
+		ChatRoom chatRoom = chatRoomRepository.findByroomNo(roomNo);
+		
+		for (Long empCode : emp_code) {
+	        Employee employee = employeeRepository.findByempCode(empCode);
+	        if (employee == null) {
+	            System.out.println("Employee not found for empCode: " + empCode);
+	            continue; // Employee가 없으면 그 다음 empCode로 진행
+	        }
 
+	        System.out.println("Employee found: " + employee.toString());
+
+	        // ChatInvite 객체 생성 및 저장
+	        ChatInvite chatInvite = ChatInvite.builder()
+	                .chatRoom(chatRoom)
+	                .employee(employee)
+	                .build();
+	        chatInviteRepository.save(chatInvite);
+	        result = 1;  // 초대 성공 시 result를 1로 설정
+	    }
+		
+		return result;
+	}
+	
 public int createChatMessage(ChatMessageDto dto) {
     int result = -1;
     try {
@@ -136,4 +172,6 @@ private void sendMessageToUser(Long empCode, ChatMessage message) {
     }
 }
 
+
 }
+

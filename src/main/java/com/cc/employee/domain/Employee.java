@@ -1,5 +1,7 @@
 package com.cc.employee.domain;
+
 import java.time.LocalDate;
+
 import java.util.List;
 
 import com.cc.attendance.domain.AnnualLeave;
@@ -21,6 +23,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name="employee")
@@ -29,6 +32,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
+@ToString
 public class Employee {
    
    @Id
