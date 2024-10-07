@@ -59,7 +59,7 @@
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card">
                 <div class="card-body">
-                  <h5 class="card-title"><b>근무 시간</b></h5>
+                  <h5 class="card-title"><b>근태 관리</b></h5>
                   <div class="d-flex align-items-center">
                     <div class="ps-3" style="width: 400px;">
                      <!-- 사용자 정보 카드 -->
@@ -132,10 +132,11 @@
 				    // (1) 출근 시간 전송
 				    $('#workStart').click(function() {
 				    	// 출근 기록이 이미 있는지 확인 (출근 시간이 비어 있지 않으면 이미 출근 기록이 있는 것)
-				        if ($('#startTimeDisplay').text().trim() !== '') {
-				            alert("이미 출근 기록이 있습니다.");
-				            return;
-				        }
+				       var startTime = $('#startTimeDisplay').text().trim();
+						if (startTime !== '-') { 
+						    alert("이미 출근 기록이 있습니다.");
+						    return;
+						}
 
 				        // 출근 버튼을 비활성화
 				        $('#workStart').prop('disabled', true);

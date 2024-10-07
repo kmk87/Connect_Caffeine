@@ -42,11 +42,11 @@
 								<!-- emp_img_file_path 값이 있을 때 -->
 								<img th:if="${userDto.emp_img_file_path != null}" 
 								     th:src="@{'/uploadImg/' + ${userDto.emp_img_file_path}}" 
-								     alt="Profile" class="rounded-circle"/>
+								     alt="Profile" class="rounded-circle" style="object-fit: cover; width: 120px; height: 120px;"/>
 								<!-- emp_img_file_path 값이 없을 때 기본 이미지 사용 -->
 								<img th:unless="${userDto.emp_img_file_path != null}" 
 								     th:src="@{'/bootstrap/img/basic_profile.png'}" 
-								     alt="Default Profile" class="rounded-circle"/>
+								     alt="Default Profile" class="rounded-circle" style="object-fit: cover; width: 120px; height: 120px;"/>
 								<h2 th:text="${userDto.emp_name}"></h2>
 								<br>
 								<h6 th:text="${empDeptName + ' > ' + userDto.group_name}"></h6>

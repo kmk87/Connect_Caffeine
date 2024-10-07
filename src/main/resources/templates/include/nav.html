@@ -50,7 +50,7 @@
           	th:href="@{/toAttendance}"><i class="ri-briefcase-line"></i><span>근태 관리</span>
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" th:if="${#authentication.name.startsWith('a')}">
           <a class="nav-link" 
           	th:classappend="${currentUri == '/employeeList' ? '' : 'collapsed'}"
           	th:href="@{/employeeList}"><i class="bi bi-person-plus-fill"></i><span>인사 관리</span>
@@ -94,136 +94,7 @@
 		</li>
         <!-- Other nav items omitted for brevity -->
       </ul>
-      <!-- 조직도 모달창1 -->
-      <button type="button" id="treeButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
-                조직도
-      </button>
-      <div class="modal fade" id="disablebackdrop" tabindex="-1" data-bs-backdrop="false">
-          <div class="modal-dialog">
-            <div class="modal-content" >
-              <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-              	<div id="treeContainer"></div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-              </div>
-            </div>
-          </div>
-      </div>
-      <!-- 조직도 모달창1 끝-->
-      <!-- 조직도 모달창2 -->
-      <div class="modal fade" id="disablebackdrop2" tabindex="-1" data-bs-backdrop="false">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">정보</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-              	<div id="left-info">
-              		<div id="left1">첫 번째 칸</div>
-              		<div id="left2">두 번째 칸</div>
-              		<div id="left3">채팅 버튼</div>
-              	</div>
-              	<div id="right-info">
-              	</div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-              </div>
-            </div>
-          </div>
-      </div>
-       <!-- 조직도 모달창2 끝-->
     </aside><!-- End Sidebar-->
-<!-- 조직도 js -->
-<script th:inline="javascript">
-
-document.addEventListener('DOMContentLoaded', function () {
-    var modal = document.getElementById('disablebackdrop');
-
-
-    
-    // 첫 번째 모달이 열릴 때 실행되는 코드
-    modal.addEventListener('show.bs.modal', function (event) {
-        
-        // 1. teamResult와 empResult 데이터를 Thymeleaf에서 자바스크립트로 전달
-        let teamData = /*[[${teamObj}]]*/ '[]';  // teamResult 데이터를 Thymeleaf에서 받아옴
-        let empData = /*[[${empObj}]]*/ '[]';   
-        
-        
-        // 2. JSON 형태로 변환
-        let parsedTeamData = JSON.parse(teamData);
-        let parsedEmpData = JSON.parse(empData); 
-        
-        let combinedData = [...parsedTeamData, ...parsedEmpData]; // 두 개의 데이터 병합
-        
-        console.log(combinedData);
-        
-       
-
-        
-        // 3. jsTree 생성
-		$("#treeContainer").jstree({
-		    core: {
-		        data: combinedData, 
-		        themes: {
-		            icons: true
-		        }
-		    }
-		}).on('loaded.jstree', function(e, data) {
-
-			// 최상위 노드 자동으로 열기
-		    $('#treeContainer').jstree('open_node', $('#treeContainer li:first')); 
-		
-		    // 노드 타입에 따라 아이콘 설정
-		    $.each(data.instance._model.data, function(index, node) {
-		        
-		        if (!node.original) {
-		            console.log("Node without original data found at index:", index);
-		            return;
-		        }
-		        
-		    	var type = node.original.type; 
-		        var id = node.id; 
-		
-		        switch(type) {
-		            case "master":
-		                $('#treeContainer').jstree(true).set_icon(id, "bi bi-cup-fill"); 
-		                break;
-		            case "team":
-		                $('#treeContainer').jstree(true).set_icon(id, "bi bi-cup-fill");
-		                break;
-		            case "employee":
-		                $('#treeContainer').jstree(true).set_icon(id, "bi bi-person-fill"); 
-		                break;
-		         /*    default:
-		                console.log("Unknown type: " + type);  // 예상치 못한 타입은 로그로 출력 */
-		        }
-		    });
-		});
-    
-        
-        
-        // 4. 트리 노드 클릭 시 두 번째 모달 창 띄우기
-        $("#treeContainer").on("select_node.jstree", function (e, data) {
-            // 선택한 노드의 텍스트와 ID를 두 번째 모달에 표시-> 정보, 버튼 입력 가능
-            $("#treeContainer").html("<p>Selected node: " + data.node.text + "<br>pk 값: " + data.node.original.primaryKey + "</p>");
-			         
-	        });
-	    });
-
-	    // 첫 번째 모달이 닫힐 때 트리 상태 초기화
-	    modal.addEventListener('hidden.bs.modal', function () {
-	        $("#treeContainer").jstree("destroy").empty(); 
-	    });
-});
-
-</script>
-<!-- 조직도 관련 js 끝 -->
 </th:block>
 
   </body>

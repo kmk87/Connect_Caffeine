@@ -89,7 +89,7 @@ public class EmployeeApiController {
 	// 5. 프로필 수정
 	 @PostMapping("/profileUpdate")
 	 public String profileUpdate(EmployeeDto dto, @RequestPart(name = "emp_img_file") MultipartFile file) {
-		System.out.println("컨트롤러로 넘어온 dto 객체: " + dto);		 
+			 
 	    // 파일 이름 추출
 	    String fileName = file.getOriginalFilename();
 	    // 파일 이름을 DTO에 설정
