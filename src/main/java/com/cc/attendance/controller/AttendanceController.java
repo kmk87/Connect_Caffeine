@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cc.attendance.domain.AnnualLeave;
 import com.cc.attendance.domain.AttendanceDto;
 import com.cc.attendance.domain.MonthlyLeaveDto;
 import com.cc.attendance.service.AnnualLeaveService;
@@ -80,9 +81,10 @@ public class AttendanceController {
 	    
 	    // (1) 출결 현황
 	    List<AttendanceDto> attnList = attendanceService.getAttendancesByEmpCode(empCode);
-	    
 	    model.addAttribute("attnList", attnList);
 	    
+//	    List<AnnualLeave> annualLeaves = annualLeaveService.findByEmpCode(empCode);
+//	    model.addAttribute("annualLeaveList", annualLeaves);
 	    
 	    // (2) 연차 현황
 	    List<MonthlyLeaveDto> monthlyLeaveUsage = annualLeaveService.getMonthlyLeaveUsage(empCode);

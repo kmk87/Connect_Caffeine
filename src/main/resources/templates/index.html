@@ -123,40 +123,57 @@
 				  
 				  
                	  // 2. 출퇴근 시간 전송
-               	  	
-                  $(document).ready(function() {
-                	  var token = $("meta[name='_csrf']").attr("content");
-                	  var header = $("meta[name='_csrf_header']").attr("content");
-                	  
-                	  
-	                	// (1) 출근 시간 전송
-					    $('#workStart').click(function() {
-					        $.ajax({
-					            url: '/attendanceRecord',
-					            type: 'POST',
-					            beforeSend: function(xhr) {
-					                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
-					            },
-					            data: { action: 'start' },
-					            success: function(response) {
-					            	// 서버에서 받은 시간을 Date 객체로 변환
-					                var attnStart = new Date(response.attnStart);
-					                
-					                // 시간을 원하는 형식으로 변환 (시:분)
-					                var hours1 = attnStart.getHours();
-					                var minutes1 = attnStart.getMinutes();
-	
-					                // 분을 두 자리로 맞춤
-					                minutes1 = minutes1 < 10 ? '0' + minutes1 : minutes1;
-					            	
-					             	// 형식에 맞게 화면에 표시
-					                $('#startTimeDisplay').text(hours1 + '시 ' + minutes1 + '분');
-					            },
-					            error: function() {
-					                alert('출근 기록에 실패했습니다.');
-					            }
-					        });
-					    });
+				let workStartClicked = false;
+				
+				$(document).ready(function() {
+				    var token = $("meta[name='_csrf']").attr("content");
+				    var header = $("meta[name='_csrf_header']").attr("content");
+				
+				    // (1) 출근 시간 전송
+				    $('#workStart').click(function() {
+				    	// 출근 기록이 이미 있는지 확인 (출근 시간이 비어 있지 않으면 이미 출근 기록이 있는 것)
+				        if ($('#startTimeDisplay').text().trim() !== '') {
+				            alert("이미 출근 기록이 있습니다.");
+				            return;
+				        }
+
+				        // 출근 버튼을 비활성화
+				        $('#workStart').prop('disabled', true);
+				
+				        $.ajax({
+				            url: '/attendanceRecord',
+				            type: 'POST',
+				            beforeSend: function(xhr) {
+				                xhr.setRequestHeader(header, token); // CSRF 토큰을 헤더에 포함
+				            },
+				            data: { action: 'start' },
+				            success: function(response) {
+				                // 서버에서 받은 시간을 Date 객체로 변환
+				                var attnStart = new Date(response.attnStart);
+				
+				                // 시간을 원하는 형식으로 변환 (시:분)
+				                var hours1 = attnStart.getHours();
+				                var minutes1 = attnStart.getMinutes();
+				
+				                // 분을 두 자리로 맞춤
+				                minutes1 = minutes1 < 10 ? '0' + minutes1 : minutes1;
+				
+				                // 형식에 맞게 화면에 표시
+				                $('#startTimeDisplay').text(hours1 + '시 ' + minutes1 + '분');
+				
+				                // 출근 버튼이 눌렸음을 기록
+				                workStartClicked = true;
+				                console.log("출근 완료 - workStartClicked 상태: " + workStartClicked);
+				            },
+				            error: function() {
+				                alert('출근 기록에 실패했습니다.');
+				                // 실패하면 다시 버튼을 활성화하고 workStartClicked 상태를 초기화
+				                $('#workStart').prop('disabled', false);
+				                workStartClicked = false;
+				            }
+				        });
+				    });
+
 					 	
 	                	
 	                	// (2) 퇴근 시간 전송

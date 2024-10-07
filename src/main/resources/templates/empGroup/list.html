@@ -5,9 +5,14 @@
 <head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
+<title>부서/팀 목록</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <style>
 .empSidebar {
     position: fixed;
@@ -92,7 +97,7 @@ table td, table th {
 							</div>
 							<hr>
 							<div class="empGroup_list">
-								<table class="table datatable">
+								<table id="group_list" class="table datatable" style="border: lightgray;">
 									<thead>
 										<tr>
 											<th>구분</th>
@@ -101,7 +106,7 @@ table td, table th {
 										</tr>
 									</thead>
 									<tbody>
-										<tr th:each="egdl:${empGroupDtoList}"
+										<tr th:each="egdl:${empGroupDtoList}" th:if="${egdl.group_status.toUpperCase() == 'Y'}"
 											th:onclick="|location.href='@{/empGroup/{group_no}(group_no=${egdl.group_no})}'|">
 											<td th:text="${egdl.group_level == 'G2' ? '팀' : '부서'}"></td>
 											<td th:text="${egdl.group_name}"></td>
@@ -116,6 +121,40 @@ table td, table th {
 				</div>
 				</div>
 			</section>
+			<script>
+			$(document).ready(function() {
+			    var table = $('#group_list').DataTable({
+			        "lengthChange": false,
+			        "searching": true, // 검색 활성화
+			        "responsive": true,
+			        "language": {
+			            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json', // 한국어 번역 적용
+			            paginate: {
+			                previous: "<<",
+			                next: ">>"
+			            }
+			        },
+			        "paging": true,
+			        "pagingType": "simple_numbers",
+			        "pageLength": 10, // 한 페이지에 보여질 항목 수 설정
+			        "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)
+			        "initComplete": function() {
+			            var table = this.api();
+
+			            // 페이지네이션 버튼 텍스트를 덮어쓰기 (초기 페이지)
+			            $('.dataTables_paginate .paginate_button.previous').html("<<");
+			            $('.dataTables_paginate .paginate_button.next').html(">>");
+			        }
+			    });
+
+			    // 페이지 변경 시에도 페이지네이션 버튼 텍스트를 덮어쓰기
+			    $('#emp_list').on('draw.dt', function() {
+			        $('.dataTables_paginate .paginate_button.previous').html("<<");
+			        $('.dataTables_paginate .paginate_button.next').html(">>");
+			    });
+			});
+
+			</script>
 		</main>
 	</th:block>
 	<!-- ======= Footer ======= -->
@@ -136,13 +175,11 @@ table td, table th {
 	<a href="#"
 		class="back-to-top d-flex align-items-center justify-content-center"><i
 		class="bi bi-arrow-up-short"></i></a>
-	<!-- Vendor JS Files -->
 	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
 	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
 	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
 	<script src="/bootstrap/vendor/quill/quill.js"></script>
-	<script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
 	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
 	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
 	<!-- Template Main JS File -->

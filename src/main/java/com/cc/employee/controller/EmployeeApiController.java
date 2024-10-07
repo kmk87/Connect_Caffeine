@@ -70,7 +70,7 @@ public class EmployeeApiController {
 	@ResponseBody
 	@PostMapping("/employeeDelete/{emp_code}")
 	public Map<String, String> deleteEmployee(@RequestBody EmployeeDto dto) {
-
+		System.out.println("컨트롤러로 넘어온 dto: " + dto);
 		Map<String, String> resultMap = new HashMap<String, String>();
 
 		resultMap.put("res_code", "404");
@@ -88,19 +88,21 @@ public class EmployeeApiController {
 	
 	// 5. 프로필 수정
 	 @PostMapping("/profileUpdate")
-	 public String profileUpdate(EmployeeDto dto, @RequestPart(name = "emp_img_file_name") MultipartFile file) {
-		System.out.println("컨트롤러로 넘어온 dto 객체: " + dto);
-		 
-		 
-		String savedFileName = fileService.upload(file);
-        
-        dto.setEmp_img_file_name(file.getOriginalFilename()); 
-        dto.setEmp_img_file_path(savedFileName);
-
+	 public String profileUpdate(EmployeeDto dto, @RequestPart(name = "emp_img_file") MultipartFile file) {
+		System.out.println("컨트롤러로 넘어온 dto 객체: " + dto);		 
+	    // 파일 이름 추출
+	    String fileName = file.getOriginalFilename();
+	    // 파일 이름을 DTO에 설정
+	    dto.setEmp_img_file_name(fileName);
+	    
+	    // 파일 저장 경로 설정하는 로직
+	    String savedFilePath = fileService.upload(file); // fileService는 파일 저장을 담당
+	    dto.setEmp_img_file_path(savedFilePath);
+	    
 	    // 프로필 업데이트
-	    employeeService.updateEmployee(dto);
+	    employeeService.updateProfile(dto);
 
-	    return "redirect:/employeeProfile"; 
+	    return "redirect:/employeeProfile";
 	}
 	
 }

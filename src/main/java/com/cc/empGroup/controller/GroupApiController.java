@@ -82,7 +82,7 @@ public class GroupApiController {
 		@PostMapping("/teamUpdate/{group_no}")
 		public Map<String, String> updateTeam(@RequestBody EmpGroupDto dto){
 			Map<String, String> resultMap = new HashMap<String, String>();
-
+			System.out.println("컨트롤러로 넘어온 팀 객체: " + dto);
 			resultMap.put("res_code", "404");
 			resultMap.put("res_msg", "팀 정보 수정 중 오류가 발생하였습니다.");
 

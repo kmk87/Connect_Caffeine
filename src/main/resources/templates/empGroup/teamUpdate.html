@@ -5,40 +5,40 @@
 <head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
+<title>팀 정보 수정</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 .empSidebar {
-    position: fixed;
-    top: 60px;
-    left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
-    bottom: 0;
-    width: 250px; /* 추가 사이드바의 너비 */
-    z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
-    transition: all 0.3s;
-    padding: 20px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #aab7cf transparent;
-    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
-    background-color: #fff;
-    font-size: 15px;
+	position: fixed;
+	top: 60px;
+	left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+	bottom: 0;
+	width: 250px; /* 추가 사이드바의 너비 */
+	z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+	transition: all 0.3s;
+	padding: 20px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #aab7cf transparent;
+	box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+	background-color: #fff;
+	font-size: 15px;
 	font-weight: 600;
 	color: #012970;
 }
 
 .content-area {
-    margin-left: 250px; /* 사이드바 너비 + 여백 */
-    padding: 20px; /* 내부 여백 */
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* 각 섹션 간의 간격 */
-    margin-top: -110px;
+	margin-left: 250px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	margin-top: -110px;
 }
 
 .card-body-header {
@@ -67,91 +67,38 @@ textarea {
 		<main id="main" class="main">
 			<aside id="empSidebar" class="empSidebar">
 				<div class="pagetitle">
-      				<h1>인사 관리</h1>
-    			</div>
-    			<ul class="sidebar-nav" id="sidebar-nav">
-		      		<li class="nav-item">
-		        		<a class="nav-link collapsed" th:href="@{/employeeList}" style="margin-top:15px;">
-		          			<i class="bi bi-person-fill"></i><span>사원 정보</span>
-		        		</a>
-		      		</li>
-		      		<li class="nav-item">
-		        		<a class="nav-link collapsed" th:href="@{/empGroupList}">
-		          			<i class="bi bi-people-fill"></i><span>부서/팀 정보</span>
-		        		</a>
-		      		</li>
-	      		</ul>
+					<h1>인사 관리</h1>
+				</div>
+				<ul class="sidebar-nav" id="sidebar-nav">
+					<li class="nav-item"><a class="nav-link collapsed"
+						th:href="@{/employeeList}" style="margin-top: 15px;"> <i
+							class="bi bi-person-fill"></i><span>사원 정보</span>
+					</a></li>
+					<li class="nav-item"><a class="nav-link collapsed"
+						th:href="@{/empGroupList}"> <i class="bi bi-people-fill"></i><span>부서/팀
+								정보</span>
+					</a></li>
+				</ul>
 			</aside>
 			<section class="section dashboard" style="width: 100%">
 				<div class="content-area">
-				<div class="col-xxl-4 col-md-6" style="width: 100%; margin-top:100px;">
-					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
-						<div class="card-body" style="height:100%">
-							<div class="card-body-header">
-								<h2 class="card-title">
-									<b th:text="${egDto.group_level == 'G1' ? '부서 정보 수정' : '팀 정보 수정'}"></b>
-								</h2>
-							</div>
-							<hr>
-							<div class="basic-info">
-								<!-- 첫 번째 테이블: 그룹 레벨이 부서(G1)일 때 -->
-								<div id="case1" th:if="${egDto.group_level == 'G1'}">
-									<form id="deptUpdateFrm" method="POST">
-										<input type="hidden" id="_csrf" name="_csrf"
-											th:value="${_csrf.token}" /> <input type=hidden
-											id="group_no" name="group_no" th:value="${egDto.group_no}">
-										<!-- 상위 부서, 위치 정보 필요 없으므로 hidden 처리 -->
-										<input type="hidden" name="parent_group" id="parent_group"
-											th:value="${egDto.group_parent_no}"> <input
-											type="hidden" name="group_location" id="group_location"
-											th:value="${egDto.group_location}">
-										<table class="table table-bordered">
-											<colgroup>
-												<col style="width: 40%;">
-												<col style="width: 60%;">
-											</colgroup>
-											<tr>
-												<th>부서명</th>
-												<td><input type="text" class="form-control"
-													id="group_name" name="group_name"
-													th:field="*{egDto.group_name}"></td>
-											</tr>
-											<tr>
-												<th>인원</th>
-												<td th:text="${deptHeadcount}" id="group_headcount"
-													th:value="${deptHeadcount}"></td>
-											</tr>
-											<tr>
-											</tr>
-											<tr>
-												<th>부서 설명</th>
-												<td th:text="${egDto.group_explain}" id="group_explain"
-													th:value="${egDto.group_explain}"></td>
-											</tr>
-											<tr>
-												<th>책임자</th>
-												<td th:text="${leaderName}" id="group_leader"
-													th:value="${egDto.group_leader_code}"></td>
-											</tr>
-											<tr>
-												<th>책임자 연락처</th>
-												<td th:text="${leaderDeskPhone}"
-													id="group_leader_desk_phone"></td>
-											</tr>
-										</table>
-										<div class="d-flex align-items-center"
-											style="display: flex; justify-content: flex-end;">
-											<button type="submit" class="btn btn-primary rounded-pill">완료</button>
-										</div>
-									</form>
+					<div class="col-xxl-4 col-md-6"
+						style="width: 100%; margin-top: 100px;">
+						<div class="card info-card sales-card"
+							style="margin-top: 25px; margin-left: 25px;">
+							<div class="card-body" style="height: 100%">
+								<div class="card-body-header">
+									<h2 class="card-title">
+										<b>팀 정보 수정</b>
+									</h2>
 								</div>
-								<!-- 두 번째 테이블: 그룹 레벨이 팀(G2)일 때 -->
-								<div id="case2" th:if="${egDto.group_level == 'G2'}">
-									<form id="teamUpdateFrm" method="POST">
+								<hr>
+								<div class="basic-info" style="width: 100%;">
+									<form id="teamUpdateFrm" method="POST" style="width: 100%;">
 										<input type="hidden" id="_csrf" name="_csrf"
 											th:value="${_csrf.token}" /> <input type=hidden
 											id="group_no" name="group_no" th:value="${egDto.group_no}">
-										<table class="table table-bordered">
+										<table class="table table-bordered" style="width: 100%;">
 											<colgroup>
 												<col style="width: 40%;">
 												<col style="width: 60%;">
@@ -195,8 +142,8 @@ textarea {
 													class="form-select" aria-label="select leader"
 													onchange="updateLeaderContact()">
 														<option th:each="emp:${empList}"
-															th:value="${emp.emp_code}" th:text="${emp.emp_name}"
-															th:if="${emp.emp_code != 1}"
+															th:value="${emp.emp_code}" th:text="${emp.emp_name +'('+ emp.group_name + ')'}"
+															th:if="${emp.emp_code != 1 && (emp.emp_job_code == 'J3' || emp.emp_job_code == 'J4' || emp.emp_job_code == 'J5')}"
 															th:selected="${emp.emp_code == egDto.group_leader_code}"
 															th:data-phone="${emp.emp_desk_phone}"></option>
 												</select></td>
@@ -208,7 +155,6 @@ textarea {
 													readonly /></td>
 											</tr>
 										</table>
-
 										<div class="d-flex align-items-center"
 											style="display: flex; justify-content: flex-end;">
 											<button type="submit" class="btn btn-primary rounded-pill">완료</button>
@@ -218,7 +164,6 @@ textarea {
 							</div>
 						</div>
 					</div>
-				</div>
 				</div>
 			</section>
 		</main>
@@ -236,15 +181,16 @@ textarea {
 			    document.getElementById('group_leader_desk_phone').value = selectedPhone || '';
 			  }
 			});
+
+		
+
 		
 		
+		// 2. 팀 정보 수정
+		const form = document.getElementById("teamUpdateFrm");
 		
-		// 2. 부서 정보 수정
-		const form1 = document.getElementById("deptUpdateFrm");
-		
-		form1.addEventListener('submit', (e) => {
+		form.addEventListener('submit', (e) => {
 			e.preventDefault();
-			
 			// 입력 값 가져오기
 			const groupNo = document.getElementById("group_no").value;
 			const groupName = document.getElementById("group_name").value;
@@ -255,121 +201,35 @@ textarea {
 			const groupLeaderCode = document.getElementById("group_leader").value;
 			const groupLeaderDeskPhone = document.getElementById("group_leader_desk_phone").value;
 			
-			// 유효성 검사
-			let vali_check = false;
-			let vali_text = "";
-			
-			if(groupName === ''){
-				vali_text += '부서명을 입력하세요.';
-				form2.group_name.focus();
-			}else if(!/^.{2,}부$/.test(groupName)){
-				vali_text += "부서명은 '부'자로 끝나야 하며, 3글자 이상이어야 합니다."
-				form2.group_name.focus();
-			}else{
-				vali_check = true;
-			}
-			
-			// 유효성 검사 실패 시 실행 중단
-			if(!vali_check){
-				alert(vali_text)
-				return;
-			}
-			
-			
-			// 객체에 담아 보내기
-			const obj = {
-					group_no : groupNo,
-					group_name : groupName,
-					group_headcount : groupHeadcount,
-					group_parent_no : parentGroup,
-					group_location : groupLocation,
-					group_explain : groupExplain,
-					group_leader_code : groupLeaderCode,
-					group_status : 'Y',
-					group_level : 'G1'
-			};
-			
-			const csrfToken = document.getElementById("_csrf").value;
-
-	        fetch('/deptUpdate/'+ groupNo, {
-	            method: 'POST',
-	            headers: {
-	                'Content-Type': 'application/json;charset=utf-8',
-	                "Accept": "application/json",
-	                'X-CSRF-TOKEN': csrfToken
-	                
-	            },
-	            body: JSON.stringify(obj)
-	        })
-	        .then(response => response.json())
-	        .then(data => {
-	            if (data.res_code === '200') {
-	                Swal.fire({
-	                    icon: 'success',
-	                    title: '성공',
-	                    text: data.res_msg,
-	                    confirmButtonText: "닫기"
-	                }).then((result) => {
-	                    location.href = "/empGroupList";
-	                });
-	            } else {
-	                Swal.fire({
-	                    icon: 'error',
-	                    title: '실패',
-	                    text: data.res_msg,
-	                    confirmButtonText: "닫기"
-	                });
-	            }
-	        });
-		});
-		
-
-		
-		
-		// 3. 팀 정보 수정
-		const form2 = document.getElementById("teamUpdateFrm");
-		
-		form2.addEventListener('submit', (e) => {
-			e.preventDefault();
-			
-			// 입력 값 가져오기
-			const groupNo = document.getElementById("group_no").value;
-			const groupName = document.getElementById("group_name").value;
-			const groupHeadcount = document.getElementById("group_headcount").value;
-			const parentGroup = document.getElementById("parent_group").value;
-			const groupLocation = document.getElementById("group_location").value;
-			const groupExplain = document.getElementById("group_explain").value;
-			const groupLeaderCode = document.getElementById("group_leader").value;
-			const groupLeaderDeskPhone = document.getElementById("group_leader_desk_phone").value;
-			
+			console.log(groupNo);
 			// 유효성 검사
 			let vali_check = false;
 			let vali_text = "";
 			
 			if(groupName === ''){
 				vali_text += '팀명을 입력하세요.';
-				form2.group_name.focus();
+				form.group_name.focus();
 			}else if(!/^.{2,}팀$/.test(groupName)){
 				vali_text += "팀명은 '팀'자로 끝나야 하며, 3글자 이상이어야 합니다."
-				form2.group_name.focus();
+				form.group_name.focus();
 			}else if(groupHeadcount === ''){
 				vali_text += '팀의 인원 수를 입력하세요.';
-				form2.group_headcount.focus();
+				form.group_headcount.focus();
 			}else if(parentGroup === ''){
 				vali_text += '상위 부서를 선택하세요.';
-				form2.parent_group.focus();
+				form.parent_group.focus();
 			}else if(groupLocation === ''){
 				vali_text += '팀의 위치를 입력하세요.';
-				form2.group_location.focus();
+				form.group_location.focus();
 			}else if(groupExplain === ''){
 				vali_text += '팀에 대한 설명을 입력하세요.';
-				form2.group_explain.focus();
+				form.group_explain.focus();
 			}else if(!/^.{9,}$/.test(groupExplain)){
 				vali_text += '팀에 대한 설명을 10자 이상 입력하세요.';
-				form2.group_explain.focus();
+				form.group_explain.focus();
 			}else if(groupLeaderCode === ''){
 				vali_text += '책임자를 선택하세요.';
-				form2.group_leader.focus();
+				form.group_leader.focus();
 			}else{
 				vali_check = true;
 			}

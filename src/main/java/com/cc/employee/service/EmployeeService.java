@@ -1,10 +1,11 @@
 package com.cc.employee.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,6 @@ import com.cc.employee.repository.EmployeeRepository;
 import com.cc.job.domain.Job;
 import com.cc.job.repository.JobRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -52,7 +52,7 @@ public class EmployeeService {
 		Job jobTemp = jobRepository.findByjobCode(dto.getEmp_job_code());
 		
 		
-if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) == false){	
+		if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) == false){	
 			
 			// DateTimeFormatter를 이용해 문자열을 LocalDate로 변환할 형식 지정 (시간 없이 날짜만 처리)
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -96,7 +96,7 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
 	}
     
     
-		// 1-1. 사원번호 카운트 부여
+	// 1-1. 사원번호 카운트 부여
 	public String getInputAccount() {
 		String inputAccount = employeeRepository.getInputAccount();
 		return inputAccount;
@@ -115,9 +115,11 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
 			EmployeeDto dto = new EmployeeDto().toDto(e);
 			employeeDtoList.add(dto);
 		}
+	    
 		return employeeDtoList;
   }
 	
+
 	// 2-2. 상세 조회(detail), 수정(update)
 	public EmployeeDto selectEmployeeOne(Long emp_code) {
 		Employee emp = employeeRepository.findByempCode(emp_code);
@@ -158,7 +160,7 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
 	
 	
 	
-	// 3. 수정
+	// 3-1. 인사 관리-수정
 	public Employee updateEmployee(EmployeeDto dto) {
 		EmployeeDto temp = selectEmployeeOne(dto.getEmp_code());
 		
@@ -186,6 +188,38 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
 		
 		return result;
 	}  
+	
+	// 3-2. 프로필 수정
+		public Employee updateProfile(EmployeeDto dto) {
+			EmployeeDto temp = selectEmployeeOne(dto.getEmp_code());
+			
+			Job job = jobRepository.findByjobCode(dto.getEmp_job_code());
+			String jobName = job.getJobName();
+			
+			temp.setGroup_no(dto.getGroup_no());
+			temp.setEmp_job_code(dto.getEmp_job_code());
+			temp.setEmp_job_name(jobName);
+			temp.setEmp_name(dto.getEmp_name());
+			temp.setEmp_account(dto.getEmp_account());
+			temp.setEmp_pw(dto.getEmp_pw());
+			temp.setEmp_postcode(dto.getEmp_postcode());
+			temp.setEmp_addr(dto.getEmp_addr());
+			temp.setEmp_addr_detail(dto.getEmp_addr_detail());
+			temp.setEmp_reg_no(dto.getEmp_reg_no());
+			temp.setEmp_email(dto.getEmp_email());
+			temp.setEmp_phone(dto.getEmp_phone());
+			temp.setEmp_desk_phone(dto.getEmp_desk_phone());
+			temp.setEmp_img_file_name(dto.getEmp_img_file_name());
+			temp.setEmp_img_file_path(dto.getEmp_img_file_path());
+			temp.setEmp_hiredate(dto.getEmp_hiredate());
+			temp.setEmp_resign(dto.getEmp_resign());
+			temp.setEmp_memo(dto.getEmp_memo());
+			
+			Employee emp = temp.toEntity();
+			Employee result = employeeRepository.save(emp);
+			
+			return result;
+		}  
 
 		// 팀명 가져오기
 		public List<String> getDataInfoName() {
@@ -219,6 +253,7 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
 			
 			Job job = jobRepository.findByjobCode(dto.getEmp_job_code());
 			String jobName = job.getJobName();
+			String emp_resigndate_iso = dto.getEmp_resigndate().substring(0, 10);
 			
 			temp.setGroup_no(dto.getGroup_no());
 			temp.setEmp_job_code(dto.getEmp_job_code());
@@ -235,7 +270,7 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
 			temp.setEmp_desk_phone(dto.getEmp_desk_phone());
 			temp.setEmp_hiredate(dto.getEmp_hiredate());
 			temp.setEmp_resign(dto.getEmp_resign());
-			temp.setEmp_resigndate(dto.getEmp_resigndate());
+			temp.setEmp_resigndate(emp_resigndate_iso);
 			
 			Employee emp = temp.toEntity();
 			Employee result = employeeRepository.save(emp);
@@ -271,12 +306,17 @@ if(dto.getEmp_img_file_name() != null && "".equals(dto.getEmp_img_file_name()) =
 				return birthDate.format(formatter);
 			}
 			
+			
 			// 부서명 가져오는 메소드
 			public String getDeptNameByEmpCode(Long emp_code) {
 				Employee emp = employeeRepository.findById(emp_code).orElseThrow();
+//				System.out.println("컨트롤러의 emp: " + emp);
 				EmpGroup team = empGroupRepository.findBygroupNo(emp.getEmpGroup().getGroupNo());
+//				System.out.println("컨트롤러의 team: " + team);
 				EmpGroup dept = empGroupRepository.findBygroupNo(team.getGroupParentNo());
+//				System.out.println("컨트롤러의 dept: " + dept);
 				String deptName = dept.getGroupName();
+//				System.out.println("컨트롤러의 deptName: " + deptName);
 				
 				return deptName;
 			}

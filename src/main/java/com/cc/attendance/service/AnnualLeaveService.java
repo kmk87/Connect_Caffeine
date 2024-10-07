@@ -5,8 +5,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.cc.attendance.domain.AnnualLeave;
 import com.cc.attendance.domain.MonthlyLeaveDto;
 import com.cc.attendance.repository.AnnualLeaveRepository;
+import com.cc.employee.domain.Employee;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AnnualLeaveService {
@@ -54,5 +58,8 @@ private final AnnualLeaveRepository annualLeaveRepository;
 		    return monthlyLeaveUsage;
 	    }
 	
-	
+//	 // 연차 쓴 날짜 데이터
+//	    public List<AnnualLeave> findByEmpCode(Long empCode) {
+//	        return annualLeaveRepository.findByEmpCode(empCode);
+//	    }
 }

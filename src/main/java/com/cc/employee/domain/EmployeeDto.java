@@ -112,7 +112,6 @@ public class EmployeeDto {
 					.empDeskPhone(emp_desk_phone)
 					.empHiredate(emp_hiredate_iso)
 					.empResign(emp_resign)
-
 					.empResigndate(emp_resigndate_iso)
 					.empImgFileName(emp_img_file_name)
 					.empImgFilePath(emp_img_file_path)
