@@ -70,8 +70,3 @@ public class OrgApiController {
 	}
 
 }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> stash
