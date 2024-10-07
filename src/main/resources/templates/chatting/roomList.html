@@ -17,7 +17,7 @@
         table.dataTable tbody tr {
             background-color: #fff; /* 원하는 배경색으로 변경 */
         }
-    </style>
+  </style>
   <link href="/bootstrap/img/쿼카.png" rel="icon">
   <link href="/bootstrap/img/쿼카.png" rel="쿼카">
 
@@ -113,21 +113,16 @@
     let empCode = [];  // 선택한 id를 저장할 배열
 
     function formatDataForJsTree(nodes) {
-        const formattedNodes = nodes.map(node => {
-            return {
-                id: node.id,
-                text: node.text,
-                parent: node.parent === '1' ? '#' : node.parent,
-                type: node.type,
-                icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill',
-                li_attr: {
-                    'data-emp-code': node.primaryKey  // empCode를 데이터 속성으로 추가
-                }
-            };
-        });
-
-        console.log("Formatted Data for jsTree:", formattedNodes);
-        return formattedNodes;
+        return nodes.map(node => ({
+            id: node.id,
+            text: node.text,
+            parent: node.parent === '1' ? '#' : node.parent,
+            type: node.type,
+            icon: node.type === 'team' ? 'ri-team-fill' : 'ri-user-2-fill',
+            li_attr: {
+                'data-emp-code': node.primaryKey  // emp_code를 데이터 속성으로 추가
+            }
+        }));
     }
 
     $(document).ready(function() {
@@ -183,16 +178,25 @@
                         }
                     })
                     .on('select_node.jstree', function (e, data) {
-                        let selectedNodeText = data.node.text;
-                        if (selectedNodeText.includes('(')) {
-                            selectedNodeText = selectedNodeText.split('(')[0].trim(); 
-                        }
+                        // 선택한 노드의 emp_code 값을 li_attr에서 추출
+                        const selectedEmpCode = data.node.li_attr['data-emp-code'];
 
-                        empCode.push(data.node.id);
-                        
-                        const currentRoomName = $('#roomName').val();
-                        const newRoomName = currentRoomName ? currentRoomName + ', ' + selectedNodeText : selectedNodeText;
-                        $('#roomName').val(newRoomName);
+                        // 중복 emp_code 방지
+                        if (!empCode.includes(selectedEmpCode)) {
+                            empCode.push(selectedEmpCode);
+
+                            let selectedNodeText = data.node.text;
+                            if (selectedNodeText.includes('(')) {
+                                selectedNodeText = selectedNodeText.split('(')[0].trim(); 
+                            }
+
+                            const currentRoomName = $('#roomName').val();
+                            const newRoomName = currentRoomName ? currentRoomName + ', ' + selectedNodeText : selectedNodeText;
+                            $('#roomName').val(newRoomName);
+
+                            console.log('Selected emp_code:', selectedEmpCode);
+                            console.log('Current empCode array:', empCode);
+                        }
                     });
                 })
                 .catch(err => {
@@ -201,13 +205,9 @@
         });
 
         // 채팅방 생성 버튼 클릭 시
-        document.getElementById('createRoomBtn').addEventListener('click', function() {
+        document.getElementById('createRoomBtn').addEventListener('click', function () {
             const roomName = document.getElementById('roomName').value;
             const loggedInEmpCode = document.getElementById('emp_code').value;
-            if (roomName.trim() === '') {
-                alert('채팅방 이름을 입력해주세요.');
-                return;
-            }
 
             // JSON 데이터 생성
             const requestData = {
@@ -215,43 +215,44 @@
                 emp_code: [...empCode, loggedInEmpCode]
             };
 
+            console.log('Request Data:', requestData);
+
             // AJAX 요청으로 JSON 데이터 전송, CSRF 토큰 포함
             $.ajax({
-                url: '/chatRoomCreate',  // 서버의 컨트롤러 URL
+                url: '/chatRoomCreate',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(requestData),  // JSON 데이터
-                beforeSend: function(xhr) {
-                    // CSRF 토큰을 요청 헤더에 추가
+                data: JSON.stringify(requestData),
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader(csrfHeader, csrfToken);
                 },
-                success: function(response) {
-                    // 서버에서 받은 res_code 값을 확인
+                success: function (response) {
+                    // 서버 응답 처리
                     if (response.res_code === "200") {
                         Swal.fire({
-                            icon: 'success',            // 성공 아이콘
-                            title: '성공',              // 타이틀
-                            text: response.res_msg,     // 서버에서 받은 성공 메시지
-                            confirmButtonText: "닫기"   // 버튼 텍스트
+                            icon: 'success',
+                            title: '성공',
+                            text: response.res_msg,
+                            confirmButtonText: "닫기"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();  // 페이지 새로고침
+                                location.reload();
                             }
                         });
                     } else if (response.res_code === "404") {
                         Swal.fire({
-                            icon: 'error',              // 오류 아이콘
-                            title: '오류 발생',         // 타이틀
-                            text: response.res_msg,     // 서버에서 받은 오류 메시지
-                            confirmButtonText: "닫기"   // 버튼 텍스트
+                            icon: 'error',
+                            title: '오류 발생',
+                            text: response.res_msg,
+                            confirmButtonText: "닫기"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.reload();  // 페이지 새로고침
+                                location.reload();
                             }
                         });
                     }
                 },
-                error: function(xhr, textStatus, errorThrown) {
+                error: function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'AJAX 오류 발생',
@@ -259,7 +260,7 @@
                         confirmButtonText: "닫기"
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            location.reload();  // 페이지 새로고침
+                            location.reload();
                         }
                     });
                 }
