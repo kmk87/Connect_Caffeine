@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.cc.approval.service.ApprovalService;
 import com.cc.attendance.domain.AttendanceDto;
 import com.cc.attendance.service.AttendanceService;
 import com.cc.employee.domain.EmployeeDto;
@@ -24,15 +25,18 @@ public class HomeController {
 	private final EmployeeService employeeService;
 	private final OrgService orgService;
 	private final AttendanceService attendanceService;
+	private final ApprovalService approvalService;
 	private final NoticeService noticeService;
-	
+
 	@Autowired
+
 	public HomeController(EmployeeService employeeService, OrgService orgService, AttendanceService attendanceService
-			,NoticeService noticeService) {
+			,NoticeService noticeService,ApprovalService approvalService) {
 		this.noticeService = noticeService;
 		this.employeeService = employeeService;
 		this.orgService = orgService;
 		this.attendanceService = attendanceService;
+		this.approvalService = approvalService;
 	}
 
 	@GetMapping({ "", "/" })
@@ -50,6 +54,13 @@ public class HomeController {
 		// 2. 오늘 날짜 출퇴근
 		AttendanceDto attnDto = attendanceService.getTodayAttendance(empCode);
         model.addAttribute("attnDto", attnDto);
+        
+        // 3. 결재 현황 (결재 대기 건수와 결재 완료 건수)
+        long waitingCount = approvalService.countByStatus("S", empCode);
+        long completedCount = approvalService.countByStatus("C", empCode);
+        model.addAttribute("waitingCount", waitingCount);
+        model.addAttribute("completedCount", completedCount);
+
 
         List<NoticeDto> noticeList = noticeService.selectNoticeList();
 		model.addAttribute("noticeList", noticeList);

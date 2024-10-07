@@ -83,6 +83,7 @@ public class ApprovalViewController {
 		this.approvalLineService = approvalLineService;
 	}
 
+	
 	// 전자결재 홈
 	 @GetMapping("/approvalHome")
 	 public String showApprovalHome(HttpServletRequest request, Model model) { 
@@ -441,7 +442,7 @@ public class ApprovalViewController {
 
 					    boolean showSecondApproveButton = (secondApprover != null &&
 					            empCode.equals(secondApprover.getEmployee().getEmpCode()) && // Employee의 empCode
-					            "S".equals(secondApprover.getApprState()));
+					            firstApprover != null && "C".equals(firstApprover.getApprState()));
 
 					    // 로그로 확인
 					    System.out.println("1차 승인 버튼 표시 여부: " + showFirstApproveButton);
