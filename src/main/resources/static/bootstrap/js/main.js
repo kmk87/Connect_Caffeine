@@ -281,7 +281,7 @@
   /**
    * Initiate Datatables
    */
-  const datatables = select('.datatable', true)
+  /*const datatables = select('.datatable', true)
   datatables.forEach(datatable => {
     new simpleDatatables.DataTable(datatable, {
       perPageSelect: [5, 10, 15, ["All", -1]],
@@ -300,7 +300,7 @@
         }
       ]
     });
-  })
+  })*/
 
   /**
    * Autoresize echart charts

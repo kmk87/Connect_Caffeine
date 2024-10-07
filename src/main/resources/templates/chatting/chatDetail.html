@@ -3,7 +3,9 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
      layout:decorate="~{include/layout}">
-  
+  <head>
+  	<title>채팅방</title>
+  </head>
   <th:block layout:fragment="content">
     <link href="/bootstrap/chat/chat.css" rel="stylesheet">
     <style>
@@ -16,7 +18,8 @@
   	
 	</style>
     <main id="main" class="main">
-
+	<button type="button" class="btn btn-outline-info" style="float: left; margin-left: 50px;" 
+        th:onclick="|window.location.href='@{/chatRoomList/{empCode}(empCode=${#authentication.principal.dto.emp_code})}'|">목록</button>
       <section class="section" style="margin-left: 50px; margin-top: 50px">
         <div class="row">
           <div class="col-md-6">
@@ -60,6 +63,7 @@
         </th:block>
     </th:block>
 </div>
+
 		    </div>
 		    
               <!-- 메시지 입력 및 전송 버튼 -->

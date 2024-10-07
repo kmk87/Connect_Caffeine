@@ -63,24 +63,28 @@ public interface ApprovalRepository extends JpaRepository<Approval, Long> {
     Optional<Approval> findByApprStateAndApprNo(String apprState, Long apprNo);
 	
     // emp_account를 이용해 로그인한 사용자의 리스트 가져오기
-    @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :empAccount ORDER BY a.apprNo DESC")
+    @Query("SELECT a FROM Approval a WHERE a.employee.empAccount = :empAccount ORDER BY a.draftDay DESC, a.apprNo DESC")
     List<Approval> findApprovalsByEmpAccount(@Param("empAccount") String empAccount);
 
     // 참조자로 등록된 리스트 가져오기
     @Query("SELECT a FROM Approval a " +
     	       "JOIN ApprovalLine al ON a.apprNo = al.approval.apprNo " +
     	       "JOIN Employee e ON al.employee.empCode = e.empCode " +
-    	       "WHERE al.apprRole = 2 AND e.empAccount = :empAccount")
+    	       "WHERE al.apprRole = 2 AND e.empAccount = :empAccount " +
+    	       "ORDER BY a.draftDay DESC, a.apprNo DESC")
     	List<Approval> findReferenceDraftsByEmpAccount(@Param("empAccount") String empAccount);
+
 
    
     
     // 내가 기안자인 결재대기건들만 가져오기
-    @Query("SELECT a FROM Approval a WHERE a.employee.empCode = :empCode AND a.apprState = 'S'")
+    @Query("SELECT a FROM Approval a WHERE a.employee.empCode = :empCode AND a.apprState = 'S' ORDER BY a.draftDay DESC, a.apprNo DESC")
     List<Approval> findStandByDraftsByEmpAccount(@Param("empCode") Long empCode);
 
 
-
+    // 상태와 작성자 코드로 필터링한 결재 건수 조회
+    @Query("SELECT COUNT(a) FROM Approval a WHERE a.apprState = :status AND a.employee.empCode = :empCode")
+    long countByStatusAndEmpCode(@Param("status") String status, @Param("empCode") Long empCode);
     
 
 

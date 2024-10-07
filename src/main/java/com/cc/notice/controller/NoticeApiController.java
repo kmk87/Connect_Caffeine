@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.cc.notice.domain.Notice;
 import com.cc.notice.domain.NoticeDto;
@@ -25,6 +28,7 @@ public class NoticeApiController {
 		this.noticeService = noticeService;
 		this.notificationService = notificationService;
 	}
+
 
 	@ResponseBody
 	@PostMapping("/noticeCreate")

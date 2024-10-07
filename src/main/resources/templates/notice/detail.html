@@ -3,7 +3,9 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
      layout:decorate="~{include/layout}">
-
+<head>
+	<title>공지사항 조회</title>
+</head>
  <th:block layout:fragment="content">
   <main id="main" class="main">
     
@@ -12,9 +14,12 @@
          <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px;">
              <div class="card-body">
              	<div class="card-body-header">
-					<h2 class="card-title"><b>게시판 조회</b></h2>
+					<h2 class="card-title"><b>공지사항 조회</b></h2>
 					<hr>
 				</div>
+				<button type="button" class="btn btn-outline-info" style="float: right;" 
+        th:onclick="|window.location.href='@{/noticeList}'|">목록</button>
+
              	<table id="notice_detail" class="table" style="margin-top: 50px;">
              		<colgroup>
              			<col width="70%" align="left">
@@ -214,7 +219,7 @@
     				<div th:id="'reply-form-' + ${parentComment.comment_no}" style="display:none; margin-top: 10px;">
         				<input type="hidden" id="comment_writer_name" name="comment_writer_name" th:value="${#authentication.principal.dto.emp_name}">
                 		<input type="hidden" id="comment_writer_code" name="comment_writer_code" th:value="${#authentication.principal.dto.emp_code}">
-        				<textarea th:id="'reply-textarea-' + ${parentComment.comment_no}" class="form-control" placeholder="답글을 작성하세요"></textarea>
+        				<textarea th:id="'reply-textarea-' + ${parentComment.comment_no}" class="form-control" placeholder="답글을 작성하세요" style="resize: none"></textarea>
         				<button type="button" class="btn btn-outline-primary" style="margin-top: 5px; float:right; resize:none;"
             			th:onclick="|submitReply(${parentComment.comment_no})|">답글 등록</button>
     				</div>
@@ -249,7 +254,7 @@
                     if(replyContent == ""){
                     	alert('답글 내용을 입력하세요.');
                     }else{
-                    fetch('/commentUpdate',{
+                    fetch('/commentCreate',{
                         method: 'post',
                         body: payload
                     })
@@ -366,7 +371,7 @@
 				    
                     // 서버로 업데이트 요청 보내기
                     
-                   fetch('/commentCreate/'+commentNo, {
+                   fetch('/commentUpdate/'+commentNo, {
                         method: 'post',
                         body: payload
                     })
