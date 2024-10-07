@@ -288,7 +288,6 @@
 										</div>
 										<script>/* 예약 현황 자바스크립트 */
                   </script>
-<<<<<<< HEAD
 									</div>
 								</div>
 							</div>
@@ -319,104 +318,6 @@
 								</div>
 							</div>
 							<!-- End 결재 현황 -->
-
-							<!-- Start 공지사항 -->
-							<div class="col-lg-6">
-								<div class="card">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>공지사항</b>
-										</h5>
-										<!-- Line Chart -->
-										<div id="reportsChart"></div>
-										<script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                      new ApexCharts(document.querySelector("#reportsChart"), {
-                        series: [{
-                          name: 'Sales',
-                          data: [31, 40, 28, 51, 42, 82, 56],
-                        }, {
-                          name: 'Revenue',
-                          data: [11, 32, 45, 32, 34, 52, 41]
-                        }, {
-                          name: 'Customers',
-                          data: [15, 11, 32, 18, 9, 24, 11]
-                        }],
-                        chart: {
-                          height: 350,
-                          type: 'area',
-                          toolbar: {
-                            show: false
-                          },
-                        },
-                        markers: {
-                          size: 4
-                        },
-                        colors: ['#4154F1', '#2ECA6A', '#FF771D'],
-                        fill: {
-                          type: "gradient",
-                          gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.3,
-                            opacityTo: 0.4,
-                            stops: [0, 90, 100]
-                          }
-                        },
-                        dataLabels: {
-                          enabled: false
-                        },
-                        stroke: {
-                          curve: 'smooth',
-                          width: 2
-                        },
-                        xaxis: {
-                          type: 'datetime',
-                          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-                        },
-                        tooltip: {
-                          x: {
-                            format: 'dd/MM/yy HH:mm'
-                          },
-                        }
-                      }).render();
-                    });
-                  </script>
-									</div>
-								</div>
-							</div>
-							<!-- End 공지사항 -->
-							<!-- Start 매출 현황 -->
-							<div class="col-lg-6">
-								<div class="card recent-sales overflow-auto">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>매출 현황</b>
-										</h5>
-										<table class="table table-borderless datatable">
-											<thead>
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col">Customer</th>
-													<th scope="col">Product</th>
-													<th scope="col">Price</th>
-													<th scope="col">Status</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<th scope="row"><a href="#">#2457</a></th>
-													<td>Brandon Jacob</td>
-													<td><a href="#" class="text-primary">At
-															praesentium minu</a></td>
-													<td>$64</td>
-													<td><span class="badge bg-success">Approved</span></td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-							<!-- End 매출 현황 -->
 						</div>
 					</div>
 					<!-- End Left side columns -->
@@ -427,20 +328,7 @@
                 </div>
               </div>
             </div><!-- End 예약 현황 -->
-            <!-- Start 결재 현황 -->
-            <div class="col-xxl-4 col-xl-12">
-              <div class="card info-card customers-card">
-                <div class="card-body">
-                  <h5 class="card-title"><b>결재 현황</b></h5>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                    </div>
-                  </div>
-                  <script>/* 결재 현황 자바스크립트 */
-                  </script>
-                </div>
-              </div>
-            </div><!-- End 결재 현황 -->
+            
             <!-- Start 공지사항 -->
             <div class="col-lg-6">
               <div class="card">
@@ -484,34 +372,6 @@
                 </div>
               </div>
             </div><!-- End 공지사항 -->
-            <!-- Start 매출 현황 -->
-            <div class="col-lg-6">
-              <div class="card recent-sales overflow-auto">
-                <div class="card-body">
-                  <h5 class="card-title"><b>매출 현황</b></h5>
-                  <table class="table table-borderless datatable">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Customer</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Brandon Jacob</td>
-                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                        <td>$64</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- End 매출 현황 -->
           </div>
         </div><!-- End Left side columns -->
         <!-- End 왼쪽 컬럼 -->
