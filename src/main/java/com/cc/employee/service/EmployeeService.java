@@ -158,8 +158,14 @@ public class EmployeeService {
 	 	// 부서 번호 가져오기
 	 		public Long getDeptNoByTeamNo(Long teamNo) {
 	 		    EmpGroup team = empGroupRepository.findById(teamNo)
-	 		        .orElseThrow();
+	 		        .orElseThrow(() -> new RuntimeException("Team not found"));
+	 		    
 	 		    Long deptNo = team.getGroupParentNo();  // 부모 그룹이 부서
+	 		    
+	 		    if (deptNo == null) {
+	 		        throw new RuntimeException("Department not found for the given team number: " + teamNo);
+	 		    }
+	 		    
 	 		    return deptNo;
 	 		}
 
