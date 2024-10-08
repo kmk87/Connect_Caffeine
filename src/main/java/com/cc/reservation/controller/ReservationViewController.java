@@ -3,6 +3,9 @@ package com.cc.reservation.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,12 +56,11 @@ public class ReservationViewController {
 	
 	@GetMapping("/reservation")
 	public String Reservation(HttpServletRequest request,Model model) {
-
-			 
 			List<BuildingDto> building = buildingService.selectBuildingList();
 			List<MeetingRoomDto> meeting = meetingRoomService.selectMeetingRoomList();
 			String currentUri = request.getRequestURI();
 			model.addAttribute("currentUri", currentUri);
+
 
 			model.addAttribute("buildings", building);
 			model.addAttribute("meetings",meeting);
