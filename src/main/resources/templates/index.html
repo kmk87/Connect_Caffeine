@@ -1,196 +1,186 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{include/layout}">
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
 <head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Connect Caffeine</title>
-<meta content="" name="description">
-<meta content="" name="keywords">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Connect Caffeine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
 
-<meta name="_csrf" th:content="${_csrf.token}" />
-<meta name="_csrf_header" th:content="${_csrf.headerName}" />
-<!-- 조직도 관련 -->
-<!-- Include jQuery -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Include jsTree CSS and JS -->
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- 조직도 끝 -->
-<link
-	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
-	rel="stylesheet" disabled="disabled">
-<link th:href="@{/css/notice/notice.css}" rel="stylesheet"
-	type="text/css">
-<style>
-.ps-3 {
-	width: 350px;
-}
-
-/* 결재현황 관련 스타일 */
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <!-- 조직도 관련 -->
+     <!-- Include jQuery -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+     <!-- Include jsTree CSS and JS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- 조직도 끝 -->
+   <link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet" disabled="disabled">
+   <link th:href="@{/css/notice/notice.css}" rel="stylesheet" type="text/css">
+  <style>
+  .ps-3{
+     width:350px;
+  }
+  
+  /* 결재현황 관련 스타일 */
 .approval-card {
-	width: 100%;
-	height: 350px; /* 카드 높이 */
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border: none;
-	margin-top: 5px; /* 상단 마진을 더 크게 설정하여 전체적으로 아래로 내림 */
+    width: 500px;
+    height: 347px; /* 카드 높이 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
 }
 
 .approval-status-row {
-	border-left: none;
-	border-right: none;
-	justify-content: center;
+    border-left: none;
+    border-right: none;
+    justify-content: center;
 }
 
 .separator {
-	border-left: 3px solid #eaeaea; /* 가운데 구분선 */
-	height: 120px; /* 구분선의 높이를 카드 높이에 맞게 설정 */
-	margin: 0 30px; /* 구분선 좌우 간격 */
-	margin-top: 20px; /* 구분선을 더 아래로 내림 */
+    border-left: 3px solid #eaeaea; /* 가운데 구분선 */
+    height: 120px; /* 구분선의 높이를 카드 높이에 맞게 설정 */
+    margin: 0 30px; /* 구분선 좌우 간격 */
+    margin-top: 20px; /* 구분선을 더 아래로 내림 */
 }
 
 .status-title {
-	font-size: 1.3rem; /* 텍스트 크기 */
-	color: #666;
-	display: block;
-	margin-bottom: 15px; /* 타이틀과 숫자 간의 간격 */
-	text-align: center; /* 텍스트를 가운데 정렬 */
-	margin-top: 20px; /* 텍스트와 숫자를 더 아래로 내림 */
+    font-size: 1.3rem; /* 텍스트 크기 */
+    color: #666;
+    display: block;
+    margin-bottom: 15px; /* 타이틀과 숫자 간의 간격 */
+    text-align: center; /* 텍스트를 가운데 정렬 */
+    margin-top: 20px; /* 텍스트와 숫자를 더 아래로 내림 */
 }
 
 .status-count {
-	font-size: 3rem; /* 숫자의 크기 */
-	color: #333;
-	text-align: center; /* 숫자도 가운데 정렬 */
-	margin-top: 20px; /* 숫자를 더 아래로 내림 */
-	font-weight: 200; /* 숫자를 얇게 설정 */
+    font-size: 3rem; /* 숫자의 크기 */
+    color: #333;
+    text-align: center; /* 숫자도 가운데 정렬 */
+    margin-top: 20px; /* 숫자를 더 아래로 내림 */
+    font-weight: 200; /* 숫자를 얇게 설정 */
 }
 
 .card-title {
-	text-align: center;
-	font-weight: bold;
-	margin-bottom: 20px;
-	color: #333;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
 }
 
 /* 중앙에서 간격 조정 */
 .status-container {
-	display: flex;
-	justify-content: space-around; /* 아이템들이 양 끝에서 균등하게 배치되도록 설정 */
-	align-items: center;
-	width: 100%;
-	margin-top: 20px; /* 전체 컨테이너를 더 아래로 내림 */
+    display: flex;
+    justify-content: space-around; /* 아이템들이 양 끝에서 균등하게 배치되도록 설정 */
+    align-items: center;
+    width: 100%;
+    margin-top: 20px; /* 전체 컨테이너를 더 아래로 내림 */
 }
 
 /* 여기까지 */
-</style>
 
+/* 예약 현황 */
+#reservationSummary .list-group-item {
+    min-height: 70px; /* 행의 높이 조절 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+  }
 
+  /* 회의실명 글자 크기 설정 */
+  .meeting-room-name {
+    font-size: 1.5em; /* 글자 크기를 1.5배로 설정 */
+    font-weight: bold;
+  }
 
-<!-- 조직도 관련 -->
-<!-- Include jQuery -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Include jsTree CSS and JS -->
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-<!-- 조직도 끝 -->
-<!-- Template Main CSS File -->
-<link href="/bootstrap/css/style.css" rel="stylesheet">
+  /* 더보기 버튼을 우측 하단에 고정 */
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* 더보기 버튼 위치 고정 (오른쪽 아래) */
+  #showMoreButton {
+    margin-top: auto;
+    align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
+  }
+  </style>
+  
+  
+
+  <!-- 조직도 관련 -->
+     <!-- Include jQuery -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+     <!-- Include jsTree CSS and JS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  <!-- 조직도 끝 -->
+  <!-- Template Main CSS File -->
+  <link href="/bootstrap/css/style.css" rel="stylesheet">
 
 </head>
 <body>
-	<th:block layout:fragment="content">
+ <th:block layout:fragment="content">
 
-		<!--   <main id="main" class="main" style="display: block; margin-top: 80px;">
-    <div class="pagetitle">
-      <h1>메인화면</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">메인화면</li>
-        </ol>
-      </nav>
-    </div>End Page Title -->
-
-		<main id="main" class="main">
-			<section class="section dashboard"
-				style="margin-top: 20px; margin-left: 30px;">
-				<div class="row">
-					<!-- Start 왼쪽 columns -->
-					<div class="col-lg-11">
-						<div class="row">
-							<!-- Start 근무 시간 -->
-							<div class="col-xxl-4 col-md-6">
-								<div class="card info-card sales-card">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>근태 관리</b>
-										</h5>
-										<div class="d-flex align-items-center">
-											<div class="ps-3" style="width: 400px;">
-												<!-- 사용자 정보 카드 -->
-												<div class="card"
-													style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
-													<div
-														class="d-flex justify-content-between align-items-center">
-														<div class="d-flex align-items-center">
-															<div>
-																<div id="userGroup"
-																	style="font-size: 16px; color: gray;"></div>
-																<div id="userInfo"
-																	style="font-size: 20px; font-weight: bold;"></div>
-															</div>
-														</div>
-														<div id="userDate"
-															style="text-align: center; font-size: 14px; color: gray;"></div>
-													</div>
-												</div>
-												<!-- 출근/퇴근 시간 -->
-												<div id="timestamp" class="mt-3"
-													style="display: flex; justify-content: space-between; align-items: center;">
-													<div style="text-align: center;">
-														<span style="font-size: 16px; color: gray;">출근 시간</span><br>
-														<span id="startTimeDisplay"
-															style="text-align: center; font-size: 20px; font-weight: bold;"
-															th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
-													</div>
-													<div style="text-align: center;">
-														<span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
-														<span id="endTimeDisplay"
-															style="text-align: center; font-size: 20px; font-weight: bold;"
-															th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
-													</div>
-												</div>
-
-												<hr>
-												<!-- 출근/퇴근 버튼 -->
-												<div class="button-box"
-													style="text-align: center; margin-top: 10px;">
-													<form id="attendanceForm">
-														<button type="button" class="btn btn-outline-info"
-															id="workStart"
-															style="width: 120px; margin-right: 50px; margin-top: 10px;">
-															<b>출근하기</b>
-														</button>
-														<button type="button" class="btn btn-outline-danger"
-															id="workFinish" style="width: 120px; margin-top: 10px;">
-															<b>퇴근하기</b>
-														</button>
-													</form>
-												</div>
-											</div>
-										</div>
-										<script th:inline="javascript">
+  <main id="main" class="main">
+    <section class="section dashboard" style="margin-top: 20px; margin-left: 30px;">
+      <div class="row">
+        <!-- Start 왼쪽 columns -->
+        <div class="col-lg-11" style="padding-left:40px;">
+          <div class="row">
+            <!-- Start 근무 시간 -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title"><b>근태 관리</b></h5>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3" style="width: 400px;">
+                     <!-- 사용자 정보 카드 -->
+                <div class="card" style="width: 100%; background-color: #E3F2FD; border-radius: 10px; padding: 10px;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div>
+                               <div id="userGroup" style="font-size: 16px; color: gray;"></div>
+                                <div id="userInfo" style="font-size: 20px; font-weight: bold;"></div>
+                            </div>
+                        </div>
+                     <div id="userDate" style="text-align:center; font-size: 14px; color: gray;"></div>
+                    </div>
+                </div>
+                    <!-- 출근/퇴근 시간 -->
+                 <div id="timestamp" class="mt-3" style="display: flex; justify-content: space-between; align-items: center;">
+                     <div style="text-align: center;">
+                        <span style="font-size: 16px; color: gray;">출근 시간</span><br>
+                         <span id="startTimeDisplay" style="text-align: center; font-size: 20px; font-weight: bold;" th:text="${attnDto.attn_start != null ? #temporals.format(attnDto.attn_start, 'HH시 mm분') : '-'}"></span>
+                     </div>
+                     <div style="text-align: center;">
+                         <span style="font-size: 16px; color: gray;">퇴근 시간</span><br>
+                         <span id="endTimeDisplay" style="text-align: center; font-size: 20px; font-weight: bold;" th:text="${attnDto.attn_end != null ? #temporals.format(attnDto.attn_end, 'HH시 mm분') : '-'}"></span>
+                     </div>
+                 </div>
+         
+                 <hr>
+                 <!-- 출근/퇴근 버튼 -->
+                 <div class="button-box" style="text-align: center; margin-top: 10px;">
+                     <form id="attendanceForm">
+                         <button type="button" class="btn btn-outline-info" id="workStart" style="width: 120px; margin-right: 50px; margin-top: 10px;">
+                             <b>출근하기</b>
+                         </button>
+                         <button type="button" class="btn btn-outline-danger" id="workFinish" style="width: 120px; margin-top: 10px;">
+                             <b>퇴근하기</b>
+                         </button>
+                     </form>
+                 </div>
+                    </div>
+                  </div>
+                  <script th:inline="javascript">
                   // 1. 기본 정보 표기
                     // (1) 일자
                   const today = new Date(); // 오늘 날짜
@@ -297,63 +287,29 @@
                     
                     
                   </script>
-									</div>
-								</div>
-							</div>
-							<!-- End 근무 시간 -->
-							<!-- Start 예약 현황 -->
-							<div class="col-xxl-4 col-md-6">
-								<div class="card info-card revenue-card">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>예약 현황</b>
-										</h5>
-										<div class="d-flex align-items-center">
-											<div class="ps-3">
-												<ul id="reservationSummary"
-													style="list-style-type: none; padding-left: 0;">
-													<!-- 여기에 오늘 날짜 예약 데이터가 표시될 예정 -->
-												</ul>
-												<button id="showMoreButton" class="btn btn-secondary mt-3"
-													style="display: none;">More</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- 모달 -->
-							<div class="modal fade" id="moreReservationsModal" tabindex="-1"
-								aria-labelledby="moreReservationsLabel" aria-hidden="true">
-								<div class="modal-dialog modal-dialog-centered">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="moreReservationsLabel">전체 예약
-												현황</h5>
-											<button type="button" class="btn-close"
-												data-bs-dismiss="modal" aria-label="Close"></button>
-										</div>
-										<div class="modal-body">
-											<ul id="moreReservationList"
-												style="list-style-type: none; padding-left: 0;">
-												<!-- 모든 예약 데이터가 여기에 표시됩니다 -->
-											</ul>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary"
-												data-bs-dismiss="modal">Close</button>
-										</div>
-									</div>
-								</div>
-							</div>
-							<script th:inline="javascript">
-  document.addEventListener('DOMContentLoaded', function () {
-    var reservations = /*[[${reservations}]]*/ [];
-    var meetingRooms = /*[[${meetings}]]*/ [];
-    var maxDisplayCount = 1;
+                </div>
+              </div>
+            </div><!-- End 근무 시간 -->
+           <!-- Start 예약 현황 -->
+<div class="col-xxl-4 col-md-6 position-relative">
+  <div class="card info-card revenue-card">
+    <div class="card-body" style="height:336px;">
+      <h5 class="card-title"><b>오늘의 예약 현황</b></h5>
+      <ul id="reservationSummary" class="list-group" style="list-style-type: none; padding-left: 0;">
+        <!-- 오늘 날짜 예약 데이터가 표시될 예정 -->
+      </ul>
+      <!-- 더보기 버튼을 href를 사용하여 바로 페이지 이동 -->
+      <button id="showMoreButton" class="btn btn-outline-warning" th:onclick="|location.href='@{/reservation}'|" 
+      style="margin-top: 15px;">더보기</button>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    var reservations = /*[[${reservations}]]*/ []; // Thymeleaf로 서버에서 전달받은 예약 데이터
+    var meetingRooms = /*[[${meetings}]]*/ []; // Thymeleaf로 서버에서 전달받은 회의실 데이터
+    var maxDisplayCount = 2;  // 항상 두 행만 보이도록 설정
     var reservationSummary = document.getElementById('reservationSummary');
-    var moreReservationList = document.getElementById('moreReservationList');
-    var showMoreButton = document.getElementById('showMoreButton');
 
     var today = new Date();
     var yyyy = today.getFullYear();
@@ -372,187 +328,208 @@
       return meetingRoom ? meetingRoom.meeting_name : '회의실 이름 없음';
     }
 
+    // 예약이 있을 경우
     if (todaysReservations.length > 0) {
       todaysReservations.forEach(function (reservation, index) {
-        var listItem = document.createElement('li');
-        var meetingRoomName = findMeetingRoomName(reservation.meeting_no);
-        var startTime = new Date(reservation.meeting_start).toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        var endTime = new Date(reservation.meeting_end).toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
+        if (index < maxDisplayCount) { // 최대 2개의 예약을 표시
+          var listItem = document.createElement('li');
+          var meetingRoomName = findMeetingRoomName(reservation.meeting_no);
+          var startTime = new Date(reservation.meeting_start).toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          });
 
-        listItem.innerHTML = `
-          <a href="/reservation" style="text-decoration: none; color: black;">
-            <b>${meetingRoomName}</b><br>
-            ${startTime} ~ ${endTime}<br>
-            회의 내용: ${reservation.meeting_content}<br>
-            참석 인원: ${reservation.meeting_people}명
-          </a>
-        `;
+          listItem.innerHTML = `
+             <div style="display: flex; justify-content: space-between; width: 100%;">
+               <span class="meeting-room-name">${meetingRoomName} <small style="font-size: 0.75em; font-weight: normal; color: gray;">회의실</small></span>
+               <span>${startTime}</span>
+             </div>
+           `;
+          listItem.classList.add("list-group-item");
 
-        // 메인에 최대 2개의 예약만 표시
-        if (index < maxDisplayCount) {
           reservationSummary.appendChild(listItem);
-          if (index < todaysReservations.length - 1 && index < maxDisplayCount - 1) {
-            var hr = document.createElement('hr');
-            reservationSummary.appendChild(hr);
-          }
-        }
-
-        // 모든 예약은 모달에 추가
-        moreReservationList.appendChild(listItem.cloneNode(true));
-        if (index < todaysReservations.length - 1) {
-          var hrInModal = document.createElement('hr');
-          moreReservationList.appendChild(hrInModal);
         }
       });
 
-      // 예약이 2개 이상일 때만 'More' 버튼 표시
-      if (todaysReservations.length > maxDisplayCount) {
-        showMoreButton.style.display = 'block';
+      // 예약이 2개 미만일 경우 빈 항목 추가
+      for (var i = todaysReservations.length; i < maxDisplayCount; i++) {
+        var emptyItem = document.createElement('li');
+        emptyItem.innerHTML = `<div style="height: 30px; width: 100%;"></div>`;
+        emptyItem.classList.add("list-group-item");
+        reservationSummary.appendChild(emptyItem);
       }
     } else {
-      var noDataItem = document.createElement('li');
-      noDataItem.textContent = '오늘 예약된 내용이 없습니다.';
-      reservationSummary.appendChild(noDataItem);
-      moreReservationList.appendChild(noDataItem.cloneNode(true));
+      // 예약이 없을 경우 빈 항목 추가
+      for (var i = 0; i < maxDisplayCount; i++) {
+        var noDataItem = document.createElement('li');
+        noDataItem.innerHTML = `<div style="height: 30px; width: 100%;"></div>`;
+        noDataItem.classList.add("list-group-item");
+        reservationSummary.appendChild(noDataItem);
+      }
     }
-
-    // 'More' 버튼 클릭 시 모달 창 열기
-    showMoreButton.addEventListener('click', function () {
-      var moreReservationsModal = new bootstrap.Modal(document.getElementById('moreReservationsModal'));
-      moreReservationsModal.show();
-    });
   });
 </script>
-
-							<!-- End 예약 현황 -->
-							<!-- Start 결재 현황 -->
-							<div class="col-xxl-4 col-xl-12">
-								<div class="card info-card approval-card">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>결재 현황</b>
-										</h5>
-										<div class="row align-items-center approval-status-row">
-											<div class="col text-center">
-												<span class="status-title">결재 대기</span>
-												<h1 class="status-count">
-													<span th:text="${waitingCount}"></span>
-												</h1>
-											</div>
-											<div class="col-1 separator"></div>
-											<div class="col text-center">
-												<span class="status-title">결재 완료</span>
-												<h1 class="status-count">
-													<span th:text="${completedCount}"></span>
-												</h1>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- End 결재 현황 -->
-							<!-- Start 공지사항 -->
-							<div class="col-lg-6">
-								<div class="card" style="width: 100%; height: 400px;">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>공지사항</b>
-										</h5>
-										<table id="notice_list"
-											class="table table-bordered rank-table">
-											<colgroup>
-												<col width="5%">
-												<col width="20%">
-												<col width="5%">
-												<col width="5%">
-											</colgroup>
-											<thead class="table-light">
-												<tr id="dynamic-header">
-													<th>번호</th>
-													<th>제목</th>
-													<th>작성일</th>
-													<th>작성자명</th>
-												</tr>
-											</thead>
-											<tbody>
-												<th:block th:if="${#lists.isEmpty(noticeList)}">
-													<tr>
-														<td colspan="4">해당하는 공지사항이 없습니다.</td>
-													</tr>
-												</th:block>
-												<th:block th:if="${!#lists.isEmpty(noticeList)}">
-													<tr th:if="${notice.notice_status.equals('Y')}"
-														th:each="notice, status : ${noticeList.size() > 5 ? noticeList.subList(0, 5) : noticeList}"
-														th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
-														<td th:text="${status.index + 1}"></td>
-														<td th:text="${notice.notice_title}"></td>
-														<td
-															th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
-														<td th:text="${notice.notice_writer_name}"></td>
-													</tr>
-												</th:block>
-											</tbody>
-
-										</table>
-
-									</div>
-								</div>
-							</div>
-							<!-- End 공지사항 -->
-							<!-- Start 매출 현황 -->
-							<div class="col-lg-6">
-								<div class="card recent-sales overflow-auto"
-									style="width: 700px; height: 450px;">
-									<div class="card-body">
-										<h5 class="card-title">
-											<b>오늘매출 현황</b>
-										</h5>
-										<div class="graph-container"
-											style="display: flex; justify-content: space-around;">
-											<canvas id="main-sales-graph"></canvas>
-											<canvas id="pie-sales-graph"></canvas>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- End 매출 현황 -->
-						</div>
-					</div>
-					<!-- End Left side columns -->
-				</div>
-			</section>
-			<style>
-#pie-sales-graph {
-	max-width: 300px; /* 최대 너비 */
-	max-height: 300px; /* 최대 높이 */
-	margin-top: 30px;
-	width: 300px;
-	height: 300px;
+<!-- End 예약 현황 -->
+            <!-- Start 결재 현황 -->
+                     <div class="col-xxl-4 col-xl-12">
+                        <div class="card info-card approval-card">
+                           <div class="card-body">
+                              <h5 class="card-title">
+                                 <b>결재 현황</b>
+                              </h5>
+                              <div class="row align-items-center approval-status-row">
+                                 <div class="col text-center">
+                                    <span class="status-title">결재 대기</span>
+                                    <h1 class="status-count">
+                                       <span th:text="${waitingCount}"></span>
+                                    </h1>
+                                 </div>
+                                 <div class="col-1 separator"></div>
+                                 <div class="col text-center">
+                                    <span class="status-title">결재 완료</span>
+                                    <h1 class="status-count">
+                                       <span th:text="${completedCount}"></span>
+                                    </h1>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <!-- End 결재 현황 -->
+                        <!-- Start 공지사항 -->
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-body" style="height:415px;">
+                  <h5 class="card-title"><b>공지사항</b></h5>
+                  <table id="notice_list" class="table table-bordered rank-table">
+                  <colgroup>
+                     <col width="5%">
+                  <col width="20%">
+                  <col width="5%">
+                  <col width="5%">
+                  </colgroup>
+         <thead class="table-light">
+            <tr id="dynamic-header">
+               <th>번호</th>
+               <th>제목</th>
+               <th>작성일</th>
+               <th>작성자명</th>
+            </tr>
+         </thead>
+         <tbody>
+            <th:block th:if="${#lists.isEmpty(noticeList)}">
+               <tr>
+                  <td colspan="4">해당하는 공지사항이 없습니다.</td> 
+               </tr>
+            </th:block>
+            <th:block th:if="${!#lists.isEmpty(noticeList)}">
+               <tr th:if="${notice.notice_status.equals('Y')}"
+               th:each="notice, status : ${noticeList.size() > 5 ? noticeList.subList(0, 5) : noticeList}"
+               th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
+                     <td th:text="${status.index + 1}"></td>
+                     <td th:text="${notice.notice_title}"></td>
+                     <td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+                     <td th:text="${notice.notice_writer_name}"></td>
+               </tr>
+            </th:block>
+         </tbody>
+         
+      </table>
+                  
+                </div>
+              </div>
+            </div><!-- End 공지사항 -->
+            <!-- Start 매출 현황 -->
+         <div class="col-lg-6" style="padding-left:50px;">
+            <div class="card recent-sales overflow-auto" style="width:700px; box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);">
+               <div class="card-body">
+                  <h5 class="card-title">
+                     <b>오늘의 매출 현황</b>
+                  </h5>
+                  <div class="graph-container" style="display: flex; justify-content: space-around;">
+                      <canvas id="main-sales-graph"></canvas>
+                      <canvas id="pie-sales-graph"></canvas>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- End 매출 현황 -->
+          </div>
+        </div><!-- End Left side columns -->
+      </div>
+    </section>
+    <style>         
+   #pie-sales-graph {
+       max-width: 300px;  /* 최대 너비 */
+       max-height: 300px; /* 최대 높이 */
+       margin-top: 30px;   
+       width: 300px; 
+       height: 300px;
+   }   
+   
+   #main-sales-graph {
+       max-width: 300px;  /* 최대 너비 */
+       max-height: 300px; /* 최대 높이 */
+       margin-top: 30px;
+       width: 300px; 
+       height: 300px;
+   }   
+   
+/* 카드 크기 조정 */
+.recent-sales {
+    overflow: hidden;
+    padding: 10px;  /* 카드 패딩을 최소화 */
+    height: auto;   /* 높이를 자동으로 조정 */
+    background-color: white;
+    box-shadow: none;  /* 그림자 제거 */
+    border: none;      /* 테두리 제거 */
+    display: flex;
+    justify-content: center; /* 카드 내부 중앙 정렬 */
 }
 
-#main-sales-graph {
-	max-width: 300px; /* 최대 너비 */
-	max-height: 300px; /* 최대 높이 */
-	margin-top: 30px;
-	width: 300px;
-	height: 300px;
+/* 그래프를 포함하는 컨테이너 */
+.graph-container {
+    width: 100%;
+    height: auto;   /* 높이 자동 조정 */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;  
+    padding: 0;
+    margin: 0 auto;  /* 중앙 정렬 */
 }
-</style>
-		</main>
-		<!-- End #main -->
-		<script>
+
+html, body {
+    height: 100%;  /* 화면 전체 높이 사용 */
+    overflow: hidden;  /* 페이지 스크롤 방지 */
+    margin: 0;
+    padding: 0;
+}
+
+/* 메인 콘텐츠 설정 */
+.main {
+    height: auto;
+    padding: 0;  /* 패딩 제거 */
+    overflow: hidden;  /* 스크롤 방지 */
+}
+
+/* 섹션 설정 */
+.section {
+    padding: 0;  /* 불필요한 패딩 제거 */
+    margin: 0;   /* 불필요한 마진 제거 */
+    height: auto;  /* 높이 자동 조정 */
+}
+
+/* 개별 그래프 크기 */
+#main-sales-graph, #pie-sales-graph {
+    width: 270px;  /* 그래프 크기 유지 */
+    height: 270px;
+    margin-top: 0;
+}
+   
+   </style>
+  </main><!-- End #main -->
+ <script>
 $(document).ready(function() {
     var rankType = 'daily'; 
     var year = new Date().getFullYear();  
@@ -690,7 +667,7 @@ function processGraphData(data) {
     }
 });
 </script>
-	</th:block>
-
+</th:block>
+  
 </body>
 </html>
