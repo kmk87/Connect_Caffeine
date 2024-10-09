@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>사원 프로필</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+#emp_profile_img {
+    object-fit: cover; 
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<main id="main" class="main" style="display: block; margin-top: 80px;">
+
+			<div class="pagetitle">
+				<h1>내 프로필</h1>
+				<nav>
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+						<li class="breadcrumb-item">Users</li>
+						<li class="breadcrumb-item active">Profile</li>
+					</ol>
+				</nav>
+			</div>
+			<!-- End Page Title -->
+			<section class="section profile" style="width: 1112px;">
+				<div class="row">
+					<div class="col-xl-4">
+						<div class="card">
+							<div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+								<!-- emp_img_file_path 값이 있을 때 -->
+								<img th:if="${userDto.emp_img_file_path != null}" 
+								     th:src="@{'/uploadImg/' + ${userDto.emp_img_file_path}}" 
+								     alt="Profile" class="rounded-circle" style="object-fit: cover; width: 120px; height: 120px;"/>
+								<!-- emp_img_file_path 값이 없을 때 기본 이미지 사용 -->
+								<img th:unless="${userDto.emp_img_file_path != null}" 
+								     th:src="@{'/bootstrap/img/basic_profile.png'}" 
+								     alt="Default Profile" class="rounded-circle" style="object-fit: cover; width: 120px; height: 120px;"/>
+								<h2 th:text="${userDto.emp_name}"></h2>
+								<br>
+								<h6 th:text="${empDeptName + ' > ' + userDto.group_name}"></h6>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-8">
+						<div class="card">
+							<div class="card-body pt-3">
+								<!-- Bordered Tabs -->
+								<ul class="nav nav-tabs nav-tabs-bordered">
+									<li class="nav-item">
+										<button class="nav-link active" data-bs-toggle="tab"
+											data-bs-target="#profile-overview">프로필</button>
+									</li>
+									<li class="nav-item">
+										<button class="nav-link" data-bs-toggle="tab"
+											data-bs-target="#profile-edit">프로필 수정</button>
+									</li>
+								</ul>
+								<div class="tab-content pt-2">
+									<div class="tab-pane fade show active profile-overview"
+										id="profile-overview">
+										<br>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">사원번호</div>
+											<div class="col-lg-9 col-md-8">
+												<span th:text="${userDto.emp_account}"></span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">생년월일</div>
+											<div class="col-lg-9 col-md-8">
+												<span th:text="${formattedRegNo}"></span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">주소</div>
+											<div class="col-lg-9 col-md-8">
+												<p
+													th:text="'(우편번호: ' + (${#strings.length(userDto.emp_postcode) == 4} ? '0'+ ${userDto.emp_postcode} : ${userDto.emp_postcode}) + ')'"
+													class="tight-line"></p>
+												<p th:text="${userDto.emp_addr + ' ' + userDto.emp_addr_detail}"
+													class="tight-line"></p>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">직급</div>
+											<div class="col-lg-9 col-md-8">
+												<span th:text="${userDto.emp_job_name}"></span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">휴대전화</div>
+											<div class="col-lg-9 col-md-8">
+												<span th:text="${userDto.emp_phone}"></span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">내선번호</div>
+											<div class="col-lg-9 col-md-8">
+												<span th:text="${userDto.emp_desk_phone}"></span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">이메일</div>
+											<div class="col-lg-9 col-md-8">
+												<span th:text="${userDto.emp_email}"></span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-3 col-md-4 label">메모</div>
+											<div class="col-lg-9 col-md-8">
+												<span th:text="${userDto.emp_memo}"></span>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+										<!-- Profile Edit Form -->
+										<form id="profileUpdateFrm" action="/profileUpdate" method="POST" enctype="multipart/form-data">
+											<input type="hidden" id="_csrf" name="_csrf" th:value="${_csrf.token}" />
+											<input type=hidden name="emp_code" th:value="${userDto.emp_code}">
+											<input type=hidden name="group_no" th:value="${userDto.emp_code}">
+											<input type=hidden name="emp_name" th:value="${userDto.emp_name}">
+											<input type=hidden name="emp_job_code" th:value="${userDto.emp_job_code}">
+											<input type=hidden name="emp_job_name" th:value="${userDto.emp_job_name}">
+											<input type=hidden name="emp_pw" th:value="${userDto.emp_pw}">
+											<input type=hidden name="emp_hiredate" th:value="${userDto.emp_hiredate}">
+											<input type="hidden" name="emp_resign" th:value="N">
+											<input type="hidden" name="emp_holiday" th:value="${userDto.emp_holiday}">
+											<div class="row mb-3">
+												<label for="profileImage"
+													class="col-md-4 col-lg-3 col-form-label">프로필 이미지</label>
+												<div class="col-md-8 col-lg-9">
+													<!-- emp_img_file_path 값이 있을 때 -->
+													<img th:if="${userDto.emp_img_file_path != null}" 
+													     th:src="@{'/uploadImg/' + ${userDto.emp_img_file_path}}" 
+													     alt="Profile" id="emp_profile_img" class="rounded-circle"/>
+													<!-- emp_img_file_path 값이 없을 때 기본 이미지 사용 -->
+													<img th:unless="${userDto.emp_img_file_path != null}" 
+													     th:src="@{'/bootstrap/img/basic_profile.png'}" 
+													     alt="Default Profile" id="emp_profile_img" class="rounded-circle"/>
+													<div class="pt-2">
+														<input type="file" id="img_file" name="emp_img_file" accept="image/*" onchange="previewImage(event)">
+													</div>
+												</div>
+											</div>
+											<div class="tab-pane fade show active profile-overview" id="profile-overview">
+											<br>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">사원번호</div>
+												<div class="col-lg-9 col-md-8">
+													<span th:text="${userDto.emp_account}"></span>
+													<input type=hidden name="emp_account" th:value="${userDto.emp_account}">
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">생년월일</div>
+												<div class="col-lg-9 col-md-8">
+													<span th:text="${formattedRegNo}"></span>
+													<input type=hidden name="emp_reg_no" th:value="${userDto.emp_reg_no}">
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">주소</div>
+												<div class="col-lg-9 col-md-8">
+													<button type="button" th:onclick="execDaumPostcode()"
+														class="btn btn-warning rounded-pill"
+														style="height: 30px; font-size: 13px;">우편번호 찾기</button> <br>
+													<input type="text" class="form-control" id="emp_postcode" name="emp_postcode"
+													th:field="*{userDto.emp_postcode}" style="display: inline-block;">
+													<input type="text" class="form-control" id="emp_addr"
+													name="emp_addr" th:field="*{userDto.emp_addr}"
+													style="display: inline-block;"> <input type="text"
+													class="form-control" id="emp_addr_detail"
+													name="emp_addr_detail" th:field="*{userDto.emp_addr_detail}"
+													style="display: inline-block;">
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">소속</div>
+												<div class="col-lg-9 col-md-8">
+													<span th:text="${empDeptName + ' > ' + userDto.group_name}"></span>
+													<input type=hidden name="group_no" th:value="${userDto.group_no}">
+													<input type=hidden name="group_name" th:value="${userDto.group_name}">
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">휴대전화</div>
+												<div class="col-lg-9 col-md-8">
+													<input type="text" class="form-control"
+													id="emp_phone" name="emp_phone" th:field="*{userDto.emp_phone}">
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">내선번호</div>
+												<div class="col-lg-9 col-md-8">
+													<input type="text" class="form-control"
+													id="emp_desk_phone" name="emp_desk_phone"
+													th:field="*{userDto.emp_desk_phone}">
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">이메일</div>
+												<div class="col-lg-9 col-md-8">
+													<input type="email" class="form-control"
+													id="emp_email" name="emp_email" th:field="*{userDto.emp_email}">
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-3 col-md-4 label">메모</div>
+												<div class="col-lg-9 col-md-8">
+													<textarea class="form-control" id="emp_memo" name="emp_memo" th:field="*{userDto.emp_memo}"style="resize: none;"></textarea>
+												</div>
+											</div>
+											<div class="text-center">
+												<button type="submit" class="btn btn-primary">저장</button>
+											</div>
+										</div>
+										</form>
+										<!-- End Profile Edit Form -->
+									</div>
+								</div>
+								<!-- End Bordered Tabs -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		<!-- End #main -->
+		<script>
+		// 1. 이미지 표현
+		function previewImage(event) {
+	    // FileReader 객체를 생성
+		    var reader = new FileReader();
+		    
+		    // 파일이 로드된 후 실행될 콜백 함수 정의
+		    reader.onload = function() {
+		        // img 태그의 src 속성을 파일의 데이터 URL로 설정
+		        var output = document.getElementById('emp_profile_img');
+		        output.src = reader.result;
+		        
+		        // 이미지 비율 유지 및 고정 크기 유지
+		        output.style.objectFit = 'cover';
+		        output.style.width = '120px';
+		        output.style.height = '120px'; 
+		        output.style.borderRadius = '50%'; // 둥근 모양 유지
+		    };
+		    
+		    // input에서 선택된 파일을 읽음
+		    reader.readAsDataURL(event.target.files[0]);
+		}
+		
+		
+		// 2. 주소 변경
+		function execDaumPostcode() {
+		
+	      new daum.Postcode({
+	          oncomplete: function(data) {
+	              // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+	
+	              // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+	              // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기한다.
+	              var addr = ''; // 주소 변수
+	              var extraAddr = ''; // 참고항목 변수
+	
+	              //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+	              if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+	                  addr = data.roadAddress;
+	              } else { // 사용자가 지번 주소를 선택했을 경우(J)
+	                  addr = data.jibunAddress;
+	              }
+	
+	              // 사용자가 선택한 주소가 도로명 타입일 때 참고 항목을 조합한다.
+	              if(data.userSelectedType === 'R'){
+	                  // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+	                  // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+	                  if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                      extraAddr += data.bname;
+	                  }
+	                  // 건물명이 있고, 공동 주택일 경우 추가한다.
+	                  if(data.buildingName !== '' && data.apartment === 'Y'){
+	                      extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	                  }
+	                  // 표시할 참고 항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+	                  if(extraAddr !== ''){
+	                      extraAddr = ' (' + extraAddr + ')';
+	                  }
+	                  // 조합된 참고 항목을 해당 필드에 넣는다.
+	                  //document.getElementById("sample6_extraAddress").value = extraAddr;
+	              
+	              } else {
+	                  //document.getElementById("sample6_extraAddress").value = '';
+	              }
+	
+	              // 우편번호와 주소 정보를 해당 필드에 넣는다.
+	              document.getElementById('emp_postcode').value = data.zonecode;
+	              document.getElementById("emp_addr").value = addr;
+	              // 커서를 상세 주소 필드로 이동한다.
+	              document.getElementById("emp_addr_detail").focus();
+		          }
+		      }).open();
+		  }
+    
+	    // 2. 정보 전송
+		const form = document.getElementById("profileUpdateFrm");
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+		
+		    // 유효성 검사
+		    let vali_check = false;
+		    let vali_text = "";
+		    
+			if(form.emp_postcode.value === ""){
+		    	vali_text += '주소를 입력하세요.\n';
+		    	form.emp_postcode.focus();
+		    } else if (form.emp_phone.value === "") {
+		        vali_text += '휴대전화 번호를 입력하세요.\n';
+		        form.emp_phone.focus();
+		    } else if (!/^01[0-9]-\d{3,4}-\d{4}$/.test(form.emp_phone.value)) {
+		        vali_text += '휴대전화 번호를 알맞은 형태로 입력하세요.\n';
+		        form.emp_phone.focus();
+		    } else if (form.emp_desk_phone.value === "") {
+		        vali_text += '내선 번호를 입력하세요.\n';
+		        form.emp_desk_phone.focus();
+		    } else if (!/^(02|0\d{2})-\d{3,4}-\d{4}$/.test(form.emp_desk_phone.value)) {
+		        vali_text += '내선 번호를 알맞은 형태로 입력하세요.\n';
+		        form.emp_desk_phone.focus();
+		    } else if (form.emp_email.value === "") {
+		        vali_text += '이메일을 입력하세요.\n';
+		        form.emp_email.focus();
+		    } else {
+		        vali_check = true;
+		    }
+			
+			 // 유효성 검사 실패하면 실행 중단
+		    if (!vali_check) {
+		        alert(vali_text)
+		        return; 
+		    }
+			
+		    // SweetAlert을 통해 확인 메시지 띄우기
+		    Swal.fire({
+		        icon: 'success',
+		        title: '성공',
+		        text: '프로필 수정에 성공하였습니다.',
+		        confirmButtonText: '닫기'
+		    }).then((result) => {
+		        if (result.isConfirmed) {
+		            form.submit();
+		        }
+		    });
+		});
+		
+	</script>
+	</th:block>
+	<!-- ======= Footer ======= -->
+	<footer id="footer" class="footer">
+		<div class="copyright">
+			&copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights
+			Reserved
+		</div>
+		<div class="credits">
+			All the links in the footer should remain intact. You can delete the
+			links only if you purchased the pro version. Licensing information:
+			https://bootstrapmade.com/license/ Purchase the pro version with
+			working PHP/AJAX contact form:
+			https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+			Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+		</div>
+		-->
+	</footer>
+	<!-- End Footer -->
+	<a href="#"
+		class="back-to-top d-flex align-items-center justify-content-center"><i
+		class="bi bi-arrow-up-short"></i></a>
+
+</body>
+</html>

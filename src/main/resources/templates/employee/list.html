@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{include/layout}">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>사원 목록</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+<style>
+.empSidebar {
+    position: fixed;
+    top: 60px;
+    left: 300px; /* 메인 사이드바의 너비만큼 왼쪽 여백 */
+    bottom: 0;
+    width: 250px; /* 추가 사이드바의 너비 */
+    z-index: 995; /* 메인 사이드바보다 낮은 z-index 설정 */
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+    font-size: 15px;
+	font-weight: 600;
+	color: #012970;
+}
+
+.content-area {
+    margin-left: 250px; /* 사이드바 너비 + 여백 */
+    padding: 20px; /* 내부 여백 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 각 섹션 간의 간격 */
+    margin-top: -110px;
+}
+.subside_title {
+	font-size: 25px;
+}
+
+.card-body-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.basic-info {
+	display: flex;
+	width: 100%;
+}
+#treeContainer {
+    max-height: 500px;
+    overflow-y: auto;
+    display: block;  
+    border: 1px solid black; 
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<main id="main" class="main">
+			<aside id="empSidebar" class="empSidebar">
+				<div class="pagetitle">
+      				<h1>인사 관리</h1>
+    			</div>
+    			<ul class="sidebar-nav" id="sidebar-nav">
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/employeeList}" style="margin-top:15px;">
+		          			<i class="bi bi-person-fill"></i><span>사원 정보</span>
+		        		</a>
+		      		</li>
+		      		<li class="nav-item">
+		        		<a class="nav-link collapsed" th:href="@{/empGroupList}">
+		          			<i class="bi bi-people-fill"></i><span>부서/팀 정보</span>
+		        		</a>
+		      		</li>
+	      		</ul>
+			</aside>
+			<section class="section dashboard" style="width: 100%">
+			<div class="content-area">
+				<div class="col-xxl-4 col-md-6" style="width: 100%; margin-top:100px;">
+					<div class="card info-card sales-card" style="margin-top: 25px; margin-left: 25px;">
+						<div class="card-body">
+							<div class="card-body-header">
+								<h2 class="card-title"><b>사원 목록</b></h2>
+								<div>
+									<button class="btn btn-primary rounded-pill"
+										style="margin-top: 20px;"
+										th:onclick="|location.href='@{/employee}'|">등록</button>
+								</div>
+							</div>
+							<hr>
+							<div class="emp_list">
+								<table id="emp_list" class="table datatable" style="border: lightgray;">
+									<thead>
+										<tr>
+											<th>팀</th>
+											<th>직급</th>
+											<th>이름</th>
+											<th>입사일</th>
+											<th>재직 여부</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="emp:${empDtoList}"
+											th:onclick="|location.href='@{/employee/{emp_code}(emp_code=${emp.emp_code})}'|">
+											<td th:text="${emp.group_name}"></td>
+											<td th:text="${emp.emp_job_name}"></td>
+											<td th:text="${emp.emp_name}"></td>
+											<td th:text="${emp.emp_hiredate}"></td>
+											<td th:text="${emp.emp_resign.toUpperCase() == 'N' ? '재직 중' : '퇴사'}"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="d-flex align-items-center" style="display: flex; justify-content: flex-end;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</section>
+			<script th:inline="none">
+			$(document).ready(function() {
+			    var table = $('#emp_list').DataTable({
+			        "lengthChange": false,
+			        "searching": true, // 검색 활성화
+			        "responsive": true,
+			        "language": {
+			            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Korean.json', // 한국어 번역 적용
+			            paginate: {
+			                previous: "<<",
+			                next: ">>"
+			            }
+			        },
+			        "paging": true,
+			        "pagingType": "simple_numbers",
+			        "pageLength": 10, // 한 페이지에 보여질 항목 수 설정
+			        "dom": 'ftp', // 검색(f)과 정보(i)를 제외한 나머지(l, t, p만 표시)
+			        "order": [[3, "desc"]],
+			        "initComplete": function() {
+			            var table = this.api();
+
+			            // 페이지네이션 버튼 텍스트를 덮어쓰기 (초기 페이지)
+			            $('.dataTables_paginate .paginate_button.previous').html("<<");
+			            $('.dataTables_paginate .paginate_button.next').html(">>");
+			        }
+			    });
+
+			    // 페이지 변경 시에도 페이지네이션 버튼 텍스트를 덮어쓰기
+			    $('#emp_list').on('draw.dt', function() {
+			        $('.dataTables_paginate .paginate_button.previous').html("<<");
+			        $('.dataTables_paginate .paginate_button.next').html(">>");
+			    });
+			});
+
+
+			</script>
+		</main>
+		
+	</th:block>
+	<!-- ======= Footer ======= -->
+	<footer id="footer" class="footer">
+		<div class="copyright">
+			&copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights
+			Reserved
+		</div>
+		<div class="credits">
+			<!-- All the links in the footer should remain intact. -->
+			<!-- You can delete the links only if you purchased the pro version. -->
+			<!-- Licensing information: https://bootstrapmade.com/license/ -->
+			<!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+			Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+		</div>
+	</footer>
+	<!-- End Footer -->
+	<a href="#"
+		class="back-to-top d-flex align-items-center justify-content-center"><i
+		class="bi bi-arrow-up-short"></i></a>
+	<script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+	<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+	<script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+	<script src="/bootstrap/vendor/quill/quill.js"></script>
+	<script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+	<script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+	<!-- Template Main JS File -->
+	<script src="/bootstrap/js/main.js"></script>
+
+
+</body>
+</html>

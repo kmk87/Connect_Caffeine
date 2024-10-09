@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{include/layout}">
+  <head>
+    <meta charset='utf-8' />
+  	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+  <title>회의실 예약</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <link th:href = "@{/css/calendar/calendar.css}" rel="stylesheet" type="text/css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CNunito:300,300i,400,400i,600,600i,700,700i%7CPoppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+ 
+  <link href="/css/reservation/nav_sider.css" rel="stylesheet">
+  <link href="/css/reservation/reservation.css" rel="stylesheet">
+  <!-- Bootstrap JS -->
+  <link href="/bootstrap/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <style>
+   
+    #reserveMeetingButton {
+      position: absolute;
+    }
+
+    #calendar {
+      position: relative;
+      z-index: 1;
+        margin-left: 100px; 
+    }
+    .subside_title {
+	font-size: 25px;
+}
+    ul {
+    overflow: hidden;
+    transition: height 0.5s ease;
+  }
+  </style>
+  </head>
+  <body>
+  <th:block layout:fragment="content">
+	   <main id="main" class="main">
+		    	<div class="pagetitle">
+			        <ol class="breadcrumb">
+			          <li class="breadcrumb-item"><a href="index.html">메인화면</a></li>
+			          <li class="breadcrumb-item active">예약 관리</li>
+			        </ol>
+			    </div><!-- End Page Title -->
+<aside id="apprSidebar" class="apprSidebar">
+  <div class="reservation-box">
+    <div class="reservation-header" style="text-align: left; margin-bottom: 20px;">
+      <b><span class="subside_title">예약 관리</span></b>
+    </div>
+
+<div th:each="building : ${buildings}" style="margin-bottom: 30px;">
+  <div class="building-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <!-- 빌딩 이름을 클릭할 수 있도록 수정 -->
+    <a class="nav-link collapsed" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${building.building_no}" href="#" aria-expanded="false" aria-controls="collapse">
+      <h4 style="margin: 0; color: #555; cursor: pointer;">
+        <span th:text="${building.building_name}"></span>
+        <i class="bi bi-chevron-down toggle-icon"style="font-size: 0.8rem;"></i> <!-- 아이콘 추가 -->
+      </h4>
+    </a>
+
+        <div th:if="${#authentication.principal.dto.emp_account[0] != 'b'}">
+        <button th:onclick="|location.href='@{/building_information/{buildingNo}(buildingNo=${building.building_no})}'|"
+          style="background: none; border: none; cursor: pointer; color: rgb(0, 0, 0);">
+          <i class="bi bi-gear" style="font-size: 1rem;"></i>
+        </button>
+        </div>
+      </div>
+
+      <!-- 회의실 목록을 숨김 상태로 설정, 각 빌딩에 해당하는 회의실 목록을 연결 -->
+      <div id="collapse" th:id="'collapse' + ${building.building_no}" class="collapse" data-bs-parent="#apprSidebar">
+        <ul style="list-style-type: none; padding: 0; margin-top: 10px;">
+          <li th:each="meeting : ${meetings}" th:if="${meeting.building_no == building.building_no}" style="margin-bottom: 8px;">
+            <div  style="text-decoration: none; color: rgb(0, 0, 0); font-size: 1rem;" th:text="${meeting.meeting_name}"></div>
+          </li>
+        </ul>
+      </div>
+
+      <hr style="border-top: 5px solid #e0e0e0; margin: 20px 0;">
+    </div>
+
+    <div th:if="${#authentication.principal.dto.emp_account[0] != 'b'}">
+    <div style="text-align: center;">
+      <a th:href="@{/Building}">
+        <button class="building-register-btn" style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+          + 건물 등록
+        </button>
+      </a>
+    </div>
+    </div>
+    <!-- 회의실 예약 버튼을 건물 등록 바로 아래로 이동 -->
+    <div style="margin-top: 60px; margin-left:40px;">
+      <button id="reserveMeetingButton" class="btn btn-primary">회의실 예약</button>
+    </div>
+
+  </div>
+</aside>
+
+
+	    	<div id='calendar' >
+	    	</div>
+
+
+	    	<!-- 캘린더를 누르면 생기는 모달창 -->
+<div class="modal fade" id="meetingModal" tabindex="-1" aria-labelledby="meetingModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="meetingModalLabel">회의실 예약</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="meetingForm">
+  <div class="mb-3">
+    <label for="meetingRoom" class="form-label">회의실 선택</label>
+    <select id="meetingRoom" class="form-select" name="meetingRoom">
+      <option selected>회의실을 선택하세요</option>
+    <option th:each="meetingRoom : ${meetings}" th:value="${meetingRoom.meeting_no}" 
+            th:text="${meetingRoom.meeting_name}" th:data-maxpeople="${meetingRoom.max_people}">
+            </option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="meetingTitle" class="form-label">회의 내용</label>
+    <input type="text" class="form-control" id="meetingTitle" name="meetingContent" placeholder="회의 내용을 입력하세요">
+  </div>
+  <div class="mb-3">
+    <label for="startTime" class="form-label">시작 시간</label>
+    <input type="datetime-local" class="form-control" id="startTime" name="meetingStart">
+  </div>
+  <div class="mb-3">
+    <label for="endTime" class="form-label">종료 시간</label>
+    <input type="datetime-local" class="form-control" id="endTime" name="meetingEnd">
+  </div>
+  <div class="mb-3">
+    <label for="meetingPeople" class="form-label">참석 인원</label>
+    <input type="number" class="form-control" id="meetingPeople" name="meetingPeople" placeholder="참석 인원을 입력하세요">
+  </div>
+  <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+  <button type="submit" class="btn btn-primary" id="saveMeeting">예약</button>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+	    	
+<!-- 캘린더를 누르면 생기는 **수정** 모달창 (새로 추가) -->
+<div class="modal fade" id="editMeetingModal" tabindex="-1" aria-labelledby="editMeetingModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editMeetingModalLabel">회의실 예약 수정</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editMeetingForm">
+          <!-- 수정 폼 필드들 (ID와 이름 다름) -->
+          <div class="mb-3">
+            <label for="editMeetingRoom" class="form-label">회의실 선택</label>
+            <select id="editMeetingRoom" class="form-select" name="editMeetingRoom">
+                <option th:each="meetingRoom : ${meetings}" th:value="${meetingRoom.meeting_no}" 
+            th:text="${meetingRoom.meeting_name}" th:data-maxpeople="${meetingRoom.max_people}">
+            </option>
+    </select>
+          </div>
+          <div class="mb-3">
+            <label for="editMeetingTitle" class="form-label">회의 내용</label>
+            <input type="text" class="form-control" id="editMeetingTitle" name="editMeetingContent">
+          </div>
+          <div class="mb-3">
+            <label for="editStartTime" class="form-label">시작 시간</label>
+            <input type="datetime-local" class="form-control" id="editStartTime" name="editMeetingStart">
+          </div>
+          <div class="mb-3">
+            <label for="editEndTime" class="form-label">종료 시간</label>
+            <input type="datetime-local" class="form-control" id="editEndTime" name="editMeetingEnd">
+          </div>
+          <div class="mb-3">
+            <label for="editMeetingPeople" class="form-label">참석 인원</label>
+            <input type="number" class="form-control" id="editMeetingPeople" name="editMeetingPeople">
+          </div>
+          <input type="hidden" id="reservation_no" name="reservation_no"> <!-- 이벤트 ID를 저장할 hidden 필드 -->
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="deleteMeeting">삭제</button>
+        <button type="submit" class="btn btn-primary" id="updateMeeting">수정</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var collapses = document.querySelectorAll('.collapse');
+    
+    collapses.forEach(function(collapse) {
+      collapse.addEventListener('show.bs.collapse', function() {
+        var icon = this.parentElement.querySelector('.toggle-icon');
+        icon.classList.remove('bi-chevron-down');
+        icon.classList.add('bi-chevron-up'); // 아래 방향에서 위 방향으로 변경
+      });
+
+      collapse.addEventListener('hide.bs.collapse', function() {
+        var icon = this.parentElement.querySelector('.toggle-icon');
+        icon.classList.remove('bi-chevron-up');
+        icon.classList.add('bi-chevron-down'); // 다시 아래 방향으로 변경
+      });
+    });
+  });
+</script>
+<script th:inline="javascript">
+  // Thymeleaf로 받은 예약 데이터 JavaScript로 변환
+  var reservations = /*[[${reservations}]]*/ [];
+  var events = reservations.map(function(reservation) {
+    return {
+      title: reservation.meeting_content,
+      start: reservation.meeting_start,
+      end: reservation.meeting_end,
+      extendedProps: {
+    	reservation: reservation.reservation_no,
+        meeting_no: reservation.meeting_no,
+        people: reservation.meeting_people
+      }
+    };
+  });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	  var calendarEl = document.getElementById('calendar');
+	  var isEditing = false; // 수정 모드 플래그
+	  
+	  // FullCalendar 초기화
+	  var calendar = new FullCalendar.Calendar(calendarEl, {
+	    initialView: 'dayGridMonth',
+	    locale: 'ko',
+	    timeZone: 'local',
+	    headerToolbar: {
+	      left: 'prev,next today',
+	      center: 'title',
+	      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+	    },
+	    navLinks: true,
+        editable: true,
+	    editable: true,
+	    selectable: true,
+	    selectHelper: true,
+        dayMaxEvents: true,
+	    
+	    events: events, // 서버에서 가져온 이벤트를 추가
+	    
+	    // 이벤트 클릭 시 수정 모달 열기
+	    eventClick: function(info) {
+	      var event = info.event;
+
+	      // 수정 모달에 데이터 채우기
+	      document.getElementById('editMeetingRoom').value = event.extendedProps.meeting_no;
+	      document.getElementById('editMeetingTitle').value = event.title;
+	      // 시작 시간과 종료 시간을 로컬 시간으로 변환
+	      document.getElementById('editStartTime').value = new Date(event.start).toLocaleString('sv-SE', {
+	        timeZone: 'Asia/Seoul',  // 원하는 시간대 설정
+	        hour12: false
+	      }).replace(' ', 'T');  // ISO 8601 형식에 맞게 공백을 T로 변경
+
+	      document.getElementById('editEndTime').value = new Date(event.end).toLocaleString('sv-SE', {
+	        timeZone: 'Asia/Seoul',  // 원하는 시간대 설정
+	        hour12: false
+	      }).replace(' ', 'T');
+
+	      document.getElementById('editMeetingPeople').value = event.extendedProps.people;
+	      document.getElementById('reservation_no').value = event.extendedProps.reservation; // 이벤트 ID 저장
+
+	      // 모달 창 열기
+	      var editMeetingModal = new bootstrap.Modal(document.getElementById('editMeetingModal'));
+	      editMeetingModal.show();
+
+	      // 필드를 비활성화 상태로 만듦
+	      document.getElementById('editMeetingRoom').disabled = true;
+	      document.getElementById('editMeetingTitle').disabled = true;
+	      document.getElementById('editStartTime').disabled = true;
+	      document.getElementById('editEndTime').disabled = true;
+	      document.getElementById('editMeetingPeople').disabled = true;
+
+	      isEditing = false; // 수정 모드 초기화
+	      document.getElementById('updateMeeting').textContent = '수정'; // 버튼 텍스트를 '수정'으로 설정
+	    }
+	  });
+
+	  // 수정 버튼 클릭 시 처리
+document.getElementById('updateMeeting').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    if (!isEditing) {
+        // 필드를 활성화하여 수정 가능하게 만듦
+        document.getElementById('editMeetingRoom').disabled = false;
+        document.getElementById('editMeetingTitle').disabled = false;
+        document.getElementById('editStartTime').disabled = false;
+        document.getElementById('editEndTime').disabled = false;
+        document.getElementById('editMeetingPeople').disabled = false;
+
+        isEditing = true; // 수정 모드로 전환
+        this.textContent = '저장'; // 버튼 텍스트를 '저장'으로 변경
+    } else {
+        // 수정 모드일 때 저장 처리
+        var meetingRoomNo = document.getElementById('editMeetingRoom').value;
+        var meetingTitle = document.getElementById('editMeetingTitle').value;
+        var meetingStart = document.getElementById('editStartTime').value;
+        var meetingEnd = document.getElementById('editEndTime').value;
+        var meetingPeople = parseInt(document.getElementById('editMeetingPeople').value, 10);  // 참석 인원 (숫자로 변환)
+        
+        // 선택된 회의실의 최대 인원수 가져오기
+        var maxPeople = parseInt(document.getElementById('editMeetingRoom').options[document.getElementById('editMeetingRoom').selectedIndex].getAttribute('data-maxpeople'), 10);  // 최대 인원 (숫자로 변환)
+
+        // 입력값 검증
+        if (meetingRoomNo === "" || meetingRoomNo === "회의실을 선택하세요") {
+            alert('회의실을 선택하세요.');
+            document.getElementById('editMeetingRoom').focus();  // 포커스를 회의실 선택 필드로 이동
+            return;
+        }
+        if (meetingTitle.trim() === "") {
+            alert('회의 내용을 입력하세요.');
+            document.getElementById('editMeetingTitle').focus();  // 포커스를 회의 내용 필드로 이동
+            return;
+        }
+        if (meetingStart === "") {
+            alert('시작 시간을 선택하세요.');
+            document.getElementById('editStartTime').focus();  // 포커스를 시작 시간 필드로 이동
+            return;
+        }
+        if (meetingEnd === "") {
+            alert('종료 시간을 선택하세요.');
+            document.getElementById('editEndTime').focus();  // 포커스를 종료 시간 필드로 이동
+            return;
+        }
+        if (isNaN(meetingPeople) || meetingPeople <= 0) {
+            alert('참석 인원을 입력하세요.');
+            document.getElementById('editMeetingPeople').focus();  // 포커스를 참석 인원 필드로 이동
+            return;
+        }
+
+
+        // 입력된 참석 인원이 최대 인원을 초과하는지 확인
+        if (meetingPeople > maxPeople) {
+            alert(`해당 회의실의 최대 참석 인원은 ${maxPeople}명입니다.`);
+            return;  // 초과했을 경우 저장을 진행하지 않음
+        }
+
+ 
+
+        var reservationNo = document.getElementById('reservation_no').value;
+        const payload = JSON.stringify({
+            meeting_no: meetingRoomNo,
+            meeting_content: meetingTitle,
+            meeting_start: meetingStart,
+            meeting_end: meetingEnd,
+            meeting_people: meetingPeople,
+            reservation_no: reservationNo
+        });
+
+        // 서버로 수정된 데이터를 전송
+        fetch(`/reservationUpdate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+            },
+            body: payload
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.res_code === '404') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '수정되었습니다',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                }).then((result) => {
+                    // SweetAlert 닫힘 후 페이지 새로 고침
+                    if (result.isConfirmed) {
+                        location.reload();  // 페이지 새로 고침
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '수정 실패',
+                    text: data.res_msg,
+                    confirmButtonText: "닫기"
+                }).then((result) => {
+                    // SweetAlert 닫힘 후 페이지 새로 고침
+                    if (result.isConfirmed) {
+                        location.reload();  // 페이지 새로 고침
+                    }
+                });
+            }
+        });
+    }
+});
+
+
+// 삭제 버튼 처리
+document.getElementById('deleteMeeting').addEventListener('click', function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+        title: '정말 삭제하시겠습니까?',
+        text: "이 작업은 되돌릴 수 없습니다!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '예, 삭제합니다!',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var reservation_no = document.getElementById('reservation_no').value;
+
+            fetch(`/reservationDelete/${reservation_no}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.res_code === '200') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '삭제되었습니다!',
+                            text: '예약이 성공적으로 삭제되었습니다.',
+                            confirmButtonText: "닫기"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();  // SweetAlert 닫힘 후 페이지 새로 고침
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '삭제 실패',
+                            text: data.res_msg,
+                            confirmButtonText: "닫기"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+        }
+    });
+});
+
+calendar.render();
+});
+
+	  
+	  
+	  // 회의실 예약 버튼 클릭 시 모달 열기
+	  document.getElementById('reserveMeetingButton').addEventListener('click', function() {
+	    var meetingModal = new bootstrap.Modal(document.getElementById('meetingModal'));
+	    meetingModal.show();
+	  });
+
+	  document.getElementById('saveMeeting').addEventListener('click', function(e) {
+		    e.preventDefault();  // 기본 폼 제출 방지
+		    var meetingRoom = document.getElementById('meetingRoom');  // 회의실 선택
+		    var meetingRoomNo = meetingRoom.value;
+		    var meetingContent = document.getElementById('meetingTitle').value;  // 회의 내용
+		    var meetingStart = document.getElementById('startTime').value;  // 시작 시간
+		    var meetingEnd = document.getElementById('endTime').value;  // 종료 시간
+		    var meetingPeople = parseInt(document.getElementById('meetingPeople').value, 10);  // 참석 인원 (숫자로 변환)
+
+		    // 선택된 회의실의 최대 인원수 가져오기
+		    var maxPeople = parseInt(meetingRoom.options[meetingRoom.selectedIndex].getAttribute('data-maxpeople'), 10);  // 최대 인원 (숫자로 변환)
+
+		    // 입력값 검증
+		    if (meetingRoomNo === "" || meetingRoomNo === "회의실을 선택하세요") {
+		        alert('회의실을 선택하세요.');
+		        meetingRoom.focus();  // 포커스를 회의실 선택 필드로 이동
+		        return;
+		    }
+		    if (meetingContent.trim() === "") {
+		        alert('회의 내용을 입력하세요.');
+		        document.getElementById('meetingTitle').focus();  // 포커스를 회의 내용 필드로 이동
+		        return;
+		    }
+		    if (meetingStart === "") {
+		        alert('시작 시간을 선택하세요.');
+		        document.getElementById('startTime').focus();  // 포커스를 시작 시간 필드로 이동
+		        return;
+		    }
+		    if (meetingEnd === "") {
+		        alert('종료 시간을 선택하세요.');
+		        document.getElementById('endTime').focus();  // 포커스를 종료 시간 필드로 이동
+		        return;
+		    }
+		    if (isNaN(meetingPeople) || meetingPeople <= 0) {
+		        alert('참석 인원을 입력하세요.');
+		        document.getElementById('meetingPeople').focus();  // 포커스를 참석 인원 필드로 이동
+		        return;
+		    }
+		    // 입력된 참석 인원이 최대 인원을 초과하는지 확인
+		    if (meetingPeople > maxPeople) {
+		        alert(`해당 회의실의 최대 참석 인원은 ${maxPeople}명입니다.`);
+		        return;  // 초과했을 경우 저장을 진행하지 않음
+		    }
+
+
+
+		    const payload = JSON.stringify({
+		        meeting_no: meetingRoomNo,
+		        meeting_content: meetingContent,
+		        meeting_start: meetingStart,
+		        meeting_end: meetingEnd,
+		        meeting_people: meetingPeople
+		    });
+
+		    // CSRF 토큰 가져오기
+		    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+		    // fetch API를 통해 서버로 POST 요청 보내기
+		    fetch('/reservationCreate', {
+		        method: 'POST',
+		        headers: {
+		            'Content-Type': 'application/json',
+		            'X-CSRF-TOKEN': csrfToken
+		        },
+		        body: payload
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		    	 console.log(data);
+		        if (data.res_code === '200') {
+		            Swal.fire({
+		                icon: 'success',
+		                title: '예약되었습니다',
+		                text: data.res_msg,
+		                confirmButtonText: "닫기"
+		            }).then((result) => {
+		                // SweetAlert 닫힘 후 페이지 새로 고침
+		                if (result.isConfirmed) {
+		                    location.reload();  // 페이지 새로 고침
+		                }
+		            });
+		        } else {
+		            Swal.fire({
+		                icon: 'error',
+		                title: '예약에 실패했습니다.',
+		                text: data.res_msg,
+		                confirmButtonText: "닫기"
+		            }).then((result) => {
+		                // SweetAlert 닫힘 후 페이지 새로 고침
+		                if (result.isConfirmed) {
+		                    location.reload();  // 페이지 새로 고침
+		                }
+		            });
+		        }
+		    });
+		});
+
+
+
+
+
+</script>
+	    </main>
+  </th:block>
+
+	   <!-- Vendor JS Files -->
+	  <script src="/bootstrap/vendor/apexcharts/apexcharts.min.js"></script>
+	  <script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	  <script src="/bootstrap/vendor/chart.js/chart.umd.js"></script>
+	  <script src="/bootstrap/vendor/echarts/echarts.min.js"></script>
+	  <script src="/bootstrap/vendor/quill/quill.js"></script>
+	  <script src="/bootstrap/vendor/simple-datatables/simple-datatables.js"></script>
+	  <script src="/bootstrap/vendor/tinymce/tinymce.min.js"></script>
+	  <script src="/bootstrap/vendor/php-email-form/validate.js"></script>
+	  <!-- Template Main JS File -->
+	  <script src="/bootstrap/js/main.js"></script>
+  </body>
+</html>

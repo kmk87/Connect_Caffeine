@@ -1,0 +1,117 @@
+.sub-sidebar {
+	position: fixed;
+	top: 60px;
+	left: 300px;
+	bottom: 0;
+	width: 250px;
+	z-index: 995;
+	transition: all 0.3s;
+	padding: 20px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #aab7cf transparent;
+	box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+	background-color: #fff;
+}
+
+.sales-list {
+	position: fixed;
+	background-color: #fff;
+	left: 550px;
+	width: 70%;
+	bottom: 0;
+	top: 60px;
+}
+
+.sales-title {
+	font-size: 24px;
+	font-weight: bold;
+	padding-left: 30px;
+	padding-top: 30px;
+	padding-bottom: 20px;
+}
+
+.sidebar-link {
+	color: #012970;
+	text-decoration: none;
+	padding: 5px 10px;
+	display: inline-block;
+}
+
+.filter-section table {
+	width: 96%;
+	margin-top: 10px;
+}
+
+.filter-section {
+	margin-left: 10px;
+}
+
+/* 검색창과 테이블 사이 간격 줄이기 */
+.dataTables_filter {
+	margin-bottom: 5px;  /* 간격 줄이기 */
+}
+
+.dataTables_wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;  /* 상단으로 정렬 */
+	height: auto;  /* 테이블 높이를 자동으로 */
+}
+
+/* 테이블 본문 스크롤 */
+.dataTables_scrollBody {
+	overflow-y: auto;
+	height: 450px;
+}
+
+/* 페이지네이션 위치 수정 */
+.dataTables_paginate {
+	text-align: center !important;
+	padding-top: 20px;
+	margin-top: 10px;
+	
+}
+
+.dataTables_paginate .paginate_button {
+	display: inline-block;
+	padding: 5px 10px;
+	margin: 0 2px;
+	color: #333;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.dataTables_paginate .paginate_button.current {
+	background-color: #C7CEEA !important;
+	color: #fff;
+	border-color: #007bff;
+}
+
+.dataTables_paginate .paginate_button:hover {
+	background-color: #f1f1f1;
+}
+
+/* 검색창 인풋 스타일 */
+.dataTables_filter input {
+	border-radius: 4px;
+	padding: 5px;
+	border: 1px solid #ddd;
+	width: 200px;  /* 검색창 너비 조정 */
+}
+
+/* 현재 페이지 활성화 스타일 */
+.sidebar-link.active {
+	background-color: #f6f9ff;
+	color: #4154f1;
+	width: 230px;
+}
+
+/* hover 시 스타일 */
+.sidebar-link:hover {
+	background-color: #f6f9ff;
+	color: #4154f1;
+	width: 230px;
+}

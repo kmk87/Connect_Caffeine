@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{include/layout}">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>공지사항 목록</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <!-- Favicons -->
+  <style>
+        /* 모든 행의 배경색을 변경 */
+        table.dataTable tbody tr {
+            background-color: #fff; /* 원하는 배경색으로 변경 */
+        }
+    </style>
+  <link href="/bootstrap/img/쿼카.png" rel="icon">
+  <link href="/bootstrap/img/쿼카.png" rel="쿼카">
+
+<!-- DataTables CSS -->
+
+  <link
+	href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"
+	rel="stylesheet" disabled="disabled">
+	<link th:href="@{/css/notice/notice.css}"
+          rel="stylesheet" type="text/css">
+
+
+
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+  
+</head>
+<body>
+
+ <th:block layout:fragment="content">
+  <main id="main" class="main">
+  
+    <div class="col-xxl-4 col-md-6" style="margin-left: 50px;">
+    
+         <div class="card info-card sales-card" style="margin-top: 25px; width: 1500px; height: 750px;">
+             <div class="card-body">
+             	<div class="card-body-header">
+					<h2 class="card-title"><b>공지사항 게시판</b></h2>
+					<hr>
+				</div>
+      <table id="notice_list" class="table table-bordered rank-table">
+      	<colgroup>
+      		<col width="5%">
+			<col width="40%">
+			<col width="5%">
+			<col width="5%">
+      	</colgroup>
+      	<thead class="table-light">
+      		<tr id="dynamic-header">
+      			<th>번호</th>
+      			<th>제목</th>
+      			<th>작성일</th>
+      			<th>작성자명</th>
+      		</tr>
+      	</thead>
+      	<tbody>
+      		<th:block th:if="${#lists.isEmpty(resultList)}">
+      			<tr>
+      				<td colspan="4">해당하는 공지사항이 없습니다.</td> 
+      			</tr>
+      		</th:block>
+      		<th:block th:if="${!#lists.isEmpty(resultList)}">
+      			<tr th:if="${notice.notice_status.equals('Y')}"
+      			th:each="notice : ${resultList}"
+      			th:onclick="|location.href='@{/noticeDetail/{noticeNo}(noticeNo=${notice.notice_no})}'|">
+      					<td th:text="${notice.notice_no}"></td>
+      					<td th:text="${notice.notice_title}"></td>
+      					<td th:text="${#temporals.format(notice.notice_reg_date, 'yy-MM-dd')}"></td>
+      					<td th:text="${notice.notice_writer_name}"></td>
+      			</tr>
+      		</th:block>
+      	</tbody>
+      	
+      </table>
+      <th:block th:if="${#authentication.principal.dto.emp_account[0] == 'a'}">
+	  	<button type="button" class="btn btn-primary rounded-pill"
+	  	style="float:right;" th:onclick="|location.href='@{/noticeCreate}'|">등록</button>
+      </th:block>
+      </div>
+                </div>
+              </div>
+      
+    <script>
+  
+  $(document).ready(function() {
+	  	
+	    $('#notice_list').DataTable({
+	    	"paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "pageLength": 10,
+            "ordering": false,
+            "info": false,
+            "autoWidth": false,
+            "language": {
+            	"search": "검색:",
+                "paginate": {
+                    "previous": "<", // 이전을 <로 표시
+                    "next": ">"      // 다음을 >로 표시
+                },
+            },
+            "pagingType": "simple_numbers",
+	    	"order": [],
+	    	"rowCallback": function(row, data, index) {
+	            // 1~10 순번을 첫 번째 열에 설정
+	            $('td:eq(0)', row).html(index + 1);
+	        }
+	    });
+	    $('#notice_list_filter').css({
+	        'float': 'right',
+	        'text-align': 'right',
+	        'margin-top': '10px',  // 아래로 내리기 위한 margin-top 추가
+	        'margin-bottom': '5px' // 검색창과 테이블 사이 간격 줄이기
+	    });
+	});
+</script>
+  </main><!-- End #main -->
+</th:block>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+</body>
+</html>

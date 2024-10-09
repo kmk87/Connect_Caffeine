@@ -1,5 +1,4 @@
 package com.cc.security.service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import com.cc.employee.domain.Employee;
 import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.repository.EmployeeRepository;
 import com.cc.security.vo.SecurityUser;
-
 @Service
 public class SecurityService implements UserDetailsService{
 	private final EmployeeRepository employeeRepository;
@@ -27,23 +25,23 @@ public class SecurityService implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Employee member = employeeRepository.findBymemId(username);
-		if(member != null) {
-			EmployeeDto dto = new EmployeeDto().toDto(member);
+		Employee employee = employeeRepository.findByempAccount(username);
+		if(employee != null) {
+			
+			EmployeeDto dto = new EmployeeDto().toDto(employee);
 			
 			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-			authorities.add(new SimpleGrantedAuthority(member.getMemAuth()));
+
+			authorities.add(new SimpleGrantedAuthority(employee.getEmpJobCode()));
+
+
 			dto.setAuthorities(authorities);
 			
-			System.out.println("로그인 정보");
-			System.out.println(dto);
 			
 			return new SecurityUser(dto);
 		} else {
 			throw new UsernameNotFoundException(username);
 		}
 	}
+	
 }
-
-
-

@@ -13,11 +13,17 @@ java {
 	}
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 }
+
+
+
 
 repositories {
 	mavenCentral()
@@ -26,6 +32,7 @@ repositories {
 dependencies {
 	// 데이터베이스 관련 의존성
 	implementation 'org.mariadb.jdbc:mariadb-java-client'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// security 관련 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -42,6 +49,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+
+	
 }
 
 tasks.named('test') {
