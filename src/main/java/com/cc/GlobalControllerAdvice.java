@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.cc.employee.domain.EmployeeDto;
 import com.cc.employee.service.EmployeeService;
 import com.cc.notification.domain.NotificationDto;
 import com.cc.notification.service.NotificationService;
@@ -34,7 +36,7 @@ public class GlobalControllerAdvice {
         this.notificationService = notificationService;
     }
 
- // 트리 조직도 만들기
+    // 트리 조직도 만들기
     @ModelAttribute
     public void treeToModel(Model model) {
     	// 1. 팀 정보
@@ -99,10 +101,10 @@ public class GlobalControllerAdvice {
 	            User user = (User) authentication.getPrincipal();
 	            String empAccount = user.getUsername();
 	            Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
-		// 읽지 않은 알림을 가져와서 모델에 추가
-        List<NotificationDto> unreadNotifications = notificationService.getUnreadNotifications(empCode);
-        model.addAttribute("unreadNotifications", unreadNotifications);
-    }
+	            // 읽지 않은 알림을 가져와서 모델에 추가
+	            List<NotificationDto> unreadNotifications = notificationService.getUnreadNotifications(empCode);
+	            model.addAttribute("unreadNotifications", unreadNotifications);
+	        }
     }
 
 
@@ -119,6 +121,28 @@ public class GlobalControllerAdvice {
         model.addAttribute("errorMessage", "예상치 못한 오류가 발생했습니다.");
         return "error/500"; // error/500.html 페이지로 이동
     }
+    
+    // header에 로그인한 사용자 정보 확인
+    @ModelAttribute
+    public void addUserAttributes(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 인증 정보가 유효한지 확인
+        if (authentication != null && authentication.isAuthenticated() 
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            User user = (User) authentication.getPrincipal();
+            String empAccount = user.getUsername();
+            Long empCode = employeeService.findEmpCodeByEmpName(empAccount);
+
+            EmployeeDto userDto = employeeService.selectEmployeeOne(empCode);
+            if (userDto != null) {
+                // 로그로 확인
+                System.out.println("Logged in User: " + userDto.getEmp_name());
+            }
+            model.addAttribute("userDto", userDto);
+        }
+    }
+    
 }
     
     
