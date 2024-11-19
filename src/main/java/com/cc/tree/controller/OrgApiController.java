@@ -55,6 +55,15 @@ public class OrgApiController {
 		// 2. 사원 정보
 		List<Map<String, Object>> empResult = orgService.getOrgEmpTree();
 
+		// 직원 데이터에 job_code 및 emp_code 추가
+	    for (Map<String, Object> emp : empResult) {
+	        // 직급 코드 및 직원 코드를 추가
+	        emp.put("job_code", emp.get("job_code")); // 직급 코드
+	        emp.put("emp_code", emp.get("emp_code")); // 직원 코드
+	    }
+		
+		
+		
 		String empObj = null;
 
 		try {
